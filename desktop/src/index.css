@@ -1,0 +1,28 @@
+:root {
+  --bg: #0a0a0b;
+  --surface: #111114;
+  --card: #1a1a1e;
+  --border: #252528;
+  --accent: #00ff88;
+  --accent-dim: #00ff8820;
+  --text: #e8e8e8;
+  --muted: #66667080;
+  --radius: 14px;
+  --font-ui: 'Instrument Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { 
+  background: var(--bg); 
+  color: var(--text); 
+  font-family: var(--font-ui);
+  height: 100dvh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+}

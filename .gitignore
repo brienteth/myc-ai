@@ -1,0 +1,34 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Node / JS
+node_modules/
+dist/
+build/
+.eslintcache
+
+# OS/System
+.DS_Store
+Thumbs.db
+
+# App specific
+downloads/
+local_models/
+*.gguf
+*.spec
+.myca/
+ai-layer/data/
+db.sqlite
+
+# Release & builds
+desktop/release/
+desktop/out/
+runtime/target/
+
