@@ -24,6 +24,15 @@ const Library = () => {
   const [urlInput, setUrlInput] = useState('');
   const [stats, setStats] = useState({ total_files: 0, by_type: {} });
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleFilePick = (e) => {
+    const picked = e.target.files;
+    if (picked && picked.length > 0) {
+      Array.from(picked).forEach(f => uploadFile(f));
+    }
+    e.target.value = '';
+  };
 
   const fetchFiles = useCallback(async () => {
     try {
@@ -211,10 +220,17 @@ const Library = () => {
       <div className="library-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <h1>Library</h1>
-          <div className="indexer-badge" title="Auto-watching ~/Documents, Desktop, Downloads, and uploaded assets">
-            <RefreshCw size={12} className="spin-icon" />
-            <span>Watching Local Mesh</span>
-          </div>
+          <button className="upload-btn" onClick={() => fileInputRef.current?.click()}>
+            <Upload size={14} />
+            <span>Upload Files</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            style={{ display: 'none' }}
+            onChange={handleFilePick}
+          />
         </div>
         
         <div className="search-wrapper">
@@ -294,7 +310,11 @@ const Library = () => {
               {uploading ? (
                 <div className="upload-spinner"><RefreshCw className="spin-icon" /> Indexing & Embedding...</div>
               ) : (
-                <p>{getEmptyStateText()}</p>
+                <>
+                  <Upload size={28} color="#86868b" />
+                  <p>{getEmptyStateText()}</p>
+                  <button className="browse-btn" onClick={() => fileInputRef.current?.click()}>Browse Files</button>
+                </>
               )}
             </div>
           )}

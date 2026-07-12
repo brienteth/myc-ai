@@ -25,12 +25,7 @@ class FileIndexer:
         self.db_path = library_engine.db_path
         self.queue = asyncio.Queue()
         self.watched_dirs = [
-            Path("~/Documents").expanduser(),
-            Path("~/Desktop").expanduser(),
-            Path("~/Downloads").expanduser(),
-            Path("~/Pictures").expanduser(),
-            Path("~/Music").expanduser(),
-            Path("~/Videos").expanduser(),
+            # Only index files the user explicitly uploads through the UI
             library_engine.uploads_dir
         ]
         self.worker_task = None
