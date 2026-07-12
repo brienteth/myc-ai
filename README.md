@@ -37,10 +37,10 @@
 
 | Platform | Download |
 |---|---|
-| **macOS** (Apple Silicon) | [myc.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/myc.dmg) |
-| **macOS** (Intel) | [myc-intel.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/myc-intel.dmg) |
-| **Windows** | [myc.exe](https://github.com/brienteth/myc-ai/releases/latest/download/myc.exe) |
-| **Linux** (AppImage) | [myc.AppImage](https://github.com/brienteth/myc-ai/releases/latest/download/myc.AppImage) |
+| **macOS** (Apple Silicon) | [Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-macOS.dmg) |
+| **macOS** (Intel / Universal) | [Myca-macOS.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-macOS.zip) |
+| **Windows** | [Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-Windows.zip) |
+| **Linux** | [Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-Linux.zip) |
 
 ---
 
