@@ -51,20 +51,32 @@ class LibraryService:
 
     async def _generate_summary(self, content: str) -> str:
         if not content:
-            return "İçerik okunamadı."
-        prompt = f"Şu metni tek ve kısa bir cümleyle (max 10 kelime) Türkçe özetle. Başka hiçbir şey yazma.\n\nMetin: {content[:1000]}"
+            return "No content to read."
+        prompt = f"Summarize the following text in a single short sentence (max 10 words). Write nothing else:\n\n{content[:1000]}"
+        
+        # Try local inference engine if initialized
+        if hasattr(self, 'inference_engine') and self.inference_engine:
+            try:
+                summary = await self.inference_engine.generate(prompt)
+                if summary:
+                    return summary.strip()
+            except Exception as e:
+                logger.warning(f"Local summary generation failed: {e}")
+
+        # Fallback to Ollama or standard message
         try:
             async with httpx.AsyncClient() as client:
                 res = await client.post(
                     "http://localhost:11434/api/generate",
                     json={"model": os.environ.get("MYCA_MODEL", "qwen2.5-coder:7b"), "prompt": prompt, "stream": False},
-                    timeout=30.0
+                    timeout=5.0
                 )
                 if res.status_code == 200:
                     return res.json().get("response", "").strip()
         except Exception as e:
-            logger.warning(f"Summary generation failed: {e}")
-        return "Özet oluşturulamadı."
+            logger.warning(f"Summary generation via Ollama fallback failed: {e}")
+        
+        return content[:60].strip() + "..." if len(content) > 60 else "No summary available."
 
     async def add_file(self, filename: str, content_bytes: bytes, file_type: str) -> dict:
         file_id = str(uuid.uuid4())
@@ -98,12 +110,14 @@ class LibraryService:
                 except ImportError:
                     extracted_text = "[Audio transcript pending - faster-whisper not installed]"
             elif file_type == "image":
-                extracted_text = "[Görsel dosyası. İçerik analizi henüz eklenmedi.]"
+                extracted_text = "[Image file. Visual content analysis not implemented yet.]"
+            elif file_type == "video":
+                extracted_text = "[Video file. Video content analysis not implemented yet.]"
             else:
                 extracted_text = ""
         except Exception as e:
             logger.error(f"Error extracting text from {filename}: {e}")
-            extracted_text = f"[İçerik okuma hatası: {str(e)}]"
+            extracted_text = f"[Content extraction error: {str(e)}]"
 
         summary = await self._generate_summary(extracted_text)
 
@@ -134,7 +148,7 @@ class LibraryService:
                 extracted_text = res.text # Basic text, should parse HTML in prod
                 size_bytes = len(res.content)
         except Exception as e:
-            extracted_text = f"[URL okuma hatası: {str(e)}]"
+            extracted_text = f"[URL read error: {str(e)}]"
             size_bytes = 0
 
         summary = await self._generate_summary(extracted_text)

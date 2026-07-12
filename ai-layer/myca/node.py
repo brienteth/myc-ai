@@ -168,6 +168,7 @@ class MycaNode:
         # Layer 5: Inference
         self.inference_engine = BackendRegistry.create_backend("auto")
         self.inference_manager = InferenceManager(self.inference_engine)
+        self.library.inference_engine = self.inference_engine
         
         # Boot the default chat capability
         try:
