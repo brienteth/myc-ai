@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/myc-ai/myc?style=flat-square&color=00e87a" alt="GitHub stars" />
-  <img src="https://img.shields.io/github/license/myc-ai/myc?style=flat-square&color=5a5a6e" alt="License" />
+  <img src="https://img.shields.io/github/stars/brienteth/myc-ai?style=flat-square&color=00e87a" alt="GitHub stars" />
+  <img src="https://img.shields.io/github/license/brienteth/myc-ai?style=flat-square&color=5a5a6e" alt="License" />
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-00e87a?style=flat-square" alt="Platform Support" />
   <img src="https://img.shields.io/discord/1234567890?style=flat-square&color=5a5a6e&label=discord" alt="Discord members" />
 </p>
@@ -37,10 +37,10 @@
 
 | Platform | Download |
 |---|---|
-| **macOS** (Apple Silicon) | [myc.dmg](https://github.com/myc-ai/myc/releases/latest/download/myc.dmg) |
-| **macOS** (Intel) | [myc-intel.dmg](https://github.com/myc-ai/myc/releases/latest/download/myc-intel.dmg) |
-| **Windows** | [myc.exe](https://github.com/myc-ai/myc/releases/latest/download/myc.exe) |
-| **Linux** (AppImage) | [myc.AppImage](https://github.com/myc-ai/myc/releases/latest/download/myc.AppImage) |
+| **macOS** (Apple Silicon) | [myc.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/myc.dmg) |
+| **macOS** (Intel) | [myc-intel.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/myc-intel.dmg) |
+| **Windows** | [myc.exe](https://github.com/brienteth/myc-ai/releases/latest/download/myc.exe) |
+| **Linux** (AppImage) | [myc.AppImage](https://github.com/brienteth/myc-ai/releases/latest/download/myc.AppImage) |
 
 ---
 
@@ -86,8 +86,8 @@ brew install myc
 myc start
 
 # or build from source
-git clone https://github.com/myc-ai/myc
-cd myc/ai-layer
+git clone https://github.com/brienteth/myc-ai
+cd myc-ai/ai-layer
 pip install -r requirements.txt
 python main.py
 ```

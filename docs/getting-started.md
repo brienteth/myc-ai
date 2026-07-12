@@ -17,8 +17,8 @@ The backend layer is written in Python and is responsible for managing local mod
 
 ```bash
 # Clone the repository
-git clone https://github.com/myc-ai/myc
-cd myc/ai-layer
+git clone https://github.com/brienteth/myc-ai
+cd myc-ai/ai-layer
 
 # Create virtual environment and install dependencies
 uv venv
