@@ -42,9 +42,46 @@ const Chat = () => {
   const { nodes, status } = useNodes();
   const [input, setInput] = useState('');
   const [showNetwork, setShowNetwork] = useState(false);
+  const [planModal, setPlanModal] = useState(null);
+  const [planning, setPlanning] = useState(false);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const hasInitialized = useRef(false);
+
+  const handleAutomateIntent = async (intentText) => {
+    setPlanning(true);
+    try {
+      const res = await fetch('http://localhost:8420/automation/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: intentText })
+      });
+      const data = await res.json();
+      if (data.plan) {
+        setPlanModal(data.plan);
+      }
+    } catch (e) {
+      console.error("Failed to plan automation:", e);
+    } finally {
+      setPlanning(false);
+    }
+  };
+
+  const handleSavePlannedWorkflow = async () => {
+    if (!planModal) return;
+    try {
+      const flowToSave = { ...planModal, enabled: true };
+      await fetch('http://localhost:8420/automation/workflows', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(flowToSave)
+      });
+      setPlanModal(null);
+      alert("Automation Workflow created and enabled successfully!");
+    } catch (e) {
+      console.error("Failed to save workflow:", e);
+    }
+  };
 
   useEffect(() => {
     if (!hasInitialized.current && location.state?.initialPrompt) {
@@ -150,7 +187,16 @@ const Chat = () => {
                     }
                   </div>
                 )}
-
+                
+                {/* Automate Flow context button */}
+                {!isUser && !isGenerating && idx === messages.length - 1 && (
+                  <button 
+                    onClick={() => handleAutomateIntent(msg.content)}
+                    style={styles.automateBtn}
+                  >
+                    ◈ Automate Flow
+                  </button>
+                )}
               </div>
             );
           })
@@ -187,6 +233,49 @@ const Chat = () => {
           </button>
         </div>
       </div>
+
+      {/* Plan Preview Modal */}
+      {planModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+            <h3>◈ Suggesting Automation Flow</h3>
+            <p style={{fontSize: '13px', color: 'var(--muted)', margin: '4px 0 16px 0'}}>
+              Myca Planner successfully translated the conversation into a DAG workflow.
+            </p>
+            <div style={styles.planPreviewCard}>
+              <div style={{fontWeight: 'bold', fontSize: '15px'}}>{planModal.name}</div>
+              <div style={{fontSize: '12px', color: 'var(--muted)', margin: '4px 0 12px 0'}}>{planModal.description}</div>
+              <div style={{fontSize: '11px', textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 'bold'}}>
+                Trigger: {planModal.trigger?.type}
+              </div>
+              <div style={{marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                {planModal.nodes?.map((n, i) => (
+                  <div key={i} style={styles.previewNodeItem}>
+                    <span style={{fontSize: '10px', color: 'var(--muted)'}}>STEP {i+1}</span>
+                    <div style={{fontSize: '13px', fontWeight: 'bold'}}>{n.skill}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={styles.modalActions}>
+              <button style={styles.cancelBtn} onClick={() => setPlanModal(null)}>Cancel</button>
+              <button style={styles.saveBtn} onClick={handleSavePlannedWorkflow}>Save & Enable</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {planning && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.loaderBox}>
+            <div className="spinner" style={styles.spinner}></div>
+            <div style={{marginTop: '12px'}}>◈ Myca Planner is designing Workflow...</div>
+            <style>{`
+              @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            `}</style>
+          </div>
+        </div>
+      )}
 
       <Network 
         nodes={nodes} 
@@ -340,6 +429,98 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+  },
+  automateBtn: {
+    background: 'rgba(0, 232, 122, 0.1)',
+    color: '#00e87a',
+    border: '1px solid rgba(0, 232, 122, 0.2)',
+    padding: '4px 8px',
+    borderRadius: '6px',
+    fontSize: '11px',
+    cursor: 'pointer',
+    marginTop: '8px',
+    display: 'inline-block',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.6)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2000,
+  },
+  modalContent: {
+    background: 'var(--surface)',
+    border: '1px solid var(--border)',
+    borderRadius: '16px',
+    width: '100%',
+    maxWidth: '480px',
+    padding: '24px',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+  },
+  planPreviewCard: {
+    background: 'var(--card)',
+    border: '1px solid var(--border)',
+    borderRadius: '12px',
+    padding: '16px',
+    maxHeight: '300px',
+    overflowY: 'auto',
+  },
+  previewNodeItem: {
+    background: 'var(--surface)',
+    border: '1px solid var(--border)',
+    borderRadius: '8px',
+    padding: '10px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+  },
+  modalActions: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '12px',
+    marginTop: '20px',
+  },
+  cancelBtn: {
+    background: 'none',
+    border: '1px solid var(--border)',
+    color: 'var(--text-secondary)',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    cursor: 'pointer',
+  },
+  saveBtn: {
+    background: 'var(--accent)',
+    border: 'none',
+    color: '#000',
+    fontWeight: 'bold',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    fontSize: '13px',
+    cursor: 'pointer',
+  },
+  loaderBox: {
+    background: 'var(--surface)',
+    border: '1px solid var(--border)',
+    padding: '24px',
+    borderRadius: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+  },
+  spinner: {
+    border: '3px solid var(--border)',
+    borderTop: '3px solid var(--accent)',
+    borderRadius: '50%',
+    width: '24px',
+    height: '24px',
+    animation: 'spin 1s linear infinite',
   }
 };
 

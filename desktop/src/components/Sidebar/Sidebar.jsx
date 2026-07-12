@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Home, MessageSquare, Library as LibraryIcon, MonitorSmartphone, Settings } from 'lucide-react';
+import { Home, MessageSquare, Library as LibraryIcon, MonitorSmartphone, Settings, Zap } from 'lucide-react';
 import '../Layout/Layout.css';
 
 const Sidebar = () => {
@@ -17,6 +17,10 @@ const Sidebar = () => {
         <NavLink to="/library" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <LibraryIcon size={20} />
           <span>Library</span>
+        </NavLink>
+        <NavLink to="/automation" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
+          <Zap size={20} />
+          <span>Automation</span>
         </NavLink>
         <NavLink to="/devices" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <MonitorSmartphone size={20} />

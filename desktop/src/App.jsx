@@ -4,6 +4,7 @@ import Layout from './components/Layout/Layout';
 import CommandPalette from './components/CommandPalette/CommandPalette';
 import Home from './views/Home';
 import Library from './views/Library';
+import Automation from './views/Automation';
 import Devices from './views/Devices';
 import Settings from './views/Settings';
 import Onboarding from './views/Onboarding';
@@ -33,6 +34,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="chat" element={<Chat />} />
             <Route path="library" element={<Library />} />
+            <Route path="automation" element={<Automation />} />
             <Route path="devices" element={<Devices />} />
             <Route path="settings" element={<Settings />} />
           </Route>

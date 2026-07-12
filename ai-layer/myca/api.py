@@ -70,6 +70,19 @@ def create_app(node: MycaNode) -> FastAPI:
     memory = ExperienceMemory()
     runtime = RuntimeEngine(node)
     
+    # Initialize and start Automation Scheduler daemon
+    from myca.automation.scheduler import AutomationScheduler
+    from myca.automation.api import router as automation_router
+    import myca.automation.api as automation_api_module
+    
+    auto_scheduler = AutomationScheduler(runtime)
+    auto_scheduler.start()
+    
+    # Inject scheduler dependency into automation router module
+    automation_api_module.scheduler = auto_scheduler
+    
+    app.include_router(automation_router)
+
     def get_runtime():
         return runtime
     # WebSocket connections for protocol log
@@ -534,8 +547,9 @@ def create_app(node: MycaNode) -> FastAPI:
     async def history_delete_conv(conv_id: str):
         db.delete_conversation(conv_id)
         return {"status": "deleted"}
-
-
+    @app.on_event("shutdown")
+    async def shutdown_event():
+        auto_scheduler.stop()
 
     import sys
     from fastapi.staticfiles import StaticFiles
