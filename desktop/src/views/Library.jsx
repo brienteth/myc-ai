@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, FileText, Image as ImageIcon, Music, Video, Code, Globe, Clock, Trash2, Upload, File as FileIcon } from 'lucide-react';
+import { Search, FileText, Image as ImageIcon, Music, Video, Code, Globe, Clock, Trash2, Upload, File as FileIcon, Star, RefreshCw } from 'lucide-react';
 import './Library.css';
 
 const CATEGORIES = [
@@ -17,14 +17,17 @@ const Library = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [files, setFiles] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [urlInput, setUrlInput] = useState('');
+  const [stats, setStats] = useState({ total_files: 0, by_type: {} });
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const fetchFiles = useCallback(async () => {
     try {
-      const typeParam = activeCategory === 'all' || activeCategory === 'recent' ? activeCategory : activeCategory;
+      const typeParam = activeCategory;
       let url = `http://localhost:8420/library/files?type=${typeParam}`;
       if (searchQuery) {
         url += `&q=${encodeURIComponent(searchQuery)}`;
@@ -37,9 +40,34 @@ const Library = () => {
     }
   }, [activeCategory, searchQuery]);
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await fetch('http://localhost:8420/library/stats');
+      const data = await res.json();
+      setStats(data || { total_files: 0, by_type: {} });
+    } catch (e) {
+      console.error("Failed to fetch stats:", e);
+    }
+  }, []);
+
+  const fetchSuggestions = async (val) => {
+    if (!val.trim()) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const res = await fetch(`http://localhost:8420/library/suggestions?q=${encodeURIComponent(val)}`);
+      const data = await res.json();
+      setSuggestions(data.suggestions || []);
+    } catch (e) {
+      console.error("Failed to fetch suggestions:", e);
+    }
+  };
+
   useEffect(() => {
     fetchFiles();
-  }, [fetchFiles]);
+    fetchStats();
+  }, [fetchFiles, fetchStats]);
 
   const onDragOver = (e) => {
     e.preventDefault();
@@ -74,6 +102,7 @@ const Library = () => {
         body: formData,
       });
       fetchFiles();
+      fetchStats();
     } catch (e) {
       console.error("Upload failed:", e);
     } finally {
@@ -92,6 +121,7 @@ const Library = () => {
         });
         setUrlInput('');
         fetchFiles();
+        fetchStats();
       } catch (err) {
         console.error("URL add failed:", err);
       } finally {
@@ -110,8 +140,27 @@ const Library = () => {
         setSelectedFile(null);
       }
       fetchFiles();
+      fetchStats();
     } catch (err) {
       console.error("Delete failed:", err);
+    }
+  };
+
+  const toggleFavorite = async (e, id) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`http://localhost:8420/library/files/${id}/favorite`, {
+        method: 'POST'
+      });
+      const data = await res.json();
+      
+      // Update local state
+      setFiles(files.map(f => f.id === id ? { ...f, favorite: data.favorite ? 1 : 0 } : f));
+      if (selectedFile?.id === id) {
+        setSelectedFile({ ...selectedFile, favorite: data.favorite ? 1 : 0 });
+      }
+    } catch (err) {
+      console.error("Favorite toggle failed:", err);
     }
   };
 
@@ -120,6 +169,8 @@ const Library = () => {
       const res = await fetch(`http://localhost:8420/library/files/${fileId}`);
       const data = await res.json();
       setSelectedFile(data);
+      // Access call triggers internal Recents log
+      fetchFiles();
     } catch (e) {
       console.error("Failed to load file details:", e);
     }
@@ -149,34 +200,73 @@ const Library = () => {
     return <Icon size={24} color="#86868b" />;
   };
 
+  const getCountBadge = (catId) => {
+    if (catId === 'all') return stats.total_files || 0;
+    if (catId === 'recent') return '';
+    return stats.by_type[catId]?.count || 0;
+  };
+
   return (
     <div className="library-container">
       <div className="library-header">
-        <h1>Library</h1>
-        <div className="search-bar">
-          <Search size={18} color="#86868b" />
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <h1>Library</h1>
+          <div className="indexer-badge" title="Auto-watching ~/Documents, Desktop, Downloads, and uploaded assets">
+            <RefreshCw size={12} className="spin-icon" />
+            <span>Watching Local Mesh</span>
+          </div>
+        </div>
+        
+        <div className="search-wrapper">
+          <div className="search-bar">
+            <Search size={18} color="#86868b" />
+            <input 
+              type="text" 
+              placeholder="Search (semantic)..." 
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                fetchSuggestions(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            />
+          </div>
+          {showSuggestions && suggestions.length > 0 && (
+            <ul className="suggestions-dropdown">
+              {suggestions.map((s, idx) => (
+                <li key={idx} onClick={() => { setSearchQuery(s); setShowSuggestions(false); }}>
+                  <Search size={12} style={{ marginRight: '8px' }} />
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
       
       <div className="library-content">
         <div className="library-sidebar">
           <ul className="category-list">
-            {CATEGORIES.map(cat => (
-              <li 
-                key={cat.id} 
-                className={activeCategory === cat.id ? 'active' : ''}
-                onClick={() => { setActiveCategory(cat.id); setSelectedFile(null); }}
-              >
-                <cat.icon size={16} />
-                <span>{cat.label}</span>
-              </li>
-            ))}
+            {CATEGORIES.map(cat => {
+              const count = getCountBadge(cat.id);
+              return (
+                <li 
+                  key={cat.id} 
+                  className={activeCategory === cat.id ? 'active' : ''}
+                  onClick={() => { setActiveCategory(cat.id); setSelectedFile(null); }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <cat.icon size={16} />
+                    <span>{cat.label}</span>
+                  </div>
+                  {count !== '' && count > 0 && (
+                    <span className="count-badge">{count}</span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
         
@@ -202,7 +292,7 @@ const Library = () => {
               onDrop={onDrop}
             >
               {uploading ? (
-                <div className="upload-spinner"><Upload className="spinner-icon" /> Uploading...</div>
+                <div className="upload-spinner"><RefreshCw className="spin-icon" /> Indexing & Embedding...</div>
               ) : (
                 <p>{getEmptyStateText()}</p>
               )}
@@ -218,9 +308,18 @@ const Library = () => {
               >
                 <div className="file-card-header">
                   {getCategoryIcon(f.type)}
-                  <button className="delete-btn" onClick={(e) => deleteFile(e, f.id)}>
-                    <Trash2 size={14} />
-                  </button>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <button 
+                      className={`fav-btn ${f.favorite ? 'active' : ''}`} 
+                      onClick={(e) => toggleFavorite(e, f.id)}
+                      title="Favorite"
+                    >
+                      <Star size={14} fill={f.favorite ? "var(--accent-primary)" : "none"} />
+                    </button>
+                    <button className="delete-btn" onClick={(e) => deleteFile(e, f.id)}>
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
                 <div className="file-card-body">
                   <h3 className="file-name" title={f.filename}>{f.filename}</h3>
@@ -245,14 +344,18 @@ const Library = () => {
               <div className="detail-meta">
                 <span><strong>Type:</strong> {selectedFile.type}</span>
                 <span><strong>Size:</strong> {formatSize(selectedFile.size_bytes)}</span>
+                {selectedFile.page_count > 1 && <span><strong>Pages:</strong> {selectedFile.page_count}</span>}
+                {selectedFile.duration_seconds > 0 && <span><strong>Duration:</strong> {selectedFile.duration_seconds}s</span>}
+                {selectedFile.resolution && selectedFile.resolution !== 'Unknown' && <span><strong>Resolution:</strong> {selectedFile.resolution}</span>}
+                {selectedFile.language && <span><strong>Language:</strong> {selectedFile.language}</span>}
               </div>
               <div className="detail-summary">
                 <strong>AI Summary:</strong>
                 <p>{selectedFile.summary}</p>
               </div>
               <div className="detail-content">
-                <strong>Content (First 2000 characters):</strong>
-                <pre>{selectedFile.content || "Empty content or media file."}</pre>
+                <strong>Content Excerpt:</strong>
+                <pre>{selectedFile.content || "Empty content or media binary file."}</pre>
               </div>
             </div>
           </div>

@@ -20,4 +20,6 @@ dependencies = [
     "sentence-transformers>=5.6.0",
     "numpy>=2.5.1",
     "llama-cpp-python>=0.3.34",
+    "pillow>=10.2.0",
+    "opencv-python-headless>=4.9.0.80",
 ]

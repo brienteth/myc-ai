@@ -407,7 +407,11 @@ def create_app(node: MycaNode) -> FastAPI:
 
     @app.get("/library/files")
     async def library_files(type: str = "all", q: str = ""):
-        files = await node.library.list_files(type, q)
+        # If type is "recent", route directly to library.get_recent()
+        if type == "recent":
+            files = await node.library.get_recent(limit=20)
+        else:
+            files = await node.library.hybrid_search(q, type_filter=type)
         return {"files": files}
 
     @app.get("/library/files/{file_id}")
@@ -415,6 +419,8 @@ def create_app(node: MycaNode) -> FastAPI:
         f = await node.library.get_file(file_id)
         if not f:
             return JSONResponse(status_code=404, content={"error": "Not found"})
+        # Record access history
+        await node.library.record_access(file_id, "opened")
         return f
 
     @app.delete("/library/files/{file_id}")
@@ -431,6 +437,16 @@ def create_app(node: MycaNode) -> FastAPI:
     async def library_stats():
         stats = await node.library.get_stats()
         return stats
+
+    @app.post("/library/files/{file_id}/favorite")
+    async def library_toggle_favorite(file_id: str):
+        fav = await node.library.toggle_favorite(file_id)
+        return {"status": "ok", "favorite": fav}
+
+    @app.get("/library/suggestions")
+    async def library_suggestions(q: str = ""):
+        s = await node.library.get_suggestions(q)
+        return {"suggestions": s}
 
     # ── Settings Endpoints ────────────────────────────────────
     import httpx

@@ -21,6 +21,8 @@ from myca.inference.registry import BackendRegistry
 from myca.inference.manager import InferenceManager
 import myca.inference.backends  # triggers registration
 from myca.library import LibraryService
+from myca.library.embedding import EmbeddingEngine
+from myca.library.indexer import FileIndexer
 
 logger = logging.getLogger("myca.node")
 
@@ -170,6 +172,13 @@ class MycaNode:
         self.inference_manager = InferenceManager(self.inference_engine)
         self.library.inference_engine = self.inference_engine
         
+        # Load local embeddings engine
+        self.library.embedding_engine = EmbeddingEngine()
+        
+        # Initialize and start background file indexer
+        self.library.indexer = FileIndexer(self.library)
+        self.library.indexer.start()
+        
         # Boot the default chat capability
         try:
             await self.inference_manager.boot_capability("chat")
@@ -204,6 +213,8 @@ class MycaNode:
             await self.discovery.stop()
         if self.connection:
             await self.connection.stop()
+        if self.library and hasattr(self.library, "indexer") and self.library.indexer:
+            self.library.indexer.stop()
         self.status = "stopped"
         await self._emit("NODE_STOP", {"node_id": self.node_id})
 
