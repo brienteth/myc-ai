@@ -126,21 +126,26 @@ Kurallar:
         if not self._llm:
             raise RuntimeError("Model not loaded. Call load() first.")
             
-        loop = asyncio.get_running_loop()
-        max_tokens = kwargs.get("max_tokens", 512)
-        
-        def _run():
-            response = self._llm.create_chat_completion(
-                messages=self._build_messages(prompt),
-                max_tokens=max_tokens,
-                temperature=0.7,
-                top_p=0.9,
-                repeat_penalty=1.1,
-                stream=False
-            )
-            return response["choices"][0]["message"]["content"]
+        async with self._lock:
+            loop = asyncio.get_running_loop()
+            max_tokens = kwargs.get("max_tokens", 512)
+            system_prompt = kwargs.get("system_prompt", None)
             
-        return await loop.run_in_executor(None, _run)
+            def _run():
+                messages = self._build_messages(prompt)
+                if system_prompt:
+                    messages[0] = {"role": "system", "content": system_prompt}
+                response = self._llm.create_chat_completion(
+                    messages=messages,
+                    max_tokens=max_tokens,
+                    temperature=0.7,
+                    top_p=0.9,
+                    repeat_penalty=1.1,
+                    stream=False
+                )
+                return response["choices"][0]["message"]["content"]
+                
+            return await loop.run_in_executor(None, _run)
 
     async def stream(self, prompt: str, **kwargs) -> AsyncGenerator[str, None]:
         if not self._llm:
