@@ -1,386 +1,279 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, FileText, Image as ImageIcon, Music, Video, Code, Globe, Clock, Trash2, Upload, File as FileIcon, Star, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import LibrarySidebar from '../components/Library/LibrarySidebar';
+import LibraryTopBar from '../components/Library/LibraryTopBar';
+import LibraryHome from '../components/Library/LibraryHome';
+import DocumentSplitView from '../components/Library/DocumentSplitView';
+import ResearchWorkspace from '../components/Library/ResearchWorkspace';
+import { FileText, Image, Code, Music, Video, Box, UploadCloud, Trash2, Star } from 'lucide-react';
 import './Library.css';
 
-const CATEGORIES = [
-  { id: 'all', label: 'All Files', icon: FileIcon },
-  { id: 'document', label: 'Documents', icon: FileText },
-  { id: 'image', label: 'Images', icon: ImageIcon },
-  { id: 'audio', label: 'Audio', icon: Music },
-  { id: 'video', label: 'Video', icon: Video },
-  { id: 'code', label: 'Code', icon: Code },
-  { id: 'research', label: 'Research', icon: Globe },
-  { id: 'recent', label: 'Recent', icon: Clock }
-];
+const formatBytes = (bytes) => {
+  if (!bytes || bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+};
+
+const formatDate = (ts) => {
+  if (!ts) return 'recently';
+  const d = new Date(ts * 1000);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  return d.toLocaleDateString();
+};
 
 const Library = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCat, setActiveCat] = useState('home');
   const [files, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedDoc, setSelectedDoc] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [urlInput, setUrlInput] = useState('');
-  const [stats, setStats] = useState({ total_files: 0, by_type: {} });
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const fileInputRef = useRef(null);
-
-  const handleFilePick = (e) => {
-    const picked = e.target.files;
-    if (picked && picked.length > 0) {
-      Array.from(picked).forEach(f => uploadFile(f));
-    }
-    e.target.value = '';
-  };
-
-  const fetchFiles = useCallback(async () => {
-    try {
-      const typeParam = activeCategory;
-      let url = `http://localhost:8420/library/files?type=${typeParam}`;
-      if (searchQuery) {
-        url += `&q=${encodeURIComponent(searchQuery)}`;
-      }
-      const res = await fetch(url);
-      const data = await res.json();
-      setFiles(data.files || []);
-    } catch (e) {
-      console.error("Failed to fetch files:", e);
-    }
-  }, [activeCategory, searchQuery]);
-
-  const fetchStats = useCallback(async () => {
-    try {
-      const res = await fetch('http://localhost:8420/library/stats');
-      const data = await res.json();
-      setStats(data || { total_files: 0, by_type: {} });
-    } catch (e) {
-      console.error("Failed to fetch stats:", e);
-    }
-  }, []);
-
-  const fetchSuggestions = async (val) => {
-    if (!val.trim()) {
-      setSuggestions([]);
-      return;
-    }
-    try {
-      const res = await fetch(`http://localhost:8420/library/suggestions?q=${encodeURIComponent(val)}`);
-      const data = await res.json();
-      setSuggestions(data.suggestions || []);
-    } catch (e) {
-      console.error("Failed to fetch suggestions:", e);
-    }
-  };
+  const [storageStats, setStorageStats] = useState(null);
 
   useEffect(() => {
     fetchFiles();
-    fetchStats();
-  }, [fetchFiles, fetchStats]);
+  }, []);
 
-  const onDragOver = (e) => {
-    e.preventDefault();
-    if (activeCategory !== 'research') {
-      setIsDragging(true);
+  useEffect(() => {
+    if (activeCat === 'storage') {
+      fetchStorageStats();
     }
-  };
+  }, [activeCat]);
 
-  const onDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const onDrop = async (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (activeCategory === 'research') return;
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-      await uploadFile(file);
-    }
-  };
-
-  const uploadFile = async (file) => {
-    setUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
+  const fetchFiles = async () => {
+    setIsLoading(true);
     try {
-      await fetch('http://localhost:8420/library/add', {
-        method: 'POST',
-        body: formData,
-      });
-      fetchFiles();
-      fetchStats();
+      const res = await fetch('http://127.0.0.1:8420/library/files?type=all');
+      if (res.ok) {
+        const data = await res.json();
+        setFiles(data.files || []);
+      }
     } catch (e) {
-      console.error("Upload failed:", e);
-    } finally {
-      setUploading(false);
+      console.error("Failed to fetch library files:", e);
+      setFiles([]);
+    }
+    setIsLoading(false);
+  };
+
+  const fetchStorageStats = async () => {
+    try {
+      const res = await fetch('http://127.0.0.1:8420/library/stats');
+      if (res.ok) {
+        const data = await res.json();
+        setStorageStats(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch storage stats:", e);
     }
   };
 
-  const addUrl = async (e) => {
-    if (e.key === 'Enter' && urlInput.trim()) {
-      setUploading(true);
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      fetchFiles();
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const typeFilter = activeCat === 'home' || activeCat === 'recent' || activeCat === 'research' || activeCat === 'storage' || activeCat === 'pinned' || activeCat === 'trash' ? 'all' : activeCat;
+      const res = await fetch(`http://127.0.0.1:8420/library/files?type=${typeFilter}&q=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setFiles(data.files || []);
+      }
+    } catch (e) {
+      console.error("Search failed:", e);
+    }
+    setIsLoading(false);
+  };
+
+  const handleDelete = async (fileId, e) => {
+    e.stopPropagation();
+    if (!confirm('Delete this file?')) return;
+    try {
+      await fetch(`http://127.0.0.1:8420/library/files/${fileId}`, { method: 'DELETE' });
+      setFiles(files.filter(f => f.id !== fileId));
+    } catch (e) {
+      console.error("Delete failed:", e);
+    }
+  };
+
+  const handleFavorite = async (fileId, e) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`http://127.0.0.1:8420/library/files/${fileId}/favorite`, { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        setFiles(files.map(f => f.id === fileId ? { ...f, favorite: data.favorite ? 1 : 0 } : f));
+      }
+    } catch (e) {
+      console.error("Favorite toggle failed:", e);
+    }
+  };
+
+  const renderContent = () => {
+    if (activeCat === 'home') {
+      return <LibraryHome onSelectDoc={setSelectedDoc} />;
+    }
+    if (activeCat === 'research') {
+      return <ResearchWorkspace document={selectedDoc} />;
+    }
+    if (activeCat === 'storage') {
+      return (
+        <div className="storage-view">
+          <h2>Storage Management</h2>
+          {storageStats ? (
+            <div className="storage-stats">
+              <div>Total Files: {storageStats.total_files}</div>
+              <div>Total Size: {formatBytes(storageStats.total_size_bytes)}</div>
+              {Object.entries(storageStats.by_type || {}).map(([type, info]) => (
+                <div key={type}>{type}: {info.count} files ({formatBytes(info.size_bytes)})</div>
+              ))}
+            </div>
+          ) : (
+            <div style={{color: 'var(--f-earth)'}}>Loading stats...</div>
+          )}
+          <button className="primary-btn" style={{marginTop: 20}} onClick={async () => {
+            if (confirm('Delete ALL library files? This cannot be undone.')) {
+              await fetch('http://127.0.0.1:8420/library/all', { method: 'DELETE' });
+              fetchFiles();
+              fetchStorageStats();
+            }
+          }}>Clean All Data</button>
+        </div>
+      );
+    }
+
+    if (activeCat === 'pinned') {
+      // Show only favorited files
+      const pinnedFiles = files.filter(f => f.favorite === 1);
+      return renderFileGrid(pinnedFiles, false);
+    }
+
+    if (activeCat === 'trash') {
+      return (
+        <div style={{color: 'var(--f-stone)', padding: 40, textAlign: 'center'}}>
+          <Trash2 size={48} style={{opacity: 0.3, marginBottom: 16}} />
+          <h3>Trash is Empty</h3>
+          <p>Deleted files are permanently removed.</p>
+        </div>
+      );
+    }
+
+    // Grid view for other categories
+    const filteredFiles = files.filter(f => {
+      if (activeCat === 'recent') return true;
+      if (activeCat === 'documents') return f.type === 'document';
+      if (activeCat === 'images') return f.type === 'image';
+      if (activeCat === 'code') return f.type === 'code';
+      if (activeCat === 'audio') return f.type === 'audio';
+      if (activeCat === 'video') return f.type === 'video';
+      return f.type === activeCat;
+    });
+
+    return renderFileGrid(filteredFiles, activeCat !== 'recent');
+  };
+
+  const renderFileGrid = (filteredFiles, showUpload = true) => {
+    const handleFileChange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setIsLoading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
       try {
-        await fetch('http://localhost:8420/library/url', {
+        const res = await fetch('http://127.0.0.1:8420/library/add', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: urlInput })
+          body: formData,
         });
-        setUrlInput('');
-        fetchFiles();
-        fetchStats();
+        if (res.ok) {
+          fetchFiles();
+        }
       } catch (err) {
-        console.error("URL add failed:", err);
-      } finally {
-        setUploading(false);
+        console.error("Upload failed", err);
       }
-    }
-  };
+      setIsLoading(false);
+    };
 
-  const deleteFile = async (e, id) => {
-    e.stopPropagation();
-    try {
-      await fetch(`http://localhost:8420/library/files/${id}`, {
-        method: 'DELETE'
-      });
-      if (selectedFile?.id === id) {
-        setSelectedFile(null);
-      }
-      fetchFiles();
-      fetchStats();
-    } catch (err) {
-      console.error("Delete failed:", err);
-    }
-  };
+    const getIcon = (type) => {
+      if (type === 'document') return <FileText size={32} />;
+      if (type === 'image') return <Image size={32} />;
+      if (type === 'code') return <Code size={32} />;
+      if (type === 'audio') return <Music size={32} />;
+      if (type === 'video') return <Video size={32} />;
+      return <Box size={32} />;
+    };
 
-  const toggleFavorite = async (e, id) => {
-    e.stopPropagation();
-    try {
-      const res = await fetch(`http://localhost:8420/library/files/${id}/favorite`, {
-        method: 'POST'
-      });
-      const data = await res.json();
-      
-      // Update local state
-      setFiles(files.map(f => f.id === id ? { ...f, favorite: data.favorite ? 1 : 0 } : f));
-      if (selectedFile?.id === id) {
-        setSelectedFile({ ...selectedFile, favorite: data.favorite ? 1 : 0 });
-      }
-    } catch (err) {
-      console.error("Favorite toggle failed:", err);
-    }
-  };
+    // Clean up displayed filename (remove UUID prefix if present)
+    const cleanFilename = (filename) => {
+      if (!filename) return 'Untitled';
+      // Pattern: UUID_originalname
+      const uuidPattern = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}_/;
+      return filename.replace(uuidPattern, '');
+    };
 
-  const handleFileClick = async (fileId) => {
-    try {
-      const res = await fetch(`http://localhost:8420/library/files/${fileId}`);
-      const data = await res.json();
-      setSelectedFile(data);
-      // Access call triggers internal Recents log
-      fetchFiles();
-    } catch (e) {
-      console.error("Failed to load file details:", e);
-    }
-  };
+    return (
+      <div className="knowledge-grid">
+        {showUpload && (
+          <label className="knowledge-card upload-card" style={{ cursor: 'pointer' }}>
+            <input type="file" style={{ display: 'none' }} onChange={handleFileChange} />
+            <div style={{ color: 'var(--f-earth)', marginBottom: 8 }}><UploadCloud size={32} /></div>
+            <h4 style={{ color: 'var(--f-deep)', margin: '0 0 4px 0' }}>Upload File</h4>
+            <p style={{ color: 'var(--f-soil)', fontSize: 12, margin: 0 }}>to {activeCat}</p>
+          </label>
+        )}
 
-  const formatSize = (bytes) => {
-    if (!bytes) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-  };
-
-  const getEmptyStateText = () => {
-    switch (activeCategory) {
-      case 'document': return "Drop a PDF or Word document — myc will read it";
-      case 'image': return "Drop an image — myc will analyze it";
-      case 'audio': return "Drop an audio file — myc will transcribe it";
-      case 'code': return "Drop a source code file — myc will read it";
-      default: return "Drag and drop your files here";
-    }
-  };
-
-  const getCategoryIcon = (type) => {
-    const cat = CATEGORIES.find(c => c.id === type);
-    const Icon = cat ? cat.icon : FileIcon;
-    return <Icon size={24} color="#86868b" />;
-  };
-
-  const getCountBadge = (catId) => {
-    if (catId === 'all') return stats.total_files || 0;
-    if (catId === 'recent') return '';
-    return stats.by_type[catId]?.count || 0;
+        {filteredFiles.map((f, i) => (
+          <div key={f.id || i} className="knowledge-card" onClick={() => setSelectedDoc(f)}>
+            <div className="card-thumbnail">
+              {getIcon(f.type)}
+            </div>
+            <div className="knowledge-info">
+              <h4>{cleanFilename(f.filename || f.name)}</h4>
+              <p>{formatBytes(f.size_bytes)} · {formatDate(f.created_at)}</p>
+              {f.summary && f.summary !== 'No content to read.' && (
+                <p style={{fontSize: 11, color: 'var(--f-stone)', marginTop: 4}}>{f.summary.slice(0, 60)}</p>
+              )}
+              <div className="k-tags">
+                <span className="k-tag">{f.type}</span>
+                <button className="icon-btn" style={{marginLeft: 'auto', padding: 2}} onClick={(e) => handleFavorite(f.id, e)}>
+                  <Star size={12} color={f.favorite ? '#ffaa00' : 'var(--f-stone)'} fill={f.favorite ? '#ffaa00' : 'none'} />
+                </button>
+                <button className="icon-btn" style={{padding: 2}} onClick={(e) => handleDelete(f.id, e)}>
+                  <Trash2 size={12} color="var(--f-stone)" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {!isLoading && filteredFiles.length === 0 && (
+          <div style={{color: 'var(--f-stone)', marginTop: 20, gridColumn: '1 / -1'}}>No files in this category yet. Upload one above.</div>
+        )}
+      </div>
+    );
   };
 
   return (
     <div className="library-container">
-      <div className="library-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <h1>Library</h1>
-          <button className="upload-btn" onClick={() => fileInputRef.current?.click()}>
-            <Upload size={14} />
-            <span>Upload Files</span>
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            style={{ display: 'none' }}
-            onChange={handleFilePick}
-          />
-        </div>
-        
-        <div className="search-wrapper">
-          <div className="search-bar">
-            <Search size={18} color="#86868b" />
-            <input 
-              type="text" 
-              placeholder="Search (semantic)..." 
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                fetchSuggestions(e.target.value);
-                setShowSuggestions(true);
-              }}
-              onFocus={() => setShowSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            />
-          </div>
-          {showSuggestions && suggestions.length > 0 && (
-            <ul className="suggestions-dropdown">
-              {suggestions.map((s, idx) => (
-                <li key={idx} onClick={() => { setSearchQuery(s); setShowSuggestions(false); }}>
-                  <Search size={12} style={{ marginRight: '8px' }} />
-                  {s}
-                </li>
-              ))}
-            </ul>
-          )}
+      <LibrarySidebar activeCat={activeCat} setActiveCat={setActiveCat} />
+      <div className="library-main-layout">
+        <LibraryTopBar onUploadComplete={fetchFiles} onSearch={handleSearch} />
+        <div className="library-scroll-area">
+          {renderContent()}
         </div>
       </div>
-      
-      <div className="library-content">
-        <div className="library-sidebar">
-          <ul className="category-list">
-            {CATEGORIES.map(cat => {
-              const count = getCountBadge(cat.id);
-              return (
-                <li 
-                  key={cat.id} 
-                  className={activeCategory === cat.id ? 'active' : ''}
-                  onClick={() => { setActiveCategory(cat.id); setSelectedFile(null); }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <cat.icon size={16} />
-                    <span>{cat.label}</span>
-                  </div>
-                  {count !== '' && count > 0 && (
-                    <span className="count-badge">{count}</span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-        
-        <div className="library-main">
-          {activeCategory === 'research' ? (
-            <div className="url-input-zone">
-              <Globe size={32} color="#a1a1a6" />
-              <input 
-                type="text" 
-                placeholder="Paste URL and press Enter (e.g. https://en.wikipedia.org/wiki/...)"
-                value={urlInput}
-                onChange={(e) => setUrlInput(e.target.value)}
-                onKeyDown={addUrl}
-                disabled={uploading}
-              />
-              {uploading && <span className="uploading-text">Analyzing URL...</span>}
-            </div>
-          ) : (
-            <div 
-              className={`drop-zone ${isDragging ? 'dragging' : ''} ${uploading ? 'uploading' : ''}`}
-              onDragOver={onDragOver}
-              onDragLeave={onDragLeave}
-              onDrop={onDrop}
-            >
-              {uploading ? (
-                <div className="upload-spinner"><RefreshCw className="spin-icon" /> Indexing & Embedding...</div>
-              ) : (
-                <>
-                  <Upload size={28} color="#86868b" />
-                  <p>{getEmptyStateText()}</p>
-                  <button className="browse-btn" onClick={() => fileInputRef.current?.click()}>Browse Files</button>
-                </>
-              )}
-            </div>
-          )}
 
-          <div className="knowledge-grid">
-            {files.map(f => (
-              <div 
-                key={f.id} 
-                className={`file-card ${selectedFile?.id === f.id ? 'selected' : ''}`}
-                onClick={() => handleFileClick(f.id)}
-              >
-                <div className="file-card-header">
-                  {getCategoryIcon(f.type)}
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <button 
-                      className={`fav-btn ${f.favorite ? 'active' : ''}`} 
-                      onClick={(e) => toggleFavorite(e, f.id)}
-                      title="Favorite"
-                    >
-                      <Star size={14} fill={f.favorite ? "var(--accent-primary)" : "none"} />
-                    </button>
-                    <button className="delete-btn" onClick={(e) => deleteFile(e, f.id)}>
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-                <div className="file-card-body">
-                  <h3 className="file-name" title={f.filename}>{f.filename}</h3>
-                  <p className="file-summary" title={f.summary}>{f.summary || 'No summary available'}</p>
-                </div>
-                <div className="file-card-footer">
-                  <span className="file-size">{formatSize(f.size_bytes)}</span>
-                  <span className="file-date">{new Date(f.created_at * 1000).toLocaleDateString()}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {selectedFile && (
-          <div className="file-detail-panel">
-            <div className="detail-header">
-              <h2>{selectedFile.filename}</h2>
-              <button className="close-btn" onClick={() => setSelectedFile(null)}>×</button>
-            </div>
-            <div className="detail-body">
-              <div className="detail-meta">
-                <span><strong>Type:</strong> {selectedFile.type}</span>
-                <span><strong>Size:</strong> {formatSize(selectedFile.size_bytes)}</span>
-                {selectedFile.page_count > 1 && <span><strong>Pages:</strong> {selectedFile.page_count}</span>}
-                {selectedFile.duration_seconds > 0 && <span><strong>Duration:</strong> {selectedFile.duration_seconds}s</span>}
-                {selectedFile.resolution && selectedFile.resolution !== 'Unknown' && <span><strong>Resolution:</strong> {selectedFile.resolution}</span>}
-                {selectedFile.language && <span><strong>Language:</strong> {selectedFile.language}</span>}
-              </div>
-              <div className="detail-summary">
-                <strong>AI Summary:</strong>
-                <p>{selectedFile.summary}</p>
-              </div>
-              <div className="detail-content">
-                <strong>Content Excerpt:</strong>
-                <pre>{selectedFile.content || "Empty content or media binary file."}</pre>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      {selectedDoc && (
+        <DocumentSplitView document={selectedDoc} onClose={() => setSelectedDoc(null)} />
+      )}
     </div>
   );
 };

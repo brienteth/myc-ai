@@ -20,6 +20,11 @@ class AutomationPlanner:
         Interprets natural language request to generate a structured Workflow schema JSON.
         """
         # Get all registered skills for LLM context mapping
+        lower_prompt = user_prompt.lower()
+        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör"]):
+            logger.info(f"[PLANNER] Heuristic match found, skipping LLM and generating fallback directly.")
+            return self._generate_fallback(user_prompt)
+
         available_skills = SkillRegistry.get_manifests()
         
         system_prompt = f"""You are the Myca Automation Architect.
@@ -104,7 +109,77 @@ Requirements:
         w_id = f"flow-{uuid.uuid4().hex[:8]}"
         now = time.time()
 
-        if "clipboard" in prompt.lower() or "kopyala" in prompt.lower():
+        if "yaz" in prompt.lower() or "write" in prompt.lower() or "dosya" in prompt.lower() or "read" in prompt.lower() or "oku" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Filesystem Manager Flow",
+                "description": "Performs file read/write operations and sends notifications.",
+                "enabled": False,
+                "trigger": {"type": "manual"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "write_file",
+                        "skill": "fs.write",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/myca_output.txt",
+                            "content": "Hello from Myca Execution OS! This is a test file written dynamically via automation."
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "read_file",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/myca_output.txt"
+                        },
+                        "depends_on": ["write_file"]
+                    },
+                    {
+                        "id": "telegram_send",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "Filesystem workflow finished! Read content:\n\n{{nodes.read_file.outputs.content}}"
+                        },
+                        "depends_on": ["read_file"]
+                    }
+                ],
+                "edges": [
+                    {"from": "write_file", "to": "read_file"},
+                    {"from": "read_file", "to": "telegram_send"}
+                ],
+                "permissions": ["fs.write", "fs.read", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif ("clipboard" in prompt.lower() or "kopyala" in prompt.lower()) and "telegram" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Clipboard to Telegram Forwarder",
+                "description": "Monitors the clipboard and automatically forwards any copied text to your Telegram chat.",
+                "enabled": True,
+                "trigger": {"type": "clipboard", "regex": ".*"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "telegram_send",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "New clipboard content detected:\n\n{{variables.clipboard}}"
+                        },
+                        "depends_on": []
+                    }
+                ],
+                "edges": [],
+                "permissions": ["network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "clipboard" in prompt.lower() or "kopyala" in prompt.lower():
             return {
                 "id": w_id,
                 "name": "Auto OCR on Clipboard",
@@ -122,6 +197,31 @@ Requirements:
                 ],
                 "edges": [],
                 "permissions": ["network"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "telegram" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Telegram Test Flow",
+                "description": "Sends a message to a Telegram chat.",
+                "enabled": False,
+                "trigger": {"type": "manual"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "telegram_send",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "Hello from Myca Execution OS! The workflow successfully triggered."
+                        },
+                        "depends_on": []
+                    }
+                ],
+                "edges": [],
+                "permissions": ["network.out"],
                 "created_at": now,
                 "updated_at": now
             }

@@ -45,6 +45,7 @@ class PeerInfo:
     tokens_per_second: float = 0.0
     model_loaded: bool = False
     source: str = "mdns_local"  # mdns_local or h3_global
+    capabilities: list[str] = field(default_factory=list)
 
     def is_alive(self) -> bool:
         return (time.time() - self.last_seen) < DEAD_NODE_TIMEOUT
@@ -63,6 +64,7 @@ class PeerInfo:
             "tokens_per_second": round(self.tokens_per_second, 2),
             "model_loaded": self.model_loaded,
             "source": self.source,
+            "capabilities": self.capabilities,
         }
 
 class H3GlobalDiscovery:

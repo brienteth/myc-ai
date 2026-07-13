@@ -5,7 +5,9 @@ import CommandPalette from './components/CommandPalette/CommandPalette';
 import Home from './views/Home';
 import Library from './views/Library';
 import Automation from './views/Automation';
-import Devices from './views/Devices';
+import Colony from './views/Colony';
+import Workflows from './views/Workflows';
+import Models from './views/Models';
 import Settings from './views/Settings';
 import Onboarding from './views/Onboarding';
 import Chat from './screens/Chat';
@@ -35,7 +37,9 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="library" element={<Library />} />
             <Route path="automation" element={<Automation />} />
-            <Route path="devices" element={<Devices />} />
+            <Route path="colony" element={<Colony />} />
+            <Route path="workflows" element={<Workflows />} />
+            <Route path="models" element={<Models />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

@@ -10,6 +10,7 @@ from typing import Dict, Any, List, Optional
 from myca.skills.core.registry import SkillRegistry
 from myca.skills.core.context import SkillContext
 from myca.skills.core.permissions import PermissionManager
+from myca.execution.transport.base import ExecutionTask
 from .history import AutomationDB
 
 logger = logging.getLogger("myca.automation.executor")
@@ -17,6 +18,22 @@ logger = logging.getLogger("myca.automation.executor")
 class WorkflowExecutor:
     def __init__(self, runtime):
         self.runtime = runtime
+        self.active_runs = {}
+
+    def cancel_run(self, run_id_or_workflow_id: str) -> bool:
+        # 1. Try direct run_id match
+        run_info = self.active_runs.get(run_id_or_workflow_id)
+        if run_info:
+            run_info["ctx"].cancel()
+            return True
+            
+        # 2. Try workflow_id match
+        cancelled_any = False
+        for r_id, info in list(self.active_runs.items()):
+            if info["workflow_id"] == run_id_or_workflow_id:
+                info["ctx"].cancel()
+                cancelled_any = True
+        return cancelled_any
 
     def _resolve_variables(self, val: Any, workflow_vars: Dict[str, Any], node_outputs: Dict[str, Any]) -> Any:
         """
@@ -147,16 +164,24 @@ class WorkflowExecutor:
             for attempt in range(retries + 1):
                 try:
                     await ctx.check_cancel()
-                    # Execute skill from registry
-                    res = await SkillRegistry.execute(ctx, node["skill"], **resolved_inputs)
+                    # Execution Bus takes over
+                    task = ExecutionTask(
+                        skill_id=node["skill"],
+                        inputs=resolved_inputs,
+                        task_id=node_id,
+                        context=ctx
+                    )
+                    res = await self.runtime.execution_bus.execute(task)
                     if res.success:
                         success = True
                         result_val = res.outputs
                         AutomationDB.log_node_event(node_log_id, f"Completed successfully. Outputs: {result_val}")
                         break
                     else:
+                        logger.error(f"[EXECUTOR] Node {node_id} Attempt {attempt} failed: {res.logs}")
                         AutomationDB.log_node_event(node_log_id, f"Attempt {attempt} failed: {res.logs}")
                 except Exception as e:
+                    logger.error(f"[EXECUTOR] Node {node_id} Attempt {attempt} exception: {str(e)}")
                     AutomationDB.log_node_event(node_log_id, f"Attempt {attempt} exception: {str(e)}")
                     if attempt == retries:
                         result_val = {"error": str(e)}
@@ -179,27 +204,37 @@ class WorkflowExecutor:
                 node_tasks[node_id] = asyncio.create_task(run_node(node_id))
             return node_tasks[node_id]
 
-        # Execute all leaf nodes (those that have no dependants waiting, starts execution recursively)
-        all_tasks = [get_or_create_task(node_id) for node_id in nodes]
-        await asyncio.gather(*all_tasks, return_exceptions=True)
+        self.active_runs[run_id] = {"ctx": ctx, "workflow_id": workflow_id}
 
-        # Check overall workflow success
-        # If any node failed and continue_on_error was False, mark run as Failed
-        failed_count = 0
-        for task in node_tasks.values():
-            if task.done() and task.result() is False:
-                failed_count += 1
-        
-        status = "Failed" if failed_count > 0 else "Completed"
-        error_msg = f"{failed_count} nodes failed." if failed_count > 0 else None
-        
-        AutomationDB.end_run(run_id, status, error=error_msg)
-        logger.info(f"[EXECUTOR] Run {run_id} completed with status {status}")
+        try:
+            # Execute all leaf nodes (those that have no dependants waiting, starts execution recursively)
+            all_tasks = [get_or_create_task(node_id) for node_id in nodes]
+            await asyncio.gather(*all_tasks, return_exceptions=True)
 
-        return {
-            "run_id": run_id,
-            "status": status,
-            "error": error_msg,
-            "variables": variables,
-            "node_outputs": node_outputs
-        }
+            # Check overall workflow success
+            # If any node failed and continue_on_error was False, mark run as Failed
+            failed_count = 0
+            for task in node_tasks.values():
+                if task.done() and task.result() is False:
+                    failed_count += 1
+            
+            # If context was cancelled during run, mark status as Cancelled
+            if ctx._is_cancelled:
+                status = "Cancelled"
+                error_msg = "Workflow execution cancelled by user."
+            else:
+                status = "Failed" if failed_count > 0 else "Completed"
+                error_msg = f"{failed_count} nodes failed." if failed_count > 0 else None
+            
+            AutomationDB.end_run(run_id, status, error=error_msg)
+            logger.info(f"[EXECUTOR] Run {run_id} completed with status {status}")
+
+            return {
+                "run_id": run_id,
+                "status": status,
+                "error": error_msg,
+                "variables": variables,
+                "node_outputs": node_outputs
+            }
+        finally:
+            self.active_runs.pop(run_id, None)

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="myc banner" width="100%" />
+  <img src="hero.png" alt="Myca - The internet, but alive." width="100%" />
 </p>
 
 <p align="center">
@@ -23,15 +23,21 @@
 
 ---
 
-### myc is an open-source AI that runs on your devices, grows stronger as more people join, and never sends your data anywhere.
+### myc is an open-source Local-first AI Automation OS that runs on your devices, connects tools securely, and keeps your data private.
 
 <p align="center">
-  <img src="docs/demo.gif" alt="myc demo" width="100%" />
-  <br />
-  <em>1.1s local inference. No cloud. No subscription.</em>
+  <em>Local inference. Model Context Protocol (MCP) support. No cloud. No subscription.</em>
 </p>
 
 ---
+
+## Key Features
+
+- **Workflow Studio:** Built-in node canvas to design pipelines (Need ➔ Planner ➔ Execution Graph ➔ Done) with live logs and visual state tracking.
+- **Model Context Protocol (MCP):** Connect Claude open-source MCP servers (via stdio or SSE) directly to register external tools as dynamic AI skills.
+- **Continuous Scheduler:** Arka planda continuously monitors system triggers like folder directories, interval timers, and clipboard changes.
+- **Secrets Vault:** Securely store local API keys, bot tokens, and database passwords.
+- **Execution Control:** Real-time monitoring of active executions with instant cancel/stop operations.
 
 ## Downloads
 

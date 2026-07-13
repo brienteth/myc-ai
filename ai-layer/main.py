@@ -15,9 +15,11 @@ async def main():
     print("║        Myca başlatılıyor...       ║")
     print("╚══════════════════════════════════╝")
 
-    # ── Step 1: Initialize database
+    # ── Step 1: Initialize databases
     init_db()
-    logger.info("[MAIN] Database ready")
+    from myca.automation.history import AutomationDB
+    AutomationDB.init_db()
+    logger.info("[MAIN] Databases ready")
 
     # ── Step 2: Persistent node identity
     node_id = get_or_create_node_id()

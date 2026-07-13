@@ -50,6 +50,13 @@ class RuntimeEngine:
         self.planner = Planner(self.node.inference_engine)
         self.analytics = Analytics()
         
+        from myca.execution.bus import ExecutionBus
+        # Initialize execution bus with discovery service
+        self.execution_bus = ExecutionBus(
+            discovery_service=self.node.discovery if hasattr(self.node, 'discovery') else None,
+            is_simulation=getattr(self.node, 'simulate', False)
+        )
+        
     async def schedule(self, need: Need) -> dict:
         self.analytics.total_needs += 1
         start_time = time.time()

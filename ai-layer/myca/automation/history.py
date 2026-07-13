@@ -67,6 +67,21 @@ class AutomationDB:
             )
         """)
 
+        # 5. mcp_servers table (Model Context Protocol configurations)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS mcp_servers (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                type TEXT NOT NULL,  -- stdio, sse
+                command TEXT,
+                url TEXT,
+                status TEXT NOT NULL, -- Connected, Disconnected, Error
+                tools_count INTEGER DEFAULT 0,
+                error_log TEXT,
+                created_at REAL
+            )
+        """)
+
         conn.commit()
         conn.close()
 
@@ -228,3 +243,50 @@ class AutomationDB:
         rows = conn.execute("SELECT key FROM secrets").fetchall()
         conn.close()
         return [r[0] for r in rows]
+
+    # ── MCP Servers ────────────────────────────────────────────
+
+    @staticmethod
+    def save_mcp_server(server: dict):
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.execute("""
+            INSERT OR REPLACE INTO mcp_servers (id, name, type, command, url, status, tools_count, error_log, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            server["id"],
+            server["name"],
+            server["type"],
+            server.get("command"),
+            server.get("url"),
+            server.get("status", "Disconnected"),
+            server.get("tools_count", 0),
+            server.get("error_log"),
+            server.get("created_at", time.time())
+        ))
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def get_mcp_servers() -> List[dict]:
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.row_factory = sqlite3.Row
+        rows = conn.execute("SELECT * FROM mcp_servers ORDER BY created_at DESC").fetchall()
+        conn.close()
+        return [dict(r) for r in rows]
+
+    @staticmethod
+    def delete_mcp_server(server_id: str):
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.execute("DELETE FROM mcp_servers WHERE id = ?", (server_id,))
+        conn.commit()
+        conn.close()
+
+    @staticmethod
+    def update_mcp_status(server_id: str, status: str, tools_count: int = 0, error_log: str = None):
+        conn = sqlite3.connect(str(DB_PATH))
+        conn.execute("""
+            UPDATE mcp_servers SET status = ?, tools_count = ?, error_log = ?
+            WHERE id = ?
+        """, (status, tools_count, error_log, server_id))
+        conn.commit()
+        conn.close()

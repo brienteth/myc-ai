@@ -53,7 +53,6 @@ class ClipboardTriggerWatcher(TriggerWatcher):
         
         regex = self.config.get("regex", ".*")
         logger.info(f"[TRIGGER] Clipboard watch started with regex '{regex}'")
-        last_clip = ""
 
         # Cross-platform clipboard fetch
         def get_clipboard():
@@ -65,6 +64,9 @@ class ClipboardTriggerWatcher(TriggerWatcher):
                     return subprocess.check_output(["xclip", "-selection", "clipboard", "-o"]).decode("utf-8")
             except Exception:
                 return ""
+
+        # Snapshot current clipboard so we don't fire on existing content at startup
+        last_clip = get_clipboard().strip()
 
         while True:
             try:

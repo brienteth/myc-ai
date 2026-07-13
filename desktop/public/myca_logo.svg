@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mushroomGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B6B" />
+      <stop offset="100%" stop-color="#C92A2A" />
+    </linearGradient>
+    <filter id="glass" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base (Dark/Glass) -->
+  <circle cx="50" cy="50" r="45" fill="#1A1B1E" />
+  <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+
+  <!-- Mushroom Stem -->
+  <path d="M 40 50 Q 50 60 45 75 Q 50 78 55 75 Q 50 60 60 50 Z" fill="#E9ECEF" />
+  
+  <!-- Mushroom Cap -->
+  <path d="M 20 50 C 20 20 80 20 80 50 Q 50 55 20 50 Z" fill="url(#mushroomGradient)" filter="url(#glass)" />
+  
+  <!-- Dots on Cap -->
+  <circle cx="35" cy="40" r="4" fill="rgba(255,255,255,0.8)" />
+  <circle cx="65" cy="40" r="3" fill="rgba(255,255,255,0.8)" />
+  <circle cx="50" cy="30" r="5" fill="rgba(255,255,255,0.8)" />
+  <circle cx="28" cy="48" r="2" fill="rgba(255,255,255,0.8)" />
+  <circle cx="72" cy="48" r="2.5" fill="rgba(255,255,255,0.8)" />
+</svg>

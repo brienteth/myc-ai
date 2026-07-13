@@ -43,6 +43,9 @@ class AutomationScheduler:
 
     async def _sync_loop(self):
         """Periodically sync active workflows with database definitions."""
+        # Wait for model to finish loading before starting triggers
+        await asyncio.sleep(15)
+        logger.info("[SCHEDULER] Initial delay complete, beginning workflow sync.")
         while self.is_running:
             try:
                 workflows = AutomationDB.get_workflows()

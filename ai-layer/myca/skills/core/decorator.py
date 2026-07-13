@@ -28,9 +28,13 @@ def _create_pydantic_model_from_fields(model_name: str, fields: List[str]) -> Ty
 def skill(
     id: str,
     version: str = "1.0.0",
+    name: str = "",
+    description: str = "",
+    category: str = "general",
     permissions: List[str] = None,
     inputs: Union[List[str], Type[BaseModel]] = None,
     outputs: Union[List[str], Type[BaseModel]] = None,
+    inputs_schema: Type[BaseModel] = None,
     streaming: bool = False,
     timeout: int = 30,
     retry: int = 0
@@ -41,15 +45,22 @@ def skill(
     """
     def decorator(func: Callable):
         # Resolve Input Schema
-        if inputs is None:
-            # Inspect function parameters to dynamically build schema
-            sig = inspect.signature(func)
-            params = [p for p in sig.parameters.keys() if p != "ctx"]
-            inputs_schema = _create_pydantic_model_from_fields(f"{id}_Inputs", params)
-        elif isinstance(inputs, list):
-            inputs_schema = _create_pydantic_model_from_fields(f"{id}_Inputs", inputs)
-        else:
-            inputs_schema = inputs
+        resolved_inputs_schema = inputs_schema  # prefer explicit inputs_schema kwarg
+        if resolved_inputs_schema is None:
+            if inputs is None:
+                # Inspect function parameters to dynamically build schema
+                sig = inspect.signature(func)
+                field_definitions = {}
+                for name_p, param in sig.parameters.items():
+                    if name_p == "ctx": continue
+                    p_type = param.annotation if param.annotation is not inspect.Parameter.empty else Any
+                    default = param.default if param.default is not inspect.Parameter.empty else ...
+                    field_definitions[name_p] = (p_type, default)
+                resolved_inputs_schema = create_model(f"{id}_Inputs", **field_definitions)
+            elif isinstance(inputs, list):
+                resolved_inputs_schema = _create_pydantic_model_from_fields(f"{id}_Inputs", inputs)
+            else:
+                resolved_inputs_schema = inputs
 
         # Resolve Output Schema
         if outputs is None or isinstance(outputs, list):
@@ -65,6 +76,8 @@ def skill(
         manifest = SkillManifest(
             id=id,
             version=version,
+            description=description,
+            category=category,
             permissions=permissions or [],
             traits=traits,
             timeout=timeout,
@@ -74,7 +87,7 @@ def skill(
         definition = SkillDefinition(
             manifest=manifest,
             func=func,
-            inputs_schema=inputs_schema,
+            inputs_schema=resolved_inputs_schema,
             outputs_schema=outputs_schema
         )
         

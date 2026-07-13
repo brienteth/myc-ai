@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "opacus_kinetic": {
+      "command": "node",
+      "args": [
+        "/Users/bl10buer/.npm/_npx/2265ccd4cf747483/node_modules/opacus-kinetic-mcp/bin/claude-mcp-bridge.js",
+        "--endpoint=https://opacus.xyz/api/kinetic/mcp",
+        "--session-token=opak_ea73a5cf85f3561f1acaba4aa4e7618617d271c6"
+      ]
+    }
+  }
+}

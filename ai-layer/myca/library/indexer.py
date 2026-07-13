@@ -56,11 +56,11 @@ class FileIndexer:
                 path, f_type = task_item
                 logger.info(f"[INDEXER] Processing queued file: {path.name}")
                 await self.process_file(path, file_type=f_type)
+                self.queue.task_done()
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error(f"[INDEXER] Error in queue worker: {e}")
-            finally:
                 self.queue.task_done()
 
     async def _watch_loop(self):
