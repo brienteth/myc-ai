@@ -15,7 +15,18 @@ class AutomationDB:
     @staticmethod
     def init_db():
         DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            import os
+            os.chmod(str(DB_PATH.parent), 0o700)
+        except Exception:
+            pass
         conn = sqlite3.connect(str(DB_PATH))
+        try:
+            import os
+            if os.path.exists(str(DB_PATH)):
+                os.chmod(str(DB_PATH), 0o600)
+        except Exception:
+            pass
         
         # 1. workflows table (stores serialised Workflow definitions)
         conn.execute("""

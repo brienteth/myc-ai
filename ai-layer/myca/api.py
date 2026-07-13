@@ -58,10 +58,15 @@ def create_app(node: MycaNode) -> FastAPI:
         version="0.1.0",
     )
 
-    # CORS for frontend dev server
+    # CORS restricted to local development and production origins for security
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=[
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:8420",
+            "http://127.0.0.1:8420"
+        ],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -556,9 +561,9 @@ def create_app(node: MycaNode) -> FastAPI:
     
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
         # Running as compiled PyInstaller executable
-        dist_dir = os.path.join(sys._MEIPASS, "frontend", "dist")
+        dist_dir = os.path.join(sys._MEIPASS, "desktop", "dist")
     else:
-        dist_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+        dist_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "desktop", "dist")
         
     if os.path.exists(dist_dir):
         app.mount("/", StaticFiles(directory=dist_dir, html=True), name="static")
