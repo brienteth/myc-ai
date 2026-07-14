@@ -21,7 +21,7 @@ class AutomationPlanner:
         """
         # Get all registered skills for LLM context mapping
         lower_prompt = user_prompt.lower()
-        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör"]):
+        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta"]):
             logger.info(f"[PLANNER] Heuristic match found, skipping LLM and generating fallback directly.")
             return self._generate_fallback(user_prompt)
 
@@ -109,7 +109,120 @@ Requirements:
         w_id = f"flow-{uuid.uuid4().hex[:8]}"
         now = time.time()
 
-        if "yaz" in prompt.lower() or "write" in prompt.lower() or "dosya" in prompt.lower() or "read" in prompt.lower() or "oku" in prompt.lower():
+        if "mail" in prompt.lower() or "email" in prompt.lower() or "posta" in prompt.lower():
+            if "oku" in prompt.lower() or "gelen" in prompt.lower() or "kontrol" in prompt.lower() or "read" in prompt.lower() or "check" in prompt.lower():
+                return {
+                    "id": w_id,
+                    "name": "Check Latest Email",
+                    "description": "Periodically checks your inbox for new emails and forwards details to Telegram.",
+                    "enabled": False,
+                    "trigger": {"type": "interval", "interval_seconds": 600}, # Checks every 10 mins
+                    "variables": {},
+                    "nodes": [
+                        {
+                            "id": "get_email",
+                            "skill": "email.get_latest",
+                            "inputs": {
+                                "imap_server": "imap.gmail.com",
+                                "imap_port": 993,
+                                "username": "{{secrets.EMAIL_USERNAME}}",
+                                "password": "{{secrets.EMAIL_PASSWORD}}",
+                                "folder": "INBOX"
+                            },
+                            "depends_on": []
+                        },
+                        {
+                            "id": "telegram_send",
+                            "skill": "telegram.send",
+                            "inputs": {
+                                "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                                "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                                "message": "📧 *Yeni E-posta Alındı:*\n\nKimden: {{nodes.get_email.outputs.sender}}\nKonu: {{nodes.get_email.outputs.subject}}\n\nİçerik:\n{{nodes.get_email.outputs.body}}"
+                            },
+                            "depends_on": ["get_email"]
+                        }
+                    ],
+                    "edges": [
+                        {"from": "get_email", "to": "telegram_send"}
+                    ],
+                    "permissions": ["network.out"],
+                    "created_at": now,
+                    "updated_at": now
+                }
+            else:
+                return {
+                    "id": w_id,
+                    "name": "Send Email Notification",
+                    "description": "Sends an email notification via SMTP automatically when triggered.",
+                    "enabled": False,
+                    "trigger": {"type": "manual"},
+                    "variables": {},
+                    "nodes": [
+                        {
+                            "id": "send_mail",
+                            "skill": "email.send",
+                            "inputs": {
+                                "smtp_server": "smtp.gmail.com",
+                                "smtp_port": 587,
+                                "username": "{{secrets.EMAIL_USERNAME}}",
+                                "password": "{{secrets.EMAIL_PASSWORD}}",
+                                "to_email": "recipient@example.com",
+                                "subject": "Myca OS Bilgilendirme",
+                                "body": "Myca otonom iş akışı başarıyla çalıştı ve bu maili gönderdi!"
+                            },
+                            "depends_on": []
+                        }
+                    ],
+                    "edges": [],
+                    "permissions": ["network.out"],
+                    "created_at": now,
+                    "updated_at": now
+                }
+        elif "kripto" in prompt.lower() or "haber" in prompt.lower() or "crypto" in prompt.lower() or "news" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Crypto News Alert Crawler",
+                "description": "Periodically searches for the latest crypto news, summarizes it using local AI, and forwards it to your Telegram chat.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 3600},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "crypto_search",
+                        "skill": "browser.search",
+                        "inputs": {
+                            "query": "kripto para son dakika haberleri"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "summarize_news",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "{{nodes.crypto_search.outputs.results}}"
+                        },
+                        "depends_on": ["crypto_search"]
+                    },
+                    {
+                        "id": "telegram_send",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "🔔 *Son Dakika Kripto Gelişmeleri:*\n\n{{nodes.summarize_news.outputs.summary}}"
+                        },
+                        "depends_on": ["summarize_news"]
+                    }
+                ],
+                "edges": [
+                    {"from": "crypto_search", "to": "summarize_news"},
+                    {"from": "summarize_news", "to": "telegram_send"}
+                ],
+                "permissions": ["browser", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "yaz" in prompt.lower() or "write" in prompt.lower() or "dosya" in prompt.lower() or "read" in prompt.lower() or "oku" in prompt.lower():
             return {
                 "id": w_id,
                 "name": "Filesystem Manager Flow",
