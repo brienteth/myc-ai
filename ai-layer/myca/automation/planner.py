@@ -21,7 +21,7 @@ class AutomationPlanner:
         """
         # Get all registered skills for LLM context mapping
         lower_prompt = user_prompt.lower()
-        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta", "youtube", "instagram", "paylaş", "video", "twit"]):
+        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta", "youtube", "instagram", "paylaş", "video", "twit", "fatura", "invoice", "destek", "ticket", "talep", "support", "rapor", "database", "excel", "csv", "veri"]):
             logger.info(f"[PLANNER] Heuristic match found, skipping LLM and generating fallback directly.")
             return self._generate_fallback(user_prompt)
 
@@ -109,7 +109,184 @@ Requirements:
         w_id = f"flow-{uuid.uuid4().hex[:8]}"
         now = time.time()
 
-        if "youtube" in prompt.lower() or "instagram" in prompt.lower() or "paylaş" in prompt.lower() or "video" in prompt.lower() or "twit" in prompt.lower():
+        if "fatura" in prompt.lower() or "invoice" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Corporate Invoice & Receipt Processor",
+                "description": "Monitors a directory for incoming PDF invoices, extracts details via AI, logs them to a CSV spreadsheet, and notifies accounting.",
+                "enabled": False,
+                "trigger": {"type": "directory", "path": "/Users/bl10buer/Desktop/invoices", "event": "created"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "list_invoices_folder",
+                        "skill": "fs.list",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/invoices"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "read_new_invoice",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/invoices/new_invoice.txt"
+                        },
+                        "depends_on": ["list_invoices_folder"]
+                    },
+                    {
+                        "id": "extract_invoice_details",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Extract Invoice ID, Vendor, Date, Tax, and Total Amount from this invoice: \n\n{{nodes.read_new_invoice.outputs.content}}"
+                        },
+                        "depends_on": ["read_new_invoice"]
+                    },
+                    {
+                        "id": "write_to_accounting_sheet",
+                        "skill": "fs.write",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/invoices_report.csv",
+                            "content": "{{nodes.extract_invoice_details.outputs.summary}}"
+                        },
+                        "depends_on": ["extract_invoice_details"]
+                    },
+                    {
+                        "id": "email_accounting_team",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.company.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "accounting@company.com",
+                            "subject": "Yeni Fatura İşlendi",
+                            "body": "Yeni fatura detayları veritabanına işlendi:\n\n{{nodes.extract_invoice_details.outputs.summary}}"
+                        },
+                        "depends_on": ["write_to_accounting_sheet"]
+                    }
+                ],
+                "edges": [
+                    {"from": "list_invoices_folder", "to": "read_new_invoice"},
+                    {"from": "read_new_invoice", "to": "extract_invoice_details"},
+                    {"from": "extract_invoice_details", "to": "write_to_accounting_sheet"},
+                    {"from": "write_to_accounting_sheet", "to": "email_accounting_team"}
+                ],
+                "permissions": ["fs.read", "fs.write", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "destek" in prompt.lower() or "ticket" in prompt.lower() or "talep" in prompt.lower() or "support" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Corporate Support Ticket Auto-Router",
+                "description": "Reads incoming customer support emails, classifies sentiment/topic using local LLM, and auto-forwards to correct department.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 600},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "fetch_support_ticket",
+                        "skill": "email.get_latest",
+                        "inputs": {
+                            "imap_server": "imap.company.com",
+                            "imap_port": 993,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "folder": "INBOX"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "classify_ticket_urgency",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Classify the sentiment (Urgent/Medium/Low) and topic (Billing/Technical/Sales) of this customer request:\n\n{{nodes.fetch_support_ticket.outputs.body}}"
+                        },
+                        "depends_on": ["fetch_support_ticket"]
+                    },
+                    {
+                        "id": "forward_to_correct_team",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.company.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "tech-support@company.com",
+                            "subject": "New Ticket Classified: [{{nodes.classify_ticket_urgency.outputs.summary}}]",
+                            "body": "Customer request has been classified. Details:\n\nSender: {{nodes.fetch_support_ticket.outputs.sender}}\nContent:\n{{nodes.fetch_support_ticket.outputs.body}}"
+                        },
+                        "depends_on": ["classify_ticket_urgency"]
+                    }
+                ],
+                "edges": [
+                    {"from": "fetch_support_ticket", "to": "classify_ticket_urgency"},
+                    {"from": "classify_ticket_urgency", "to": "forward_to_correct_team"}
+                ],
+                "permissions": ["network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "rapor" in prompt.lower() or "database" in prompt.lower() or "excel" in prompt.lower() or "csv" in prompt.lower() or "veri" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "Corporate DB Report Builder & Sender",
+                "description": "Periodically executes Postgres/SQLite database metrics query, builds local CSV/Excel report, and emails it to directors.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 86400}, # Runs daily
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "read_db_file",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/myca_db_logs.txt"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "summarize_db_metrics",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Summarize these daily transactional metrics and highlight anomalies:\n\n{{nodes.read_db_file.outputs.content}}"
+                        },
+                        "depends_on": ["read_db_file"]
+                    },
+                    {
+                        "id": "create_excel_report",
+                        "skill": "fs.write",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/daily_financial_report.csv",
+                            "content": "Metric,Value\nTotal Transactions,1200\nAnomalies Detected,{{nodes.summarize_db_metrics.outputs.summary}}"
+                        },
+                        "depends_on": ["summarize_db_metrics"]
+                    },
+                    {
+                        "id": "email_directors",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.company.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "directors@company.com",
+                            "subject": "Günlük Finansal Rapor Özeti",
+                            "body": "Merhaba,\n\nGünlük veritabanı analiz özeti ektedir:\n\n{{nodes.summarize_db_metrics.outputs.summary}}"
+                        },
+                        "depends_on": ["create_excel_report"]
+                    }
+                ],
+                "edges": [
+                    {"from": "read_db_file", "to": "summarize_db_metrics"},
+                    {"from": "summarize_db_metrics", "to": "create_excel_report"},
+                    {"from": "create_excel_report", "to": "email_directors"}
+                ],
+                "permissions": ["fs.read", "fs.write", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "youtube" in prompt.lower() or "instagram" in prompt.lower() or "paylaş" in prompt.lower() or "video" in prompt.lower() or "twit" in prompt.lower():
             return {
                 "id": w_id,
                 "name": "AI Video Creator & Social Publisher",
