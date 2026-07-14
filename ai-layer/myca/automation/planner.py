@@ -109,7 +109,202 @@ Requirements:
         w_id = f"flow-{uuid.uuid4().hex[:8]}"
         now = time.time()
 
-        if "fatura" in prompt.lower() or "invoice" in prompt.lower():
+        if "stok" in prompt.lower() or "envanter" in prompt.lower() or "malzeme" in prompt.lower() or "stock" in prompt.lower() or "inventory" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "KOBİ Stock Monitoring & Supplier Alert",
+                "description": "Monitors stock levels in local CSV file, alerts the supplier via email when low, and updates the owner via Telegram.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 14400}, # Checks every 4 hours
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "read_stock_csv",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/stok_durumu.csv"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "detect_low_stock",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Find items with stock level less than 10 units in this CSV. Draft a purchase order request for them:\n\n{{nodes.read_stock_csv.outputs.content}}"
+                        },
+                        "depends_on": ["read_stock_csv"]
+                    },
+                    {
+                        "id": "email_supplier",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.gmail.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "depo-tedarik@example.com",
+                            "subject": "Yeni Malzeme Siparişi (Acil)",
+                            "body": "Merhaba,\n\nAşağıdaki ürünler için sipariş geçmek istiyoruz:\n\n{{nodes.detect_low_stock.outputs.summary}}"
+                        },
+                        "depends_on": ["detect_low_stock"]
+                    },
+                    {
+                        "id": "alert_owner",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "⚠️ *Düşük Stok Bildirimi:*\n\nStok kritik seviyenin altına indi, tedarikçiye otomatik sipariş geçildi:\n\n{{nodes.detect_low_stock.outputs.summary}}"
+                        },
+                        "depends_on": ["email_supplier"]
+                    }
+                ],
+                "edges": [
+                    {"from": "read_stock_csv", "to": "detect_low_stock"},
+                    {"from": "detect_low_stock", "to": "email_supplier"},
+                    {"from": "email_supplier", "to": "alert_owner"}
+                ],
+                "permissions": ["fs.read", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "yorum" in prompt.lower() or "memnuniyet" in prompt.lower() or "şikayet" in prompt.lower() or "review" in prompt.lower() or "feedback" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "KOBİ Customer Review & Sentiment Tracker",
+                "description": "Searches for new customer reviews online, analyzes sentiment with local AI, and forwards negative reviews directly to the owner.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 28800}, # Runs every 8 hours
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "search_reviews",
+                        "skill": "browser.search",
+                        "inputs": {
+                            "query": "google işletme yorumları şikayetleri müşteri geri bildirimleri"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "analyze_sentiment",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Filter out any negative customer reviews and draft a polite professional response template to resolve their issue:\n\n{{nodes.search_reviews.outputs.results}}"
+                        },
+                        "depends_on": ["search_reviews"]
+                    },
+                    {
+                        "id": "notify_manager",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "💬 *Müşteri Şikayet Bildirimi (Acil):*\n\nİnternette olumsuz bir yorum algılandı. Taslak cevap:\n\n{{nodes.analyze_sentiment.outputs.summary}}"
+                        },
+                        "depends_on": ["analyze_sentiment"]
+                    }
+                ],
+                "edges": [
+                    {"from": "search_reviews", "to": "analyze_sentiment"},
+                    {"from": "analyze_sentiment", "to": "notify_manager"}
+                ],
+                "permissions": ["browser", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "satış" in prompt.lower() or "kasa" in prompt.lower() or "ciro" in prompt.lower() or "sales" in prompt.lower() or "revenue" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "KOBİ Daily Revenue & Cash Flow Reporter",
+                "description": "Reads daily transactions from a CSV file, summarizes total sales, margins, and sends a daily status message to the owner.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 86400}, # Daily
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "read_sales_data",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/gunluk_satis.csv"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "calculate_sales_summary",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Calculate total revenue, total transactions, and best selling product category from these daily sales log:\n\n{{nodes.read_sales_data.outputs.content}}"
+                        },
+                        "depends_on": ["read_sales_data"]
+                    },
+                    {
+                        "id": "send_sales_to_telegram",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "📊 *Günlük Kasa ve Satış Raporu:*\n\nBugünün kasa kapanış özeti:\n\n{{nodes.calculate_sales_summary.outputs.summary}}"
+                        },
+                        "depends_on": ["calculate_sales_summary"]
+                    }
+                ],
+                "edges": [
+                    {"from": "read_sales_data", "to": "calculate_sales_summary"},
+                    {"from": "calculate_sales_summary", "to": "send_sales_to_telegram"}
+                ],
+                "permissions": ["fs.read", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "müşteri bul" in prompt.lower() or "lead" in prompt.lower() or "contact" in prompt.lower() or "bulma" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "KOBİ Lead Generator & Sales Emailer",
+                "description": "Searches for target businesses locally, extracts contact details using AI, and drafts customized introductory sales pitches.",
+                "enabled": False,
+                "trigger": {"type": "manual"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "search_potential_leads",
+                        "skill": "browser.search",
+                        "inputs": {
+                            "query": "istanbul butik cafe otel iletişim eposta adresleri"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "draft_personalized_pitch",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Find email addresses and business names in these search results. Draft a friendly business partnership proposal email tailored for them:\n\n{{nodes.search_potential_leads.outputs.results}}"
+                        },
+                        "depends_on": ["search_potential_leads"]
+                    },
+                    {
+                        "id": "send_cold_email",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.gmail.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "potansiyel-musteri@example.com",
+                            "subject": "İş Birliği & Tanıtım Teklifi",
+                            "body": "{{nodes.draft_personalized_pitch.outputs.summary}}"
+                        },
+                        "depends_on": ["draft_personalized_pitch"]
+                    }
+                ],
+                "edges": [
+                    {"from": "search_potential_leads", "to": "draft_personalized_pitch"},
+                    {"from": "draft_personalized_pitch", "to": "send_cold_email"}
+                ],
+                "permissions": ["browser", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "fatura" in prompt.lower() or "invoice" in prompt.lower():
             return {
                 "id": w_id,
                 "name": "Corporate Invoice & Receipt Processor",
