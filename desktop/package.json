@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "sed -i '' 's/crossorigin//g' dist/index.html",
+    "postbuild": "node postbuild.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "electron:start": "concurrently -k \"npm run dev\" \"wait-on tcp:5173 && electron .\"",
@@ -33,6 +33,13 @@
       "target": [
         "nsis",
         "zip"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "tar.gz"
       ]
     },
     "nsis": {
