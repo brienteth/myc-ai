@@ -121,7 +121,7 @@ const Library = () => {
       return <LibraryHome onSelectDoc={setSelectedDoc} />;
     }
     if (activeCat === 'research') {
-      return <ResearchWorkspace document={selectedDoc} />;
+      return <ResearchWorkspace document={selectedDoc} onSelectDoc={setSelectedDoc} />;
     }
     if (activeCat === 'storage') {
       return (
