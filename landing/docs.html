@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Myca OS — Otonom İş Akışları ve Belgeler</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-warm: #FAF8F3;
+      --primary: #1E3A27;
+      --primary-soft: rgba(30, 58, 39, 0.08);
+      --accent: #D4A373;
+      --text: #2B2D2F;
+      --text-muted: #6B7280;
+      --border: rgba(30, 58, 39, 0.12);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --shadow: 0 10px 30px -10px rgba(30, 58, 39, 0.08);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-warm);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Elegant Grid Pattern overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: radial-gradient(rgba(30, 58, 39, 0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* Premium Header */
+    header {
+      padding: 60px 0 40px 0;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      background: rgba(250, 248, 243, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      fill: var(--primary);
+    }
+
+    .logo-text {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      font-size: 24px;
+      letter-spacing: -0.5px;
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      transition: color 0.25s;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    /* Hero section */
+    .hero {
+      padding: 100px 0 60px 0;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: 56px;
+      line-height: 1.15;
+      color: var(--primary);
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    .hero p {
+      font-size: 20px;
+      color: var(--text-muted);
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+    }
+
+    /* Grid Sections */
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 36px;
+      color: var(--primary);
+      margin-bottom: 30px;
+      border-left: 4px solid var(--accent);
+      padding-left: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      margin-bottom: 80px;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 {
+        font-size: 40px;
+      }
+      .container {
+        padding: 0 20px;
+      }
+    }
+
+    /* Premium Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px -15px rgba(30, 58, 39, 0.12);
+      border-color: var(--accent);
+    }
+
+    .card-badge {
+      display: inline-block;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .card-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    /* Prompt Box */
+    .prompt-box {
+      background: #F3ECE0;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px dashed rgba(30, 58, 39, 0.2);
+    }
+
+    .prompt-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .prompt-text {
+      font-family: var(--font-serif);
+      font-size: 16px;
+      font-style: italic;
+      color: var(--primary);
+      position: relative;
+    }
+
+    /* Copy Button */
+    .copy-btn {
+      position: absolute;
+      right: 0;
+      top: -2px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .copy-btn:hover {
+      color: var(--primary);
+    }
+
+    /* Whitepaper Section */
+    .whitepaper-section {
+      background: var(--primary);
+      color: var(--bg-warm);
+      padding: 80px 0;
+      border-radius: 24px;
+      margin-bottom: 80px;
+      box-shadow: var(--shadow);
+    }
+
+    .whitepaper-section h2 {
+      font-family: var(--font-serif);
+      font-size: 40px;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    .whitepaper-section p {
+      font-size: 18px;
+      color: rgba(250, 248, 243, 0.8);
+      max-width: 800px;
+      margin-bottom: 40px;
+    }
+
+    .whitepaper-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+
+    @media (max-width: 768px) {
+      .whitepaper-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wp-card {
+      border-top: 1px solid rgba(250, 248, 243, 0.2);
+      padding-top: 24px;
+    }
+
+    .wp-card h4 {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .wp-card p {
+      font-size: 14px;
+      color: rgba(250, 248, 243, 0.7);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Premium Header -->
+  <header>
+    <div class="container header-inner">
+      <a href="/" class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 100 100">
+          <path d="M50 15C32.1 15 17.6 28.5 15.3 46C15.1 47.3 16.1 48.5 17.5 48.5H35V65C35 73.3 41.7 80 50 80C58.3 80 65 73.3 65 65V48.5H82.5C83.9 48.5 84.9 47.3 84.7 46C82.4 28.5 67.9 15 50 15Z"/>
+        </svg>
+        <span class="logo-text">myca os</span>
+      </a>
+      <nav>
+        <a href="/">Ana Sayfa</a>
+        <a href="#workflows">İş Akışları</a>
+        <a href="#whitepaper">Manifesto</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero container">
+    <h1>İnternet, ama <em>canlı</em> ve <em>otonom</em>.</h1>
+    <p>Myca OS, kurumsal şirketlerden KOBİ'lere, içerik üreticilerinden e-ticaret satıcılarına kadar tüm sektörlerin en kritik iş akışlarını yerel cihazlarında tamamen güvenli ve otonom şekilde yürütür.</p>
+  </section>
+
+  <!-- Workflows Grid Section -->
+  <section class="container" id="workflows">
+    <h2 class="section-title">Popüler Otonom İş Akışları</h2>
+    
+    <div class="grid">
+      
+      <!-- KOBI Card -->
+      <div class="card">
+        <span class="card-badge">KOBİ / Esnaf</span>
+        <h3>Stok Takip ve Otomatik Sipariş</h3>
+        <p>Stoğu azalan ürünlerinizi Excel'de tespit ederek tedarikçiye otomatik sipariş mailleri atar ve size Telegram'dan rapor verir.</p>
+        <div class="card-steps">
+          <div class="step-item"><span class="step-num">1</span> fs.read (Stok listesini oku)</div>
+          <div class="step-item"><span class="step-num">2</span> ai.summary (Kritik stokları ve sipariş formunu çıkar)</div>
+          <div class="step-item"><span class="step-num">3</span> email.send (Tedarikçiye e-posta at)</div>
+          <div class="step-item"><span class="step-num">4</span> telegram.send (KOBİ sahibine bildirim gönder)</div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">AI Assist Promptu</div>
+          <div class="prompt-text">
+            "Kritik stoğu düşen ürünleri kontrol et, tedarikçiye sipariş geç ve bana Telegram'dan haber ver."
+          </div>
+        </div>
+      </div>
+
+      <!-- E-commerce Card -->
+      <div class="card">
+        <span class="card-badge">E-Ticaret</span>
+        <h3>Dinamik Fiyat ve Rakip Takipçisi</h3>
+        <p>Pazaryerlerindeki rakiplerin fiyatlarını günlük olarak izler, anomali tespiti yapar ve Telegram üzerinden anlık fiyat ayarlama önerileri gönderir.</p>
+        <div class="card-steps">
+          <div class="step-item"><span class="step-num">1</span> browser.search (Trendyol/Hepsiburada rakip taraması)</div>
+          <div class="step-item"><span class="step-num">2</span> ai.summary (Rakip fiyat analizini çıkar)</div>
+          <div class="step-item"><span class="step-num">3</span> telegram.send (Ekibe akıllı fiyat önerisi gönder)</div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">AI Assist Promptu</div>
+          <div class="prompt-text">
+            "Rakiplerin kulaklık fiyatlarını Trendyol'da kontrol et ve fiyat analizini bana Telegram'dan gönder."
+          </div>
+        </div>
+      </div>
+
+      <!-- Corporate Card -->
+      <div class="card">
+        <span class="card-badge">Kurumsal / Enterprise</span>
+        <h3>Fatura ve OCR Muhasebe İşleme</h3>
+        <p>Klasöre düşen yeni PDF faturaları anında okur, yapay zeka ile verileri ayıklayarak Excel'e yazar ve finans ekibine mail gönderir.</p>
+        <div class="card-steps">
+          <div class="step-item"><span class="step-num">1</span> fs.list & fs.read (Fatura klasörünü izle ve oku)</div>
+          <div class="step-item"><span class="step-num">2</span> ai.summary (Fatura tutar, KDV, Vergi No detaylarını ayıkla)</div>
+          <div class="step-item"><span class="step-num">3</span> fs.write (CSV/Muhasebe tablosuna ekle)</div>
+          <div class="step-item"><span class="step-num">4</span> email.send (Fatura işleme detaylarını accounting'e maille)</div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">AI Assist Promptu</div>
+          <div class="prompt-text">
+            "Gelen faturaları tara, yapay zekayla bilgilerini çıkarıp Excel'e yaz ve muhasebeye mail at."
+          </div>
+        </div>
+      </div>
+
+      <!-- Social Creators Card -->
+      <div class="card">
+        <span class="card-badge">Sosyal Medya & İçerik</span>
+        <h3>Otonom Video Üretim ve Çoklu Yayın</h3>
+        <p>Belirlediğiniz bir konudan otomatik olarak dikey video üretir, bunu YouTube Shorts, Instagram Reels ve X üzerinde otomatik paylaşır.</p>
+        <div class="card-steps">
+          <div class="step-item"><span class="step-num">1</span> video.generate (Video üretici API çağrısı)</div>
+          <div class="step-item"><span class="step-num">2</span> youtube.upload (YouTube Shorts yüklemesi)</div>
+          <div class="step-item"><span class="step-num">3</span> x.post & instagram.post (Sosyal ağlarda eş zamanlı yayınlama)</div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-label">AI Assist Promptu</div>
+          <div class="prompt-text">
+            "Her gün saat 12:00'de son kripto haberlerinden otomatik bir dikey video üret, bu videoyu YouTube Shorts, Instagram Reels ve X üzerinde paylaş."
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Whitepaper / Manifesto Section -->
+  <section class="container" id="whitepaper">
+    <div class="whitepaper-section" style="padding: 60px 40px;">
+      <h2>Myca OS Whitepaper & Manifesto</h2>
+      <p>Myca, bulut sunucu bağımlılığını tamamen ortadan kaldıran, bilgisayarlarınızı birbirine bağlayarak ortak bir yapay zeka ağı oluşturan "Mycelium" (Fungal Ağ) mimarisi üzerine inşa edilmiştir. Bilgileriniz asla buluta gitmez, veri güvenliğiniz donanımınızın kontrolündedir.</p>
+      
+      <div class="whitepaper-grid">
+        <div class="wp-card">
+          <h4>%100 Yerel Yapay Zeka</h4>
+          <p>Tüm yapay zeka modelleri, ses tanıma motorları ve otomasyon planlayıcılar doğrudan kendi cihazlarınızın üzerinde (Ollama, local LLM) çalışır.</p>
+        </div>
+        <div class="wp-card">
+          <h4>Model Context Protocol (MCP)</h4>
+          <p>Claude MCP altyapısı sayesinde sisteme yeni araçlar, veritabanları veya API entegrasyonları saniyeler içinde bağlanabilir.</p>
+        </div>
+        <div class="wp-card">
+          <h4>Güvenli Şifre Koruması (Secrets)</h4>
+          <p>Email, Telegram ve API şifreleriniz yerel diskinizde owner-only yetkilerle kilitlenmiş SQLite veritabanı içinde korunur.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 Myca OS. Tüm Hakları Saklıdır. Local-First AI Automation.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
