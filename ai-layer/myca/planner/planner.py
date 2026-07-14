@@ -40,7 +40,13 @@ class Planner:
         try:
             # Here we'd call: response = await self.inference.generate_json(system_prompt, need_prompt)
             # Simulating basic parsing for now based on user intent
-            if "file" in need_prompt.lower() or "read" in need_prompt.lower():
+            if "context document:" in need_prompt.lower():
+                return {
+                    "nodes": [
+                        {"id": "A", "skill": "core.chat", "inputs": {"prompt": need_prompt}, "deps": []}
+                    ]
+                }
+            elif "file" in need_prompt.lower() or "read" in need_prompt.lower():
                 return {
                     "nodes": [
                         {"id": "A", "skill": "fs.list", "inputs": {"path": "."}, "deps": []}

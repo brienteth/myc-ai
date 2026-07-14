@@ -81,12 +81,6 @@ const LibraryTopBar = ({ onUploadComplete, onSearch }) => {
       </div>
 
       <div className="topbar-actions">
-        <label className="topbar-btn" style={{ cursor: 'pointer' }}>
-          <UploadCloud size={14} /> Import
-          <input type="file" style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} />
-        </label>
-        <div className="topbar-divider" />
-        
         {/* Status Indicator */}
         <div className="topbar-status">
           <Activity size={14} color={isUploading ? 'var(--f-alive)' : 'var(--f-moss)'} />

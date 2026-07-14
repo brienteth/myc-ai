@@ -90,6 +90,27 @@ const LibraryHome = ({ onSelectDoc }) => {
   return (
     <div className="library-home">
       <div className="home-section">
+        <h3>Collections</h3>
+        <div className="collections-grid">
+          <div className="collection-card">
+            <div className="col-icon" style={{background: 'var(--f-moss)', color: 'white'}}><Briefcase size={24} /></div>
+            <h4>All Files</h4>
+            <p>{stats.total_files} items · {formatBytes(stats.total_size_bytes)}</p>
+          </div>
+          <div className="collection-card">
+            <div className="col-icon" style={{background: 'var(--f-stone)', color: 'white'}}><FileText size={24} /></div>
+            <h4>Documents</h4>
+            <p>{stats?.by_type?.document?.count || 0} files</p>
+          </div>
+          <div className="collection-card">
+            <div className="col-icon" style={{background: 'var(--f-soil)', color: 'white'}}><ImageIcon size={24} /></div>
+            <h4>Media</h4>
+            <p>{(stats?.by_type?.image?.count || 0) + (stats?.by_type?.video?.count || 0) + (stats?.by_type?.audio?.count || 0)} files</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="home-section">
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <h3>Recent Files</h3>
           <label className="primary-btn" style={{fontSize: 12, padding: '6px 14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6}}>
@@ -118,45 +139,6 @@ const LibraryHome = ({ onSelectDoc }) => {
               </div>
             ))
           )}
-        </div>
-      </div>
-
-      <div className="home-section">
-        <h3>Collections</h3>
-        <div className="collections-grid">
-          <div className="collection-card">
-            <div className="col-icon" style={{background: 'var(--f-moss)', color: 'white'}}><Briefcase size={24} /></div>
-            <h4>All Files</h4>
-            <p>{stats.total_files} items · {formatBytes(stats.total_size_bytes)}</p>
-          </div>
-          <div className="collection-card">
-            <div className="col-icon" style={{background: 'var(--f-stone)', color: 'white'}}><FileText size={24} /></div>
-            <h4>Documents</h4>
-            <p>{stats?.by_type?.document?.count || 0} files</p>
-          </div>
-          <div className="collection-card">
-            <div className="col-icon" style={{background: 'var(--f-soil)', color: 'white'}}><ImageIcon size={24} /></div>
-            <h4>Media</h4>
-            <p>{(stats?.by_type?.image?.count || 0) + (stats?.by_type?.video?.count || 0) + (stats?.by_type?.audio?.count || 0)} files</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="home-section insights-section">
-        <h3>Insights</h3>
-        <div className="insights-grid">
-          <div className="insight-card">
-            <p className="insight-val">{stats.total_files}</p>
-            <p className="insight-lbl">Total Files Imported</p>
-          </div>
-          <div className="insight-card warn">
-            <p className="insight-val">{formatBytes(stats.total_size_bytes)}</p>
-            <p className="insight-lbl">Total Library Size</p>
-          </div>
-          <div className="insight-card">
-            <p className="insight-val">100%</p>
-            <p className="insight-lbl">Local Privacy</p>
-          </div>
         </div>
       </div>
 
