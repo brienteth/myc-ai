@@ -98,6 +98,23 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### Building the Desktop Application (Electron)
+
+To run the local desktop client in development mode or build a standalone production installer (`.dmg` for macOS, `.exe` for Windows):
+
+```bash
+cd desktop
+npm install
+
+# Run the app locally in development mode
+npm run electron:start
+
+# Compile standalone installer package (.dmg / .exe)
+npm run electron:build
+```
+
+Stand-alone installers will be generated under the `desktop/release/` directory.
+
 ---
 
 ## System Requirements
