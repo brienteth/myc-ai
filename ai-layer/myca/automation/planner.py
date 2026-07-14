@@ -21,7 +21,7 @@ class AutomationPlanner:
         """
         # Get all registered skills for LLM context mapping
         lower_prompt = user_prompt.lower()
-        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta", "youtube", "instagram", "paylaş", "video", "twit", "fatura", "invoice", "destek", "ticket", "talep", "support", "rapor", "database", "excel", "csv", "veri"]):
+        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta", "youtube", "instagram", "paylaş", "video", "twit", "fatura", "invoice", "destek", "ticket", "talep", "support", "rapor", "database", "excel", "csv", "veri", "rakip", "competitor", "pricing", "sepet", "cart", "seo", "description"]):
             logger.info(f"[PLANNER] Heuristic match found, skipping LLM and generating fallback directly.")
             return self._generate_fallback(user_prompt)
 
@@ -109,7 +109,190 @@ Requirements:
         w_id = f"flow-{uuid.uuid4().hex[:8]}"
         now = time.time()
 
-        if "stok" in prompt.lower() or "envanter" in prompt.lower() or "malzeme" in prompt.lower() or "stock" in prompt.lower() or "inventory" in prompt.lower():
+        if "rakip" in prompt.lower() or "fiyat" in prompt.lower() or "competitor" in prompt.lower() or "pricing" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "E-Commerce Competitor Price Monitor",
+                "description": "Scrapes competitor websites for target product prices daily, compares with local cost threshold, and alerts the team on price changes.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 86400}, # Runs daily
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "search_competitor_price",
+                        "skill": "browser.search",
+                        "inputs": {
+                            "query": "rakip e-ticaret sitesi en çok satan kulaklık fiyatı"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "compare_pricing",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Analyze the competitor product prices in these search results and suggest a competitive pricing strategy:\n\n{{nodes.search_competitor_price.outputs.results}}"
+                        },
+                        "depends_on": ["search_competitor_price"]
+                    },
+                    {
+                        "id": "notify_pricing_change",
+                        "skill": "telegram.send",
+                        "inputs": {
+                            "bot_token": "{{secrets.TELEGRAM_BOT_TOKEN}}",
+                            "chat_id": "{{secrets.TELEGRAM_CHAT_ID}}",
+                            "message": "💰 *Rakip Fiyat Analiz Raporu:*\n\nE-ticaret rakip fiyat karşılaştırma özeti:\n\n{{nodes.compare_pricing.outputs.summary}}"
+                        },
+                        "depends_on": ["compare_pricing"]
+                    }
+                ],
+                "edges": [
+                    {"from": "search_competitor_price", "to": "compare_pricing"},
+                    {"from": "compare_pricing", "to": "notify_pricing_change"}
+                ],
+                "permissions": ["browser", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "sipariş" in prompt.lower() or "kargo" in prompt.lower() or "order" in prompt.lower() or "shipping" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "E-Commerce Order & Shipping Automator",
+                "description": "Reads new orders, processes customer details, updates shipping logs, and emails the tracking number to customers.",
+                "enabled": False,
+                "trigger": {"type": "directory", "path": "/Users/bl10buer/Desktop/orders", "event": "created"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "read_new_orders",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/orders/new_orders.csv"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "generate_shipping_notification",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Extract customer name, order number, and email. Write a friendly notification email confirming their order is shipped:\n\n{{nodes.read_new_orders.outputs.content}}"
+                        },
+                        "depends_on": ["read_new_orders"]
+                    },
+                    {
+                        "id": "send_shipping_email",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.gmail.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "musteri@example.com",
+                            "subject": "Siparişiniz Kargoya Verildi!",
+                            "body": "{{nodes.generate_shipping_notification.outputs.summary}}"
+                        },
+                        "depends_on": ["generate_shipping_notification"]
+                    }
+                ],
+                "edges": [
+                    {"from": "read_new_orders", "to": "generate_shipping_notification"},
+                    {"from": "generate_shipping_notification", "to": "send_shipping_email"}
+                ],
+                "permissions": ["fs.read", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "sepet" in prompt.lower() or "cart" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "E-Commerce Abandoned Cart Recoverer",
+                "description": "Identifies abandoned shopping carts, drafts custom discount code offers using AI, and emails customers to recover sales.",
+                "enabled": False,
+                "trigger": {"type": "interval", "interval_seconds": 43200}, # Runs twice a day
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "read_cart_logs",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/terk_edilen_sepetler.csv"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "draft_discount_offer",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Extract user emails and items left in cart. Draft a personalized email offering a 10% discount to encourage them to complete purchase:\n\n{{nodes.read_cart_logs.outputs.content}}"
+                        },
+                        "depends_on": ["read_cart_logs"]
+                    },
+                    {
+                        "id": "send_recovery_email",
+                        "skill": "email.send",
+                        "inputs": {
+                            "smtp_server": "smtp.gmail.com",
+                            "smtp_port": 587,
+                            "username": "{{secrets.EMAIL_USERNAME}}",
+                            "password": "{{secrets.EMAIL_PASSWORD}}",
+                            "to_email": "kullanici@example.com",
+                            "subject": "Sepetinizde Unuttuğunuz Ürünler Var!",
+                            "body": "{{nodes.draft_discount_offer.outputs.summary}}"
+                        },
+                        "depends_on": ["draft_discount_offer"]
+                    }
+                ],
+                "edges": [
+                    {"from": "read_cart_logs", "to": "draft_discount_offer"},
+                    {"from": "draft_discount_offer", "to": "send_recovery_email"}
+                ],
+                "permissions": ["fs.read", "network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "seo" in prompt.lower() or "açıklama" in prompt.lower() or "description" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "E-Commerce Product SEO description Writer",
+                "description": "Reads raw product specifications, writes SEO-optimized descriptions and titles, and logs outputs to a ready-to-upload CSV file.",
+                "enabled": False,
+                "trigger": {"type": "manual"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "read_raw_specs",
+                        "skill": "fs.read",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/ham_urun_ozellikleri.csv"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "write_seo_details",
+                        "skill": "ai.summary",
+                        "inputs": {
+                            "text": "Write a search engine optimized product title, a 150-word description with search keywords, and relevant metadata for this product specs:\n\n{{nodes.read_raw_specs.outputs.content}}"
+                        },
+                        "depends_on": ["read_raw_specs"]
+                    },
+                    {
+                        "id": "save_seo_csv",
+                        "skill": "fs.write",
+                        "inputs": {
+                            "path": "/Users/bl10buer/Desktop/seo_urunler.csv",
+                            "content": "SEO_Title,SEO_Description\n{{nodes.write_seo_details.outputs.summary}}"
+                        },
+                        "depends_on": ["write_seo_details"]
+                    }
+                ],
+                "edges": [
+                    {"from": "read_raw_specs", "to": "write_seo_details"},
+                    {"from": "write_seo_details", "to": "save_seo_csv"}
+                ],
+                "permissions": ["fs.read", "fs.write"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "stok" in prompt.lower() or "envanter" in prompt.lower() or "malzeme" in prompt.lower() or "stock" in prompt.lower() or "inventory" in prompt.lower():
             return {
                 "id": w_id,
                 "name": "KOBİ Stock Monitoring & Supplier Alert",
