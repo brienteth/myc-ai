@@ -21,7 +21,7 @@ class AutomationPlanner:
         """
         # Get all registered skills for LLM context mapping
         lower_prompt = user_prompt.lower()
-        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta"]):
+        if any(w in lower_prompt for w in ["telegram", "kopyala", "clipboard", "yaz", "oku", "dosya", "read", "write", "folder", "klasör", "kripto", "haber", "crypto", "news", "mail", "email", "posta", "youtube", "instagram", "paylaş", "video", "twit"]):
             logger.info(f"[PLANNER] Heuristic match found, skipping LLM and generating fallback directly.")
             return self._generate_fallback(user_prompt)
 
@@ -109,7 +109,71 @@ Requirements:
         w_id = f"flow-{uuid.uuid4().hex[:8]}"
         now = time.time()
 
-        if "mail" in prompt.lower() or "email" in prompt.lower() or "posta" in prompt.lower():
+        if "youtube" in prompt.lower() or "instagram" in prompt.lower() or "paylaş" in prompt.lower() or "video" in prompt.lower() or "twit" in prompt.lower():
+            return {
+                "id": w_id,
+                "name": "AI Video Creator & Social Publisher",
+                "description": "Automatically generates a video from a script prompt and publishes it across YouTube, X/Twitter, and Instagram.",
+                "enabled": False,
+                "trigger": {"type": "manual"},
+                "variables": {},
+                "nodes": [
+                    {
+                        "id": "generate_ai_video",
+                        "skill": "video.generate",
+                        "inputs": {
+                            "prompt": "Son kripto haberlerini anlatan 15 saniyelik dikey bir Shorts videosu hazırla.",
+                            "generator_api_key": "{{secrets.REPLICATE_API_KEY}}",
+                            "aspect_ratio": "9:16"
+                        },
+                        "depends_on": []
+                    },
+                    {
+                        "id": "publish_youtube",
+                        "skill": "youtube.upload",
+                        "inputs": {
+                            "video_path": "{{nodes.generate_ai_video.outputs.video_url}}",
+                            "title": "Son Dakika Kripto Gelişmeleri!",
+                            "description": "Myca OS tarafından otonom olarak üretilmiştir.",
+                            "youtube_token": "{{secrets.YOUTUBE_OAUTH_TOKEN}}"
+                        },
+                        "depends_on": ["generate_ai_video"]
+                    },
+                    {
+                        "id": "publish_x",
+                        "skill": "x.post",
+                        "inputs": {
+                            "text": "Bugünün en önemli gelişmeleri! 🚀 #crypto #ai",
+                            "media_path": "{{nodes.generate_ai_video.outputs.video_url}}",
+                            "x_api_key": "{{secrets.X_API_KEY}}",
+                            "x_api_secret": "{{secrets.X_API_SECRET}}",
+                            "x_access_token": "{{secrets.X_ACCESS_TOKEN}}",
+                            "x_access_token_secret": "{{secrets.X_ACCESS_TOKEN_SECRET}}"
+                        },
+                        "depends_on": ["generate_ai_video"]
+                    },
+                    {
+                        "id": "publish_instagram",
+                        "skill": "instagram.post",
+                        "inputs": {
+                            "media_path": "{{nodes.generate_ai_video.outputs.video_url}}",
+                            "caption": "Otonom haber bülteni! 🤖",
+                            "instagram_access_token": "{{secrets.INSTAGRAM_ACCESS_TOKEN}}",
+                            "instagram_account_id": "{{secrets.INSTAGRAM_ACCOUNT_ID}}"
+                        },
+                        "depends_on": ["generate_ai_video"]
+                    }
+                ],
+                "edges": [
+                    {"from": "generate_ai_video", "to": "publish_youtube"},
+                    {"from": "generate_ai_video", "to": "publish_x"},
+                    {"from": "generate_ai_video", "to": "publish_instagram"}
+                ],
+                "permissions": ["network.out"],
+                "created_at": now,
+                "updated_at": now
+            }
+        elif "mail" in prompt.lower() or "email" in prompt.lower() or "posta" in prompt.lower():
             if "oku" in prompt.lower() or "gelen" in prompt.lower() or "kontrol" in prompt.lower() or "read" in prompt.lower() or "check" in prompt.lower():
                 return {
                     "id": w_id,
