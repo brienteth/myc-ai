@@ -29,7 +29,7 @@ nav {
   text-decoration: none; transition: all .2s;
 }
 .nav-download:hover { background: var(--f-thread); }
-.lang-switch { font-family: var(--f-mono); font-size: 12px; color: var(--f-soil); cursor: pointer; border: 1px solid var(--f-bark); padding: 4px 8px; border-radius: 6px; }
+.lang-switch { font-family: var(--f-mono); font-size: 12px; color: var(--f-soil); cursor: pointer; border: 1px solid var(--f-bark); padding: 4px 8px; border-radius: 6px; background: transparent; }
 
 /* HERO */
 .hero {
@@ -99,84 +99,101 @@ nav {
   box-shadow: var(--f-shadow-sm);
 }
 .card.accent {
-  background: var(--f-glow); border-color: var(--f-spore);
+  background: var(--f-deep); border-color: var(--f-deep);
+  color: var(--f-cream);
 }
-.card-tag { font-family: var(--f-mono); font-size: 12px; color: var(--f-stone); }
-.card.accent .card-tag { color: var(--f-spore); }
-.card-title { font-size: 24px; font-weight: 500; color: var(--f-deep); line-height: 1.2; }
-.card.accent .card-title { color: var(--f-moss); }
-.card-body { font-size: 15px; color: var(--f-soil); line-height: 1.6; }
+.card.accent .card-title { color: var(--f-cream); }
+.card.accent .card-body { color: var(--f-parchment); }
+.card-tag {
+  font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--f-spore);
+}
+.card.accent .card-tag { color: var(--f-accent); }
+.card-title {
+  font-size: 24px; font-weight: 500; color: var(--f-deep); line-height: 1.25;
+}
+.card-body {
+  font-size: 14px; color: var(--f-soil); line-height: 1.6;
+}
 
-/* HOW IT WORKS */
+/* HOW SECTION */
 .how-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto;
 }
-.how-step { display: flex; flex-direction: column; gap: 12px; }
-.how-num { font-size: 64px; color: var(--f-bark); line-height: 1; margin-bottom: 16px; }
-.how-title { font-size: 18px; font-weight: 500; color: var(--f-deep); }
-.how-body { font-size: 14px; color: var(--f-soil); line-height: 1.5; }
+.how-step {
+  display: flex; flex-direction: column; gap: 16px;
+}
+.how-num { font-size: 32px; color: var(--f-spore); }
+.how-title { font-size: 18px; font-weight: 600; color: var(--f-deep); }
+.how-body { font-size: 13px; color: var(--f-soil); line-height: 1.6; }
 
-/* COMPUTE AVOIDANCE */
+/* COMPUTE SECTION */
 .compute-layout {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; max-width: 1100px; margin: 0 auto; align-items: center;
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; max-width: 1100px; margin: 0 auto; align-items: center;
 }
 .compute-flow {
-  background: var(--f-cream); border: 1px solid var(--f-bark); border-radius: 20px; padding: 48px;
-  display: flex; flex-direction: column; gap: 20px;
+  display: flex; flex-direction: column; gap: 12px;
 }
 .flow-row {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 12px 0; border-bottom: 1px solid var(--f-linen);
+  padding: 16px 24px; background: var(--f-cream); border: 1px solid var(--f-bark);
+  border-radius: 12px;
 }
-.flow-row:last-child { border-bottom: none; }
-.flow-name { font-size: 15px; font-weight: 500; color: var(--f-deep); }
-.flow-time { font-family: var(--f-mono); font-size: 13px; color: var(--f-spore); }
-.flow-row.disabled .flow-name { color: var(--f-stone); text-decoration: line-through; }
-.flow-row.disabled .flow-time { color: var(--f-dead); text-decoration: line-through; }
+.flow-row.disabled {
+  opacity: 0.4; background: transparent; border-style: dashed;
+}
+.flow-name { font-size: 14px; font-weight: 500; color: var(--f-deep); }
+.flow-time { font-family: var(--f-mono); font-size: 12px; color: var(--f-spore); }
 
-/* EXECUTION OS */
+/* BLOCKS GRID (ARCHITECTURE) */
 .blocks-grid {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1000px; margin: 0 auto;
 }
 .block {
-  border: 1px solid var(--f-bark); border-radius: 12px; padding: 24px; text-align: center;
-  font-family: var(--f-mono); font-size: 14px; color: var(--f-humus); background: var(--f-parchment);
+  background: var(--f-cream); border: 1.5px solid var(--f-bark);
+  padding: 24px; border-radius: 12px; text-align: center;
+  font-family: var(--f-mono); font-size: 13px; color: var(--f-moss);
+  font-weight: 500;
+  transition: all .2s;
+}
+.block:hover {
+  border-color: var(--f-moss); background: var(--f-parchment); transform: translateY(-2px);
 }
 
-/* OPEN SOURCE */
+/* OPEN SOURCE SECTION */
 .os-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; max-width: 1100px; margin: 0 auto;
 }
 .os-card {
-  padding: 32px; border: 1px solid var(--f-bark); border-radius: 16px; background: var(--f-cream);
-  text-decoration: none; color: var(--f-deep); transition: all 0.2s;
+  border-top: 1px solid var(--f-bark); padding-top: 24px;
+  text-decoration: none; display: flex; flex-direction: column; gap: 8px;
 }
-.os-card:hover { border-color: var(--f-stone); transform: translateY(-2px); }
-.os-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
-.os-desc { font-size: 14px; color: var(--f-soil); }
+.os-title { font-size: 18px; font-weight: 600; color: var(--f-deep); transition: color .2s; }
+.os-card:hover .os-title { color: var(--f-moss); }
+.os-desc { font-size: 13px; color: var(--f-soil); line-height: 1.6; }
 
-/* DOWNLOAD */
-.download-sec { text-align: center; max-width: 800px; margin: 0 auto; }
-.dl-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 48px; }
+/* DOWNLOAD SECTION */
+.download-sec { text-align: center; max-width: 600px; margin: 0 auto; }
+.dl-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 40px; }
 
 /* FOOTER */
 footer {
-  padding: 48px; border-top: 1px solid var(--f-bark);
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 13px; color: var(--f-soil);
+  background: var(--f-parchment); border-top: 0.5px solid var(--f-bark);
+  padding: 64px 48px;
+  display: flex; justify-content: space-between; align-items: flex-start;
 }
-.footer-logo { font-size: 20px; color: var(--f-moss); margin-bottom: 4px; }
+.footer-logo { font-size: 28px; color: var(--f-deep); margin-bottom: 12px; }
 .footer-links { display: flex; gap: 24px; }
-.footer-links a { color: var(--f-soil); text-decoration: none; }
-.footer-links a:hover { color: var(--f-humus); }
+.footer-links a { color: var(--f-soil); text-decoration: none; font-size: 14px; }
+.footer-links a:hover { color: var(--f-moss); }
 
-@media(max-width: 968px) {
-  .hero { grid-template-columns: 1fr; padding-top: 120px; text-align: center; }
-  .hero-canvas-container { width: 100%; height: 50vh; position: relative; margin-top: 40px; }
-  .hero-content { margin: 0 auto; }
-  .hero-actions, .hero-stats { justify-content: center; }
-  .comparison-grid, .how-grid, .compute-layout, .blocks-grid, .os-grid, .dl-buttons { grid-template-columns: 1fr; }
-  footer { flex-direction: column; gap: 24px; text-align: center; }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; padding-top: 120px; }
+  .hero-canvas-container { display: none; }
+  .comparison-grid, .how-grid, .os-grid, .blocks-grid { grid-template-columns: 1fr; }
+  .compute-layout { grid-template-columns: 1fr; gap: 40px; }
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  footer { flex-direction: column; gap: 40px; }
 }
 </style>
 </head>
@@ -186,15 +203,15 @@ footer {
   <div style="display:flex; align-items:center;">
     <div class="nav-logo f-serif-italic">myc</div>
     <div class="nav-links">
-      <a href="#problem">Neden?</a>
-      <a href="#how">Nasıl Çalışır?</a>
-      <a href="#compute">Mimari</a>
+      <a href="#problem" id="t-nav-1">Neden?</a>
+      <a href="#how" id="t-nav-2">Nasıl Çalışır?</a>
+      <a href="#compute" id="t-nav-3">Mimari</a>
       <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
   </div>
   <div style="display:flex; align-items:center; gap:24px;">
     <button class="lang-switch" onclick="toggleLang()">EN / TR</button>
-    <a href="#download" class="nav-download">İndir</a>
+    <a href="#download" class="nav-download" id="t-nav-dl">İndir</a>
   </div>
 </nav>
 
@@ -235,17 +252,17 @@ footer {
   <div class="comparison-grid">
     <div class="card">
       <div class="card-tag">ChatGPT</div>
-      <div class="card-title">Her mesajın OpenAI'a gidiyor</div>
+      <div class="card-title" id="t-prob-title-1">Her mesajın OpenAI'a gidiyor</div>
       <div class="card-body" id="t-prob-1">Saklı. Analiz ediliyor. Ticari modelleri eğitmek için kullanılıyor. İnternet olmadan çalışmaz.</div>
     </div>
     <div class="card">
       <div class="card-tag">Gemini</div>
-      <div class="card-title">Her belgen Google'a gidiyor</div>
+      <div class="card-title" id="t-prob-title-2">Her belgen Google'a gidiyor</div>
       <div class="card-body" id="t-prob-2">Başka bir şirket. Aynı hikaye. Verin senin cihazında değil, onların sunucularında yaşar.</div>
     </div>
     <div class="card accent">
       <div class="card-tag">myc</div>
-      <div class="card-title f-serif-italic">Her şey cihazında kalır.</div>
+      <div class="card-title f-serif-italic" id="t-prob-title-3">Her şey cihazında kalır.</div>
       <div class="card-body" id="t-prob-3">Her zaman. Yaşayan kolonin sadece senin yerel ağında çalışır. Verin hiçbir zaman internete çıkmaz.</div>
     </div>
   </div>
@@ -323,7 +340,7 @@ footer {
 </section>
 
 <section class="section-pad">
-  <div class="section-label" style="text-align:center;">MİMARİ</div>
+  <div class="section-label" style="text-align:center;" id="t-arch-lbl">MİMARİ</div>
   <h2 class="section-title f-serif-italic" style="text-align:center;">Execution OS</h2>
   <div class="blocks-grid">
     <div class="block">Need Engine</div>
@@ -338,24 +355,24 @@ footer {
 </section>
 
 <section class="section-pad bg-parchment">
-  <div class="section-label" style="text-align:center;">KAYNAKLAR</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;">Açık Kaynak</h2>
+  <div class="section-label" style="text-align:center;" id="t-os-lbl">KAYNAKLAR</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-os-title">Açık Kaynak</h2>
   <div class="os-grid">
     <a href="https://github.com/brienteth/myc-ai" class="os-card">
-      <div class="os-title">GitHub</div>
-      <div class="os-desc">Kodları incele, fork et, katkıda bulun.</div>
+      <div class="os-title" id="t-os-card-1-t">GitHub</div>
+      <div class="os-desc" id="t-os-card-1-d">Kodları incele, fork et, katkıda bulun.</div>
     </a>
-    <a href="#" class="os-card">
-      <div class="os-title">Whitepaper</div>
-      <div class="os-desc">Yaşayan işletim sistemi vizyonunu oku.</div>
+    <a href="docs.html" class="os-card">
+      <div class="os-title" id="t-os-card-2-t">Whitepaper</div>
+      <div class="os-desc" id="t-os-card-2-d">Yaşayan işletim sistemi vizyonunu oku.</div>
     </a>
-    <a href="#" class="os-card">
-      <div class="os-title">Architecture</div>
-      <div class="os-desc">Dağıtık yürütme ağının teknik detayları.</div>
+    <a href="docs.html#workflows" class="os-card">
+      <div class="os-title" id="t-os-card-3-t">Dokümantasyon</div>
+      <div class="os-desc" id="t-os-card-3-d">Dağıtık yürütme ağının teknik detayları.</div>
     </a>
-    <a href="#" class="os-card">
-      <div class="os-title">MIT License</div>
-      <div class="os-desc">Özgür, şeffaf ve kısıtlamasız.</div>
+    <a href="LICENSE" class="os-card">
+      <div class="os-title" id="t-os-card-4-t">MIT Lisansı</div>
+      <div class="os-desc" id="t-os-card-4-d">Özgür, şeffaf ve kısıtlamasız.</div>
     </a>
   </div>
 </section>
@@ -365,9 +382,9 @@ footer {
     <h2 class="section-title f-serif-italic" id="t-dl-title">Bugün kolonini kur.</h2>
     <p class="hero-sub" style="margin:0 auto;" id="t-dl-sub">Hesap yok. İnternet yok. Sadece donanımın ve sen.</p>
     <div class="dl-buttons">
-      <a href="#" class="btn-primary">macOS</a>
-      <a href="#" class="btn-secondary">Windows</a>
-      <a href="#" class="btn-secondary">Linux</a>
+      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-primary">macOS</a>
+      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary">Windows</a>
+      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary">Linux</a>
     </div>
   </div>
 </section>
@@ -379,11 +396,11 @@ footer {
   </div>
   <div class="footer-links">
     <a href="https://github.com/brienteth/myc-ai">GitHub</a>
-    <a href="#">Whitepaper</a>
-    <a href="#">X / Twitter</a>
+    <a href="docs.html">Whitepaper</a>
+    <a href="https://x.com/myc_ai">X / Twitter</a>
   </div>
   <div>
-    <div>MIT Lisansı · 2026</div>
+    <div id="t-foot-lic">MIT Lisansı · 2026</div>
   </div>
 </footer>
 
@@ -399,38 +416,184 @@ footer {
     threadColor: '#2E6B45'
   });
 
-  // Simple language toggle
+  const translations = {
+    tr: {
+      nav1: "Neden?",
+      nav2: "Nasıl Çalışır?",
+      nav3: "Mimari",
+      nav_dl: "İndir",
+      hero_title: "İnternet, ama canlı.",
+      hero_sub: "Cihazlarınız birlikte çalışır. Hiçbir veri cihazınızdan çıkmaz. Telefonunuz, dizüstü bilgisayarınız ve masaüstünüz tek bir yaşayan ağa dönüşür.",
+      hero_dl: "Mac için İndir",
+      hero_gh: "GitHub'da İncele",
+      stat1: "Yerel",
+      stat2: "Açık Kaynak",
+      stat3: "Çevrimdışı",
+      prob_lbl: "SORUN",
+      prob_title: "Veriniz nereye gidiyor?",
+      prob_title_1: "Her mesajın OpenAI'a gidiyor",
+      prob_b1: "Saklı. Analiz ediliyor. Ticari modelleri eğitmek için kullanılıyor. İnternet olmadan çalışmaz.",
+      prob_title_2: "Her belgen Google'a gidiyor",
+      prob_b2: "Başka bir şirket. Aynı hikaye. Verin senin cihazında değil, onların sunucularında yaşar.",
+      prob_title_3: "Her şey cihazında kalır.",
+      prob_b3: "Her zaman. Yaşayan kolonin sadece senin yerel ağında çalışır. Verin hiçbir zaman internete çıkmaz.",
+      how_lbl: "SİSTEM",
+      how_title: "Yaşayan Koloni Nasıl Çalışır?",
+      h1_t: "İhtiyaç",
+      h1_b: "Ne yapmak istediğini söylersin. Myc sadece chat yapmaz, işi anlar.",
+      h2_t: "Planlayıcı",
+      h2_b: "Görevi parçalara böler ve bir yürütme planı çıkarır.",
+      h3_t: "Yürütme",
+      h3_b: "Gereken becerileri (skills) ve araçları hazırlar.",
+      h4_t: "Koloni",
+      h4_b: "İşi en uygun cihaza gönderir. (Örn: Model laptopta çalışır, sonuç telefona gelir).",
+      h5_t: "Sonuç",
+      h5_b: "İşlem tamamlanır, öğrenilir ve gelecekteki hız için önbelleğe alınır.",
+      comp_lbl: "HESAPLAMADAN KAÇINMA",
+      comp_title: "GPU son çaredir.",
+      comp_sub: "Herkes daha büyük GPU'lar inşa etmeye çalışıyor. Myc ise hesaplamayı sıfıra indirmeyi hedefler. Sorgular her zaman en ucuz ve en hızlı katmanda çözülür.",
+      f4: "Koloni (Ağdaki diğer cihaz)",
+      f6: "Cloud (Bulut)",
+      arch_lbl: "MİMARİ",
+      os_lbl: "KAYNAKLAR",
+      os_title: "Açık Kaynak",
+      os_c1_t: "GitHub",
+      os_c1_d: "Kodları incele, fork et, katkıda bulun.",
+      os_c2_t: "Whitepaper",
+      os_c2_d: "Yaşayan işletim sistemi vizyonunu oku.",
+      os_c3_t: "Dokümantasyon",
+      os_c3_d: "Dağıtık yürütme ağının teknik detayları.",
+      os_c4_t: "MIT Lisansı",
+      os_c4_d: "Özgür, şeffaf ve kısıtlamasız.",
+      dl_title: "Bugün kolonini kur.",
+      dl_sub: "Hesap yok. İnternet yok. Sadece donanımın ve sen.",
+      foot_slogan: "Verini sen kontrol et.",
+      foot_lic: "MIT Lisansı · 2026"
+    },
+    en: {
+      nav1: "Why?",
+      nav2: "How it works?",
+      nav3: "Architecture",
+      nav_dl: "Download",
+      hero_title: "The internet, but alive.",
+      hero_sub: "Your devices work together. Nothing leaves your device. Your phone, laptop, and desktop turn into a single living network.",
+      hero_dl: "Download for Mac",
+      hero_gh: "View on GitHub",
+      stat1: "Local",
+      stat2: "Open Source",
+      stat3: "Offline",
+      prob_lbl: "THE PROBLEM",
+      prob_title: "Where does your data go?",
+      prob_title_1: "Every message goes to OpenAI",
+      prob_b1: "Stored. Analyzed. Used to train commercial models. Doesn't work without internet.",
+      prob_title_2: "Every document goes to Google",
+      prob_b2: "Another company. Same story. Your data lives on their servers, not your device.",
+      prob_title_3: "Everything stays on your device.",
+      prob_b3: "Always. Your living colony only runs on your local network. Your data never sees the internet.",
+      how_lbl: "THE SYSTEM",
+      how_title: "How the Living Colony Works",
+      h1_t: "Need",
+      h1_b: "You state your intent. Myc doesn't just chat, it understands the work.",
+      h2_t: "Planner",
+      h2_b: "Breaks the task into sub-tasks and designs an execution plan.",
+      h3_t: "Execution",
+      h3_b: "Assembles the required skills and tools.",
+      h4_t: "Colony",
+      h4_b: "Routes work to the most capable device (e.g., model runs on laptop, result returned to phone).",
+      h5_t: "Result",
+      h5_b: "Execution completes, experience is learned and cached for future speed.",
+      comp_lbl: "COMPUTE AVOIDANCE",
+      comp_title: "The GPU is the last resort.",
+      comp_sub: "Everyone is building bigger GPUs. myc aims to reduce compute to zero. Queries are always solved at the cheapest and fastest layer.",
+      f4: "Colony (Other node on network)",
+      f6: "Cloud (Offline / Disabled)",
+      arch_lbl: "ARCHITECTURE",
+      os_lbl: "RESOURCES",
+      os_title: "Open Source",
+      os_c1_t: "GitHub",
+      os_c1_d: "Review code, fork, and contribute.",
+      os_c2_t: "Whitepaper",
+      os_c2_d: "Read the living OS vision document.",
+      os_c3_t: "Documentation",
+      os_c3_d: "Technical details of the distributed execution network.",
+      os_c4_t: "MIT License",
+      os_c4_d: "Free, transparent, and unrestricted.",
+      dl_title: "Start your colony today.",
+      dl_sub: "No account. No internet. Just your hardware and you.",
+      foot_slogan: "You control your data.",
+      foot_lic: "MIT License · 2026"
+    }
+  };
+
   let lang = 'tr';
   window.toggleLang = () => {
     lang = lang === 'tr' ? 'en' : 'tr';
-    if(lang === 'en') {
-      document.getElementById('t-hero-title').innerText = "The internet, but alive.";
-      document.getElementById('t-hero-sub').innerText = "Your devices work together. Nothing leaves your device. Your phone, laptop, and desktop turn into a single living network.";
-      document.getElementById('t-hero-dl').innerText = "Download for Mac";
-      document.getElementById('t-hero-gh').innerText = "View on GitHub";
-      document.getElementById('t-stat-1').innerText = "Local";
-      document.getElementById('t-stat-2').innerText = "Open Source";
-      document.getElementById('t-stat-3').innerText = "Offline";
-      
-      document.getElementById('t-prob-lbl').innerText = "THE PROBLEM";
-      document.getElementById('t-prob-title').innerText = "Where does your data go?";
-      document.getElementById('t-prob-1').innerText = "Stored. Analyzed. Used to train commercial models. Doesn't work without internet.";
-      document.getElementById('t-prob-2').innerText = "Another company. Same story. Your data lives on their servers, not your device.";
-      document.getElementById('t-prob-3').innerText = "Always. Your living colony only runs on your local network. Your data never sees the internet.";
-      
-      document.getElementById('t-how-lbl').innerText = "THE SYSTEM";
-      document.getElementById('t-how-title').innerText = "How the Living Colony Works";
-      
-      document.getElementById('t-comp-lbl').innerText = "COMPUTE AVOIDANCE";
-      document.getElementById('t-comp-title').innerText = "The GPU is the last resort.";
-      document.getElementById('t-comp-sub').innerText = "Everyone is building bigger GPUs. myc aims to reduce compute to zero. Queries are always solved at the cheapest and fastest layer.";
-      
-      document.getElementById('t-dl-title').innerText = "Start your colony today.";
-      document.getElementById('t-dl-sub').innerText = "No account. No internet. Just your hardware and you.";
-      document.getElementById('t-foot-slogan').innerText = "You control your data.";
-    } else {
-      location.reload();
-    }
+    const dict = translations[lang];
+    
+    // Update nav
+    document.getElementById('t-nav-1').innerText = dict.nav1;
+    document.getElementById('t-nav-2').innerText = dict.nav2;
+    document.getElementById('t-nav-3').innerText = dict.nav3;
+    document.getElementById('t-nav-dl').innerText = dict.nav_dl;
+    
+    // Update Hero
+    document.getElementById('t-hero-title').innerText = dict.hero_title;
+    document.getElementById('t-hero-sub').innerText = dict.hero_sub;
+    document.getElementById('t-hero-dl').innerText = dict.hero_dl;
+    document.getElementById('t-hero-gh').innerText = dict.hero_gh;
+    document.getElementById('t-stat-1').innerText = dict.stat1;
+    document.getElementById('t-stat-2').innerText = dict.stat2;
+    document.getElementById('t-stat-3').innerText = dict.stat3;
+    
+    // Update Problem
+    document.getElementById('t-prob-lbl').innerText = dict.prob_lbl;
+    document.getElementById('t-prob-title').innerText = dict.prob_title;
+    document.getElementById('t-prob-title-1').innerText = dict.prob_title_1;
+    document.getElementById('t-prob-1').innerText = dict.prob_b1;
+    document.getElementById('t-prob-title-2').innerText = dict.prob_title_2;
+    document.getElementById('t-prob-2').innerText = dict.prob_b2;
+    document.getElementById('t-prob-title-3').innerText = dict.prob_title_3;
+    document.getElementById('t-prob-3').innerText = dict.prob_b3;
+    
+    // Update How
+    document.getElementById('t-how-lbl').innerText = dict.how_lbl;
+    document.getElementById('t-how-title').innerText = dict.how_title;
+    document.getElementById('t-h1-t').innerText = dict.h1_t;
+    document.getElementById('t-h1-b').innerText = dict.h1_b;
+    document.getElementById('t-h2-t').innerText = dict.h2_t;
+    document.getElementById('t-h2-b').innerText = dict.h2_b;
+    document.getElementById('t-h3-t').innerText = dict.h3_t;
+    document.getElementById('t-h3-b').innerText = dict.h3_b;
+    document.getElementById('t-h4-t').innerText = dict.h4_t;
+    document.getElementById('t-h4-b').innerText = dict.h4_b;
+    document.getElementById('t-h5-t').innerText = dict.h5_t;
+    document.getElementById('t-h5-b').innerText = dict.h5_b;
+    
+    // Update Compute
+    document.getElementById('t-comp-lbl').innerText = dict.comp_lbl;
+    document.getElementById('t-comp-title').innerText = dict.comp_title;
+    document.getElementById('t-comp-sub').innerText = dict.comp_sub;
+    document.getElementById('t-f4').innerText = dict.f4;
+    document.getElementById('t-f6').innerText = dict.f6;
+    
+    // Update OS / Resources
+    document.getElementById('t-arch-lbl').innerText = dict.arch_lbl;
+    document.getElementById('t-os-lbl').innerText = dict.os_lbl;
+    document.getElementById('t-os-title').innerText = dict.os_title;
+    document.getElementById('t-os-card-1-t').innerText = dict.os_c1_t;
+    document.getElementById('t-os-card-1-d').innerText = dict.os_c1_d;
+    document.getElementById('t-os-card-2-t').innerText = dict.os_c2_t;
+    document.getElementById('t-os-card-2-d').innerText = dict.os_c2_d;
+    document.getElementById('t-os-card-3-t').innerText = dict.os_c3_t;
+    document.getElementById('t-os-card-3-d').innerText = dict.os_c3_d;
+    document.getElementById('t-os-card-4-t').innerText = dict.os_c4_t;
+    document.getElementById('t-os-card-4-d').innerText = dict.os_c4_d;
+    
+    // Update Download Section & Footer
+    document.getElementById('t-dl-title').innerText = dict.dl_title;
+    document.getElementById('t-dl-sub').innerText = dict.dl_sub;
+    document.getElementById('t-foot-slogan').innerText = dict.foot_slogan;
+    document.getElementById('t-foot-lic').innerText = dict.foot_lic;
   };
 </script>
 </body>

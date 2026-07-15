@@ -39,7 +39,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Elegant Grid Pattern overlay */
+    /* Grid Pattern overlay */
     body::before {
       content: "";
       position: fixed;
@@ -60,7 +60,7 @@
       padding: 0 40px;
     }
 
-    /* Premium Header */
+    /* Header */
     header {
       padding: 60px 0 40px 0;
       border-bottom: 1px solid var(--border);
@@ -100,6 +100,7 @@
 
     nav {
       display: flex;
+      align-items: center;
       gap: 30px;
     }
 
@@ -114,6 +115,8 @@
     nav a:hover {
       color: var(--accent);
     }
+
+    .lang-switch { font-family: var(--font-mono); font-size: 12px; color: var(--text); cursor: pointer; border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; background: transparent; }
 
     /* Hero section */
     .hero {
@@ -268,25 +271,6 @@
       position: relative;
     }
 
-    /* Copy Button */
-    .copy-btn {
-      position: absolute;
-      right: 0;
-      top: -2px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 12px;
-      font-family: var(--font-sans);
-      font-weight: 600;
-      transition: color 0.2s;
-    }
-
-    .copy-btn:hover {
-      color: var(--primary);
-    }
-
     /* Whitepaper Section */
     .whitepaper-section {
       background: var(--primary);
@@ -362,39 +346,40 @@
         <span class="logo-text">myca os</span>
       </a>
       <nav>
-        <a href="/">Ana Sayfa</a>
-        <a href="#workflows">İş Akışları</a>
-        <a href="#whitepaper">Manifesto</a>
+        <a href="/" id="t-nav-home">Ana Sayfa</a>
+        <a href="#workflows" id="t-nav-workflows">İş Akışları</a>
+        <a href="#whitepaper" id="t-nav-manifesto">Manifesto</a>
+        <button class="lang-switch" onclick="toggleLang()">EN / TR</button>
       </nav>
     </div>
   </header>
 
   <!-- Hero Section -->
   <section class="hero container">
-    <h1>İnternet, ama <em>canlı</em> ve <em>otonom</em>.</h1>
-    <p>Myca OS, kurumsal şirketlerden KOBİ'lere, içerik üreticilerinden e-ticaret satıcılarına kadar tüm sektörlerin en kritik iş akışlarını yerel cihazlarında tamamen güvenli ve otonom şekilde yürütür.</p>
+    <h1 id="t-hero-title">İnternet, ama <em>canlı</em> ve <em>otonom</em>.</h1>
+    <p id="t-hero-desc">Myca OS, kurumsal şirketlerden KOBİ'lere, içerik üreticilerinden e-ticaret satıcılarına kadar tüm sektörlerin en kritik iş akışlarını yerel cihazlarında tamamen güvenli ve otonom şekilde yürütür.</p>
   </section>
 
   <!-- Workflows Grid Section -->
   <section class="container" id="workflows">
-    <h2 class="section-title">Popüler Otonom İş Akışları</h2>
+    <h2 class="section-title" id="t-wf-title">Popüler Otonom İş Akışları</h2>
     
     <div class="grid">
       
       <!-- KOBI Card -->
       <div class="card">
-        <span class="card-badge">KOBİ / Esnaf</span>
-        <h3>Stok Takip ve Otomatik Sipariş</h3>
-        <p>Stoğu azalan ürünlerinizi Excel'de tespit ederek tedarikçiye otomatik sipariş mailleri atar ve size Telegram'dan rapor verir.</p>
+        <span class="card-badge" id="t-c1-badge">KOBİ / Esnaf</span>
+        <h3 id="t-c1-title">Stok Takip ve Otomatik Sipariş</h3>
+        <p id="t-c1-desc">Stoğu azalan ürünlerinizi Excel'de tespit ederek tedarikçiye otomatik sipariş mailleri atar ve size Telegram'dan rapor verir.</p>
         <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> fs.read (Stok listesini oku)</div>
-          <div class="step-item"><span class="step-num">2</span> ai.summary (Kritik stokları ve sipariş formunu çıkar)</div>
-          <div class="step-item"><span class="step-num">3</span> email.send (Tedarikçiye e-posta at)</div>
-          <div class="step-item"><span class="step-num">4</span> telegram.send (KOBİ sahibine bildirim gönder)</div>
+          <div class="step-item"><span class="step-num">1</span> <span id="t-c1-s1">fs.read (Stok listesini oku)</span></div>
+          <div class="step-item"><span class="step-num">2</span> <span id="t-c1-s2">ai.summary (Kritik stokları ve sipariş formunu çıkar)</span></div>
+          <div class="step-item"><span class="step-num">3</span> <span id="t-c1-s3">email.send (Tedarikçiye e-posta at)</span></div>
+          <div class="step-item"><span class="step-num">4</span> <span id="t-c1-s4">telegram.send (KOBİ sahibine bildirim gönder)</span></div>
         </div>
         <div class="prompt-box">
-          <div class="prompt-label">AI Assist Promptu</div>
-          <div class="prompt-text">
+          <div class="prompt-label" id="t-c1-pl">AI Assist Promptu</div>
+          <div class="prompt-text" id="t-c1-pt">
             "Kritik stoğu düşen ürünleri kontrol et, tedarikçiye sipariş geç ve bana Telegram'dan haber ver."
           </div>
         </div>
@@ -402,17 +387,17 @@
 
       <!-- E-commerce Card -->
       <div class="card">
-        <span class="card-badge">E-Ticaret</span>
-        <h3>Dinamik Fiyat ve Rakip Takipçisi</h3>
-        <p>Pazaryerlerindeki rakiplerin fiyatlarını günlük olarak izler, anomali tespiti yapar ve Telegram üzerinden anlık fiyat ayarlama önerileri gönderir.</p>
+        <span class="card-badge" id="t-c2-badge">E-Ticaret</span>
+        <h3 id="t-c2-title">Dinamik Fiyat ve Rakip Takipçisi</h3>
+        <p id="t-c2-desc">Pazaryerlerindeki rakiplerin fiyatlarını günlük olarak izler, anomali tespiti yapar ve Telegram üzerinden anlık fiyat ayarlama önerileri gönderir.</p>
         <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> browser.search (Trendyol/Hepsiburada rakip taraması)</div>
-          <div class="step-item"><span class="step-num">2</span> ai.summary (Rakip fiyat analizini çıkar)</div>
-          <div class="step-item"><span class="step-num">3</span> telegram.send (Ekibe akıllı fiyat önerisi gönder)</div>
+          <div class="step-item"><span class="step-num">1</span> <span id="t-c2-s1">browser.search (Trendyol/Hepsiburada rakip taraması)</span></div>
+          <div class="step-item"><span class="step-num">2</span> <span id="t-c2-s2">ai.summary (Rakip fiyat analizini çıkar)</span></div>
+          <div class="step-item"><span class="step-num">3</span> <span id="t-c2-s3">telegram.send (Ekibe akıllı fiyat önerisi gönder)</span></div>
         </div>
         <div class="prompt-box">
-          <div class="prompt-label">AI Assist Promptu</div>
-          <div class="prompt-text">
+          <div class="prompt-label" id="t-c2-pl">AI Assist Promptu</div>
+          <div class="prompt-text" id="t-c2-pt">
             "Rakiplerin kulaklık fiyatlarını Trendyol'da kontrol et ve fiyat analizini bana Telegram'dan gönder."
           </div>
         </div>
@@ -420,18 +405,18 @@
 
       <!-- Corporate Card -->
       <div class="card">
-        <span class="card-badge">Kurumsal / Enterprise</span>
-        <h3>Fatura ve OCR Muhasebe İşleme</h3>
-        <p>Klasöre düşen yeni PDF faturaları anında okur, yapay zeka ile verileri ayıklayarak Excel'e yazar ve finans ekibine mail gönderir.</p>
+        <span class="card-badge" id="t-c3-badge">Kurumsal / Enterprise</span>
+        <h3 id="t-c3-title">Fatura ve OCR Muhasebe İşleme</h3>
+        <p id="t-c3-desc">Klasöre düşen yeni PDF faturaları anında okur, yapay zeka ile verileri ayıklayarak Excel'e yazar ve finans ekibine mail gönderir.</p>
         <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> fs.list & fs.read (Fatura klasörünü izle ve oku)</div>
-          <div class="step-item"><span class="step-num">2</span> ai.summary (Fatura tutar, KDV, Vergi No detaylarını ayıkla)</div>
-          <div class="step-item"><span class="step-num">3</span> fs.write (CSV/Muhasebe tablosuna ekle)</div>
-          <div class="step-item"><span class="step-num">4</span> email.send (Fatura işleme detaylarını accounting'e maille)</div>
+          <div class="step-item"><span class="step-num">1</span> <span id="t-c3-s1">fs.list & fs.read (Fatura klasörünü izle ve oku)</span></div>
+          <div class="step-item"><span class="step-num">2</span> <span id="t-c3-s2">ai.summary (Fatura tutar, KDV, Vergi No detaylarını ayıkla)</span></div>
+          <div class="step-item"><span class="step-num">3</span> <span id="t-c3-s3">fs.write (CSV/Muhasebe tablosuna ekle)</span></div>
+          <div class="step-item"><span class="step-num">4</span> <span id="t-c3-s4">email.send (Fatura işleme detaylarını accounting'e maille)</span></div>
         </div>
         <div class="prompt-box">
-          <div class="prompt-label">AI Assist Promptu</div>
-          <div class="prompt-text">
+          <div class="prompt-label" id="t-c3-pl">AI Assist Promptu</div>
+          <div class="prompt-text" id="t-c3-pt">
             "Gelen faturaları tara, yapay zekayla bilgilerini çıkarıp Excel'e yaz ve muhasebeye mail at."
           </div>
         </div>
@@ -439,17 +424,17 @@
 
       <!-- Social Creators Card -->
       <div class="card">
-        <span class="card-badge">Sosyal Medya & İçerik</span>
-        <h3>Otonom Video Üretim ve Çoklu Yayın</h3>
-        <p>Belirlediğiniz bir konudan otomatik olarak dikey video üretir, bunu YouTube Shorts, Instagram Reels ve X üzerinde otomatik paylaşır.</p>
+        <span class="card-badge" id="t-c4-badge">Sosyal Medya & İçerik</span>
+        <h3 id="t-c4-title">Otonom Video Üretim ve Çoklu Yayın</h3>
+        <p id="t-c4-desc">Belirlediğiniz bir konudan otomatik olarak dikey video üretir, bunu YouTube Shorts, Instagram Reels ve X üzerinde otomatik paylaşır.</p>
         <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> video.generate (Video üretici API çağrısı)</div>
-          <div class="step-item"><span class="step-num">2</span> youtube.upload (YouTube Shorts yüklemesi)</div>
-          <div class="step-item"><span class="step-num">3</span> x.post & instagram.post (Sosyal ağlarda eş zamanlı yayınlama)</div>
+          <div class="step-item"><span class="step-num">1</span> <span id="t-c4-s1">video.generate (Video üretici API çağrısı)</span></div>
+          <div class="step-item"><span class="step-num">2</span> <span id="t-c4-s2">youtube.upload (YouTube Shorts yüklemesi)</span></div>
+          <div class="step-item"><span class="step-num">3</span> <span id="t-c4-s3">x.post & instagram.post (Sosyal ağlarda eş zamanlı yayınlama)</span></div>
         </div>
         <div class="prompt-box">
-          <div class="prompt-label">AI Assist Promptu</div>
-          <div class="prompt-text">
+          <div class="prompt-label" id="t-c4-pl">AI Assist Promptu</div>
+          <div class="prompt-text" id="t-c4-pt">
             "Her gün saat 12:00'de son kripto haberlerinden otomatik bir dikey video üret, bu videoyu YouTube Shorts, Instagram Reels ve X üzerinde paylaş."
           </div>
         </div>
@@ -461,21 +446,21 @@
   <!-- Whitepaper / Manifesto Section -->
   <section class="container" id="whitepaper">
     <div class="whitepaper-section" style="padding: 60px 40px;">
-      <h2>Myca OS Whitepaper & Manifesto</h2>
-      <p>Myca, bulut sunucu bağımlılığını tamamen ortadan kaldıran, bilgisayarlarınızı birbirine bağlayarak ortak bir yapay zeka ağı oluşturan "Mycelium" (Fungal Ağ) mimarisi üzerine inşa edilmiştir. Bilgileriniz asla buluta gitmez, veri güvenliğiniz donanımınızın kontrolündedir.</p>
+      <h2 id="t-wp-title">Myca OS Whitepaper & Manifesto</h2>
+      <p id="t-wp-desc">Myca, bulut sunucu bağımlılığını tamamen ortadan kaldıran, bilgisayarlarınızı birbirine bağlayarak ortak bir yapay zeka ağı oluşturan "Mycelium" (Fungal Ağ) mimarisi üzerine inşa edilmiştir. Bilgileriniz asla buluta gitmez, veri güvenliğiniz donanımınızın kontrolündedir.</p>
       
       <div class="whitepaper-grid">
         <div class="wp-card">
-          <h4>%100 Yerel Yapay Zeka</h4>
-          <p>Tüm yapay zeka modelleri, ses tanıma motorları ve otomasyon planlayıcılar doğrudan kendi cihazlarınızın üzerinde (Ollama, local LLM) çalışır.</p>
+          <h4 id="t-wp-c1-t">%100 Yerel Yapay Zeka</h4>
+          <p id="t-wp-c1-d">Tüm yapay zeka modelleri, ses tanıma motorları ve otomasyon planlayıcılar doğrudan kendi cihazlarınızın üzerinde (Ollama, local LLM) çalışır.</p>
         </div>
         <div class="wp-card">
-          <h4>Model Context Protocol (MCP)</h4>
-          <p>Claude MCP altyapısı sayesinde sisteme yeni araçlar, veritabanları veya API entegrasyonları saniyeler içinde bağlanabilir.</p>
+          <h4 id="t-wp-c2-t">Model Context Protocol (MCP)</h4>
+          <p id="t-wp-c2-d">Claude MCP altyapısı sayesinde sisteme yeni araçlar, veritabanları veya API entegrasyonları saniyeler içinde bağlanabilir.</p>
         </div>
         <div class="wp-card">
-          <h4>Güvenli Şifre Koruması (Secrets)</h4>
-          <p>Email, Telegram ve API şifreleriniz yerel diskinizde owner-only yetkilerle kilitlenmiş SQLite veritabanı içinde korunur.</p>
+          <h4 id="t-wp-c3-t">Güvenli Şifre Koruması (Secrets)</h4>
+          <p id="t-wp-c3-d">Email, Telegram ve API şifreleriniz yerel diskinizde owner-only yetkilerle kilitlenmiş SQLite veritabanı içinde korunur.</p>
         </div>
       </div>
     </div>
@@ -484,9 +469,200 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>&copy; 2026 Myca OS. Tüm Hakları Saklıdır. Local-First AI Automation.</p>
+      <p id="t-foot-lic">&copy; 2026 Myca OS. Tüm Hakları Saklıdır. Local-First AI Automation.</p>
     </div>
   </footer>
 
+<script>
+  const translations = {
+    tr: {
+      nav_home: "Ana Sayfa",
+      nav_workflows: "İş Akışları",
+      nav_manifesto: "Manifesto",
+      hero_title: "İnternet, ama canlı ve otonom.",
+      hero_desc: "Myca OS, kurumsal şirketlerden KOBİ'lere, içerik üreticilerinden e-ticaret satıcılarına kadar tüm sektörlerin en kritik iş akışlarını yerel cihazlarında tamamen güvenli ve otonom şekilde yürütür.",
+      wf_title: "Popüler Otonom İş Akışları",
+      
+      c1_badge: "KOBİ / Esnaf",
+      c1_title: "Stok Takip ve Otomatik Sipariş",
+      c1_desc: "Stoğu azalan ürünlerinizi Excel'de tespit ederek tedarikçiye otomatik sipariş mailleri atar ve size Telegram'dan rapor verir.",
+      c1_s1: "fs.read (Stok listesini oku)",
+      c1_s2: "ai.summary (Kritik stokları ve sipariş formunu çıkar)",
+      c1_s3: "email.send (Tedarikçiye e-posta at)",
+      c1_s4: "telegram.send (KOBİ sahibine bildirim gönder)",
+      c1_pl: "AI Assist Promptu",
+      c1_pt: '"Kritik stoğu düşen ürünleri kontrol et, tedarikçiye sipariş geç ve bana Telegram\'dan haber ver."',
+
+      c2_badge: "E-Ticaret",
+      c2_title: "Dinamik Fiyat ve Rakip Takipçisi",
+      c2_desc: "Pazaryerlerindeki rakiplerin fiyatlarını günlük olarak izler, anomali tespiti yapar ve Telegram üzerinden anlık fiyat ayarlama önerileri gönderir.",
+      c2_s1: "browser.search (Trendyol/Hepsiburada rakip taraması)",
+      c2_s2: "ai.summary (Rakip fiyat analizini çıkar)",
+      c2_s3: "telegram.send (Ekibe akıllı fiyat önerisi gönder)",
+      c2_pl: "AI Assist Promptu",
+      c2_pt: '"Rakiplerin kulaklık fiyatlarını Trendyol\'da kontrol et ve fiyat analizini bana Telegram\'dan gönder."',
+
+      c3_badge: "Kurumsal / Enterprise",
+      c3_title: "Fatura ve OCR Muhasebe İşleme",
+      c3_desc: "Klasöre düşen yeni PDF faturaları anında okur, yapay zeka ile verileri ayıklayarak Excel'e yazar ve finans ekibine mail gönderir.",
+      c3_s1: "fs.list & fs.read (Fatura klasörünü izle ve oku)",
+      c3_s2: "ai.summary (Fatura tutar, KDV, Vergi No detaylarını ayıkla)",
+      c3_s3: "fs.write (CSV/Muhasebe tablosuna ekle)",
+      c3_s4: "email.send (Fatura işleme detaylarını accounting'e maille)",
+      c3_pl: "AI Assist Promptu",
+      c3_pt: '"Gelen faturaları tara, yapay zekayla bilgilerini çıkarıp Excel\'e yaz ve muhasebeye mail at."',
+
+      c4_badge: "Sosyal Medya & İçerik",
+      c4_title: "Otonom Video Üretim ve Çoklu Yayın",
+      c4_desc: "Belirlediğiniz bir konudan otomatik olarak dikey video üretir, bunu YouTube Shorts, Instagram Reels ve X üzerinde otomatik paylaşır.",
+      c4_s1: "video.generate (Video üretici API çağrısı)",
+      c4_s2: "youtube.upload (YouTube Shorts yüklemesi)",
+      c4_s3: "x.post & instagram.post (Sosyal ağlarda eş zamanlı yayınlama)",
+      c4_pl: "AI Assist Promptu",
+      c4_pt: '"Her gün saat 12:00\'de son kripto haberlerinden otomatik bir dikey video üret, bu videoyu YouTube Shorts, Instagram Reels ve X üzerinde paylaş."',
+
+      wp_title: "Myca OS Whitepaper & Manifesto",
+      wp_desc: 'Myca, bulut sunucu bağımlılığını tamamen ortadan kaldıran, bilgisayarlarınızı birbirine bağlayarak ortak bir yapay zeka ağı oluşturan "Mycelium" (Fungal Ağ) mimarisi üzerine inşa edilmiştir. Bilgileriniz asla buluta gitmez, veri güvenliğiniz donanımınızın kontrolündedir.',
+      wp_c1_t: "%100 Yerel Yapay Zeka",
+      wp_c1_d: "Tüm yapay zeka modelleri, ses tanıma motorları ve otomasyon planlayıcılar doğrudan kendi cihazlarınızın üzerinde (Ollama, local LLM) çalışır.",
+      wp_c2_t: "Model Context Protocol (MCP)",
+      wp_c2_d: "Claude MCP altyapısı sayesinde sisteme yeni araçlar, veritabanları veya API entegrasyonları saniyeler içinde bağlanabilir.",
+      wp_c3_t: "Güvenli Şifre Koruması (Secrets)",
+      wp_c3_d: "Email, Telegram ve API şifreleriniz yerel diskinizde owner-only yetkilerle kilitlenmiş SQLite veritabanı içinde korunur.",
+      
+      foot_lic: "© 2026 Myca OS. Tüm Hakları Saklıdır. Local-First AI Automation."
+    },
+    en: {
+      nav_home: "Home",
+      nav_workflows: "Workflows",
+      nav_manifesto: "Manifesto",
+      hero_title: "The internet, but alive and autonomous.",
+      hero_desc: "Myca OS runs the most critical workflows of all industries—from enterprise companies to SMEs, content creators to e-commerce sellers—entirely secure and autonomously on local devices.",
+      wf_title: "Popular Autonomous Workflows",
+      
+      c1_badge: "SME / Retail",
+      c1_title: "Stock Tracking & Auto-Reordering",
+      c1_desc: "Detects low stock items in Excel, emails suppliers automatically, and reports status updates directly to the owner via Telegram.",
+      c1_s1: "fs.read (Read stock list)",
+      c1_s2: "ai.summary (Extract critical stock levels)",
+      c1_s3: "email.send (Email purchase order to supplier)",
+      c1_s4: "telegram.send (Send stock notification to owner)",
+      c1_pl: "AI Assist Prompt",
+      c1_pt: '"Check critical stock levels, email the supplier, and notify me via Telegram."',
+
+      c2_badge: "E-Commerce",
+      c2_title: "Dynamic Pricing & Competitor Tracker",
+      c2_desc: "Scrapes competitor pricing daily, detects pricing anomalies, and sends real-time recommendation alerts via Telegram.",
+      c2_s1: "browser.search (Trendyol/Hepsiburada competitor check)",
+      c2_s2: "ai.summary (Extract competitor pricing analysis)",
+      c2_s3: "telegram.send (Send dynamic pricing suggestions to team)",
+      c2_pl: "AI Assist Prompt",
+      c2_pt: '"Check competitor headphone prices on Trendyol and send the analysis to me on Telegram."',
+
+      c3_badge: "Corporate / Enterprise",
+      c3_title: "Invoice & OCR Accounting Processor",
+      c3_desc: "Monitors invoice folders, reads PDF contents, extracts payment metadata via local AI, saves to CSV, and emails accounting.",
+      c3_s1: "fs.list & fs.read (Monitor and read invoice folder)",
+      c3_s2: "ai.summary (Extract total, tax, and registration details)",
+      c3_s3: "fs.write (Append new entry to CSV sheet)",
+      c3_s4: "email.send (Email invoice summary to accounting)",
+      c3_pl: "AI Assist Prompt",
+      c3_pt: '"Scan incoming invoices, extract details using AI, write to Excel, and email accounting."',
+
+      c4_badge: "Social Media & Creators",
+      c4_title: "Autonomous Video Generation & Social Publishing",
+      c4_desc: "Automatically generates vertical shorts from target scripts using AI, and publishes them across YouTube, Reels, and X.",
+      c4_s1: "video.generate (API request to generate video file)",
+      c4_s2: "youtube.upload (Upload video to YouTube Shorts)",
+      c4_s3: "x.post & instagram.post (Publish on social networks)",
+      c4_pl: "AI Assist Prompt",
+      c4_pt: '"Generate a vertical video daily at 12:00 about crypto news, and share it on YouTube, Reels, and X."',
+
+      wp_title: "Myca OS Whitepaper & Manifesto",
+      wp_desc: 'Myca is built on the "Mycelium" architecture, removing cloud server dependencies and linking your devices into a shared intelligence mesh. Your data remains entirely local.',
+      wp_c1_t: "100% Local AI",
+      wp_c1_d: "All AI models, speech-to-text engines, and automation planners run directly on your local hardware (Ollama, local LLM).",
+      wp_c2_t: "Model Context Protocol (MCP)",
+      wp_c2_d: "Integrate custom databases, third-party APIs, or external developer tools as dynamic skills using Claude MCP.",
+      wp_c3_t: "Secure Credentials (Secrets)",
+      wp_c3_d: "API keys, email SMTP passwords, and bot tokens are encrypted locally with owner-only system permissions.",
+      
+      foot_lic: "© 2026 Myca OS. All rights reserved. Local-First AI Automation."
+    }
+  };
+
+  let lang = 'tr';
+  window.toggleLang = () => {
+    lang = lang === 'tr' ? 'en' : 'tr';
+    const dict = translations[lang];
+    
+    // Header & Nav
+    document.getElementById('t-nav-home').innerText = dict.nav_home;
+    document.getElementById('t-nav-workflows').innerText = dict.nav_workflows;
+    document.getElementById('t-nav-manifesto').innerText = dict.nav_manifesto;
+    
+    // Hero
+    document.getElementById('t-hero-title').innerHTML = lang === 'tr' ? 'İnternet, ama <em>canlı</em> ve <em>otonom</em>.' : 'The internet, but <em>alive</em> and <em>autonomous</em>.';
+    document.getElementById('t-hero-desc').innerText = dict.hero_desc;
+    
+    // Title
+    document.getElementById('t-wf-title').innerText = dict.wf_title;
+    
+    // Card 1 (KOBI)
+    document.getElementById('t-c1-badge').innerText = dict.c1_badge;
+    document.getElementById('t-c1-title').innerText = dict.c1_title;
+    document.getElementById('t-c1-desc').innerText = dict.c1_desc;
+    document.getElementById('t-c1-s1').innerText = dict.c1_s1;
+    document.getElementById('t-c1-s2').innerText = dict.c1_s2;
+    document.getElementById('t-c1-s3').innerText = dict.c1_s3;
+    document.getElementById('t-c1-s4').innerText = dict.c1_s4;
+    document.getElementById('t-c1-pl').innerText = dict.c1_pl;
+    document.getElementById('t-c1-pt').innerText = dict.c1_pt;
+
+    // Card 2 (E-com)
+    document.getElementById('t-c2-badge').innerText = dict.c2_badge;
+    document.getElementById('t-c2-title').innerText = dict.c2_title;
+    document.getElementById('t-c2-desc').innerText = dict.c2_desc;
+    document.getElementById('t-c2-s1').innerText = dict.c2_s1;
+    document.getElementById('t-c2-s2').innerText = dict.c2_s2;
+    document.getElementById('t-c2-s3').innerText = dict.c2_s3;
+    document.getElementById('t-c2-pl').innerText = dict.c2_pl;
+    document.getElementById('t-c2-pt').innerText = dict.c2_pt;
+
+    // Card 3 (Corporate)
+    document.getElementById('t-c3-badge').innerText = dict.c3_badge;
+    document.getElementById('t-c3-title').innerText = dict.c3_title;
+    document.getElementById('t-c3-desc').innerText = dict.c3_desc;
+    document.getElementById('t-c3-s1').innerText = dict.c3_s1;
+    document.getElementById('t-c3-s2').innerText = dict.c3_s2;
+    document.getElementById('t-c3-s3').innerText = dict.c3_s3;
+    document.getElementById('t-c3-s4').innerText = dict.c3_s4;
+    document.getElementById('t-c3-pl').innerText = dict.c3_pl;
+    document.getElementById('t-c3-pt').innerText = dict.c3_pt;
+
+    // Card 4 (Creators)
+    document.getElementById('t-c4-badge').innerText = dict.c4_badge;
+    document.getElementById('t-c4-title').innerText = dict.c4_title;
+    document.getElementById('t-c4-desc').innerText = dict.c4_desc;
+    document.getElementById('t-c4-s1').innerText = dict.c4_s1;
+    document.getElementById('t-c4-s2').innerText = dict.c4_s2;
+    document.getElementById('t-c4-s3').innerText = dict.c4_s3;
+    document.getElementById('t-c4-pl').innerText = dict.c4_pl;
+    document.getElementById('t-c4-pt').innerText = dict.c4_pt;
+
+    // Whitepaper
+    document.getElementById('t-wp-title').innerText = dict.wp_title;
+    document.getElementById('t-wp-desc').innerText = dict.wp_desc;
+    document.getElementById('t-wp-c1-t').innerText = dict.wp_c1_t;
+    document.getElementById('t-wp-c1-d').innerText = dict.wp_c1_d;
+    document.getElementById('t-wp-c2-t').innerText = dict.wp_c2_t;
+    document.getElementById('t-wp-c2-d').innerText = dict.wp_c2_d;
+    document.getElementById('t-wp-c3-t').innerText = dict.wp_c3_t;
+    document.getElementById('t-wp-c3-d').innerText = dict.wp_c3_d;
+    
+    // Footer
+    document.getElementById('t-foot-lic').innerText = dict.foot_lic;
+  };
+</script>
 </body>
 </html>
