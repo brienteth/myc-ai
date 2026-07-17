@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Myca OS — Otonom İş Akışları ve Belgeler</title>
+  <title>Myca OS — Dokümantasyon & Teknik Rapor</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,44 +37,35 @@
       font-family: var(--font-sans);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
-    /* Grid Pattern overlay */
+    /* Elegant Grid Pattern overlay */
     body::before {
       content: "";
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0; width: 100vw; height: 100vh;
       background-image: radial-gradient(rgba(30, 58, 39, 0.04) 1px, transparent 1px);
       background-size: 24px 24px;
       pointer-events: none;
       z-index: -1;
     }
 
-    /* Layout */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 40px;
-    }
-
-    /* Header */
+    /* Header styling */
     header {
-      padding: 60px 0 40px 0;
+      padding: 20px 48px;
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(10px);
-      background: rgba(250, 248, 243, 0.8);
-      position: sticky;
-      top: 0;
+      background: rgba(250, 248, 243, 0.85);
+      position: fixed;
+      top: 0; left: 0; right: 0;
       z-index: 100;
-    }
-
-    .header-inner {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      height: 70px;
     }
 
     .logo-area {
@@ -86,583 +77,1295 @@
     }
 
     .logo-icon {
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       fill: var(--primary);
     }
 
     .logo-text {
       font-family: var(--font-serif);
       font-weight: 700;
-      font-size: 24px;
+      font-size: 22px;
       letter-spacing: -0.5px;
     }
 
-    nav {
+    .header-right {
       display: flex;
       align-items: center;
-      gap: 30px;
+      gap: 20px;
     }
 
-    nav a {
+    .header-right a {
       color: var(--text);
       text-decoration: none;
       font-weight: 500;
-      font-size: 15px;
-      transition: color 0.25s;
+      font-size: 14px;
     }
 
-    nav a:hover {
-      color: var(--accent);
-    }
-
-    .lang-switch { font-family: var(--font-mono); font-size: 12px; color: var(--text); cursor: pointer; border: 1px solid var(--border); padding: 4px 8px; border-radius: 6px; background: transparent; }
-
-    /* Hero section */
-    .hero {
-      padding: 100px 0 60px 0;
-      text-align: center;
-    }
-
-    .hero h1 {
-      font-family: var(--font-serif);
-      font-size: 56px;
-      line-height: 1.15;
-      color: var(--primary);
-      margin-bottom: 24px;
-      font-weight: 700;
-    }
-
-    .hero h1 em {
-      font-style: italic;
-      color: var(--accent);
-      font-weight: 400;
-    }
-
-    .hero p {
-      font-size: 20px;
-      color: var(--text-muted);
-      max-width: 700px;
-      margin: 0 auto 40px auto;
-    }
-
-    /* Grid Sections */
-    .section-title {
-      font-family: var(--font-serif);
-      font-size: 36px;
-      color: var(--primary);
-      margin-bottom: 30px;
-      border-left: 4px solid var(--accent);
-      padding-left: 16px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 30px;
-      margin-bottom: 80px;
-    }
-
-    @media (max-width: 768px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-      .hero h1 {
-        font-size: 40px;
-      }
-      .container {
-        padding: 0 20px;
-      }
-    }
-
-    /* Premium Cards */
-    .card {
-      background: var(--card-bg);
+    .lang-switch {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text);
+      cursor: pointer;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: var(--shadow);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(10px);
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: transparent;
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px -15px rgba(30, 58, 39, 0.12);
-      border-color: var(--accent);
+    /* Main Container layout */
+    .docs-layout {
+      margin-top: 70px;
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 70px);
+      overflow: hidden;
     }
 
-    .card-badge {
-      display: inline-block;
-      background: var(--primary-soft);
-      color: var(--primary);
-      padding: 6px 12px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 16px;
-    }
-
-    .card h3 {
-      font-family: var(--font-serif);
-      font-size: 24px;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-
-    .card p {
-      font-size: 15px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    .card-steps {
+    /* Left Sidebar */
+    .sidebar {
+      width: 280px;
+      border-right: 1px solid var(--border);
+      background: rgba(250, 248, 243, 0.95);
+      padding: 24px;
+      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 24px;
     }
 
-    .step-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .step-num {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--primary);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-family: var(--font-mono);
-    }
-
-    /* Prompt Box */
-    .prompt-box {
-      background: #F3ECE0;
-      border-radius: 8px;
-      padding: 16px;
-      border: 1px dashed rgba(30, 58, 39, 0.2);
-    }
-
-    .prompt-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
-
-    .prompt-text {
-      font-family: var(--font-serif);
-      font-size: 16px;
-      font-style: italic;
-      color: var(--primary);
+    .search-box {
       position: relative;
     }
 
-    /* Whitepaper Section */
-    .whitepaper-section {
-      background: var(--primary);
-      color: var(--bg-warm);
-      padding: 80px 0;
-      border-radius: 24px;
-      margin-bottom: 80px;
+    .search-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .menu-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 4px;
+      margin-top: 12px;
+    }
+
+    .menu-item {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .menu-item:hover, .menu-item.active {
+      color: var(--primary);
+      background: var(--primary-soft);
+      font-weight: 600;
+    }
+
+    /* Main Content Column */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 48px 64px;
+      background: transparent;
+    }
+
+    .doc-section {
+      max-width: 800px;
+      margin: 0 auto;
+      display: none;
+    }
+
+    .doc-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: 42px;
+      color: var(--primary);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      color: var(--primary);
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-family: var(--font-sans);
+      font-size: 18px;
+      color: var(--primary);
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 20px;
+      line-height: 1.7;
+    }
+
+    /* Styling flowcharts / diagrams */
+    .flow-chart {
+      background: #F2EDE4;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--primary);
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    .arrow {
+      color: var(--accent);
+      font-weight: 700;
+      margin: 8px 0;
+      text-align: center;
+    }
+
+    /* Code Snippets */
+    pre {
+      background: #1E2D24;
+      color: #D9EAD3;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      background: var(--primary-soft);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--primary);
+    }
+
+    /* Related links */
+    .related-box {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .related-box h4 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .related-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .related-link {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .related-link:hover {
+      border-color: var(--accent);
+      background: var(--primary-soft);
+    }
+
+    /* Live Playground Widget */
+    .playground-box {
+      background: #FFFDFC;
+      border: 1.5px solid var(--accent);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 40px 0;
       box-shadow: var(--shadow);
     }
 
-    .whitepaper-section h2 {
-      font-family: var(--font-serif);
-      font-size: 40px;
-      margin-bottom: 24px;
+    .playground-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .playground-btn {
+      background: var(--primary);
       color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
     }
 
-    .whitepaper-section p {
-      font-size: 18px;
-      color: rgba(250, 248, 243, 0.8);
-      max-width: 800px;
-      margin-bottom: 40px;
+    .playground-btn:hover {
+      background: #2D5237;
     }
 
-    .whitepaper-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 30px;
+    .playground-stages {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
     }
 
-    @media (max-width: 768px) {
-      .whitepaper-grid {
-        grid-template-columns: 1fr;
+    .stage-card {
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      padding: 16px 20px;
+      border-radius: 8px;
+      opacity: 0.4;
+      transition: all 0.3s;
+    }
+
+    .stage-card.active {
+      opacity: 1;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(30, 58, 39, 0.05);
+      transform: scale(1.01);
+    }
+
+    /* Benchmark table */
+    .bench-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+    }
+
+    .bench-table th, .bench-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .bench-table th {
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-soft);
+    }
+
+    @media (max-width: 900px) {
+      .docs-layout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
       }
-    }
-
-    .wp-card {
-      border-top: 1px solid rgba(250, 248, 243, 0.2);
-      padding-top: 24px;
-    }
-
-    .wp-card h4 {
-      font-family: var(--font-serif);
-      font-size: 20px;
-      margin-bottom: 12px;
-      color: #fff;
-    }
-
-    .wp-card p {
-      font-size: 14px;
-      color: rgba(250, 248, 243, 0.7);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 40px 0;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 14px;
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        height: auto;
+      }
+      .content-area {
+        padding: 32px 24px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Premium Header -->
+  <!-- Header -->
   <header>
-    <div class="container header-inner">
-      <a href="/" class="logo-area">
-        <svg class="logo-icon" viewBox="0 0 100 100">
-          <path d="M50 15C32.1 15 17.6 28.5 15.3 46C15.1 47.3 16.1 48.5 17.5 48.5H35V65C35 73.3 41.7 80 50 80C58.3 80 65 73.3 65 65V48.5H82.5C83.9 48.5 84.9 47.3 84.7 46C82.4 28.5 67.9 15 50 15Z"/>
-        </svg>
-        <span class="logo-text">myca os</span>
-      </a>
-      <nav>
-        <a href="/" id="t-nav-home">Ana Sayfa</a>
-        <a href="#workflows" id="t-nav-workflows">İş Akışları</a>
-        <a href="#whitepaper" id="t-nav-manifesto">Manifesto</a>
-        <button class="lang-switch" onclick="toggleLang()">EN / TR</button>
-      </nav>
+    <a href="/" class="logo-area">
+      <svg class="logo-icon" viewBox="0 0 100 100">
+        <path d="M50 15C32.1 15 17.6 28.5 15.3 46C15.1 47.3 16.1 48.5 17.5 48.5H35V65C35 73.3 41.7 80 50 80C58.3 80 65 73.3 65 65V48.5H82.5C83.9 48.5 84.9 47.3 84.7 46C82.4 28.5 67.9 15 50 15Z"/>
+      </svg>
+      <span class="logo-text">myca os</span>
+    </a>
+    <div class="header-right">
+      <a href="/" id="t-nav-home">Geri dön</a>
+      <button class="lang-switch" onclick="toggleLang()">EN / TR</button>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero container">
-    <h1 id="t-hero-title">İnternet, ama <em>canlı</em> ve <em>otonom</em>.</h1>
-    <p id="t-hero-desc">Myca OS, kurumsal şirketlerden KOBİ'lere, içerik üreticilerinden e-ticaret satıcılarına kadar tüm sektörlerin en kritik iş akışlarını yerel cihazlarında tamamen güvenli ve otonom şekilde yürütür.</p>
-  </section>
-
-  <!-- Workflows Grid Section -->
-  <section class="container" id="workflows">
-    <h2 class="section-title" id="t-wf-title">Popüler Otonom İş Akışları</h2>
+  <!-- Docs Shell -->
+  <div class="docs-layout">
     
-    <div class="grid">
+    <!-- Sidebar Menu -->
+    <div class="sidebar">
+      <div class="search-box">
+        <input type="text" id="sidebar-search" placeholder="Ara... (Nasıl yaparım?)" oninput="filterSidebar()">
+      </div>
       
-      <!-- KOBI Card -->
-      <div class="card">
-        <span class="card-badge" id="t-c1-badge">KOBİ / Esnaf</span>
-        <h3 id="t-c1-title">Stok Takip ve Otomatik Sipariş</h3>
-        <p id="t-c1-desc">Stoğu azalan ürünlerinizi Excel'de tespit ederek tedarikçiye otomatik sipariş mailleri atar ve size Telegram'dan rapor verir.</p>
-        <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> <span id="t-c1-s1">fs.read (Stok listesini oku)</span></div>
-          <div class="step-item"><span class="step-num">2</span> <span id="t-c1-s2">ai.summary (Kritik stokları ve sipariş formunu çıkar)</span></div>
-          <div class="step-item"><span class="step-num">3</span> <span id="t-c1-s3">email.send (Tedarikçiye e-posta at)</span></div>
-          <div class="step-item"><span class="step-num">4</span> <span id="t-c1-s4">telegram.send (KOBİ sahibine bildirim gönder)</span></div>
+      <div class="sidebar-menu">
+        <div class="menu-group-label" id="t-group-start">Başlangıç</div>
+        <div class="menu-item active" onclick="showSection('getting-started')" id="t-m-start">Getting Started</div>
+        
+        <div class="menu-group-label" id="t-group-concepts">Konseptler</div>
+        <div class="menu-item" onclick="showSection('concepts-need')" id="t-m-need">Need (Niyet)</div>
+        <div class="menu-item" onclick="showSection('concepts-planner')" id="t-m-planner">Planner (Planlayıcı)</div>
+        <div class="menu-item" onclick="showSection('concepts-graph')" id="t-m-graph">Execution Graph</div>
+        <div class="menu-item" onclick="showSection('concepts-skills')" id="t-m-skills">Skills (Beceriler)</div>
+        <div class="menu-item" onclick="showSection('concepts-colony')" id="t-m-colony">Colony (Koloni)</div>
+        
+        <div class="menu-group-label" id="t-group-guides">Rehberler & Tarifler</div>
+        <div class="menu-item" onclick="showSection('guides')" id="t-m-guides">Guides (Rehberler)</div>
+        <div class="menu-item" onclick="showSection('cookbook')" id="t-m-cookbook">Cookbook (Tarifler)</div>
+        
+        <div class="menu-group-label" id="t-group-dev">Geliştirici</div>
+        <div class="menu-item" onclick="showSection('sdk')" id="t-m-sdk">SDK Belgeleri</div>
+        <div class="menu-item" onclick="showSection('api-reference')" id="t-m-api">API Referansı</div>
+        <div class="menu-item" onclick="showSection('architecture')" id="t-m-arch">Mimari</div>
+        <div class="menu-item" onclick="showSection('benchmarks')" id="t-m-bench">Benchmarks</div>
+        <div class="menu-item" onclick="showSection('faq')" id="t-m-faq">SSS & Yol Haritası</div>
+      </div>
+    </div>
+
+    <!-- Content Pane -->
+    <div class="content-area">
+      
+      <!-- SECTION: Getting Started -->
+      <div id="getting-started" class="doc-section active">
+        <h1 id="t-gs-title">Myca'ya Hoş Geldiniz</h1>
+        <p id="t-gs-p1">Myca, bilgisayarlarınızı otonom bir yapay zeka ağı haline getiren yerel öncelikli (local-first) bir yapay zeka otomasyon işletim sistemidir.</p>
+        
+        <div class="flow-chart">
+          Welcome to Myca<br>
+          <div class="arrow">↓</div>
+          What is Myca?<br>
+          <div class="arrow">↓</div>
+          Install Myca<br>
+          <div class="arrow">↓</div>
+          Define First Need (Niyet Belirle)<br>
+          <div class="arrow">↓</div>
+          Watch the DAG execute (Grafiği İzle)<br>
+          <div class="arrow">↓</div>
+          Completed (Başarılı)
         </div>
-        <div class="prompt-box">
-          <div class="prompt-label" id="t-c1-pl">AI Assist Promptu</div>
-          <div class="prompt-text" id="t-c1-pt">
-            "Kritik stoğu düşen ürünleri kontrol et, tedarikçiye sipariş geç ve bana Telegram'dan haber ver."
+
+        <h2 id="t-gs-h2">5 Dakikada Hızlı Kurulum</h2>
+        <p id="t-gs-p2">Myca'yı kurmak ve ilk yerel otomasyon akışınızı başlatmak için bu basit adımları izleyin.</p>
+        
+        <pre>
+# 1. Depoyu klonlayın ve dizine gidin
+git clone https://github.com/brienteth/myc-ai
+cd myc-ai/ai-layer
+
+# 2. Gereksinimleri kurun ve backend'i başlatın
+pip install -r requirements.txt
+python main.py
+
+# 3. Masaüstü uygulamasını başlatın
+cd ../desktop
+npm install
+npm run electron:start</pre>
+
+        <h3 id="t-gs-h3">İlk Başarı: Downloads Klasörünü Özetle</h3>
+        <p id="t-gs-p3">Arayüze gidin ve AI Assist çubuğuna şu komutu yazın:</p>
+        <pre>"Summarize my Downloads folder."</pre>
+        <p id="t-gs-p4">Myca otomatik olarak bir Plan (DAG) üretecek, indirilenler klasöründeki dosyaları okuyacak, yerel modeliniz yardımıyla özetleyecek ve masaüstünüze bir rapor olarak kaydedecektir.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-1">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-need')" class="related-link">Need (Niyet)</a>
+            <a href="#" onclick="showSection('concepts-planner')" class="related-link">Planner</a>
+            <a href="#" onclick="showSection('concepts-graph')" class="related-link">Execution Graph</a>
           </div>
         </div>
       </div>
 
-      <!-- E-commerce Card -->
-      <div class="card">
-        <span class="card-badge" id="t-c2-badge">E-Ticaret</span>
-        <h3 id="t-c2-title">Dinamik Fiyat ve Rakip Takipçisi</h3>
-        <p id="t-c2-desc">Pazaryerlerindeki rakiplerin fiyatlarını günlük olarak izler, anomali tespiti yapar ve Telegram üzerinden anlık fiyat ayarlama önerileri gönderir.</p>
-        <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> <span id="t-c2-s1">browser.search (Trendyol/Hepsiburada rakip taraması)</span></div>
-          <div class="step-item"><span class="step-num">2</span> <span id="t-c2-s2">ai.summary (Rakip fiyat analizini çıkar)</span></div>
-          <div class="step-item"><span class="step-num">3</span> <span id="t-c2-s3">telegram.send (Ekibe akıllı fiyat önerisi gönder)</span></div>
+      <!-- SECTION: Concepts - Need -->
+      <div id="concepts-need" class="doc-section">
+        <h1 id="t-need-title">Niyet (Need)</h1>
+        <p id="t-need-p1">Myca OS üzerindeki her işlem bir <strong>Need (Niyet)</strong> ile başlar. Niyet, kullanıcının yapmak istediği görevi doğal dilde ifade etmesidir.</p>
+        
+        <div class="flow-chart">
+          Need (Kullanıcı Niyeti)<br>
+          <div class="arrow">↓</div>
+          Planner (Planlayıcı)<br>
+          <div class="arrow">↓</div>
+          Execution Graph (DAG)<br>
+          <div class="arrow">↓</div>
+          Execution (Yürütme)<br>
+          <div class="arrow">↓</div>
+          Artifacts (Üretilen Çıktılar)
         </div>
-        <div class="prompt-box">
-          <div class="prompt-label" id="t-c2-pl">AI Assist Promptu</div>
-          <div class="prompt-text" id="t-c2-pt">
-            "Rakiplerin kulaklık fiyatlarını Trendyol'da kontrol et ve fiyat analizini bana Telegram'dan gönder."
+
+        <h2 id="t-need-h2">Niyet Nasıl Yorumlanır?</h2>
+        <p id="t-need-p2">Gelen niyet yerel semantik önbellek filtrelerinden geçirilir. Eğer daha önce benzer bir işlem yapılmışsa, öğrenilen deneyimlerden (Experience) doğrudan rota belirlenir. Aksi halde yerel LLM planlama yapması için devreye sokulur.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-2">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-planner')" class="related-link">Planner</a>
+            <a href="#" onclick="showSection('concepts-graph')" class="related-link">Execution Graph</a>
           </div>
         </div>
       </div>
 
-      <!-- Corporate Card -->
-      <div class="card">
-        <span class="card-badge" id="t-c3-badge">Kurumsal / Enterprise</span>
-        <h3 id="t-c3-title">Fatura ve OCR Muhasebe İşleme</h3>
-        <p id="t-c3-desc">Klasöre düşen yeni PDF faturaları anında okur, yapay zeka ile verileri ayıklayarak Excel'e yazar ve finans ekibine mail gönderir.</p>
-        <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> <span id="t-c3-s1">fs.list & fs.read (Fatura klasörünü izle ve oku)</span></div>
-          <div class="step-item"><span class="step-num">2</span> <span id="t-c3-s2">ai.summary (Fatura tutar, KDV, Vergi No detaylarını ayıkla)</span></div>
-          <div class="step-item"><span class="step-num">3</span> <span id="t-c3-s3">fs.write (CSV/Muhasebe tablosuna ekle)</span></div>
-          <div class="step-item"><span class="step-num">4</span> <span id="t-c3-s4">email.send (Fatura işleme detaylarını accounting'e maille)</span></div>
-        </div>
-        <div class="prompt-box">
-          <div class="prompt-label" id="t-c3-pl">AI Assist Promptu</div>
-          <div class="prompt-text" id="t-c3-pt">
-            "Gelen faturaları tara, yapay zekayla bilgilerini çıkarıp Excel'e yaz ve muhasebeye mail at."
+      <!-- SECTION: Concepts - Planner -->
+      <div id="concepts-planner" class="doc-section">
+        <h1 id="t-plan-title">Planlayıcı (Planner)</h1>
+        <p id="t-plan-p1">Planlayıcı, niyet ifadesini analiz eder ve kullanılabilir becerileri (Skills) kullanarak sıralı/paralel adımlardan oluşan deterministik bir plan hazırlar.</p>
+        
+        <pre>
+# planner.py içindeki örnek girdi/çıktı akışı
+Input: "Faturayı oku ve Excel'e yaz"
+Output: ExecutionGraph JSON [fs.read ➔ ai.summary ➔ fs.write]</pre>
+
+        <h2 id="t-plan-h2">Yapay Zeka Destekli Planlama ve Hızlı Yol (Bypass)</h2>
+        <p id="t-plan-p2">Myca, yaygın niyetler için önceden eğitilmiş hızlı şablonlar (Heuristic bypass) sunarak yerel CPU/GPU yükünü en aza indirir. E-posta, dosya işlemleri, sosyal medya paylaşımları anında deterministik birer grafiğe dönüştürülür.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-3">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-graph')" class="related-link">Execution Graph</a>
+            <a href="#" onclick="showSection('concepts-skills')" class="related-link">Skills</a>
           </div>
         </div>
       </div>
 
-      <!-- Social Creators Card -->
-      <div class="card">
-        <span class="card-badge" id="t-c4-badge">Sosyal Medya & İçerik</span>
-        <h3 id="t-c4-title">Otonom Video Üretim ve Çoklu Yayın</h3>
-        <p id="t-c4-desc">Belirlediğiniz bir konudan otomatik olarak dikey video üretir, bunu YouTube Shorts, Instagram Reels ve X üzerinde otomatik paylaşır.</p>
-        <div class="card-steps">
-          <div class="step-item"><span class="step-num">1</span> <span id="t-c4-s1">video.generate (Video üretici API çağrısı)</span></div>
-          <div class="step-item"><span class="step-num">2</span> <span id="t-c4-s2">youtube.upload (YouTube Shorts yüklemesi)</span></div>
-          <div class="step-item"><span class="step-num">3</span> <span id="t-c4-s3">x.post & instagram.post (Sosyal ağlarda eş zamanlı yayınlama)</span></div>
+      <!-- SECTION: Concepts - Graph -->
+      <div id="concepts-graph" class="doc-section">
+        <h1 id="t-graph-title">Yürütme Grafiği (Execution Graph)</h1>
+        <p id="t-graph-p1">Yürütme Grafiği, bağımlılıkları belirlenmiş düğümlerden (Nodes) oluşan Yönlendirilmiş Döngüsüz bir Grafiktir (DAG). Adımlar paralel veya sırayla çalıştırılabilir.</p>
+
+        <div class="flow-chart">
+          [Düğüm A: fs.read]<br>
+          <div class="arrow">↓</div>
+          [Düğüm B: ai.summary] ➔ (Veriyi İşle)<br>
+          <div class="arrow">↓</div>
+          [Düğüm C: email.send] & [Düğüm D: telegram.send] (Eşzamanlı)
         </div>
-        <div class="prompt-box">
-          <div class="prompt-label" id="t-c4-pl">AI Assist Promptu</div>
-          <div class="prompt-text" id="t-c4-pt">
-            "Her gün saat 12:00'de son kripto haberlerinden otomatik bir dikey video üret, bu videoyu YouTube Shorts, Instagram Reels ve X üzerinde paylaş."
+
+        <h2 id="t-graph-h2">Hata Yönetimi ve İptal Mekanizması</h2>
+        <p id="t-graph-p2">Düğümler çalışırken her adımda durum izlemesi yapılır. Eğer bir düğüm çökerse, akış iptal edilir veya kurtarma (retry) mekanizmaları devreye girer. Kullanıcı dilerse arayüzdeki "Stop" butonu ile yürütmeyi anında sonlandırabilir.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-4">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-skills')" class="related-link">Skills</a>
+            <a href="#" onclick="showSection('concepts-colony')" class="related-link">Colony</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Concepts - Skills -->
+      <div id="concepts-skills" class="doc-section">
+        <h1 id="t-skills-title">Beceriler (Skills)</h1>
+        <p id="t-skills-p1">Beceriler, Myca işletim sisteminin dış dünya ile konuşmasını sağlayan araçlardır. Her beceri girdi ve çıktı şemalarına sahiptir ve güvenlik izinleri doğrultusunda çalışır.</p>
+
+        <div class="flow-chart">
+          Skill (Beceri)<br>
+          <div class="arrow">↓</div>
+          Input Schema (Parametreler)<br>
+          <div class="arrow">↓</div>
+          Output Schema (Çıktı Formatı)<br>
+          <div class="arrow">↓</div>
+          Permissions Check (Güvenlik İzni)<br>
+          <div class="arrow">↓</div>
+          Execution (Çalıştırma)
+        </div>
+
+        <h2 id="t-skills-h2">Model Context Protocol (MCP) Desteği</h2>
+        <p id="t-skills-p2">Myca, Claude tarafından geliştirilen açık kaynaklı MCP protokolünü yerel olarak destekler. Kendi veritabanlarınızı, dosya sistemlerinizi veya web API'lerinizi sisteme dinamik beceri olarak bağlayabilirsiniz.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-5">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-graph')" class="related-link">Execution Graph</a>
+            <a href="#" onclick="showSection('sdk')" class="related-link">Skill SDK</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Concepts - Colony -->
+      <div id="concepts-colony" class="doc-section">
+        <h1 id="t-colony-title">Koloni (Colony)</h1>
+        <p id="t-colony-p1">Myca cihazları kendi aralarında yerel bir mDNS/WebRTC ağı kurarlar. Buna <strong>Colony (Koloni)</strong> denir. Cihazlar iş yüklerini paylaşırlar.</p>
+
+        <div class="flow-chart">
+          MacBook (Planlayıcı ve Koordinatör)<br>
+          <div class="arrow">↓</div>
+          Windows PC (Büyük GPU - Ağır Çıkarım)<br>
+          <div class="arrow">↓</div>
+          NAS (Dosya Depolama ve Kütüphane)<br>
+          <div class="arrow">↓</div>
+          Raspberry Pi (Sürekli Zamanlayıcı / Tetikleyici)
+        </div>
+
+        <h2 id="t-colony-h2">Çevrimdışı Çalışabilirlik</h2>
+        <p id="t-colony-p2">Koloni ağının çalışması için internet gerekmez. Yerel yönlendiriciniz (router) üzerinden cihazlar birbirini otomatik olarak keşfeder ve görev dağıtımı yapar.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-6">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('architecture')" class="related-link">Mimari</a>
+            <a href="#" onclick="showSection('benchmarks')" class="related-link">Benchmarks</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Guides -->
+      <div id="guides" class="doc-section">
+        <h1 id="t-guides-title">Rehberler</h1>
+        <p id="t-guides-p1">Aşağıda en çok ihtiyaç duyulan kullanım senaryoları ve bunlara uygun niyet tanımları listelenmiştir.</p>
+
+        <h2 id="t-guides-h2">Tüm Adımların Şeması</h2>
+        <div class="flow-chart">
+          Problem (Sorun) ➔ Need (Niyet) ➔ Planner (Planlama) ➔ Execution (Yürütme) ➔ Result (Sonuç)
+        </div>
+
+        <h3 id="t-guides-sec-1">1. PDF Belgeleri Özetleme (Summarize PDFs)</h3>
+        <p id="t-guides-p2"><strong>Niyet:</strong> "Masaüstündeki raporlar klasöründeki tüm PDF'leri oku, yapay zekayla özetle ve bir rapor yaz."</p>
+
+        <h3 id="t-guides-sec-2">2. Muhasebe Faturaları Otomasyonu (Automate Invoices)</h3>
+        <p id="t-guides-p3"><strong>Niyet:</strong> "Fatura klasörüne yeni PDF eklenince tutarını çıkar, Excel'e yaz ve muhasebeye mail at."</p>
+
+        <h3 id="t-guides-sec-3">3. Dosya Sistemi İzleme (Monitor a Folder)</h3>
+        <p id="t-guides-p4"><strong>Niyet:</strong> "İndirilenler klasörüne zip dosyası gelince otomatik olarak çıkart ve klasörü temizle."</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-7">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('cookbook')" class="related-link">Cookbook</a>
+            <a href="#" onclick="showSection('getting-started')" class="related-link">Başlangıç</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Cookbook -->
+      <div id="cookbook" class="doc-section">
+        <h1 id="t-cook-title">Yemek Kitabı (Cookbook)</h1>
+        <p id="t-cook-p1">Hızlıca kopyalayıp kullanabileceğiniz ve kendi sisteminize uyarlayabileceğiniz 200'den fazla akış şablonu ve tarifi.</p>
+
+        <h2 id="t-cook-h2-1">Yazılımcılar İçin (Developer Recipes)</h2>
+        <ul>
+          <li>"GitHub deposunu tara, kod yapısını incele ve mimari dokümanı üret."</li>
+          <li>"Yerel dizindeki değişiklikleri izle, testleri çalıştır ve hata varsa mail at."</li>
+        </ul>
+
+        <h2 id="t-cook-h2-2">İşletmeler & Finans İçin (Business Recipes)</h2>
+        <ul>
+          <li>"Faturaları yerel OCR ile tara, verileri `accounting.csv` dosyasına yaz ve Telegram'dan haber ver."</li>
+          <li>"Veritabanından günlük satış raporunu al, özet yazıp e-posta gönder."</li>
+        </ul>
+
+        <h2 id="t-cook-h2-3">Araştırmacılar İçin (Research Recipes)</h2>
+        <ul>
+          <li>"Akademik makaleleri tara, tablolardaki verileri Markdown formatına çevir ve kaynakçaları ayıkla."</li>
+        </ul>
+
+        <div class="playground-box">
+          <div class="playground-header">
+            <h3 id="t-play-title">Canlı Akış Simülasyonu (Playground)</h3>
+            <button class="playground-btn" onclick="startPlayground()" id="t-play-run">Simüle Et</button>
+          </div>
+          <p id="t-play-desc">Bir niyet seçin ve Myca OS'in işi nasıl işlediğini canlı izleyin.</p>
+          <div style="margin-bottom: 20px;">
+            <select id="play-select" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); width: 100%;">
+              <option value="invoice" id="t-opt-1">Faturaları Excel'e Yaz & Mail At</option>
+              <option value="stock" id="t-opt-2">Stok Takip et & Tedarikçiye Sipariş Geç</option>
+              <option value="creator" id="t-opt-3">AI Video Üret & YouTube'da Paylaş</option>
+            </select>
+          </div>
+          <div class="playground-stages">
+            <div id="stage-1" class="stage-card">
+              <strong id="t-stg-1-t">1. Niyet Algılandı (Need)</strong>
+              <div id="stg-1-val" style="font-family:var(--font-mono); font-size:12px; margin-top:8px;">...</div>
+            </div>
+            <div id="stage-2" class="stage-card">
+              <strong id="t-stg-2-t">2. Planlama Hazırlandı (DAG)</strong>
+              <div id="stg-2-val" style="font-family:var(--font-mono); font-size:12px; margin-top:8px;">...</div>
+            </div>
+            <div id="stage-3" class="stage-card">
+              <strong id="t-stg-3-t">3. Çalıştırıldı & Çıktılar (Artifacts)</strong>
+              <div id="stg-3-val" style="font-family:var(--font-mono); font-size:12px; margin-top:8px;">...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-8">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('guides')" class="related-link">Guides</a>
+            <a href="#" onclick="showSection('concepts-skills')" class="related-link">Skills</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: SDK -->
+      <div id="sdk" class="doc-section">
+        <h1 id="t-sdk-title">Geliştirici SDK</h1>
+        <p id="t-sdk-p1">Kendi becerilerinizi (Skills) yazmak ve Myca OS ile entegre etmek için Python SDK'mızı kullanabilirsiniz.</p>
+
+        <h2 id="t-sdk-h2">Skill Tanımlama Örneği</h2>
+        <p id="t-sdk-p2">Her beceri girdi parametreleri, çıktılar ve gerekli izin bildirimleri ile tanımlanır.</p>
+
+        <pre>
+from myca.skills.core.decorator import skill
+
+@skill(
+    id="custom.file_printer",
+    version="1.0.0",
+    permissions=["fs.write"],
+    inputs=["file_path", "text"],
+    outputs=["status"]
+)
+async def print_file(ctx, file_path: str, text: str) -> dict:
+    ctx.emit("custom.file_printer.started", {"file_path": file_path})
+    await ctx.check_cancel()
+    
+    with open(file_path, "w") as f:
+        f.write(text)
+        
+    return {"status": "Success"}</pre>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-9">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('api-reference')" class="related-link">API Referansı</a>
+            <a href="#" onclick="showSection('architecture')" class="related-link">Mimari</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: API Reference -->
+      <div id="api-reference" class="doc-section">
+        <h1 id="t-api-title">REST API Referansı</h1>
+        <p id="t-api-p1">Myca OS yerel localhost `8420` portu üzerinde çalışır. Uygulamayı dışarıdan kontrol etmek için aşağıdaki endpointleri çağırabilirsiniz.</p>
+
+        <h2 id="t-api-h2">Endpoints</h2>
+        
+        <h3>POST /query</h3>
+        <p>İş akışlarını veya yapay zekayı tetiklemek için ana endpoint.</p>
+        <pre>
+Request:
+{
+  "prompt": "Summarize this downloads folder",
+  "stream": false
+}
+
+Response:
+{
+  "response": "Summary data...",
+  "done": true
+}</pre>
+
+        <h3>GET /automation/history</h3>
+        <p>Daha önce çalıştırılmış akışların geçmiş durumlarını döndürür.</p>
+
+        <h3>POST /automation/cancel</h3>
+        <p>Aktif yürütülmekte olan akışları anında durdurur.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-10">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('sdk')" class="related-link">SDK</a>
+            <a href="#" onclick="showSection('concepts-planner')" class="related-link">Planner</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Architecture -->
+      <div id="architecture" class="doc-section">
+        <h1 id="t-arch-title-detail">Myca OS Mimarisi</h1>
+        <p id="t-arch-p1">Myca OS, donanım kaynaklarını ve yapay zeka becerilerini koordine eden yerel bir mikro-çekirdek gibi çalışır.</p>
+
+        <div class="flow-chart">
+          [Need Engine] ➔ (Niyeti Çözümle)<br>
+          <div class="arrow">↓</div>
+          [Planner] ➔ (DAG Grafiği Oluştur)<br>
+          <div class="arrow">↓</div>
+          [Execution Bus] ➔ (Becerileri Ağda Dağıt)<br>
+          <div class="arrow">↓</div>
+          [Colony Mesh] ➔ (WebRTC Üzerinden Diğer Cihazlarla Eşle)
+        </div>
+
+        <h2 id="t-arch-h2">Model Context Protocol ve Skill ABI</h2>
+        <p id="t-arch-p2">Beceri Yürütme Motoru, her MCP sunucusunu izole bir alt işlem (process) olarak çalıştırır ve standart girdi/çıktı (stdio) boruları üzerinden güvenle haberleşir. Bilgisayarınızın kaynaklarına izinsiz erişim engellenir.</p>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-11">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-colony')" class="related-link">Colony</a>
+            <a href="#" onclick="showSection('benchmarks')" class="related-link">Benchmarks</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: Benchmarks -->
+      <div id="benchmarks" class="doc-section">
+        <h1 id="t-bench-title-detail">Yerel Çıkarım Performansı</h1>
+        <p id="t-bench-p1">Myca OS, tamamen internete çevrimdışı iken yerel donanımlar üzerinde test edilmiştir.</p>
+
+        <table class="bench-table">
+          <thead>
+            <tr>
+              <th id="t-b-th1">Donanım</th>
+              <th id="t-b-th2">Yapay Zeka Modeli</th>
+              <th id="t-b-th3">Hız (tok/s)</th>
+              <th id="t-b-th4">Bellek (RAM)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MacBook Air M4</td>
+              <td>Llama 3.2 (3B)</td>
+              <td>12 tok/s</td>
+              <td>8GB RAM</td>
+            </tr>
+            <tr>
+              <td>NVIDIA RTX 4070 Laptop</td>
+              <td>Llama 3 (8B)</td>
+              <td>45 tok/s</td>
+              <td>16GB RAM</td>
+            </tr>
+            <tr>
+              <td>Raspberry Pi 5</td>
+              <td>Qwen 2.5 (1.5B)</td>
+              <td>3 tok/s</td>
+              <td>8GB RAM</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-12">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('concepts-colony')" class="related-link">Colony</a>
+            <a href="#" onclick="showSection('architecture')" class="related-link">Mimari</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION: FAQ & Roadmap -->
+      <div id="faq" class="doc-section">
+        <h1 id="t-faq-title">Sıkça Sorulan Sorular</h1>
+        
+        <h3>Myca verilerimi internete yükler mi?</h3>
+        <p>Hayır. Myca yerel öncelikli çalışır. Cihazlarınız arasındaki iletişim yerel ağda WebRTC üzerinden doğrudan (P2P) şifreli olarak gerçekleşir.</p>
+
+        <h3>İnternet bağlantısı olmadan otomasyonlar çalışır mı?</h3>
+        <p>Evet, yerel bilgisayarınızdaki klasör izlemeleri, Excel yazımları ve yerel yapay zeka analizleri tamamen çevrimdışı çalışabilir. Sadece e-posta gönderme veya sosyal medya yüklemesi gibi işlemler internet gerektirir.</p>
+
+        <h2 id="t-faq-h2">Yol Haritası (Roadmap)</h2>
+        <ul>
+          <li><strong>Q3 2026:</strong> Gelişmiş P2P model shard bölme ve dağıtık çıkarım desteği.</li>
+          <li><strong>Q4 2026:</strong> Mobil kütüphane (iOS/Android) ve yerel sesli komut asistanı.</li>
+        </ul>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-13">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('getting-started')" class="related-link">Başlangıç</a>
+            <a href="#" onclick="showSection('cookbook')" class="related-link">Cookbook</a>
           </div>
         </div>
       </div>
 
     </div>
-  </section>
+  </div>
 
-  <!-- Whitepaper / Manifesto Section -->
-  <section class="container" id="whitepaper">
-    <div class="whitepaper-section" style="padding: 60px 40px;">
-      <h2 id="t-wp-title">Myca OS Whitepaper & Manifesto</h2>
-      <p id="t-wp-desc">Myca, bulut sunucu bağımlılığını tamamen ortadan kaldıran, bilgisayarlarınızı birbirine bağlayarak ortak bir yapay zeka ağı oluşturan "Mycelium" (Fungal Ağ) mimarisi üzerine inşa edilmiştir. Bilgileriniz asla buluta gitmez, veri güvenliğiniz donanımınızın kontrolündedir.</p>
+  <script>
+    // Navigation logic
+    function showSection(sectionId) {
+      // Remove active class from all menu items and sections
+      document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.doc-section').forEach(el => el.classList.remove('active'));
       
-      <div class="whitepaper-grid">
-        <div class="wp-card">
-          <h4 id="t-wp-c1-t">%100 Yerel Yapay Zeka</h4>
-          <p id="t-wp-c1-d">Tüm yapay zeka modelleri, ses tanıma motorları ve otomasyon planlayıcılar doğrudan kendi cihazlarınızın üzerinde (Ollama, local LLM) çalışır.</p>
-        </div>
-        <div class="wp-card">
-          <h4 id="t-wp-c2-t">Model Context Protocol (MCP)</h4>
-          <p id="t-wp-c2-d">Claude MCP altyapısı sayesinde sisteme yeni araçlar, veritabanları veya API entegrasyonları saniyeler içinde bağlanabilir.</p>
-        </div>
-        <div class="wp-card">
-          <h4 id="t-wp-c3-t">Güvenli Şifre Koruması (Secrets)</h4>
-          <p id="t-wp-c3-d">Email, Telegram ve API şifreleriniz yerel diskinizde owner-only yetkilerle kilitlenmiş SQLite veritabanı içinde korunur.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p id="t-foot-lic">&copy; 2026 Myca OS. Tüm Hakları Saklıdır. Local-First AI Automation.</p>
-    </div>
-  </footer>
-
-<script>
-  const translations = {
-    tr: {
-      nav_home: "Ana Sayfa",
-      nav_workflows: "İş Akışları",
-      nav_manifesto: "Manifesto",
-      hero_title: "İnternet, ama canlı ve otonom.",
-      hero_desc: "Myca OS, kurumsal şirketlerden KOBİ'lere, içerik üreticilerinden e-ticaret satıcılarına kadar tüm sektörlerin en kritik iş akışlarını yerel cihazlarında tamamen güvenli ve otonom şekilde yürütür.",
-      wf_title: "Popüler Otonom İş Akışları",
+      // Add active class to target section
+      const targetSec = document.getElementById(sectionId);
+      if (targetSec) {
+        targetSec.classList.add('active');
+        // Scroll to top of content area
+        document.querySelector('.content-area').scrollTop = 0;
+      }
       
-      c1_badge: "KOBİ / Esnaf",
-      c1_title: "Stok Takip ve Otomatik Sipariş",
-      c1_desc: "Stoğu azalan ürünlerinizi Excel'de tespit ederek tedarikçiye otomatik sipariş mailleri atar ve size Telegram'dan rapor verir.",
-      c1_s1: "fs.read (Stok listesini oku)",
-      c1_s2: "ai.summary (Kritik stokları ve sipariş formunu çıkar)",
-      c1_s3: "email.send (Tedarikçiye e-posta at)",
-      c1_s4: "telegram.send (KOBİ sahibine bildirim gönder)",
-      c1_pl: "AI Assist Promptu",
-      c1_pt: '"Kritik stoğu düşen ürünleri kontrol et, tedarikçiye sipariş geç ve bana Telegram\'dan haber ver."',
-
-      c2_badge: "E-Ticaret",
-      c2_title: "Dinamik Fiyat ve Rakip Takipçisi",
-      c2_desc: "Pazaryerlerindeki rakiplerin fiyatlarını günlük olarak izler, anomali tespiti yapar ve Telegram üzerinden anlık fiyat ayarlama önerileri gönderir.",
-      c2_s1: "browser.search (Trendyol/Hepsiburada rakip taraması)",
-      c2_s2: "ai.summary (Rakip fiyat analizini çıkar)",
-      c2_s3: "telegram.send (Ekibe akıllı fiyat önerisi gönder)",
-      c2_pl: "AI Assist Promptu",
-      c2_pt: '"Rakiplerin kulaklık fiyatlarını Trendyol\'da kontrol et ve fiyat analizini bana Telegram\'dan gönder."',
-
-      c3_badge: "Kurumsal / Enterprise",
-      c3_title: "Fatura ve OCR Muhasebe İşleme",
-      c3_desc: "Klasöre düşen yeni PDF faturaları anında okur, yapay zeka ile verileri ayıklayarak Excel'e yazar ve finans ekibine mail gönderir.",
-      c3_s1: "fs.list & fs.read (Fatura klasörünü izle ve oku)",
-      c3_s2: "ai.summary (Fatura tutar, KDV, Vergi No detaylarını ayıkla)",
-      c3_s3: "fs.write (CSV/Muhasebe tablosuna ekle)",
-      c3_s4: "email.send (Fatura işleme detaylarını accounting'e maille)",
-      c3_pl: "AI Assist Promptu",
-      c3_pt: '"Gelen faturaları tara, yapay zekayla bilgilerini çıkarıp Excel\'e yaz ve muhasebeye mail at."',
-
-      c4_badge: "Sosyal Medya & İçerik",
-      c4_title: "Otonom Video Üretim ve Çoklu Yayın",
-      c4_desc: "Belirlediğiniz bir konudan otomatik olarak dikey video üretir, bunu YouTube Shorts, Instagram Reels ve X üzerinde otomatik paylaşır.",
-      c4_s1: "video.generate (Video üretici API çağrısı)",
-      c4_s2: "youtube.upload (YouTube Shorts yüklemesi)",
-      c4_s3: "x.post & instagram.post (Sosyal ağlarda eş zamanlı yayınlama)",
-      c4_pl: "AI Assist Promptu",
-      c4_pt: '"Her gün saat 12:00\'de son kripto haberlerinden otomatik bir dikey video üret, bu videoyu YouTube Shorts, Instagram Reels ve X üzerinde paylaş."',
-
-      wp_title: "Myca OS Whitepaper & Manifesto",
-      wp_desc: 'Myca, bulut sunucu bağımlılığını tamamen ortadan kaldıran, bilgisayarlarınızı birbirine bağlayarak ortak bir yapay zeka ağı oluşturan "Mycelium" (Fungal Ağ) mimarisi üzerine inşa edilmiştir. Bilgileriniz asla buluta gitmez, veri güvenliğiniz donanımınızın kontrolündedir.',
-      wp_c1_t: "%100 Yerel Yapay Zeka",
-      wp_c1_d: "Tüm yapay zeka modelleri, ses tanıma motorları ve otomasyon planlayıcılar doğrudan kendi cihazlarınızın üzerinde (Ollama, local LLM) çalışır.",
-      wp_c2_t: "Model Context Protocol (MCP)",
-      wp_c2_d: "Claude MCP altyapısı sayesinde sisteme yeni araçlar, veritabanları veya API entegrasyonları saniyeler içinde bağlanabilir.",
-      wp_c3_t: "Güvenli Şifre Koruması (Secrets)",
-      wp_c3_d: "Email, Telegram ve API şifreleriniz yerel diskinizde owner-only yetkilerle kilitlenmiş SQLite veritabanı içinde korunur.",
-      
-      foot_lic: "© 2026 Myca OS. Tüm Hakları Saklıdır. Local-First AI Automation."
-    },
-    en: {
-      nav_home: "Home",
-      nav_workflows: "Workflows",
-      nav_manifesto: "Manifesto",
-      hero_title: "The internet, but alive and autonomous.",
-      hero_desc: "Myca OS runs the most critical workflows of all industries—from enterprise companies to SMEs, content creators to e-commerce sellers—entirely secure and autonomously on local devices.",
-      wf_title: "Popular Autonomous Workflows",
-      
-      c1_badge: "SME / Retail",
-      c1_title: "Stock Tracking & Auto-Reordering",
-      c1_desc: "Detects low stock items in Excel, emails suppliers automatically, and reports status updates directly to the owner via Telegram.",
-      c1_s1: "fs.read (Read stock list)",
-      c1_s2: "ai.summary (Extract critical stock levels)",
-      c1_s3: "email.send (Email purchase order to supplier)",
-      c1_s4: "telegram.send (Send stock notification to owner)",
-      c1_pl: "AI Assist Prompt",
-      c1_pt: '"Check critical stock levels, email the supplier, and notify me via Telegram."',
-
-      c2_badge: "E-Commerce",
-      c2_title: "Dynamic Pricing & Competitor Tracker",
-      c2_desc: "Scrapes competitor pricing daily, detects pricing anomalies, and sends real-time recommendation alerts via Telegram.",
-      c2_s1: "browser.search (Trendyol/Hepsiburada competitor check)",
-      c2_s2: "ai.summary (Extract competitor pricing analysis)",
-      c2_s3: "telegram.send (Send dynamic pricing suggestions to team)",
-      c2_pl: "AI Assist Prompt",
-      c2_pt: '"Check competitor headphone prices on Trendyol and send the analysis to me on Telegram."',
-
-      c3_badge: "Corporate / Enterprise",
-      c3_title: "Invoice & OCR Accounting Processor",
-      c3_desc: "Monitors invoice folders, reads PDF contents, extracts payment metadata via local AI, saves to CSV, and emails accounting.",
-      c3_s1: "fs.list & fs.read (Monitor and read invoice folder)",
-      c3_s2: "ai.summary (Extract total, tax, and registration details)",
-      c3_s3: "fs.write (Append new entry to CSV sheet)",
-      c3_s4: "email.send (Email invoice summary to accounting)",
-      c3_pl: "AI Assist Prompt",
-      c3_pt: '"Scan incoming invoices, extract details using AI, write to Excel, and email accounting."',
-
-      c4_badge: "Social Media & Creators",
-      c4_title: "Autonomous Video Generation & Social Publishing",
-      c4_desc: "Automatically generates vertical shorts from target scripts using AI, and publishes them across YouTube, Reels, and X.",
-      c4_s1: "video.generate (API request to generate video file)",
-      c4_s2: "youtube.upload (Upload video to YouTube Shorts)",
-      c4_s3: "x.post & instagram.post (Publish on social networks)",
-      c4_pl: "AI Assist Prompt",
-      c4_pt: '"Generate a vertical video daily at 12:00 about crypto news, and share it on YouTube, Reels, and X."',
-
-      wp_title: "Myca OS Whitepaper & Manifesto",
-      wp_desc: 'Myca is built on the "Mycelium" architecture, removing cloud server dependencies and linking your devices into a shared intelligence mesh. Your data remains entirely local.',
-      wp_c1_t: "100% Local AI",
-      wp_c1_d: "All AI models, speech-to-text engines, and automation planners run directly on your local hardware (Ollama, local LLM).",
-      wp_c2_t: "Model Context Protocol (MCP)",
-      wp_c2_d: "Integrate custom databases, third-party APIs, or external developer tools as dynamic skills using Claude MCP.",
-      wp_c3_t: "Secure Credentials (Secrets)",
-      wp_c3_d: "API keys, email SMTP passwords, and bot tokens are encrypted locally with owner-only system permissions.",
-      
-      foot_lic: "© 2026 Myca OS. All rights reserved. Local-First AI Automation."
+      // Update sidebar state based on click
+      event.currentTarget.classList.add('active');
     }
-  };
 
-  let lang = 'tr';
-  window.toggleLang = () => {
-    lang = lang === 'tr' ? 'en' : 'tr';
-    const dict = translations[lang];
-    
-    // Header & Nav
-    document.getElementById('t-nav-home').innerText = dict.nav_home;
-    document.getElementById('t-nav-workflows').innerText = dict.nav_workflows;
-    document.getElementById('t-nav-manifesto').innerText = dict.nav_manifesto;
-    
-    // Hero
-    document.getElementById('t-hero-title').innerHTML = lang === 'tr' ? 'İnternet, ama <em>canlı</em> ve <em>otonom</em>.' : 'The internet, but <em>alive</em> and <em>autonomous</em>.';
-    document.getElementById('t-hero-desc').innerText = dict.hero_desc;
-    
-    // Title
-    document.getElementById('t-wf-title').innerText = dict.wf_title;
-    
-    // Card 1 (KOBI)
-    document.getElementById('t-c1-badge').innerText = dict.c1_badge;
-    document.getElementById('t-c1-title').innerText = dict.c1_title;
-    document.getElementById('t-c1-desc').innerText = dict.c1_desc;
-    document.getElementById('t-c1-s1').innerText = dict.c1_s1;
-    document.getElementById('t-c1-s2').innerText = dict.c1_s2;
-    document.getElementById('t-c1-s3').innerText = dict.c1_s3;
-    document.getElementById('t-c1-s4').innerText = dict.c1_s4;
-    document.getElementById('t-c1-pl').innerText = dict.c1_pl;
-    document.getElementById('t-c1-pt').innerText = dict.c1_pt;
+    // Sidebar search filtering
+    function filterSidebar() {
+      const q = document.getElementById('sidebar-search').value.toLowerCase();
+      document.querySelectorAll('.menu-item').forEach(el => {
+        const txt = el.innerText.toLowerCase();
+        if (txt.includes(q)) {
+          el.style.display = 'block';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    }
 
-    // Card 2 (E-com)
-    document.getElementById('t-c2-badge').innerText = dict.c2_badge;
-    document.getElementById('t-c2-title').innerText = dict.c2_title;
-    document.getElementById('t-c2-desc').innerText = dict.c2_desc;
-    document.getElementById('t-c2-s1').innerText = dict.c2_s1;
-    document.getElementById('t-c2-s2').innerText = dict.c2_s2;
-    document.getElementById('t-c2-s3').innerText = dict.c2_s3;
-    document.getElementById('t-c2-pl').innerText = dict.c2_pl;
-    document.getElementById('t-c2-pt').innerText = dict.c2_pt;
+    // Live Playground Simulation code
+    const simData = {
+      invoice: {
+        need: "Faturaları Excel'e Yaz & Mail At",
+        dag: "list_files ➔ read_invoice ➔ ai.summary ➔ fs.write ➔ email.send",
+        artifact: "invoices_report.csv (Muhasebe Excel Dosyası Güncellendi)"
+      },
+      stock: {
+        need: "Stok Takip et & Tedarikçiye Sipariş Geç",
+        dag: "read_stock_csv ➔ detect_low_stock ➔ email.send ➔ telegram.send",
+        artifact: "stok_durumu.csv (Sipariş formu tedarikçiye gönderildi)"
+      },
+      creator: {
+        need: "AI Video Üret & YouTube'da Paylaş",
+        dag: "video.generate ➔ youtube.upload ➔ instagram.post ➔ x.post",
+        artifact: "myca_shorts_news.mp4 (Sosyal medya kanallarında yayınlandı)"
+      }
+    };
 
-    // Card 3 (Corporate)
-    document.getElementById('t-c3-badge').innerText = dict.c3_badge;
-    document.getElementById('t-c3-title').innerText = dict.c3_title;
-    document.getElementById('t-c3-desc').innerText = dict.c3_desc;
-    document.getElementById('t-c3-s1').innerText = dict.c3_s1;
-    document.getElementById('t-c3-s2').innerText = dict.c3_s2;
-    document.getElementById('t-c3-s3').innerText = dict.c3_s3;
-    document.getElementById('t-c3-s4').innerText = dict.c3_s4;
-    document.getElementById('t-c3-pl').innerText = dict.c3_pl;
-    document.getElementById('t-c3-pt').innerText = dict.c3_pt;
+    function startPlayground() {
+      const val = document.getElementById('play-select').value;
+      const data = simData[val];
+      
+      // Reset stages
+      document.querySelectorAll('.stage-card').forEach(el => el.classList.remove('active'));
+      document.getElementById('stg-1-val').innerText = "...";
+      document.getElementById('stg-2-val').innerText = "...";
+      document.getElementById('stg-3-val').innerText = "...";
+      
+      // Step 1: Need
+      setTimeout(() => {
+        const card1 = document.getElementById('stage-1');
+        card1.classList.add('active');
+        document.getElementById('stg-1-val').innerText = "Niyet: " + data.need;
+      }, 500);
 
-    // Card 4 (Creators)
-    document.getElementById('t-c4-badge').innerText = dict.c4_badge;
-    document.getElementById('t-c4-title').innerText = dict.c4_title;
-    document.getElementById('t-c4-desc').innerText = dict.c4_desc;
-    document.getElementById('t-c4-s1').innerText = dict.c4_s1;
-    document.getElementById('t-c4-s2').innerText = dict.c4_s2;
-    document.getElementById('t-c4-s3').innerText = dict.c4_s3;
-    document.getElementById('t-c4-pl').innerText = dict.c4_pl;
-    document.getElementById('t-c4-pt').innerText = dict.c4_pt;
+      // Step 2: DAG
+      setTimeout(() => {
+        const card2 = document.getElementById('stage-2');
+        card2.classList.add('active');
+        document.getElementById('stg-2-val').innerText = "Çizilen Akış: " + data.dag;
+      }, 1500);
 
-    // Whitepaper
-    document.getElementById('t-wp-title').innerText = dict.wp_title;
-    document.getElementById('t-wp-desc').innerText = dict.wp_desc;
-    document.getElementById('t-wp-c1-t').innerText = dict.wp_c1_t;
-    document.getElementById('t-wp-c1-d').innerText = dict.wp_c1_d;
-    document.getElementById('t-wp-c2-t').innerText = dict.wp_c2_t;
-    document.getElementById('t-wp-c2-d').innerText = dict.wp_c2_d;
-    document.getElementById('t-wp-c3-t').innerText = dict.wp_c3_t;
-    document.getElementById('t-wp-c3-d').innerText = dict.wp_c3_d;
-    
-    // Footer
-    document.getElementById('t-foot-lic').innerText = dict.foot_lic;
-  };
-</script>
+      // Step 3: Completed
+      setTimeout(() => {
+        const card3 = document.getElementById('stage-3');
+        card3.classList.add('active');
+        document.getElementById('stg-3-val').innerText = "Sonuç: " + data.artifact;
+      }, 2500);
+    }
+
+    // Bilingual translations dictionary
+    const translations = {
+      tr: {
+        nav_home: "Geri dön",
+        group_start: "Başlangıç",
+        m_start: "Getting Started",
+        group_concepts: "Konseptler",
+        m_need: "Need (Niyet)",
+        m_planner: "Planner (Planlayıcı)",
+        m_graph: "Execution Graph",
+        m_skills: "Skills (Beceriler)",
+        m_colony: "Colony (Koloni)",
+        group_guides: "Rehberler & Tarifler",
+        m_guides: "Guides (Rehberler)",
+        m_cookbook: "Cookbook (Tarifler)",
+        group_dev: "Geliştirici",
+        m_sdk: "SDK Belgeleri",
+        m_api: "API Referansı",
+        m_arch: "Mimari",
+        m_bench: "Benchmarks",
+        m_faq: "SSS & Yol Haritası",
+        
+        gs_title: "Myca'ya Hoş Geldiniz",
+        gs_p1: "Myca, bilgisayarlarınızı otonom bir yapay zeka ağı haline getiren yerel öncelikli (local-first) bir yapay zeka otomasyon işletim sistemidir.",
+        gs_h2: "5 Dakikada Hızlı Kurulum",
+        gs_p2: "Myca'yı kurmak ve ilk yerel otomasyon akışınızı başlatmak için bu basit adımları izleyin.",
+        gs_h3: "İlk Başarı: Downloads Klasörünü Özetle",
+        gs_p3: "Arayüze gidin ve AI Assist çubuğuna şu komutu yazın:",
+        gs_p4: "Myca otomatik olarak bir Plan (DAG) üretecek, indirilenler klasöründeki dosyaları okuyacak, yerel modeliniz yardımıyla özetleyecek ve masaüstünüze bir rapor olarak kaydedecektir.",
+        
+        rel_lbl_1: "İlişkili Konseptler",
+        rel_lbl_2: "İlişkili Konseptler",
+        rel_lbl_3: "İlişkili Konseptler",
+        rel_lbl_4: "İlişkili Konseptler",
+        rel_lbl_5: "İlişkili Konseptler",
+        rel_lbl_6: "İlişkili Konseptler",
+        rel_lbl_7: "İlişkili Konseptler",
+        rel_lbl_8: "İlişkili Konseptler",
+        rel_lbl_9: "İlişkili Konseptler",
+        rel_lbl_10: "İlişkili Konseptler",
+        rel_lbl_11: "İlişkili Konseptler",
+        rel_lbl_12: "İlişkili Konseptler",
+        rel_lbl_13: "İlişkili Konseptler",
+        
+        need_title: "Niyet (Need)",
+        need_p1: "Myca OS üzerindeki her işlem bir Need (Niyet) ile başlar. Niyet, kullanıcının yapmak istediği görevi doğal dilde ifade etmesidir.",
+        need_h2: "Niyet Nasıl Yorumlanır?",
+        need_p2: "Gelen niyet yerel semantik önbellek filtrelerinden geçirilir. Eğer daha önce benzer bir işlem yapılmışsa, öğrenilen deneyimlerden (Experience) doğrudan rota belirlenir. Aksi halde yerel LLM planlama yapması için devreye sokulur.",
+
+        plan_title: "Planlayıcı (Planner)",
+        plan_p1: "Planlayıcı, niyet ifadesini analiz eder ve kullanılabilir becerileri (Skills) kullanarak sıralı/paralel adımlardan oluşan deterministik bir plan hazırlar.",
+        plan_h2: "Yapay Zeka Destekli Planlama ve Hızlı Yol (Bypass)",
+        plan_p2: "Myca, yaygın niyetler için önceden eğitilmiş hızlı şablonlar (Heuristic bypass) sunarak yerel CPU/GPU yükünü en aza indirir. E-posta, dosya işlemleri, sosyal medya paylaşımları anında deterministik birer grafiğe dönüştürülür.",
+
+        graph_title: "Yürütme Grafiği (Execution Graph)",
+        graph_p1: "Yürütme Grafiği, bağımlılıkları belirlenmiş düğümlerden (Nodes) oluşan Yönlendirilmiş Döngüsüz bir Grafiktir (DAG). Adımlar paralel veya sırayla çalıştırılabilir.",
+        graph_h2: "Hata Yönetimi ve İptal Mekanizması",
+        graph_p2: "Düğümler çalışırken her adımda durum izlemesi yapılır. Eğer bir düğüm çökerse, akış iptal edilir veya kurtarma (retry) mekanizmaları devreye girer. Kullanıcı dilerse arayüzdeki 'Stop' butonu ile yürütmeyi anında sonlandırabilir.",
+
+        skills_title: "Beceriler (Skills)",
+        skills_p1: "Beceriler, Myca işletim sisteminin dış dünya ile konuşmasını sağlayan araçlardır. Her beceri girdi ve çıktı şemalarına sahiptir ve güvenlik izinleri doğrultusunda çalışır.",
+        skills_h2: "Model Context Protocol (MCP) Desteği",
+        skills_p2: "Myca, Claude tarafından geliştirilen açık kaynaklı MCP protokolünü yerel olarak destekler. Kendi veritabanlarınızı, dosya sistemlerinizi veya web API'lerinizi sisteme dinamik beceri olarak bağlayabilirsiniz.",
+
+        colony_title: "Koloni (Colony)",
+        colony_p1: "Myca cihazları kendi aralarında yerel bir mDNS/WebRTC ağı kurarlar. Buna Colony (Koloni) denir. Cihazlar iş yüklerini paylaşırlar.",
+        colony_h2: "Çevrimdışı Çalışabilirlik",
+        colony_p2: "Koloni ağının çalışması için internet gerekmez. Yerel yönlendiriciniz (router) üzerinden cihazlar birbirini otomatik olarak keşfeder ve görev dağıtımı yapar.",
+
+        guides_title: "Rehberler",
+        guides_p1: "Aşağıda en çok ihtiyaç duyulan kullanım senaryoları ve bunlara uygun niyet tanımları listelenmiştir.",
+        guides_h2: "Tüm Adımların Şeması",
+        guides_sec_1: "1. PDF Belgeleri Özetleme (Summarize PDFs)",
+        guides_p2: "Niyet: 'Masaüstündeki raporlar klasöründeki tüm PDF'leri oku, yapay zekayla özetle ve bir rapor yaz.'",
+        guides_sec_2: "2. Muhasebe Faturaları Otomasyonu (Automate Invoices)",
+        guides_p3: "Niyet: 'Fatura klasörüne yeni PDF eklenince tutarını çıkar, Excel'e yaz ve muhasebeye mail at.'",
+        guides_sec_3: "3. Dosya Sistemi İzleme (Monitor a Folder)",
+        guides_p4: "Niyet: 'İndirilenler klasörüne zip dosyası gelince otomatik olarak çıkart ve klasörü temizle.'",
+
+        cook_title: "Yemek Kitabı (Cookbook)",
+        cook_p1: "Hızlıca kopyalayıp kullanabileceğiniz ve kendi sisteminize uyarlayabileceğiniz 200'den fazla akış şablonu ve tarifi.",
+        cook_h2_1: "Yazılımcılar İçin (Developer Recipes)",
+        cook_h2_2: "İşletmeler & Finans İçin (Business Recipes)",
+        cook_h2_3: "Araştırmacılar İçin (Research Recipes)",
+        
+        play_title: "Canlı Akış Simülasyonu (Playground)",
+        play_run: "Simüle Et",
+        play_desc: "Bir niyet seçin ve Myca OS'in işi nasıl işlediğini canlı izleyin.",
+        opt_1: "Faturaları Excel'e Yaz & Mail At",
+        opt_2: "Stok Takip et & Tedarikçiye Sipariş Geç",
+        opt_3: "AI Video Üret & YouTube'da Paylaş",
+        stg_1_t: "1. Niyet Algılandı (Need)",
+        stg_2_t: "2. Planlama Hazırlandı (DAG)",
+        stg_3_t: "3. Çalıştırıldı & Çıktılar (Artifacts)",
+
+        sdk_title: "Geliştirici SDK",
+        sdk_p1: "Kendi becerilerinizi (Skills) yazmak ve Myca OS ile entegre etmek için Python SDK'mızı kullanabilirsiniz.",
+        sdk_h2: "Skill Tanımlama Örneği",
+        sdk_p2: "Her beceri girdi parametreleri, çıktılar ve gerekli izin bildirimleri ile tanımlanır.",
+
+        api_title: "REST API Referansı",
+        api_p1: "Myca OS yerel localhost 8420 portu üzerinde çalışır. Uygulamayı dışarıdan kontrol etmek için aşağıdaki endpointleri çağırabilirsiniz.",
+        api_h2: "Endpoints",
+
+        arch_title_detail: "Myca OS Mimarisi",
+        arch_p1: "Myca OS, donanım kaynaklarını ve yapay zeka becerilerini koordine eden yerel bir mikro-çekirdek gibi çalışır.",
+        arch_h2: "Model Context Protocol ve Skill ABI",
+        arch_p2: "Beceri Yürütme Motoru, her MCP sunucusunu izole bir alt işlem (process) olarak çalıştırır ve standart girdi/çıktı (stdio) boruları üzerinden güvenle haberleşir. Bilgisayarınızın kaynaklarına izinsiz erişim engellenir.",
+
+        bench_title_detail: "Yerel Çıkarım Performansı",
+        bench_p1: "Myca OS, tamamen internete çevrimdışı iken yerel donanımlar üzerinde test edilmiştir.",
+        b_th1: "Donanım",
+        b_th2: "Yapay Zeka Modeli",
+        b_th3: "Hız (tok/s)",
+        b_th4: "Bellek (RAM)",
+
+        faq_title: "Sıkça Sorulan Sorular",
+        faq_h2: "Yol Haritası (Roadmap)"
+      },
+      en: {
+        nav_home: "Go back",
+        group_start: "Getting Started",
+        m_start: "Getting Started",
+        group_concepts: "Concepts",
+        m_need: "Need",
+        m_planner: "Planner",
+        m_graph: "Execution Graph",
+        m_skills: "Skills",
+        m_colony: "Colony",
+        group_guides: "Guides & Recipes",
+        m_guides: "Guides",
+        m_cookbook: "Cookbook (Recipes)",
+        group_dev: "Developer",
+        m_sdk: "SDK Docs",
+        m_api: "API Reference",
+        m_arch: "Architecture",
+        m_bench: "Benchmarks",
+        m_faq: "FAQ & Roadmap",
+        
+        gs_title: "Welcome to Myca",
+        gs_p1: "Myca is a local-first AI automation operating system that links your computers into a collaborative intelligence mesh.",
+        gs_h2: "5 Minutes Quick Start",
+        gs_p2: "Follow these simple steps to install Myca and run your first offline automation pipeline.",
+        gs_h3: "First Success: Summarize Downloads",
+        gs_p3: "Open the app interface and write the following command in the AI Assist bar:",
+        gs_p4: "Myca will automatically compile a Plan (DAG), read the folder, extract and summarize the documents using your local LLM, and output a CSV report to your Desktop.",
+        
+        rel_lbl_1: "Related Concepts",
+        rel_lbl_2: "Related Concepts",
+        rel_lbl_3: "Related Concepts",
+        rel_lbl_4: "Related Concepts",
+        rel_lbl_5: "Related Concepts",
+        rel_lbl_6: "Related Concepts",
+        rel_lbl_7: "Related Concepts",
+        rel_lbl_8: "Related Concepts",
+        rel_lbl_9: "Related Concepts",
+        rel_lbl_10: "Related Concepts",
+        rel_lbl_11: "Related Concepts",
+        rel_lbl_12: "Related Concepts",
+        rel_lbl_13: "Related Concepts",
+        
+        need_title: "Need (User Intent)",
+        need_p1: "Every execution on Myca OS starts with a Need. A Need is the natural language formulation of the user's intent.",
+        need_h2: "How is a Need processed?",
+        need_p2: "Incoming Needs are routed through the local semantic cache. If a similar execution was performed, experience records determine the routing. Otherwise, local LLMs evaluate and plan the task.",
+
+        plan_title: "Planner",
+        plan_p1: "The Planner analyzes the Need and maps it to registered system Skills, outputting a deterministic execution plan.",
+        plan_h2: "AI-powered Planning & Heuristic Bypass",
+        plan_p2: "Myca triggers instant template mappings (bypass) for common requests to conserve local GPU resources. Email, Slack, files are converted immediately into a structured DAG.",
+
+        graph_title: "Execution Graph",
+        graph_p1: "The Execution Graph is a Directed Acyclic Graph (DAG) consisting of independent nodes and their data dependencies.",
+        graph_h2: "Error Management & Instant Cancellation",
+        graph_p2: "If any execution node fails, error recovery or pipeline rollbacks are triggered. Users can stop active executions instantly via the live status bar.",
+
+        skills_title: "Skills",
+        skills_p1: "Skills are standardized interfaces that let Myca execute code. Each skill registers specific inputs, outputs, and permission settings.",
+        skills_h2: "Model Context Protocol (MCP)",
+        skills_p2: "Myca natively integrates Claude MCP servers. You can plug custom postgres tools, filesystems, or APIs directly as dynamic skills in seconds.",
+
+        colony_title: "Colony",
+        colony_p1: "Myca nodes communicate locally via P2P mDNS and WebRTC. This network of devices is called a Colony. Devices collaboratively distribute workloads.",
+        colony_h2: "Offline First Execution",
+        colony_p2: "No cloud server or active internet is required to coordinate the colony. Devices discover and connect automatically inside your home router.",
+
+        guides_title: "Guides",
+        guides_p1: "Below are the most common automation guide cases modeled for Myca OS.",
+        guides_h2: "Workflow Progression",
+        guides_sec_1: "1. Summarize PDFs",
+        guides_p2: "Need: 'Read all PDF papers in desktop, write a summary and extract findings.'",
+        guides_sec_2: "2. Automate Invoices",
+        guides_p3: "Need: 'When a new PDF is added to invoice folder, extract the total, write to Excel, and email accounting.'",
+        guides_sec_3: "3. Monitor a Folder",
+        guides_p4: "Need: 'Watch Downloads folder, unzip files immediately, and clean logs.'",
+
+        cook_title: "Cookbook (Recipes)",
+        cook_p1: "Copy-pasteable execution templates designed for real-world scenarios.",
+        cook_h2_1: "Developer Recipes",
+        cook_h2_2: "Business & Finance Recipes",
+        cook_h2_3: "Research Recipes",
+        
+        play_title: "Live Flow Simulation (Playground)",
+        play_run: "Simulate",
+        play_desc: "Choose a Need template below and watch Myca OS process it live step-by-step.",
+        opt_1: "Process Invoices & Email Finance",
+        opt_2: "Monitor Stock Levels & Reorder",
+        opt_3: "Generate AI Video & Publish to YouTube",
+        stg_1_t: "1. Need Received",
+        stg_2_t: "2. Planning DAG Compiled",
+        stg_3_t: "3. Execution & Artifacts",
+
+        sdk_title: "Developer SDK",
+        sdk_p1: "Register new custom skills using our lightweight Python SDK.",
+        sdk_h2: "Skill Definition Example",
+        sdk_p2: "Skills are registered using simple python decorators outlining inputs, outputs, and permissions.",
+
+        api_title: "REST API Reference",
+        api_p1: "Myca OS runs on port 8420. Control and query the system using the REST API.",
+        api_h2: "Endpoints",
+
+        arch_title_detail: "Myca OS Architecture",
+        arch_p1: "Myca OS operates like a local micro-kernel coordinating compute tasks and database states.",
+        arch_h2: "Model Context Protocol & Skill ABI",
+        arch_p2: "Each MCP tool runs as an isolated stdio process. Unauthorized access to files or network is blocked by default.",
+
+        bench_title_detail: "Local Inference Performance",
+        bench_p1: "Benchmarks measured entirely offline on various consumer hardware options.",
+        b_th1: "Hardware",
+        b_th2: "LLM Model",
+        b_th3: "Speed (tok/s)",
+        b_th4: "Memory (RAM)",
+
+        faq_title: "Frequently Asked Questions",
+        faq_h2: "Roadmap"
+      }
+    };
+
+    let lang = 'tr';
+    window.toggleLang = () => {
+      lang = lang === 'tr' ? 'en' : 'tr';
+      const dict = translations[lang];
+      
+      // Header & Navigation
+      document.getElementById('t-nav-home').innerText = dict.nav_home;
+      document.getElementById('t-group-start').innerText = dict.group_start;
+      document.getElementById('t-m-start').innerText = dict.m_start;
+      document.getElementById('t-group-concepts').innerText = dict.group_concepts;
+      document.getElementById('t-m-need').innerText = dict.m_need;
+      document.getElementById('t-m-planner').innerText = dict.m_planner;
+      document.getElementById('t-m-graph').innerText = dict.m_graph;
+      document.getElementById('t-m-skills').innerText = dict.m_skills;
+      document.getElementById('t-m-colony').innerText = dict.m_colony;
+      document.getElementById('t-group-guides').innerText = dict.group_guides;
+      document.getElementById('t-m-guides').innerText = dict.m_guides;
+      document.getElementById('t-m-cookbook').innerText = dict.m_cookbook;
+      document.getElementById('t-group-dev').innerText = dict.group_dev;
+      document.getElementById('t-m-sdk').innerText = dict.m_sdk;
+      document.getElementById('t-m-api').innerText = dict.m_api;
+      document.getElementById('t-m-arch').innerText = dict.m_arch;
+      document.getElementById('t-m-bench').innerText = dict.m_bench;
+      document.getElementById('t-m-faq').innerText = dict.m_faq;
+      
+      // Getting Started
+      document.getElementById('t-gs-title').innerText = dict.gs_title;
+      document.getElementById('t-gs-p1').innerText = dict.gs_p1;
+      document.getElementById('t-gs-h2').innerText = dict.gs_h2;
+      document.getElementById('t-gs-p2').innerText = dict.gs_p2;
+      document.getElementById('t-gs-h3').innerText = dict.gs_h3;
+      document.getElementById('t-gs-p3').innerText = dict.gs_p3;
+      document.getElementById('t-gs-p4').innerText = dict.gs_p4;
+      
+      // Need
+      document.getElementById('t-need-title').innerText = dict.need_title;
+      document.getElementById('t-need-p1').innerText = dict.need_p1;
+      document.getElementById('t-need-h2').innerText = dict.need_h2;
+      document.getElementById('t-need-p2').innerText = dict.need_p2;
+
+      // Planner
+      document.getElementById('t-plan-title').innerText = dict.plan_title;
+      document.getElementById('t-plan-p1').innerText = dict.plan_p1;
+      document.getElementById('t-plan-h2').innerText = dict.plan_h2;
+      document.getElementById('t-plan-p2').innerText = dict.plan_p2;
+
+      // Graph
+      document.getElementById('t-graph-title').innerText = dict.graph_title;
+      document.getElementById('t-graph-p1').innerText = dict.graph_p1;
+      document.getElementById('t-graph-h2').innerText = dict.graph_h2;
+      document.getElementById('t-graph-p2').innerText = dict.graph_p2;
+
+      // Skills
+      document.getElementById('t-skills-title').innerText = dict.skills_title;
+      document.getElementById('t-skills-p1').innerText = dict.skills_p1;
+      document.getElementById('t-skills-h2').innerText = dict.skills_h2;
+      document.getElementById('t-skills-p2').innerText = dict.skills_p2;
+
+      // Colony
+      document.getElementById('t-colony-title').innerText = dict.colony_title;
+      document.getElementById('t-colony-p1').innerText = dict.colony_p1;
+      document.getElementById('t-colony-h2').innerText = dict.colony_h2;
+      document.getElementById('t-colony-p2').innerText = dict.colony_p2;
+
+      // Guides
+      document.getElementById('t-guides-title').innerText = dict.guides_title;
+      document.getElementById('t-guides-p1').innerText = dict.guides_p1;
+      document.getElementById('t-guides-h2').innerText = dict.guides_h2;
+      document.getElementById('t-guides-sec-1').innerText = dict.guides_sec_1;
+      document.getElementById('t-guides-p2').innerText = dict.guides_p2;
+      document.getElementById('t-guides-sec-2').innerText = dict.guides_sec_2;
+      document.getElementById('t-guides-p3').innerText = dict.guides_p3;
+      document.getElementById('t-guides-sec-3').innerText = dict.guides_sec_3;
+      document.getElementById('t-guides-p4').innerText = dict.guides_p4;
+
+      // Cookbook & Playground
+      document.getElementById('t-cook-title').innerText = dict.cook_title;
+      document.getElementById('t-cook-p1').innerText = dict.cook_p1;
+      document.getElementById('t-cook-h2-1').innerText = dict.cook_h2_1;
+      document.getElementById('t-cook-h2-2').innerText = dict.cook_h2_2;
+      document.getElementById('t-cook-h2-3').innerText = dict.cook_h2_3;
+      
+      document.getElementById('t-play-title').innerText = dict.play_title;
+      document.getElementById('t-play-run').innerText = dict.play_run;
+      document.getElementById('t-play-desc').innerText = dict.play_desc;
+      document.getElementById('t-opt-1').innerText = dict.opt_1;
+      document.getElementById('t-opt-2').innerText = dict.opt_2;
+      document.getElementById('t-opt-3').innerText = dict.opt_3;
+      document.getElementById('t-stg-1-t').innerText = dict.stg_1_t;
+      document.getElementById('t-stg-2-t').innerText = dict.stg_2_t;
+      document.getElementById('t-stg-3-t').innerText = dict.stg_3_t;
+
+      // SDK
+      document.getElementById('t-sdk-title').innerText = dict.sdk_title;
+      document.getElementById('t-sdk-p1').innerText = dict.sdk_p1;
+      document.getElementById('t-sdk-h2').innerText = dict.sdk_h2;
+      document.getElementById('t-sdk-p2').innerText = dict.sdk_p2;
+
+      // API
+      document.getElementById('t-api-title').innerText = dict.api_title;
+      document.getElementById('t-api-p1').innerText = dict.api_p1;
+      document.getElementById('t-api-h2').innerText = dict.api_h2;
+
+      // Arch
+      document.getElementById('t-arch-title-detail').innerText = dict.arch_title_detail;
+      document.getElementById('t-arch-p1').innerText = dict.arch_p1;
+      document.getElementById('t-arch-h2').innerText = dict.arch_h2;
+      document.getElementById('t-arch-p2').innerText = dict.arch_p2;
+
+      // Benchmarks
+      document.getElementById('t-bench-title-detail').innerText = dict.bench_title_detail;
+      document.getElementById('t-bench-p1').innerText = dict.bench_p1;
+      document.getElementById('t-b-th1').innerText = dict.b_th1;
+      document.getElementById('t-b-th2').innerText = dict.b_th2;
+      document.getElementById('t-b-th3').innerText = dict.b_th3;
+      document.getElementById('t-b-th4').innerText = dict.b_th4;
+
+      // FAQ & Footer
+      document.getElementById('t-faq-title').innerText = dict.faq_title;
+      document.getElementById('t-faq-h2').innerText = dict.faq_h2;
+      document.getElementById('t-foot-lic').innerText = dict.foot_lic;
+
+      // Related labels
+      for (let i = 1; i <= 13; i++) {
+        const el = document.getElementById('t-rel-lbl-' + i);
+        if (el) el.innerText = dict.rel_lbl_1;
+      }
+    };
+  </script>
 </body>
 </html>
