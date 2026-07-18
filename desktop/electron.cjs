@@ -1,6 +1,50 @@
 const { app, BrowserWindow, globalShortcut, ipcMain } = require('electron');
 const path = require('path');
 
+
+const { spawn } = require('child_process');
+const path = require('path');
+const os = require('os');
+const fs = require('fs');
+
+let backendProcess = null;
+
+function startBackend() {
+  const isDev = process.env.NODE_ENV === 'development';
+  const isWin = process.platform === 'win32';
+  
+  let backendPath;
+  if (isDev) {
+    // In dev, assuming we run python backend manually or it's somewhere else
+    console.log('[Main] Running in dev mode, assuming backend is started manually.');
+    return;
+  } else {
+    // In production, the backend executable should be in resources
+    const exeName = isWin ? 'myca-backend.exe' : 'myca-backend';
+    backendPath = path.join(process.resourcesPath, 'backend', exeName);
+  }
+  
+  if (!fs.existsSync(backendPath)) {
+    console.error('[Main] Backend executable not found at:', backendPath);
+    return;
+  }
+
+  console.log('[Main] Starting backend at:', backendPath);
+  
+  backendProcess = spawn(backendPath, [], {
+    detached: false,
+    stdio: 'inherit' // forward logs to parent
+  });
+  
+  backendProcess.on('error', (err) => {
+    console.error('[Main] Failed to start backend:', err);
+  });
+  
+  backendProcess.on('close', (code) => {
+    console.log('[Main] Backend exited with code', code);
+  });
+}
+
 const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow;
@@ -57,6 +101,7 @@ function registerShortcuts() {
 }
 
 app.whenReady().then(() => {
+  startBackend();
   createWindow();
   registerShortcuts();
 
@@ -76,6 +121,9 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
+  if (backendProcess) {
+    backendProcess.kill();
+  }
   app.isQuitting = true;
 });
 

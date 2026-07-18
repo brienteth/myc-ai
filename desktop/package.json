@@ -47,7 +47,13 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true
-    }
+    },
+    "extraResources": [
+      {
+        "from": "backend-dist",
+        "to": "backend"
+      }
+    ]
   },
   "dependencies": {
     "@xyflow/react": "^12.11.2",

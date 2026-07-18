@@ -32,3 +32,4 @@ desktop/release/
 desktop/out/
 runtime/target/
 
+.vercel
