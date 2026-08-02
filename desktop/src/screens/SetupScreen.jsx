@@ -36,15 +36,15 @@ const SetupScreen = ({ onComplete }) => {
     let ws = null;
 
     // ── Safety timers ──
-    // Show "skip" button after 8 seconds
+    // Show "skip" button after 3 seconds
     const skipTimer = setTimeout(() => {
       if (!doneRef.current) setShowSkip(true);
-    }, 8000);
+    }, 3000);
 
-    // Auto-proceed after 15 seconds no matter what
+    // Auto-proceed after 6 seconds no matter what
     const autoTimer = setTimeout(() => {
       if (!doneRef.current) finish('skip');
-    }, 15000);
+    }, 6000);
 
     // ── Fake progress animation while connecting ──
     let fakeProgress = 0;
