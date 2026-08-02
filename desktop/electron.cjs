@@ -11,6 +11,16 @@ let backendProcess = null;
 
 let backendReady = false;
 
+// Auto-remove macOS quarantine attribute on startup so Gatekeeper never blocks the app
+if (process.platform === 'darwin') {
+  try {
+    const { exec } = require('child_process');
+    const appBundlePath = path.dirname(path.dirname(app.getPath('exe')));
+    exec(`xattr -d com.apple.quarantine "${appBundlePath}" 2>/dev/null || true`);
+    exec(`xattr -cr "${appBundlePath}" 2>/dev/null || true`);
+  } catch (_) {}
+}
+
 function startBackend() {
   if (isDev) {
     console.log('[Main] Dev mode — backend must be started manually.');
