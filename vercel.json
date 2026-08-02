@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/docs-web", "destination": "/docs.html" },
+    { "source": "/docs", "destination": "/docs.html" },
+    { "source": "/app", "destination": "/app.html" }
+  ]
+}

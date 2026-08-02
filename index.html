@@ -223,7 +223,7 @@ footer {
       <a href="#problem" id="t-nav-1">Neden?</a>
       <a href="#how" id="t-nav-2">Nasıl Çalışır?</a>
       <a href="#compute" id="t-nav-3">Mimari</a>
-      <a href="/docs-web" id="t-nav-docs">Dokümantasyon & SDK</a>
+      <a href="docs.html" id="t-nav-docs">Dokümantasyon & SDK</a>
       <a href="/app" id="t-nav-app">Web App</a>
       <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
@@ -234,8 +234,9 @@ footer {
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-content">
+<section class="hero" style="position:relative; overflow:hidden;">
+  <canvas id="heroCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
+  <div class="hero-content" style="position:relative; z-index:1;">
     <h1 class="f-serif-italic" id="t-hero-title">İnternet, ama canlı.</h1>
     <p class="hero-sub" id="t-hero-sub">
       Cihazlarınız birlikte çalışır. Hiçbir veri cihazınızdan çıkmaz. 
@@ -640,6 +641,22 @@ footer {
     document.getElementById('t-foot-slogan').innerText = dict.foot_slogan;
     document.getElementById('t-foot-lic').innerText = dict.foot_lic;
   };
+</script>
+
+<script type="module">
+  import { MyceliumCanvas } from './landing/mycelium.js';
+  window.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('heroCanvas');
+    if (canvas) {
+      MyceliumCanvas(canvas, {
+        nodeCount: 60,
+        connectDist: 140,
+        speed: 0.22,
+        nodeColor: '#00e87a',
+        threadColor: '#00e87a'
+      });
+    }
+  });
 </script>
 </body>
 </html>
