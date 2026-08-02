@@ -257,8 +257,8 @@ footer {
       </div>
     </div>
   </div>
-  <div class="hero-canvas-container">
-    <canvas id="heroCanvas" style="width:100%; height:100%;"></canvas>
+  <div class="hero-canvas-container" style="display:flex; align-items:center; justify-content:center; padding:20px 0;">
+    <img src="landing/hero.png" alt="myc — The internet, but alive." style="width:100%; max-width:560px; border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,0.18);" />
   </div>
 </section>
 
@@ -398,16 +398,11 @@ footer {
     <h2 class="section-title f-serif-italic" id="t-dl-title">Bugün kolonini kur.</h2>
     <p class="hero-sub" style="margin:0 auto;" id="t-dl-sub">Hesap yok. İnternet yok. Sadece donanımın ve sen.</p>
     <div class="dl-buttons">
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-macOS.dmg" class="btn-primary" id="dl-mac">macOS (DMG)</a>
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip" class="btn-secondary" id="dl-win">Windows (ZIP/EXE)</a>
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip" class="btn-secondary" id="dl-linux">Linux (ZIP)</a>
-      <a href="https://github.com/brienteth/myc-ai/releases/tag/v1.0.0" class="btn-secondary">Tüm Sürümler</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-0.1.0.dmg" class="btn-primary" id="dl-mac">macOS (DMG)</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe" class="btn-secondary" id="dl-win">Windows (EXE)</a>
+      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary" id="dl-all">Tüm Sürümler</a>
     </div>
-    <div style="margin-top:24px; padding:12px 18px; background:rgba(0, 232, 122, 0.05); border:1px solid rgba(0, 232, 122, 0.2); border-radius:8px; font-size:13px; color:#aaa; max-width:600px; margin-left:auto; margin-right:auto; text-align:center;">
-      <strong style="color:var(--green);">💡 macOS "Hasar Görmüş / Açılamıyor" Uyarısı İçin:</strong><br>
-      Açık kaynaklı uygulamalarda macOS Gatekeeper uyarısını geçmek için Terminal'de şu komutu çalıştırın:<br>
-      <code style="color:var(--green); font-family:var(--font-mono, monospace); background:rgba(0,0,0,0.4); padding:2px 6px; border-radius:4px; margin-top:4px; display:inline-block;">xattr -cr /Applications/Myca.app</code>
-    </div>
+    <p style="margin-top:16px; font-size:12px; color:var(--f-soil); opacity:0.7;">macOS'te indirdikten sonra DMG'yi aç, Myca.app'i Applications klasörüne sürükle ve çalıştır.</p>
   </div>
 </section>
 
