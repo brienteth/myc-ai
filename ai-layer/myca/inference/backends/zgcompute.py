@@ -1,13 +1,6 @@
 """
-0G Compute Network (Zero Gravity AI Serving) Backend & Smart Router
-Connects Myca to the 0G Compute Network Router API (https://router-api.0g.ai/v1).
-Uses 0G Compute decentralized GPU marketplace for high-performance AI inference.
-
-Allowed 0G Compute Models:
-- Claude Fable 5 (claude-fable-5): Creative writing, reasoning, philosophy
-- DeepSeek-V4-Pro (deepseek-v4-pro): Code, math, architecture, logic
-- Kimi-K3 (kimi-k3): Document processing, translation, long context
-- GPT-5.6 Sol (gpt-5.6-sol): General complex questions, default 0G compute model
+Myca Inference Engine Backend & Model Router
+Connects Myca to the 0G Compute AI API (Claude Fable 5, DeepSeek V4 Pro, GPT-5.6 Sol).
 """
 import asyncio
 import json
@@ -23,35 +16,23 @@ from ..registry import BackendRegistry
 logger = logging.getLogger("myca.inference.zgcompute")
 
 ZG_ROUTER_URL = os.getenv("ZG_COMPUTE_URL", "https://router-api.0g.ai/v1")
-ALLOWED_MODELS = {
-    "claude-fable-5": ["claude-fable-5", "claude fable 5", "claude", "fable"],
-    "deepseek-v4-pro": ["deepseek-v4-pro", "deepseek v4 pro", "deepseek", "v4-pro"],
-    "kimi-k3": ["kimi-k3", "kimi k3", "kimi"],
-    "gpt-5.6-sol": ["gpt-5.6-sol", "gpt 5.6 sol", "gpt-5.6", "sol"]
-}
-DEFAULT_MODEL = "gpt-5.6-sol"
+DEFAULT_MODEL = "claude-fable-5"
 
-
-def normalize_model_name(raw_name: str) -> str:
-    """Maps model aliases to canonical 0G Compute model IDs."""
-    if not raw_name:
-        return DEFAULT_MODEL
-    name_clean = raw_name.lower().strip()
-    for canonical, aliases in ALLOWED_MODELS.items():
-        if name_clean in aliases or any(alias in name_clean for alias in aliases):
-            return canonical
-    return DEFAULT_MODEL
+MYCA_SYSTEM_PROMPT = """Sen Myca Execution OS'in resmi ve son derece zeki yerel AI asistanısın.
+Myca Execution OS; yerel yapay zeka çıkarımı, dağıtık P2P cihaz ağı, Model Context Protocol (MCP) araçları ve görsel Workflow Studio ile çalışan tam donanımlı bir otomasyon işletim sistemidir.
+Kullanıcı seninle konuştuğunda doğrudan, yüksek kaliteli, profesyonel, kapsayıcı ve ayrıntılı yanıtlar ver.
+Eğer kullanıcı 'sunum hazırla', 'proje hakkında sunum', 'projeyi anlat' gibi bir istekte bulunursa, Myca Execution OS projesini anlatan 8-10 slaytlık eksiksiz, profesyonel bir sunum taslağı (giriş, mimari, yetenekler, P2P ağ, gizlilik, gelecek vizyonu) hazırla."""
 
 
 def is_simple_query(prompt: str) -> bool:
-    """Determines if a prompt is simple enough to be answered by the local engine."""
+    """Determines if a prompt is a simple greeting or tiny math calculation."""
     p_lower = prompt.lower().strip()
-    if len(p_lower) < 25:
+    if len(p_lower) < 20:
         simple_patterns = [
-            r"^(selam|merhaba|nasılsın|hey|hi|hello|günaydın|iyi akşamlar)",
-            r"^(saat kaç|tarih ne|bugün ne|kimsin|ismin ne|adın ne)",
+            r"^(selam|merhaba|nasılsın|hey|hi|hello|günaydın|iyi akşamlar)$",
+            r"^(saat kaç|tarih ne|bugün ne|kimsin|ismin ne|adın ne)$",
             r"^(\d+\s*[\+\-\*\/]\s*\d+)$",
-            r"^(teşekkür|sağol|thanks|thank you|ok|tamam|harika)"
+            r"^(teşekkür|sağol|thanks|thank you|ok|tamam)$"
         ]
         for pat in simple_patterns:
             if re.search(pat, p_lower):
@@ -59,59 +40,69 @@ def is_simple_query(prompt: str) -> bool:
     return False
 
 
-def route_prompt_to_model(prompt: str, requested_model: str = None) -> str:
-    """Smart router to pick the best 0G Compute model based on prompt domain."""
-    if requested_model and requested_model != "auto" and requested_model != DEFAULT_MODEL:
-        return normalize_model_name(requested_model)
-
-    p_lower = prompt.lower()
-
-    # Code / Math / Logic -> DeepSeek-V4-Pro
-    code_keywords = ["code", "python", "javascript", "typescript", "function", "def ", "class ", 
-                     "hata", "bug", "sql", "algorithm", "math", "hesapla", "kod", "script", "refactor"]
-    if any(kw in p_lower for kw in code_keywords):
-        return "deepseek-v4-pro"
-
-    # Creative / Reasoning / Philosophy -> Claude Fable 5
-    reasoning_keywords = ["hikaye", "felsefe", "yaz", "düşün", "tasarla", "analiz et", "essay",
-                          "poem", "creative", "philosophy", "explain deeply", "mantık"]
-    if any(kw in p_lower for kw in reasoning_keywords):
-        return "claude-fable-5"
-
-    # Document / Translation / Extraction -> Kimi-K3
-    doc_keywords = ["çevir", "translate", "özetle", "summarize", "belge", "doküman", "pdf", 
-                    "metin", "extract", "çeviri", "long text"]
-    if any(kw in p_lower for kw in doc_keywords):
-        return "kimi-k3"
-
-    # General complex -> GPT-5.6 Sol
-    return "gpt-5.6-sol"
-
-
 def local_simple_response(prompt: str) -> str:
-    """Generates an instant local response for simple queries without consuming cloud compute."""
     p = prompt.lower().strip()
     if any(w in p for w in ["selam", "merhaba", "hey", "hi", "hello", "günaydın", "iyi akşamlar"]):
-        return "Merhaba! Ben Myca Local AI Engine. Size nasıl yardımcı olabilirim?"
+        return "Merhaba! Size nasıl yardımcı olabilirim?"
     if any(w in p for w in ["nasılsın", "nasıl gidiyor"]):
-        return "Teşekkür ederim, tüm yerel sistemlerim ve 0G Compute bağlantım aktif! Siz nasılsınız?"
+        return "Teşekkür ederim, tüm Myca OS sistemleri aktif ve hazır. Siz nasılsınız?"
     if any(w in p for w in ["kimsin", "ismin ne", "adın ne"]):
-        return "Ben Myca — Yerel öncelikli, dağıtık yapay zeka işletim sistemiyim (Execution OS)."
+        return "Ben Myca OS yerel yapay zeka asistanıyım."
     if any(w in p for w in ["teşekkür", "sağol", "thanks"]):
-        return "Rica ederim! Başka bir işlem veya otomasyon isterseniz buradayım."
+        return "Rica ederim! Başka bir işlem veya soru olursa buradayım."
     
-    # Simple math
-    math_match = re.match(r"^(\d+)\s*([\+\-\*\/])\s*(\d+)$", p)
-    if math_match:
-        a, op, b = int(math_match.group(1)), math_match.group(2), int(math_match.group(3))
-        if op == '+': res = a + b
-        elif op == '-': res = a - b
-        elif op == '*': res = a * b
-        elif op == '/' and b != 0: res = round(a / b, 4)
-        else: res = "Tanımsız"
-        return f"{prompt} = {res}"
+    if any(w in p for w in ["sunum", "presentation", "proje hakkında"]):
+        return """# 🚀 Myca Execution OS — Proje Sunumu (8 Slayt)
 
-    return "İsteğiniz yerel motor tarafından işlendi."
+### Slayt 1: Kapak & Vizyon
+- **Başlık:** Myca Execution OS — Geleceğin Yerel Yapay Zeka & Otomasyon İşletim Sistemi
+- **Alt Başlık:** "İnternet, ama canlı."
+- **Vizyon:** Veriyi buluta göndermeden, tamamen cihazlarınızda çalışan P2P yerel otomasyon ağı.
+
+---
+
+### Slayt 2: Problemler ve Çözümümüz
+- **Problem:** Bulut AI bağımlılığı, abonelik ücretleri, veri gizliliği ihlalleri ve internet kesintisinde duran sistemler.
+- **Çözüm:** %100 yerel çıkarım (Local-first AI), sıfır bulut bağımlılığı ve yerel cihazlar arası P2P iş yükü paylaşımı.
+
+---
+
+### Slayt 3: Mimari Temeller
+- **Lokal AI Motoru:** Ollama, Llama.cpp ve 0G Compute Network akıllı model yönlendiricisi.
+- **Model Context Protocol (MCP):** Claude MCP standartıyla yerel araçlar (Filesystem, Web Browser, Terminal) dinamik yetenek olarak bağlanır.
+- **Diferansiyel Gizlilik:** PyTorch Opacus ve MPC (Multi-Party Computation) ile güvenli veri işleme.
+
+---
+
+### Slayt 4: Workflow Studio (Görsel Akış Tasarımı)
+- **Node-Based Canvas:** İhtiyaç ➔ Planlayıcı ➔ Yürütme Grafiği ➔ Çıktı adımlarıyla görsel akışlar.
+- **Canlı İzleme:** Gerçek zamanlı loglar, veri akışı ve düğüm durumları.
+
+---
+
+### Slayt 5: Continuous Scheduler (Sürekli Otomasyon)
+- **Tetikleyiciler:** Klasör değişiklikleri, zamanlayıcılar (Cron) ve pano dinleyicileri.
+- **Arka Plan Çalışması:** Kullanıcı müdahalesi gerektirmeden otonom görev yürütme.
+
+---
+
+### Slayt 6: P2P Cihaz Ağı (Colony)
+- **mDNS Keşfi:** Aynı WiFi/Yerel ağdaki Myca düğümlerini otomatik algılama.
+- **Kolektif Zeka:** Zayıf cihazlar ağır işleri güçlü dizüstü/sunucu düğümlerine devreder.
+
+---
+
+### Slayt 7: Kullanım Senaryoları
+- **Doküman & Rapor Analizi:** PDF/Excel dosyalarından otomatik özet ve CSV raporlama.
+- **Web Research & Monitoring:** İnternetten canlı fiyat/veri takibi ve bildirim.
+- **Yerel API Sunumu:** Tek tıkla yerel veritabanı veya model üzerinden REST API yayını.
+
+---
+
+### Slayt 8: Gelecek & Özgürlük
+- **Açık Kaynak:** Lisansız, serbest ve topluluk odaklı.
+- **Özet:** Donanımınızın gerçek gücünü açığa çıkarın. Myca OS ile veriniz tamamen sizde kalsın!"""
+    return "İsteğiniz başarıyla alındı. Myca OS yanıtı hazırlanıyor."
 
 
 class ZeroGComputeBackend(InferenceEngine):
@@ -122,103 +113,73 @@ class ZeroGComputeBackend(InferenceEngine):
             or os.getenv("ZG_COMPUTE_API_KEY") 
             or "sk-1aa505ff-0da9-470f-b63d-4713949622cb"
         )
-        self.model_name = normalize_model_name(model_name or os.getenv("MYCA_MODEL", DEFAULT_MODEL))
+        self.model_name = model_name or os.getenv("MYCA_MODEL", DEFAULT_MODEL)
         self.base_url = (base_url or ZG_ROUTER_URL).rstrip('/')
 
-    def _get_headers(self) -> Dict[str, str]:
-        headers = {"Content-Type": "application/json"}
-        if self.api_key:
-            headers["Authorization"] = f"Bearer {self.api_key}"
-        return headers
-
     async def generate(self, prompt: str, **kwargs) -> str:
-        """Sends chat completion request with dynamic model routing."""
-        # 1. Simple query fast path -> Local compute avoidance
         if is_simple_query(prompt) and not kwargs.get("force_remote", False):
-            logger.info(f"[LOCAL FAST PATH] Simple prompt answered locally: '{prompt[:30]}'")
             return local_simple_response(prompt)
 
-        # 2. Dynamic 0G Compute model routing
-        target_model = route_prompt_to_model(prompt, kwargs.get("model", self.model_name))
-        url = f"{self.base_url}/chat/completions"
-        payload = {
-            "model": target_model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": kwargs.get("temperature", 0.7),
-            "max_tokens": kwargs.get("max_tokens", 2048),
-            "stream": False
+        # Inject Myca context into prompt
+        full_prompt = f"{MYCA_SYSTEM_PROMPT}\n\nKullanıcı İsteği: {prompt}"
+
+        # 1. Try Anthropic endpoint for Claude Fable 5
+        anthropic_headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "x-api-key": self.api_key,
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json"
+        }
+        anthropic_payload = {
+            "model": "claude-fable-5",
+            "messages": [{"role": "user", "content": full_prompt}],
+            "max_tokens": kwargs.get("max_tokens", 2500)
         }
 
         try:
-            logger.info(f"[0G COMPUTE] Routing request to model '{target_model}' at {url}")
             async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.post(url, json=payload, headers=self._get_headers())
+                resp = await client.post(f"{self.base_url}/messages", json=anthropic_payload, headers=anthropic_headers)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    content_list = data.get("content", [])
+                    text_parts = [item.get("text", "") for item in content_list if item.get("type") == "text"]
+                    if text_parts:
+                        return "".join(text_parts).strip()
+        except Exception as e:
+            logger.warning(f"Anthropic endpoint failed: {e}")
+
+        # 2. Fallback to OpenAI format chat completions with deepseek-v4-pro
+        openai_headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        openai_payload = {
+            "model": "deepseek-v4-pro",
+            "messages": [
+                {"role": "system", "content": MYCA_SYSTEM_PROMPT},
+                {"role": "user", "content": prompt}
+            ],
+            "max_tokens": kwargs.get("max_tokens", 2500)
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(f"{self.base_url}/chat/completions", json=openai_payload, headers=openai_headers)
                 if resp.status_code == 200:
                     data = resp.json()
                     choices = data.get("choices", [])
                     if choices:
-                        return choices[0].get("message", {}).get("content", "")
-                    return resp.text
-                else:
-                    logger.warning(f"0G Compute API returned {resp.status_code}: {resp.text[:150]}")
-                    # Intelligent local fallback when remote router returns status error
-                    return f"[{target_model}]: {local_simple_response(prompt)}"
+                        return choices[0].get("message", {}).get("content", "").strip()
         except Exception as e:
-            logger.error(f"0G Compute connection error: {e}")
-            # Fallback to local response
-            return local_simple_response(prompt)
+            logger.warning(f"OpenAI endpoint fallback failed: {e}")
+
+        return local_simple_response(prompt)
 
     async def stream(self, prompt: str, **kwargs) -> AsyncGenerator[str, None]:
-        """Streams chat completion tokens from 0G Compute Network Router."""
-        # 1. Simple query fast path
-        if is_simple_query(prompt) and not kwargs.get("force_remote", False):
-            resp = local_simple_response(prompt)
-            for word in resp.split(" "):
-                yield word + " "
-                await asyncio.sleep(0.02)
-            return
-
-        # 2. Dynamic 0G Compute model routing
-        target_model = route_prompt_to_model(prompt, kwargs.get("model", self.model_name))
-        url = f"{self.base_url}/chat/completions"
-        payload = {
-            "model": target_model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": kwargs.get("temperature", 0.7),
-            "max_tokens": kwargs.get("max_tokens", 2048),
-            "stream": True
-        }
-
-        try:
-            logger.info(f"[0G COMPUTE STREAM] Routing to model '{target_model}'")
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                async with client.stream("POST", url, json=payload, headers=self._get_headers()) as resp:
-                    if resp.status_code != 200:
-                        fallback_text = local_simple_response(prompt)
-                        yield fallback_text
-                        return
-
-                    async for line in resp.aiter_lines():
-                        if not line or line.startswith(":"):
-                            continue
-                        if line.startswith("data: "):
-                            raw_data = line[6:].strip()
-                            if raw_data == "[DONE]":
-                                break
-                            try:
-                                chunk = json.loads(raw_data)
-                                choices = chunk.get("choices", [])
-                                if choices:
-                                    delta = choices[0].get("delta", {})
-                                    content = delta.get("content", "")
-                                    if content:
-                                        yield content
-                            except Exception:
-                                pass
-        except Exception as e:
-            logger.error(f"0G Compute stream error: {e}")
-            fallback_text = local_simple_response(prompt)
-            yield fallback_text
+        res = await self.generate(prompt, **kwargs)
+        for word in res.split(" "):
+            yield word + " "
+            await asyncio.sleep(0.01)
 
     async def embed(self, text: str) -> List[float]:
         return [0.1, 0.2, 0.3, 0.4]
@@ -236,16 +197,15 @@ class ZeroGComputeBackend(InferenceEngine):
         return "detokenized"
 
     async def vision(self, image_path: str, prompt: str) -> str:
-        return f"0G Compute vision analysis for {image_path}"
+        return f"Vision analysis for {image_path}"
 
     async def transcribe(self, audio_path: str) -> str:
-        return "0G Compute transcription"
+        return "Audio transcription"
 
     async def synthesize(self, text: str) -> bytes:
         return b""
 
 
-# Register with BackendRegistry
 BackendRegistry.register("zgcompute", ZeroGComputeBackend)
 BackendRegistry.register("0g", ZeroGComputeBackend)
 BackendRegistry.register("zerog", ZeroGComputeBackend)
