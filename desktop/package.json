@@ -23,7 +23,9 @@
       "electron.cjs",
       "package.json"
     ],
+    "icon": "public/icon.png",
     "mac": {
+      "icon": "public/icon.png",
       "category": "public.app-category.utilities",
       "hardenedRuntime": false,
       "gatekeeperAssess": false,

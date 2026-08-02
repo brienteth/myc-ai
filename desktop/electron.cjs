@@ -34,7 +34,15 @@ function startBackend() {
   let spawnCmd = backendPath;
   let spawnArgs = [];
 
-  if (!fs.existsSync(backendPath)) {
+  if (fs.existsSync(backendPath)) {
+    if (process.platform === 'darwin') {
+      try {
+        fs.chmodSync(backendPath, '0755');
+      } catch (err) {
+        console.warn('[Main] chmod +x on backend binary failed:', err);
+      }
+    }
+  } else {
     console.warn('[Main] Standalone backend binary not found at:', backendPath);
     // Fallback: check if local python main.py exists
     const pyMain = path.join(app.getAppPath(), '..', 'ai-layer', 'main.py');
@@ -135,9 +143,11 @@ function waitForBackendHealth() {
 }
 
 function createWindow() {
+  const iconPath = path.join(__dirname, 'public', 'icon.png');
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 700,
+    icon: fs.existsSync(iconPath) ? iconPath : undefined,
     titleBarStyle: 'hiddenInset',
     vibrancy: 'sidebar',
     visualEffectState: 'active',
