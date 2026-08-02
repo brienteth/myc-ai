@@ -202,17 +202,20 @@ footer {
 <nav>
   <div style="display:flex; align-items:center;">
     <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-      <svg width="26" height="26" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-        <circle cx="256" cy="256" r="240" fill="#0A0A14" stroke="#2E6B45" stroke-width="20" />
-        <g>
-          <path d="M 160,340 C 160,260 170,200 175,180" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
-          <circle cx="160" cy="340" r="16" fill="#00e87a" />
-          <circle cx="175" cy="180" r="15" fill="#00e87a" />
-          <path d="M 175,180 C 185,140 235,140 245,190 L 245,330" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
-          <circle cx="245" cy="330" r="15" fill="#00e87a" />
-          <path d="M 245,190 C 255,140 305,140 315,185 L 315,310 C 315,330 330,340 345,340" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
-          <circle cx="345" cy="340" r="16" fill="#00e87a" />
-        </g>
+      <svg width="32" height="32" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+        <path d="M 100 28 C 50 28 35 72 42 98 C 62 98 75 90 100 90 C 125 90 138 98 158 98 C 165 72 150 28 100 28 Z" stroke="#00e87a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M 52 98 Q 100 86 148 98" stroke="#00e87a" stroke-width="4" opacity="0.8" />
+        <path d="M 91 92 Q 88 122 84 142 C 95 145 105 145 116 142 Q 112 122 109 92" stroke="#00e87a" stroke-width="6" stroke-linecap="round" />
+        <path d="M 86 142 Q 68 162 42 158" stroke="#00e87a" stroke-width="5" stroke-linecap="round" />
+        <circle cx="42" cy="158" r="5" fill="#00e87a" />
+        <path d="M 92 143 Q 78 178 62 188" stroke="#00e87a" stroke-width="4" stroke-linecap="round" />
+        <circle cx="62" cy="188" r="4" fill="#00e87a" />
+        <path d="M 100 144 L 100 192" stroke="#00e87a" stroke-width="5" stroke-linecap="round" />
+        <circle cx="100" cy="192" r="5" fill="#00e87a" />
+        <path d="M 108 143 Q 122 178 138 188" stroke="#00e87a" stroke-width="4" stroke-linecap="round" />
+        <circle cx="138" cy="188" r="4" fill="#00e87a" />
+        <path d="M 114 142 Q 132 162 158 158" stroke="#00e87a" stroke-width="5" stroke-linecap="round" />
+        <circle cx="158" cy="158" r="5" fill="#00e87a" />
       </svg>
       <div class="nav-logo f-serif-italic">myc</div>
     </a>
@@ -257,8 +260,8 @@ footer {
       </div>
     </div>
   </div>
-  <div class="hero-canvas-container" style="display:flex; align-items:center; justify-content:center; padding:20px 0;">
-    <img src="landing/hero.png" alt="myc — The internet, but alive." style="width:100%; max-width:560px; border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,0.18);" />
+  <div class="hero-canvas-container">
+    <canvas id="heroCanvas" style="width:100%; height:100%;"></canvas>
   </div>
 </section>
 
@@ -408,17 +411,20 @@ footer {
 
 <footer>
   <div style="display:flex; align-items:center; gap:12px;">
-    <svg width="28" height="28" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
-      <circle cx="256" cy="256" r="240" fill="#0A0A14" stroke="#2E6B45" stroke-width="20" />
-      <g>
-        <path d="M 160,340 C 160,260 170,200 175,180" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
-        <circle cx="160" cy="340" r="16" fill="#00e87a" />
-        <circle cx="175" cy="180" r="15" fill="#00e87a" />
-        <path d="M 175,180 C 185,140 235,140 245,190 L 245,330" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
-        <circle cx="245" cy="330" r="15" fill="#00e87a" />
-        <path d="M 245,190 C 255,140 305,140 315,185 L 315,310 C 315,330 330,340 345,340" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
-        <circle cx="345" cy="340" r="16" fill="#00e87a" />
-      </g>
+    <svg width="36" height="36" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+      <path d="M 100 28 C 50 28 35 72 42 98 C 62 98 75 90 100 90 C 125 90 138 98 158 98 C 165 72 150 28 100 28 Z" stroke="#00e87a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 52 98 Q 100 86 148 98" stroke="#00e87a" stroke-width="4" opacity="0.8" />
+      <path d="M 91 92 Q 88 122 84 142 C 95 145 105 145 116 142 Q 112 122 109 92" stroke="#00e87a" stroke-width="6" stroke-linecap="round" />
+      <path d="M 86 142 Q 68 162 42 158" stroke="#00e87a" stroke-width="5" stroke-linecap="round" />
+      <circle cx="42" cy="158" r="5" fill="#00e87a" />
+      <path d="M 92 143 Q 78 178 62 188" stroke="#00e87a" stroke-width="4" stroke-linecap="round" />
+      <circle cx="62" cy="188" r="4" fill="#00e87a" />
+      <path d="M 100 144 L 100 192" stroke="#00e87a" stroke-width="5" stroke-linecap="round" />
+      <circle cx="100" cy="192" r="5" fill="#00e87a" />
+      <path d="M 108 143 Q 122 178 138 188" stroke="#00e87a" stroke-width="4" stroke-linecap="round" />
+      <circle cx="138" cy="188" r="4" fill="#00e87a" />
+      <path d="M 114 142 Q 132 162 158 158" stroke="#00e87a" stroke-width="5" stroke-linecap="round" />
+      <circle cx="158" cy="158" r="5" fill="#00e87a" />
     </svg>
     <div>
       <div class="footer-logo f-serif-italic">myc</div>
