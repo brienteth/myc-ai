@@ -41,12 +41,12 @@
 
 ## Downloads
 
-| Platform | Download |
-|---|---|
-| **macOS** (Apple Silicon) | [Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-macOS.dmg) |
-| **macOS** (Intel / Universal) | [Myca-macOS.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-macOS.zip) |
-| **Windows** | [Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-Windows.zip) |
-| **Linux** | [Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-Linux.zip) |
+| Platform | Download Link | Format |
+|---|---|---|
+| **macOS** | [Download Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-macOS.dmg) | `.dmg` |
+| **Windows** | [Download Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip) | `.zip` / `.exe` |
+| **Linux** | [Download Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip) | `.zip` / `.AppImage` |
+| **All Versions** | [View GitHub Releases Tag v1.0.0](https://github.com/brienteth/myc-ai/releases/tag/v1.0.0) | `Release v1.0.0` |
 
 ---
 
@@ -114,6 +114,22 @@ npm run electron:build
 ```
 
 Stand-alone installers will be generated under the `desktop/release/` directory.
+
+```
+
+### Python SDK (`pip install myca`)
+
+You can embed Myca's local LLM engine, web scraper, session memory, and autonomous software factory into any Python application:
+
+```python
+from myca import Myca
+
+async with Myca() as ai:
+    res = await ai.generate("Explain quantum computing in 2 sentences.")
+    page = await ai.scrape("https://example.com")
+```
+
+For complete SDK API documentation, see [docs/sdk.md](docs/sdk.md).
 
 ---
 

@@ -425,9 +425,18 @@
 
   <!-- Header -->
   <header>
-    <a href="/" class="logo-area">
-      <svg class="logo-icon" viewBox="0 0 100 100">
-        <path d="M50 15C32.1 15 17.6 28.5 15.3 46C15.1 47.3 16.1 48.5 17.5 48.5H35V65C35 73.3 41.7 80 50 80C58.3 80 65 73.3 65 65V48.5H82.5C83.9 48.5 84.9 47.3 84.7 46C82.4 28.5 67.9 15 50 15Z"/>
+    <a href="/" class="logo-area" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+      <svg width="26" height="26" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+        <circle cx="256" cy="256" r="240" fill="#0A0A14" stroke="#2E6B45" stroke-width="20" />
+        <g>
+          <path d="M 160,340 C 160,260 170,200 175,180" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+          <circle cx="160" cy="340" r="16" fill="#00e87a" />
+          <circle cx="175" cy="180" r="15" fill="#00e87a" />
+          <path d="M 175,180 C 185,140 235,140 245,190 L 245,330" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+          <circle cx="245" cy="330" r="15" fill="#00e87a" />
+          <path d="M 245,190 C 255,140 305,140 315,185 L 315,310 C 315,330 330,340 345,340" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+          <circle cx="345" cy="340" r="16" fill="#00e87a" />
+        </g>
       </svg>
       <span class="logo-text">myca os</span>
     </a>
@@ -458,6 +467,7 @@
         <div class="menu-item" onclick="showSection('concepts-colony')" id="t-m-colony">Colony (Koloni)</div>
         
         <div class="menu-group-label" id="t-group-guides">Rehberler & Tarifler</div>
+        <div class="menu-item" onclick="showSection('workflows')" id="t-m-workflows">Workflows (İş Akışları)</div>
         <div class="menu-item" onclick="showSection('guides')" id="t-m-guides">Guides (Rehberler)</div>
         <div class="menu-item" onclick="showSection('cookbook')" id="t-m-cookbook">Cookbook (Tarifler)</div>
         
@@ -746,11 +756,66 @@ Output: ExecutionGraph JSON [fs.read ➔ ai.summary ➔ fs.write]</pre>
 
       <!-- SECTION: SDK -->
       <div id="sdk" class="doc-section">
-        <h1 id="t-sdk-title">Geliştirici SDK</h1>
-        <p id="t-sdk-p1">Kendi becerilerinizi (Skills) yazmak ve Myca OS ile entegre etmek için Python SDK'mızı kullanabilirsiniz.</p>
+        <h1 id="t-sdk-title">Myca Python SDK Kullanımı</h1>
+        <p id="t-sdk-p1">Myca'nın yerel çıkarım motorunu, web kazıyıcısını (Firecrawl benzeri), oturum hafızasını (Obsidian benzeri) ve otonom yazılım fabrikasını (Finn-loop benzeri) istediğiniz Python uygulamasına bağımsız bir SDK olarak entegre edebilirsiniz.</p>
 
-        <h2 id="t-sdk-h2">Skill Tanımlama Örneği</h2>
-        <p id="t-sdk-p2">Her beceri girdi parametreleri, çıktılar ve gerekli izin bildirimleri ile tanımlanır.</p>
+        <h2>Kurulum</h2>
+        <pre>
+# İstemci + Uzak Düğüm Bağlantısı
+pip install myca
+
+# İstemci + Yerel LLM Çıkarımı (llama-cpp-python)
+pip install "myca[local]"
+
+# Tam Kurulum (Yerel LLM + Web Kazıyıcı + Sunucu + P2P Mesh)
+pip install "myca[all]"</pre>
+
+        <h2>High-Level Python İstemcisi (`Myca`)</h2>
+        <p>Myca istemcisini asenkron bağlam yöneticisi ile doğrudan uygulamanızda çalıştırabilirsiniz:</p>
+
+        <pre>
+import asyncio
+from myca import Myca
+
+async def main():
+    async with Myca(backend="auto") as ai:
+        # 1. LLM Üretimi & Akış
+        response = await ai.generate("Kuantum bilgisayarları kısaca açıkla.")
+        print(response)
+
+        async for token in ai.stream("Kod yazarken dikkat edilecekler:"):
+            print(token, end="", flush=True)
+
+        # 2. Yerel Web Kazıma (URL -> Temiz Markdown)
+        page = await ai.scrape("https://example.com")
+        print(page["title"], page["markdown"])
+
+        # 3. Oturum Hafızası (Handover & Resume)
+        await ai.handover(
+            summary="API katmanı tamamlandı",
+            decisions=["FastAPI seçildi"],
+            next_steps=["Testleri yaz"]
+        )
+        previous = await ai.resume()
+        print("Kaldığımız yer:", previous["summary"])
+
+        # 4. Otonom Yazılım Fabrikası (Spec -> Build -> Review)
+        spec = await ai.factory_spec("Kullanıcı profili REST API")
+        print("Spec ID:", spec["id"])
+
+if __name__ == "__main__":
+    asyncio.run(main())</pre>
+
+        <h2>Tek Satırlık Senkron Yardımcılar</h2>
+        <p>Senkron betikler için hızlı tek satırlık fonksiyonlar:</p>
+        <pre>
+from myca import generate, scrape
+
+text = generate("Python nedir?", backend="mock")
+page = scrape("https://example.com")</pre>
+
+        <h2 id="t-sdk-h2">Özel Beceri (Custom Skill) Tanımlama</h2>
+        <p id="t-sdk-p2">Myca OS içerisinde çalışan kendi becerilerinizi girdi parametreleri, çıktılar ve gerekli izin bildirimleri ile tanımlayabilirsiniz.</p>
 
         <pre>
 from myca.skills.core.decorator import skill

@@ -41,12 +41,12 @@
 
 ## İndirmeler
 
-| Platform | İndirme Linki |
-|---|---|
-| **macOS** (Apple Silicon) | [Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-macOS.dmg) |
-| **macOS** (Intel / Universal) | [Myca-macOS.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-macOS.zip) |
-| **Windows** | [Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-Windows.zip) |
-| **Linux** | [Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/latest/download/Myca-Linux.zip) |
+| Platform | İndirme Linki | Format |
+|---|---|---|
+| **macOS** | [İndir: Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-macOS.dmg) | `.dmg` |
+| **Windows** | [İndir: Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip) | `.zip` / `.exe` |
+| **Linux** | [İndir: Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip) | `.zip` / `.AppImage` |
+| **Tüm Sürümler** | [GitHub Releases Tag v1.0.0 İncele](https://github.com/brienteth/myc-ai/releases/tag/v1.0.0) | `Release v1.0.0` |
 
 ---
 
@@ -114,6 +114,22 @@ npm run electron:build
 ```
 
 Bağımsız yükleyiciler `desktop/release/` dizini altında oluşturulacaktır.
+
+```
+
+### Python SDK (`pip install myca`)
+
+Myca'nın yerel LLM çıkarım motorunu, web kazıyıcısını, oturum hafızasını ve otonom yazılım fabrikasını istediğiniz Python projesine doğrudan entegre edebilirsiniz:
+
+```python
+from myca import Myca
+
+async with Myca() as ai:
+    res = await ai.generate("Kuantum bilgisayarları kısaca açıkla.")
+    page = await ai.scrape("https://example.com")
+```
+
+Detaylı SDK dokümantasyonu için [docs/sdk.md](docs/sdk.md) dosyasına göz atabilirsiniz.
 
 ---
 

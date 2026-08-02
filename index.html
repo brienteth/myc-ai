@@ -201,17 +201,33 @@ footer {
 
 <nav>
   <div style="display:flex; align-items:center;">
-    <div class="nav-logo f-serif-italic">myc</div>
+    <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
+      <svg width="26" height="26" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+        <circle cx="256" cy="256" r="240" fill="#0A0A14" stroke="#2E6B45" stroke-width="20" />
+        <g>
+          <path d="M 160,340 C 160,260 170,200 175,180" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+          <circle cx="160" cy="340" r="16" fill="#00e87a" />
+          <circle cx="175" cy="180" r="15" fill="#00e87a" />
+          <path d="M 175,180 C 185,140 235,140 245,190 L 245,330" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+          <circle cx="245" cy="330" r="15" fill="#00e87a" />
+          <path d="M 245,190 C 255,140 305,140 315,185 L 315,310 C 315,330 330,340 345,340" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+          <circle cx="345" cy="340" r="16" fill="#00e87a" />
+        </g>
+      </svg>
+      <div class="nav-logo f-serif-italic">myc</div>
+    </a>
     <div class="nav-links">
       <a href="#problem" id="t-nav-1">Neden?</a>
       <a href="#how" id="t-nav-2">Nasıl Çalışır?</a>
       <a href="#compute" id="t-nav-3">Mimari</a>
+      <a href="/docs-web" id="t-nav-docs">Dokümantasyon & SDK</a>
+      <a href="/app" id="t-nav-app">Web App</a>
       <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
   </div>
   <div style="display:flex; align-items:center; gap:24px;">
     <button class="lang-switch" onclick="toggleLang()">EN / TR</button>
-    <a href="#download" class="nav-download" id="t-nav-dl">İndir</a>
+    <a href="/app" class="nav-download" id="t-nav-dl">Web App'e Git</a>
   </div>
 </nav>
 
@@ -382,22 +398,37 @@ footer {
     <h2 class="section-title f-serif-italic" id="t-dl-title">Bugün kolonini kur.</h2>
     <p class="hero-sub" style="margin:0 auto;" id="t-dl-sub">Hesap yok. İnternet yok. Sadece donanımın ve sen.</p>
     <div class="dl-buttons">
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-0.1.0.dmg" class="btn-primary">macOS</a>
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe" class="btn-secondary">Windows</a>
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-0.1.0.AppImage" class="btn-secondary">Linux</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-macOS.dmg" class="btn-primary" id="dl-mac">macOS (DMG)</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip" class="btn-secondary" id="dl-win">Windows (ZIP/EXE)</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip" class="btn-secondary" id="dl-linux">Linux (ZIP)</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/tag/v1.0.0" class="btn-secondary">Tüm Sürümler</a>
     </div>
   </div>
 </section>
 
 <footer>
-  <div>
-    <div class="footer-logo f-serif-italic">myc</div>
-    <div id="t-foot-slogan">Verini sen kontrol et.</div>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <svg width="28" height="28" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+      <circle cx="256" cy="256" r="240" fill="#0A0A14" stroke="#2E6B45" stroke-width="20" />
+      <g>
+        <path d="M 160,340 C 160,260 170,200 175,180" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+        <circle cx="160" cy="340" r="16" fill="#00e87a" />
+        <circle cx="175" cy="180" r="15" fill="#00e87a" />
+        <path d="M 175,180 C 185,140 235,140 245,190 L 245,330" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+        <circle cx="245" cy="330" r="15" fill="#00e87a" />
+        <path d="M 245,190 C 255,140 305,140 315,185 L 315,310 C 315,330 330,340 345,340" stroke="#00e87a" stroke-width="28" stroke-linecap="round" />
+        <circle cx="345" cy="340" r="16" fill="#00e87a" />
+      </g>
+    </svg>
+    <div>
+      <div class="footer-logo f-serif-italic">myc</div>
+      <div id="t-foot-slogan">Verini sen kontrol et.</div>
+    </div>
   </div>
   <div class="footer-links">
     <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     <a href="docs.html">Whitepaper</a>
-    <a href="https://x.com/myc_ai">X / Twitter</a>
+    <a href="https://github.com/brienteth/myc-ai/releases">Releases</a>
   </div>
   <div>
     <div id="t-foot-lic">MIT Lisansı · 2026</div>
