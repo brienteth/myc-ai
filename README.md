@@ -48,6 +48,11 @@
 | **Linux** | *Coming soon* | `.AppImage` |
 | **All Versions** | [View All Releases](https://github.com/brienteth/myc-ai/releases) | |
 
+> 💡 **macOS "Hasar Görmüş / Çöp Sepetine Taşı" Uyarısı Çözümü:**  
+> Bağımsız açık kaynaklı uygulamalarda macOS sertifika kontrolü nedeniyle bu uyarıyı verir. İki kolay yöntemle anında açabilirsiniz:  
+> **1. Yöntem (En Kolay):** Uygulamaya **Sağ Tıklayıp (Control + Tık) "Aç"** seçeneğini seçin ve açılan onayda **"Aç"** butonuna tıklayın.  
+> **2. Yöntem (Terminal):** Terminal'de şu komutu çalıştırın: `xattr -cr /Applications/Myca.app`
+
 ---
 
 ## What makes it different?

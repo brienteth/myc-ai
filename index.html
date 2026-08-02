@@ -406,6 +406,14 @@ footer {
       <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary" id="dl-all">Tüm Sürümler</a>
     </div>
     <p style="margin-top:16px; font-size:12px; color:var(--f-soil); opacity:0.7;">macOS'te indirdikten sonra DMG'yi aç, Myca.app'i Applications klasörüne sürükle ve çalıştır.</p>
+    
+    <div style="margin-top:24px; padding:14px 20px; background:rgba(0, 232, 122, 0.05); border:1px solid rgba(0, 232, 122, 0.2); border-radius:12px; font-size:13px; color:var(--f-soil); max-width:640px; margin-left:auto; margin-right:auto; text-align:left; line-height:1.6;">
+      <strong style="color:#00e87a; display:block; margin-bottom:6px;">💡 macOS "Hasar Görmüş / Çöp Sepetine Taşı" Uyarısı Çözümü:</strong>
+      Açık kaynaklı bağımsız uygulamalarda macOS bu koruma uyarısını çıkarabilir. İki kolay yoldan anında açabilirsiniz:<br>
+      <strong>1. Yöntem (En Kolayı):</strong> Uygulamaya <strong>Sağ Tıklayıp "Aç"</strong> seçeneğini seçin ve açılan onay penceresinde <strong>"Aç"</strong> butonuna tıklayın.<br>
+      <strong>2. Yöntem (Terminal):</strong> Terminal'de aşağıdaki tek satırlık komutu çalıştırın:<br>
+      <code style="color:#00e87a; font-family:var(--f-mono, monospace); background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:6px; margin-top:6px; display:inline-block;">xattr -cr /Applications/Myca.app</code>
+    </div>
   </div>
 </section>
 
