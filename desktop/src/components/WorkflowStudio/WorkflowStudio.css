@@ -384,8 +384,8 @@
   height: 140px !important;
   max-height: 140px !important;
   min-height: 140px !important;
-  background: #090b14 !important;
-  border-top: 1px solid rgba(0, 232, 122, 0.25) !important;
+  background: var(--f-parchment) !important;
+  border-top: 1px solid var(--f-bark) !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
@@ -394,6 +394,7 @@
 .debugger-header {
   height: 36px;
   border-bottom: 1px solid var(--f-bark);
+  background: var(--f-parchment);
   display: flex;
   align-items: center;
   padding: 0 16px;
@@ -422,6 +423,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  background: var(--f-cream);
 }
 
 .logs-container {
