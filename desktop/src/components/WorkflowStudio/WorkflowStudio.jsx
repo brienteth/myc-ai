@@ -14,7 +14,7 @@ import '@xyflow/react/dist/style.css';
 
 import { 
   Play, Save, Check, UploadCloud, Square, X, Download, FileText, 
-  CheckCircle2, Cpu, Search, Globe, Folder, Image, Settings, Terminal
+  CheckCircle2, Cpu, Search, Globe, Folder, Image, Settings, Terminal, Sparkles, FileSpreadsheet
 } from 'lucide-react';
 import WorkflowInspector from './WorkflowInspector';
 import WorkflowDebugger from './WorkflowDebugger';
@@ -104,6 +104,10 @@ const WorkflowStudioCanvas = () => {
   const [showSkillModal, setShowSkillModal] = useState(false);
   const [skillSearch, setSkillSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  
+  // AI Refine state for execution results
+  const [aiRefinePrompt, setAiRefinePrompt] = useState('');
+  const [isRefining, setIsRefining] = useState(false);
 
   const [logs, setLogs] = useState(() => {
     try {
@@ -116,7 +120,7 @@ const WorkflowStudioCanvas = () => {
     }
   });
 
-  const { fitView, screenToFlowPosition } = useReactFlow();
+  const { fitView } = useReactFlow();
 
   // Save state to localStorage whenever nodes/edges/draft/logs change
   useEffect(() => {
@@ -137,7 +141,7 @@ const WorkflowStudioCanvas = () => {
     const inputs = [{ name: 'input' }];
     const outputs = [{ name: 'output' }];
     if (skillData.id.includes('search')) { inputs.push({name: 'path'}); inputs.push({name: 'pattern'}); outputs.push({name: 'files'}); }
-    if (skillData.id.includes('read')) { inputs.push({name: 'path'}); outputs.push({name: 'content'}); }
+    if (skillData.id.includes('read')) { inputs.push({name: 'path'}); inputs.push({name: 'content'}); }
     if (skillData.id.includes('write')) { inputs.push({name: 'path'}); inputs.push({name: 'content'}); inputs.push({name: 'format'}); outputs.push({name: 'path'}); }
 
     const newNode = {
@@ -246,7 +250,7 @@ const WorkflowStudioCanvas = () => {
         setNodes(nds => nds.map(n => n.id === sn.id ? {...n, data: {...n.data, status: 'running'}} : n));
         setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'info', msg: `Executing skill: ${sn.skill}...` }]);
         
-        await new Promise(r => setTimeout(r, 700 + Math.random() * 400));
+        await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
         
         setNodes(nds => nds.map(n => n.id === sn.id ? {...n, data: {...n.data, status: 'completed'}} : n));
       }
@@ -409,6 +413,58 @@ const WorkflowStudioCanvas = () => {
     }
   };
 
+  const handleAIRefineResult = async () => {
+    if (!aiRefinePrompt.trim() || !executionResult) return;
+    setIsRefining(true);
+    try {
+      const fullPrompt = `Here is the current workflow execution output result:\n\n${executionResult.content}\n\nUser Revision/Format Request: ${aiRefinePrompt}\n\nPlease revise, format, edit, or translate the output content accordingly and output ONLY the modified result content.`;
+      const res = await fetch('http://127.0.0.1:8420/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: fullPrompt, stream: false })
+      });
+      const data = await res.json();
+      if (data.response) {
+        setExecutionResult(prev => ({
+          ...prev,
+          content: data.response
+        }));
+        setAiRefinePrompt('');
+      }
+    } catch (err) {
+      alert(`AI Refine Error: ${err.message}`);
+    }
+    setIsRefining(false);
+  };
+
+  const handleDownloadFormat = (targetFormat) => {
+    if (!executionResult) return;
+    let contentToDownload = executionResult.content;
+    let mimeType = 'text/plain';
+    let ext = '.txt';
+
+    if (targetFormat === 'CSV') {
+      mimeType = 'text/csv';
+      ext = '.csv';
+    } else if (targetFormat === 'JSON') {
+      mimeType = 'application/json';
+      ext = '.json';
+    } else if (targetFormat === 'PDF') {
+      mimeType = 'text/plain';
+      ext = '.pdf';
+    }
+
+    const blob = new Blob([contentToDownload], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `myca_workflow_output_${Date.now()}${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Filter skills for Skill Registry Modal
   const allSkillsList = SKILL_CATEGORIES.flatMap(cat => cat.skills.map(s => ({ ...s, category: cat.name })));
   const filteredSkills = allSkillsList.filter(s => {
@@ -429,7 +485,6 @@ const WorkflowStudioCanvas = () => {
         </div>
         
         <div className="toolbar-actions">
-          {/* Skill Registry Button */}
           <button 
             className="toolbar-btn skill-registry-trigger" 
             onClick={() => setShowSkillModal(true)}
@@ -454,7 +509,7 @@ const WorkflowStudioCanvas = () => {
         </div>
       </div>
 
-      <div className="studio-content-wrapper full-screen-canvas" style={{ position: 'relative', width: '100%', height: 'calc(100vh - 120px)' }}>
+      <div className="studio-content-wrapper full-screen-canvas" style={{ position: 'relative', width: '100%', height: 'calc(100vh - 200px)' }}>
         <div className="studio-canvas" ref={reactFlowWrapper} style={{ width: '100%', height: '100%' }}>
           <WorkflowAIAssist onGenerate={handleAIGenerate} />
           <ReactFlow
@@ -489,14 +544,14 @@ const WorkflowStudioCanvas = () => {
       {showSkillModal && (
         <div className="skill-modal-overlay" style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(10, 10, 20, 0.8)', backdropFilter: 'blur(12px)',
+          background: 'rgba(5, 7, 14, 0.85)', backdropFilter: 'blur(16px)',
           zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
         }}>
           <div className="skill-modal-container" style={{
             background: 'linear-gradient(145deg, rgba(20, 22, 34, 0.98) 0%, rgba(10, 12, 20, 0.99) 100%)',
             border: '1px solid rgba(0, 232, 122, 0.35)',
             borderRadius: 18, width: '90%', maxWidth: 740, padding: 26,
-            boxShadow: '0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(0, 232, 122, 0.12)', color: '#f4f4f6'
+            boxShadow: '0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(0, 232, 122, 0.15)', color: '#f4f4f6'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -584,72 +639,144 @@ const WorkflowStudioCanvas = () => {
         </div>
       )}
 
-      {/* Execution Result Modal */}
+      {/* Execution Result Modal (High Contrast & AI Refine) */}
       {executionResult && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(10, 10, 20, 0.75)', backdropFilter: 'blur(8px)',
+          background: 'rgba(5, 7, 14, 0.88)', backdropFilter: 'blur(16px)',
           zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
         }}>
           <div style={{
-            background: 'var(--f-bark, #141424)', border: '1px solid var(--f-spore, #2e6b45)',
-            borderRadius: 16, width: '90%', maxWidth: 680, padding: 24,
-            boxShadow: '0 20px 40px rgba(0,0,0,0.5)', color: 'var(--f-linen, #f0f0f0)', position: 'relative'
+            background: 'linear-gradient(145deg, rgba(18, 20, 34, 0.98) 0%, rgba(9, 11, 20, 0.99) 100%)',
+            border: '1px solid rgba(0, 232, 122, 0.35)',
+            borderRadius: 18, width: '90%', maxWidth: 720, padding: 26,
+            boxShadow: '0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(0, 232, 122, 0.15)',
+            color: '#ffffff', position: 'relative'
           }}>
             <button 
               onClick={() => setExecutionResult(null)}
-              style={{ position: 'absolute', top: 16, right: 16, background: 'transparent', border: 'none', color: 'var(--f-earth)', cursor: 'pointer' }}
+              style={{
+                position: 'absolute', top: 16, right: 16,
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: 8, padding: 6, color: '#a0a0b2', cursor: 'pointer', display: 'flex'
+              }}
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <CheckCircle2 size={28} color="#00e87a" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+              <CheckCircle2 size={30} color="#00e87a" />
               <div>
-                <h3 style={{ margin: 0, fontSize: 18, color: '#00e87a' }}>Execution Completed Successfully!</h3>
-                <span style={{ fontSize: 12, color: 'var(--f-earth)' }}>Run ID: {executionResult.runId} • {executionResult.timestamp}</span>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#00e87a', letterSpacing: '-0.2px' }}>Execution Completed Successfully!</h3>
+                <span style={{ fontSize: 12, color: '#a0a0b2', fontWeight: 500 }}>Run ID: {executionResult.runId} • {executionResult.timestamp}</span>
               </div>
             </div>
 
-            <div style={{ marginBottom: 16, padding: '12px 16px', background: 'rgba(0, 232, 122, 0.08)', borderRadius: 8, border: '1px solid rgba(0, 232, 122, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{
+              marginBottom: 16, padding: '12px 16px', background: '#090b14', borderRadius: 10,
+              border: '1px solid rgba(0, 232, 122, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+            }}>
               <div>
-                <div style={{ fontSize: 11, color: 'var(--f-earth)', marginBottom: 2 }}>Generated Result File / Artifact:</div>
-                <code style={{ color: '#00e87a', fontSize: 13, fontFamily: 'monospace' }}>{executionResult.filePath}</code>
+                <div style={{ fontSize: 11, color: '#a0a0b2', marginBottom: 2, fontWeight: 600, textTransform: 'uppercase' }}>Generated Result File / Artifact:</div>
+                <code style={{ color: '#00e87a', fontSize: 13, fontFamily: 'monospace', fontWeight: 600 }}>{executionResult.filePath}</code>
               </div>
-              <span style={{ padding: '4px 10px', borderRadius: 6, background: '#00e87a', color: '#0a0a14', fontWeight: 700, fontSize: 12 }}>
+              <span style={{ padding: '4px 12px', borderRadius: 6, background: '#00e87a', color: '#070a10', fontWeight: 800, fontSize: 12 }}>
                 [{executionResult.fileFormat}]
               </span>
             </div>
 
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 12, color: 'var(--f-earth)', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <FileText size={14} /> Output Content Preview ({executionResult.fileFormat}):
+            {/* Content Preview Box */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 12, color: '#a0a0b2', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>
+                <FileText size={14} color="#00e87a" /> Output Content Preview ({executionResult.fileFormat}):
               </div>
               <pre style={{
-                background: '#0a0a14', padding: 16, borderRadius: 8, maxHeight: 220, overflowY: 'auto',
-                fontSize: 12, color: '#e0e0e0', lineHeight: 1.5, border: '1px solid var(--f-soil)', whiteSpace: 'pre-wrap'
+                background: '#04050a', padding: 16, borderRadius: 10, maxHeight: 200, overflowY: 'auto',
+                fontSize: 13, color: '#ffffff', lineHeight: 1.5, border: '1px solid rgba(255,255,255,0.12)', whiteSpace: 'pre-wrap',
+                fontFamily: 'monospace'
               }}>
                 {executionResult.content}
               </pre>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-              <button 
-                onClick={() => setExecutionResult(null)}
-                style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--f-soil)', background: 'transparent', color: '#fff', cursor: 'pointer', fontSize: 13 }}
-              >
-                Close
-              </button>
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(executionResult.content);
-                  alert("Output result kopyalandı!");
-                }}
-                style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: '#00e87a', color: '#0a0a14', fontWeight: 600, cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}
-              >
-                <Download size={14} /> Copy Output Result
-              </button>
+            {/* AI Assistant Refine Box */}
+            <div style={{ marginBottom: 20, padding: 14, background: 'rgba(0, 232, 122, 0.04)', borderRadius: 10, border: '1px solid rgba(0, 232, 122, 0.2)' }}>
+              <div style={{ fontSize: 12, color: '#00e87a', fontWeight: 700, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Sparkles size={14} /> AI Assistant Refinement & Format Editor:
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input 
+                  type="text" 
+                  placeholder="Ask AI to edit, reformat, translate or summarize result (e.g. 'Format as Markdown table', 'Translate to English')..."
+                  value={aiRefinePrompt}
+                  onChange={e => setAiRefinePrompt(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleAIRefineResult()}
+                  style={{
+                    flex: 1, padding: '9px 14px', borderRadius: 8, background: '#090b14',
+                    border: '1px solid rgba(0, 232, 122, 0.3)', color: '#fff', fontSize: 13, outline: 'none'
+                  }}
+                />
+                <button 
+                  onClick={handleAIRefineResult}
+                  disabled={isRefining}
+                  style={{
+                    padding: '9px 16px', borderRadius: 8, border: 'none',
+                    background: isRefining ? '#2d2d34' : 'linear-gradient(135deg, #00e87a 0%, #00b862 100%)',
+                    color: '#070a10', fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
+                  }}
+                >
+                  {isRefining ? 'Refining...' : '✨ Refine with AI'}
+                </button>
+              </div>
             </div>
+
+            {/* Format Export Buttons & Actions */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 16 }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ fontSize: 12, color: '#a0a0b2', fontWeight: 600 }}>Download Format:</span>
+                {['CSV', 'JSON', 'PDF', 'TXT'].map(fmt => (
+                  <button 
+                    key={fmt}
+                    onClick={() => handleDownloadFormat(fmt)}
+                    style={{
+                      padding: '5px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.15)',
+                      background: 'rgba(255,255,255,0.05)', color: '#ffffff', fontSize: 12, fontWeight: 600,
+                      cursor: 'pointer', transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#00e87a'; e.currentTarget.style.color = '#00e87a'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.color = '#ffffff'; }}
+                  >
+                    📥 {fmt}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button 
+                  onClick={() => setExecutionResult(null)}
+                  style={{
+                    padding: '8px 18px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)',
+                    background: '#161826', color: '#ffffff', fontWeight: 600, cursor: 'pointer', fontSize: 13
+                  }}
+                >
+                  Close
+                </button>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(executionResult.content);
+                    alert("Output result copied to clipboard!");
+                  }}
+                  style={{
+                    padding: '8px 18px', borderRadius: 8, border: 'none',
+                    background: 'linear-gradient(135deg, #00e87a 0%, #00b862 100%)',
+                    color: '#070a10', fontWeight: 700, cursor: 'pointer', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6
+                  }}
+                >
+                  <Download size={14} /> Copy Result
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

@@ -380,12 +380,15 @@
 }
 
 /* Debugger Panel */
-.studio-debugger {
-  height: 250px;
-  background: var(--f-parchment);
-  border-top: 1px solid var(--f-bark);
-  display: flex;
-  flex-direction: column;
+.workflow-debugger, .studio-debugger {
+  height: 140px !important;
+  max-height: 140px !important;
+  min-height: 140px !important;
+  background: #090b14 !important;
+  border-top: 1px solid rgba(0, 232, 122, 0.25) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
 }
 
 .debugger-header {
