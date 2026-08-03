@@ -217,7 +217,7 @@ Requirements:
         elif "telegram" in p_lower:
             nodes = [
                 {"id": "gen_msg", "skill": "core.chat", "inputs": {"prompt": prompt}, "depends_on": []},
-                {"id": "send_tg", "skill": "telegram.send", "inputs": {"chat_id": "@myca_channel", "message": "{{nodes.gen_msg.outputs.response}}"}, "depends_on": ["gen_msg"]}
+                {"id": "send_tg", "skill": "communication.send", "inputs": {"channel": "telegram", "recipient": "@myca_channel", "body": "{{nodes.gen_msg.outputs.response}}"}, "depends_on": ["gen_msg"]}
             ]
             edges = [{"from": "gen_msg", "to": "send_tg"}]
         elif "youtube" in p_lower or "video" in p_lower:

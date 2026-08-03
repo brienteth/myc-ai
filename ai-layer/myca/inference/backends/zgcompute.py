@@ -128,7 +128,8 @@ class ZeroGComputeBackend(InferenceEngine):
             "Authorization": f"Bearer {self.api_key}",
             "x-api-key": self.api_key,
             "anthropic-version": "2023-06-01",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept-Encoding": "identity"
         }
         anthropic_payload = {
             "model": "claude-fable-5",
@@ -151,7 +152,8 @@ class ZeroGComputeBackend(InferenceEngine):
         # 2. Fallback to OpenAI format chat completions with deepseek-v4-pro
         openai_headers = {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept-Encoding": "identity"
         }
         openai_payload = {
             "model": "deepseek-v4-pro",
