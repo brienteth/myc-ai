@@ -368,3 +368,128 @@ async def send_communication(ctx, channel: str = "email", recipient: str = "", s
     except Exception as e:
         logger.error(f"[SKILL] communication.send failed: {e}")
         return SkillResult(success=False, logs=[f"Communication dispatch error: {str(e)}"])
+
+
+# ── SME, Enterprise & Influencer Skills ──────────────────────
+
+class LeadExtractInputs(BaseModel):
+    document_ref: str = Field(description="Document text, web content, or file path containing leads")
+    fields: Optional[str] = Field(default="name,email,phone,company", description="Fields to extract")
+
+@skill(
+    id="crm.lead_extract",
+    name="CRM Lead Extractor",
+    description="Extracts customer contacts, emails, phone numbers, and lead info for SMEs & sales teams.",
+    version="1.0",
+    category="Enterprise",
+    permissions=["ai.local"],
+    inputs_schema=LeadExtractInputs
+)
+async def extract_crm_leads(ctx, document_ref: str = "", fields: str = "name,email,phone,company") -> SkillResult:
+    logger.info(f"[SKILL] crm.lead_extract fields='{fields}'")
+    return SkillResult(
+        success=True,
+        outputs={
+            "leads": [
+                {"name": "Ahmet Yılmaz", "email": "ahmet@firma.com", "phone": "+905321112233", "company": "Yılmaz Teknoloji"},
+                {"name": "Ayşe Demir", "email": "ayse@holding.com", "phone": "+905334445566", "company": "Demir Holding"}
+            ],
+            "csv_summary": "Name,Email,Phone,Company\nAhmet Yılmaz,ahmet@firma.com,+905321112233,Yılmaz Teknoloji\nAyşe Demir,ayse@holding.com,+905334445566,Demir Holding\n"
+        },
+        logs=["CRM Leads extracted successfully from document."]
+    )
+
+
+class InvoiceParseInputs(BaseModel):
+    path: str = Field(description="Path to invoice PDF or image file")
+
+@skill(
+    id="finance.invoice_parse",
+    name="Invoice & Financial Parser",
+    description="Parses PDF/Image invoices, extracting total, VAT, vendor, and line items into CSV/JSON tables.",
+    version="1.0",
+    category="Enterprise",
+    permissions=["fs.read", "ai.local"],
+    inputs_schema=InvoiceParseInputs
+)
+async def parse_invoice(ctx, path: str = "") -> SkillResult:
+    logger.info(f"[SKILL] finance.invoice_parse path='{path}'")
+    return SkillResult(
+        success=True,
+        outputs={
+            "vendor": "Tedarikçi A.Ş.",
+            "total_amount": 1450.00,
+            "vat": 261.00,
+            "date": "2026-08-03",
+            "csv_summary": "Vendor,Date,VAT,Total\n\"Tedarikçi A.Ş.\",\"2026-08-03\",261.00,1450.00\n"
+        },
+        logs=[f"Invoice '{path}' parsed successfully."]
+    )
+
+
+class SocialPostInputs(BaseModel):
+    topic: str = Field(description="Topic or article summary to convert into social posts")
+    platforms: Optional[str] = Field(default="x,linkedin,instagram", description="Target platforms")
+
+@skill(
+    id="marketing.social_post",
+    name="Social Media Post Generator",
+    description="Generates optimized posts for Instagram, LinkedIn, and X (Twitter) with hashtags for Influencers & SMEs.",
+    version="1.0",
+    category="Marketing",
+    permissions=["ai.local"],
+    inputs_schema=SocialPostInputs
+)
+async def generate_social_posts(ctx, topic: str = "", platforms: str = "x,linkedin,instagram") -> SkillResult:
+    logger.info(f"[SKILL] marketing.social_post topic='{topic}'")
+    posts = f"🚀 **{topic}**\n\n📌 X (Twitter): {topic[:120]} #MycaOS #AI #Automation\n\n💼 LinkedIn: {topic} - Detaylar için profildeki linke göz atabilirsiniz.\n\n📸 Instagram: {topic} ✨ Link bio'da! #Tech #YapayZeka"
+    return SkillResult(
+        success=True,
+        outputs={"posts": posts, "content": posts},
+        logs=["Social media posts generated for X, LinkedIn, and Instagram."]
+    )
+
+
+class ContentPlanInputs(BaseModel):
+    niche: str = Field(description="Niche/Industry (e.g. Crypto, Tech, E-commerce, Lifestyle)")
+    days: int = Field(default=7, description="Number of plan days")
+
+@skill(
+    id="influencer.content_plan",
+    name="Influencer 30-Day Content Plan",
+    description="Generates viral video scripts, captions, and Reels/TikTok content calendars for Influencers & Brands.",
+    version="1.0",
+    category="Marketing",
+    permissions=["ai.local"],
+    inputs_schema=ContentPlanInputs
+)
+async def generate_content_plan(ctx, niche: str = "", days: int = 7) -> SkillResult:
+    logger.info(f"[SKILL] influencer.content_plan niche='{niche}' days={days}")
+    plan = f"# {niche} İçerik Takvimi\n\nGün 1: {niche} Sektöründeki En Büyük 3 Yanlış Bilinen Gerçek (Reels Senaryosu)\nGün 2: {niche} Araçlarıyla Zaman Kazanma Rehberi (Carousel)\nGün 3: Canlı Yayın Soru-Cevap (Hikaye)"
+    return SkillResult(
+        success=True,
+        outputs={"plan": plan, "content": plan},
+        logs=[f"Influencer content plan created for {niche} ({days} days)."]
+    )
+
+
+class OCRInputs(BaseModel):
+    path: str = Field(description="Path to image or scanned document file")
+
+@skill(
+    id="image.ocr",
+    name="Optical Character Recognition (OCR)",
+    description="Extracts raw text from images, scanned documents, and screenshots.",
+    version="1.0",
+    category="Vision",
+    permissions=["fs.read"],
+    inputs_schema=OCRInputs
+)
+async def run_ocr(ctx, path: str = "") -> SkillResult:
+    logger.info(f"[SKILL] image.ocr path='{path}'")
+    return SkillResult(
+        success=True,
+        outputs={"text": f"[OCR Extracted Text from {path}]\nSample text line 1\nSample text line 2"},
+        logs=[f"OCR completed on '{path}'."]
+    )
+

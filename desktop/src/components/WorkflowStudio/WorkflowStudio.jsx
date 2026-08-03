@@ -55,10 +55,27 @@ const SKILL_CATEGORIES = [
     ] 
   },
   { 
+    name: 'Enterprise', 
+    icon: Settings, 
+    skills: [
+      { id: 'crm.lead_extract', title: 'CRM Lead Extractor', desc: 'Extract customer contacts, emails, phone numbers for SMEs', latency: '500ms', offline: true, permission: 'ai.local' },
+      { id: 'finance.invoice_parse', title: 'Invoice & Financial Parser', desc: 'Parse PDF/Image invoices into CSV/JSON tables', latency: '700ms', offline: true, permission: 'fs.read' }
+    ] 
+  },
+  { 
+    name: 'Marketing', 
+    icon: Sparkles, 
+    skills: [
+      { id: 'marketing.social_post', title: 'Social Media Post Generator', desc: 'Generate Instagram, LinkedIn, and X posts with hashtags', latency: '600ms', offline: true, permission: 'ai.local' },
+      { id: 'influencer.content_plan', title: 'Influencer 30-Day Content Plan', desc: 'Generate Reels/TikTok video scripts and content calendars', latency: '900ms', offline: true, permission: 'ai.local' }
+    ] 
+  },
+  { 
     name: 'Vision', 
     icon: Image, 
     skills: [
-      { id: 'vision.analyze', title: 'Analyze Image', desc: 'Describe visual contents of an image', latency: '1200ms', offline: true, permission: 'ai.vision' }
+      { id: 'vision.analyze', title: 'Analyze Image', desc: 'Describe visual contents of an image', latency: '1200ms', offline: true, permission: 'ai.vision' },
+      { id: 'image.ocr', title: 'Optical Character Recognition (OCR)', desc: 'Extract text from scanned images and screenshots', latency: '400ms', offline: true, permission: 'fs.read' }
     ] 
   },
   { 
@@ -584,7 +601,7 @@ const WorkflowStudioCanvas = () => {
 
             {/* Category Filter Chips */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 18, overflowX: 'auto', paddingBottom: 4 }}>
-              {['All', 'Browser', 'Filesystem', 'AI', 'Vision', 'Communication'].map(cat => (
+              {['All', 'Browser', 'Filesystem', 'AI', 'Enterprise', 'Marketing', 'Vision', 'Communication'].map(cat => (
                 <button 
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
