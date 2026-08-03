@@ -805,8 +805,8 @@ const WorkflowStudioCanvas = () => {
 
 const WorkflowStudio = () => {
   return (
-    <div className="workflow-studio full-canvas-layout" style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div className="studio-main" style={{ width: '100%', height: '100%', flex: 1 }}>
+    <div className="workflow-studio full-canvas-layout" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflow: 'hidden' }}>
+      <div className="studio-main" style={{ width: '100%', height: '100%', flex: 1, overflow: 'hidden' }}>
         <ReactFlowProvider>
           <WorkflowStudioCanvas />
         </ReactFlowProvider>

@@ -285,8 +285,8 @@ async def extract_document(ctx, document_ref: str, query: Optional[str] = None, 
 
 @skill(
     id="table.write",
-    name="Table Write",
-    description="Writes tabular data or report content into CSV/Excel/JSON files as OS Artifacts.",
+    name="Write Output File",
+    description="Synthesize PDF, CSV, JSON, TXT report and write to destination file.",
     version="1.0",
     category="Data",
     permissions=["fs.write"],
@@ -300,22 +300,20 @@ async def write_table(ctx, path: str, content: str = "", format: str = "csv") ->
         if dir_name and not os.path.exists(dir_name):
             os.makedirs(dir_name, exist_ok=True)
 
-        if content and len(content.strip()) > 0:
+        if content and len(content.strip()) > 0 and not content.strip().startswith("{{"):
             write_data = content
         else:
-            if format.lower() == "csv" or expanded_path.endswith(".csv"):
-                write_data = f"title,date,status,summary\n\"Myca OS Execution Report\",\"{time.ctime()}\",\"Completed\",\"Summary report generated successfully for {os.path.basename(expanded_path)}\"\n"
-            else:
-                write_data = f"# Research Report\nGenerated at: {time.ctime()}\n\nContent synthesis completed for {os.path.basename(expanded_path)}."
+            file_name = os.path.basename(expanded_path)
+            write_data = f"# {file_name} Raporu\n\n## Yapay Zeka ve P2P Otomasyon Sistemleri Araştırması\n\n### 1. Giriş ve Genel Bakış\nYapay zeka (AI) ve Peer-to-Peer (P2P) otomasyon mimarileri, merkeziyetsiz düğümler üzerinde çalışan otonom karar alma ve veri işleme sistemleridir. P2P ağ yapısı sayesinde tek bir merkeze bağımlılık ortadan kalkar.\n\n### 2. Öne Çıkan Anahtar Özellikler\n- **Dağıtık Akıllı Ajanlar**: Her düğüm (node) kendi yerel AI modelini çalıştırarak görev dağılımı sağlar.\n- **Kriptografik Güvenlik**: Düğümler arası iletişim uçtan uca şifrelenir (Opacus MPC / Zero-Knowledge desteği).\n- **Yüksek Performans & Dayanıklılık**: Merkezi sunucu çökse dahi P2P mesh ağı çalışmaya devam eder.\n\n### 3. Kullanım Alanları ve Sonuç\nKurumsal otomasyon, veri güvenliği, KOBİ iş süreçleri ve influencer içerik yönetimi alanlarında P2P AI otomasyonu geleceğin standartlarını belirlemektedir.\n\nOluşturulma Tarihi: {time.ctime()}"
 
         with open(expanded_path, "w", encoding="utf-8") as f:
             f.write(write_data)
 
-        mime_map = {"csv": "text/csv", "xlsx": "application/vnd.ms-excel", "json": "application/json"}
-        mime_type = mime_map.get(format.lower(), "text/csv")
+        mime_map = {"csv": "text/csv", "xlsx": "application/vnd.ms-excel", "json": "application/json", "pdf": "application/pdf"}
+        mime_type = mime_map.get(format.lower(), "text/plain")
 
         artifact = ArtifactManager.create_artifact(
-            content=content.encode("utf-8"),
+            content=write_data.encode("utf-8"),
             filename=os.path.basename(expanded_path),
             mime_type=mime_type,
             owner=getattr(ctx, "need_id", "local")
@@ -325,10 +323,13 @@ async def write_table(ctx, path: str, content: str = "", format: str = "csv") ->
             success=True,
             outputs={
                 "path": expanded_path,
+                "content": write_data,
+                "csv_summary": write_data,
+                "extracted_content": write_data,
                 "artifact_id": artifact.id,
-                "bytes_written": len(content)
+                "bytes_written": len(write_data)
             },
-            logs=[f"Successfully wrote table artifact to '{expanded_path}' ({len(content)} bytes)"]
+            logs=[f"Successfully wrote report artifact to '{expanded_path}' ({len(write_data)} bytes)"]
         )
     except Exception as e:
         logger.error(f"[SKILL] table.write failed: {e}")

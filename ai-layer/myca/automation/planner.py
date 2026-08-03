@@ -226,18 +226,19 @@ Requirements:
                 {"id": "upload_yt", "skill": "youtube.upload", "inputs": {"video_path": "{{nodes.gen_video.outputs.video_path}}", "title": prompt[:50]}, "depends_on": ["gen_video"]}
             ]
             edges = [{"from": "gen_video", "to": "upload_yt"}]
-        elif "browser" in p_lower or "site" in p_lower or "web" in p_lower or "http" in p_lower or "ara" in p_lower or "rapor" in p_lower:
-            url_target = "https://google.com"
-            if "http" in prompt:
-                import re
-                urls = re.findall(r'https?://[^\s]+', prompt)
-                if urls: url_target = urls[0]
+        elif "browser" in p_lower or "site" in p_lower or "web" in p_lower or "http" in p_lower or "ara" in p_lower or "rapor" in p_lower or "google" in p_lower:
+            import re
+            file_match = re.search(r'([\w\-\.]+\.(?:pdf|csv|json|txt))', prompt, re.IGNORECASE)
+            target_filename = file_match.group(1) if file_match else "research_report.pdf"
+            export_path = f"~/Desktop/{target_filename}"
+            export_format = "pdf" if target_filename.endswith(".pdf") else ("csv" if target_filename.endswith(".csv") else "json")
+
             nodes = [
-                {"id": "goto_site", "skill": "browser.goto", "inputs": {"url": url_target}, "depends_on": []},
-                {"id": "extract_web", "skill": "document.extract", "inputs": {"query": prompt, "document_ref": "{{nodes.goto_site.outputs.content}}"}, "depends_on": ["goto_site"]},
-                {"id": "export_pdf_report", "skill": "table.write", "inputs": {"path": "~/Desktop/research_report.pdf", "content": "{{nodes.extract_web.outputs.summary}}", "format": "json"}, "depends_on": ["extract_web"]}
+                {"id": "search_web", "skill": "browser.search", "inputs": {"query": prompt}, "depends_on": []},
+                {"id": "synthesize_research", "skill": "core.chat", "inputs": {"prompt": f"Web ve Google aramaları sonucu elde edilen konu: '{prompt}'. Bu konuda Türkçe detaylı, teknik ve kapsamlı bir araştırma raporu metni oluştur."}, "depends_on": ["search_web"]},
+                {"id": "export_report", "skill": "table.write", "inputs": {"path": export_path, "content": "{{nodes.synthesize_research.outputs.response}}", "format": export_format}, "depends_on": ["synthesize_research"]}
             ]
-            edges = [{"from": "goto_site", "to": "extract_web"}, {"from": "extract_web", "to": "export_pdf_report"}]
+            edges = [{"from": "search_web", "to": "synthesize_research"}, {"from": "synthesize_research", "to": "export_report"}]
         elif "mail" in p_lower or "eposta" in p_lower or "gönder" in p_lower:
             nodes = [
                 {"id": "search_doc", "skill": "filesystem.search", "inputs": {"path": "~/Desktop", "pattern": "*.*"}, "depends_on": []},

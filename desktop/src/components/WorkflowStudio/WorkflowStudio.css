@@ -1,8 +1,10 @@
 .workflow-studio {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--f-cream);
   color: var(--f-humus);
   overflow: hidden;
@@ -11,16 +13,22 @@
 .studio-main {
   flex: 1;
   width: 100%;
+  max-width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .studio-content-wrapper {
   flex: 1;
   width: 100%;
+  max-width: 100%;
   height: 100%;
   position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .palette-header {
