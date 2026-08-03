@@ -489,27 +489,34 @@ const WorkflowStudioCanvas = () => {
       {showSkillModal && (
         <div className="skill-modal-overlay" style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(10, 10, 20, 0.75)', backdropFilter: 'blur(8px)',
+          background: 'rgba(10, 10, 20, 0.8)', backdropFilter: 'blur(12px)',
           zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20
         }}>
           <div className="skill-modal-container" style={{
-            background: 'var(--f-bark, #141424)', border: '1px solid var(--f-soil, #3a3a4c)',
-            borderRadius: 16, width: '90%', maxWidth: 720, padding: 24,
-            boxShadow: '0 20px 40px rgba(0,0,0,0.5)', color: 'var(--f-linen, #f0f0f0)'
+            background: 'linear-gradient(145deg, rgba(20, 22, 34, 0.98) 0%, rgba(10, 12, 20, 0.99) 100%)',
+            border: '1px solid rgba(0, 232, 122, 0.35)',
+            borderRadius: 18, width: '90%', maxWidth: 740, padding: 26,
+            boxShadow: '0 25px 60px rgba(0,0,0,0.7), 0 0 30px rgba(0, 232, 122, 0.12)', color: '#f4f4f6'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <Cpu size={22} color="#00e87a" />
-                <h3 style={{ margin: 0, fontSize: 18, color: '#00e87a' }}>Skill Registry</h3>
+                <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#00e87a', letterSpacing: '-0.3px' }}>Skill Registry</h3>
               </div>
-              <button onClick={() => setShowSkillModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--f-earth)', cursor: 'pointer' }}>
-                <X size={20} />
+              <button 
+                onClick={() => setShowSkillModal(false)} 
+                style={{
+                  background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 8, padding: 6, color: '#a0a0b2', cursor: 'pointer', display: 'flex'
+                }}
+              >
+                <X size={18} />
               </button>
             </div>
 
             {/* Search Input */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#0a0a14', border: '1px solid var(--f-soil)', borderRadius: 8, padding: '8px 14px', marginBottom: 16 }}>
-              <Search size={16} color="var(--f-earth)" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#090b14', border: '1px solid rgba(0, 232, 122, 0.25)', borderRadius: 10, padding: '10px 16px', marginBottom: 18 }}>
+              <Search size={16} color="#00e87a" />
               <input 
                 type="text" 
                 placeholder="Search Execution OS Skills (PDF, CSV, Telegram, Web, OCR)..." 
@@ -521,16 +528,18 @@ const WorkflowStudioCanvas = () => {
             </div>
 
             {/* Category Filter Chips */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 18, overflowX: 'auto', paddingBottom: 4 }}>
               {['All', 'Browser', 'Filesystem', 'AI', 'Vision', 'Communication'].map(cat => (
                 <button 
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   style={{
-                    padding: '6px 14px', borderRadius: 20, fontSize: 12, fontWeight: 500, cursor: 'pointer',
-                    background: selectedCategory === cat ? '#00e87a' : 'rgba(255,255,255,0.05)',
-                    color: selectedCategory === cat ? '#0a0a14' : 'var(--f-linen)',
-                    border: selectedCategory === cat ? 'none' : '1px solid var(--f-soil)'
+                    padding: '7px 16px', borderRadius: 20, fontSize: 12, fontWeight: selectedCategory === cat ? 700 : 500, cursor: 'pointer',
+                    background: selectedCategory === cat ? 'linear-gradient(135deg, #00e87a 0%, #00b862 100%)' : 'rgba(255,255,255,0.05)',
+                    color: selectedCategory === cat ? '#070a10' : '#a0a0b2',
+                    border: selectedCategory === cat ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                    boxShadow: selectedCategory === cat ? '0 4px 14px rgba(0, 232, 122, 0.3)' : 'none',
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   {cat}
@@ -539,7 +548,7 @@ const WorkflowStudioCanvas = () => {
             </div>
 
             {/* Skill List Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12, maxHeight: 360, overflowY: 'auto' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))', gap: 12, maxHeight: 380, overflowY: 'auto' }}>
               {filteredSkills.map(skill => (
                 <div 
                   key={skill.id} 
@@ -548,17 +557,25 @@ const WorkflowStudioCanvas = () => {
                     setShowSkillModal(false);
                   }}
                   style={{
-                    background: '#0e0e1a', border: '1px solid var(--f-soil)', borderRadius: 10, padding: 14,
+                    background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 16,
                     cursor: 'pointer', transition: 'all 0.2s ease'
                   }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#00e87a'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--f-soil)'}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#00e87a';
+                    e.currentTarget.style.background = 'rgba(0, 232, 122, 0.06)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.03)';
+                    e.currentTarget.style.transform = 'none';
+                  }}
                 >
-                  <div style={{ fontWeight: 600, fontSize: 14, color: '#fff', marginBottom: 4 }}>{skill.title}</div>
-                  <div style={{ fontSize: 12, color: 'var(--f-earth)', marginBottom: 8, lineHeight: 1.4 }}>{skill.desc}</div>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: '#fff', marginBottom: 4 }}>{skill.title}</div>
+                  <div style={{ fontSize: 12, color: '#a0a0b2', marginBottom: 10, lineHeight: 1.4 }}>{skill.desc}</div>
                   <div style={{ display: 'flex', gap: 8, fontSize: 11 }}>
-                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(0, 232, 122, 0.1)', color: '#00e87a' }}>{skill.category}</span>
-                    <span style={{ padding: '2px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: 'var(--f-earth)' }}>{skill.latency}</span>
+                    <span style={{ padding: '3px 8px', borderRadius: 4, background: 'rgba(0, 232, 122, 0.12)', color: '#00e87a', fontWeight: 600 }}>{skill.category}</span>
+                    <span style={{ padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#a0a0b2' }}>{skill.latency}</span>
                   </div>
                 </div>
               ))}
