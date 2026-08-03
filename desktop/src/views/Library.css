@@ -1,0 +1,236 @@
+/* Forest Floor Design System for Knowledge OS */
+:root {
+  --f-cream: #fcfaf7;
+  --f-parchment: #f4f0e8;
+  --f-linen: #eae4d8;
+  --f-bark: #ded6c8;
+  --f-soil: #5a544c;
+  --f-earth: #7a7368;
+  --f-stone: #9e968a;
+  --f-deep: #141424;
+  --f-moss: #2e6b45;
+  --f-alive: #00e87a;
+  --f-mono: 'DM Mono', monospace;
+  --f-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --f-serif: 'Playfair Display', Georgia, serif;
+}
+
+.library-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  background: var(--f-cream);
+  color: var(--f-deep);
+  font-family: var(--f-sans);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.library-sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: var(--f-parchment);
+  border-right: 1px solid var(--f-bark);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.library-sidebar h2 {
+  font-size: 11px;
+  color: var(--f-earth);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  font-family: var(--f-mono);
+  font-weight: 700;
+}
+
+.sidebar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  color: var(--f-soil);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.category-item:hover {
+  background: var(--f-linen);
+  color: var(--f-deep);
+}
+
+.category-item.active {
+  background: var(--f-moss);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 3px 10px rgba(46, 107, 69, 0.25);
+}
+
+.library-main-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.library-topbar {
+  height: 56px;
+  border-bottom: 1px solid var(--f-bark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--f-parchment);
+  z-index: 10;
+}
+
+.topbar-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  max-width: 480px;
+  background: var(--f-cream);
+  border: 1px solid var(--f-bark);
+  border-radius: 8px;
+  padding: 7px 14px;
+}
+
+.topbar-search input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: var(--f-deep);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.library-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--f-cream);
+}
+
+/* Grid & Cards System */
+.knowledge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  padding: 28px 32px;
+}
+
+.knowledge-card {
+  background: #ffffff;
+  border: 1px solid var(--f-bark);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.knowledge-card:hover {
+  border-color: var(--f-moss);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.card-thumbnail {
+  height: 100px;
+  background: var(--f-linen);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.knowledge-info h4 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--f-deep);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.knowledge-info p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--f-stone);
+}
+
+.k-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--f-linen);
+}
+
+.k-tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--f-parchment);
+  color: var(--f-soil);
+  text-transform: uppercase;
+  font-family: var(--f-mono);
+}
+
+.upload-card {
+  border: 2px dashed var(--f-bark);
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 180px;
+}
+
+.upload-card:hover {
+  border-color: var(--f-moss);
+  background: rgba(46, 107, 69, 0.03);
+}
+
+.storage-view {
+  padding: 32px;
+  max-width: 800px;
+}
+
+.storage-stats {
+  background: #ffffff;
+  border: 1px solid var(--f-bark);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
