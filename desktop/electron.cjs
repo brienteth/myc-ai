@@ -66,6 +66,12 @@ function startBackend() {
   backendProcess = spawn(spawnCmd, spawnArgs, {
     cwd: app.getPath('userData'),
     detached: false,
+    env: {
+      ...process.env,
+      MYCA_MODEL_PATH: process.env.MYCA_MODEL_PATH || 'sk-1aa505ff-0da9-470f-b63d-4713949622cb',
+      ZG_COMPUTE_URL: process.env.ZG_COMPUTE_URL || 'https://router-api.0g.ai/v1',
+      MYCA_MODEL: process.env.MYCA_MODEL || 'claude-fable-5'
+    },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
