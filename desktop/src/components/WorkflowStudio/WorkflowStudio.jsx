@@ -30,48 +30,65 @@ const nodeTypes = {
 
 const SKILL_CATEGORIES = [
   { 
-    name: 'Browser', 
+    name: 'Browser & Web', 
     icon: Globe, 
     skills: [
       { id: 'browser.search', title: 'Browser Search', desc: 'Search the web using Myca Browser', latency: '400ms', offline: false, permission: 'network.out' },
-      { id: 'browser.goto', title: 'Open URL', desc: 'Navigate to a specific URL', latency: '200ms', offline: false, permission: 'network.out' }
+      { id: 'browser.goto', title: 'Open URL', desc: 'Navigate to a specific URL', latency: '200ms', offline: false, permission: 'network.out' },
+      { id: 'web.scrape', title: 'Web Scraper & HTML Reader', desc: 'Scrape page content & tables from URLs', latency: '350ms', offline: false, permission: 'network.out' },
+      { id: 'github.repo_read', title: 'GitHub Repo Inspector', desc: 'Fetch code, issues, and READMEs from GitHub repos', latency: '500ms', offline: false, permission: 'network.out' },
+      { id: 'rss.read', title: 'RSS Feed News Reader', desc: 'Read news feeds & tech updates from RSS sources', latency: '250ms', offline: false, permission: 'network.out' }
     ] 
   },
   { 
-    name: 'Filesystem', 
+    name: 'Filesystem & Library', 
     icon: Folder, 
     skills: [
       { id: 'filesystem.search', title: 'Search Directory', desc: 'Search files by pattern in folder', latency: '2ms', offline: true, permission: 'fs.read' },
-      { id: 'document.read', title: 'Read File / Document', desc: 'Extract content from PDF, CSV, TXT', latency: '5ms', offline: true, permission: 'fs.read' },
-      { id: 'table.write', title: 'Write Output File', desc: 'Synthesize PDF, CSV, JSON, TXT report', latency: '10ms', offline: true, permission: 'fs.write' }
+      { id: 'document.read', title: 'Read File / Document', desc: 'Extract content from PDF, CSV, TXT, DOCX', latency: '5ms', offline: true, permission: 'fs.read' },
+      { id: 'table.write', title: 'Write Output File', desc: 'Synthesize PDF, CSV, JSON, TXT report', latency: '10ms', offline: true, permission: 'fs.write' },
+      { id: 'fs.read', title: 'Raw File Read', desc: 'Read raw text/binary file from local storage', latency: '1ms', offline: true, permission: 'fs.read' },
+      { id: 'fs.write', title: 'Raw File Write', desc: 'Write raw bytes/text directly to disk', latency: '2ms', offline: true, permission: 'fs.write' },
+      { id: 'library.index', title: 'Index Local Library', desc: 'Index local files for RAG semantic search', latency: '300ms', offline: true, permission: 'fs.read' },
+      { id: 'library.search', title: 'Semantic Library Search', desc: 'Query indexed knowledge base with AI embeddings', latency: '80ms', offline: true, permission: 'ai.local' }
     ] 
   },
   { 
-    name: 'AI', 
+    name: 'AI & Autonomous Agents', 
     icon: Terminal, 
     skills: [
-      { id: 'core.chat', title: 'AI Assistant Reasoning', desc: 'Process prompt with 0G Compute local AI', latency: '800ms', offline: true, permission: 'ai.local' },
-      { id: 'document.extract', title: 'Data Extraction', desc: 'Extract structured tables & insights from text', latency: '600ms', offline: true, permission: 'ai.local' }
+      { id: 'core.chat', title: 'AI Assistant Reasoning (0G Compute)', desc: 'Process prompt with 0G Compute local AI', latency: '800ms', offline: true, permission: 'ai.local' },
+      { id: 'document.extract', title: 'Data Extraction', desc: 'Extract structured tables & insights from text', latency: '600ms', offline: true, permission: 'ai.local' },
+      { id: 'ai.summary', title: 'Document Summarizer', desc: 'Generate concise summaries for long documents', latency: '700ms', offline: true, permission: 'ai.local' },
+      { id: 'core.verify', title: 'Fact Verification Engine', desc: 'Verify accuracy and hallucinations in AI responses', latency: '500ms', offline: true, permission: 'ai.local' },
+      { id: 'anthropic_agent.run', title: 'Autonomous Agent Sub-Engine', desc: 'Run multi-step autonomous task planning agent', latency: '1500ms', offline: true, permission: 'ai.local' }
     ] 
   },
   { 
-    name: 'Enterprise', 
+    name: 'Enterprise & KOBİ', 
     icon: Settings, 
     skills: [
       { id: 'crm.lead_extract', title: 'CRM Lead Extractor', desc: 'Extract customer contacts, emails, phone numbers for SMEs', latency: '500ms', offline: true, permission: 'ai.local' },
-      { id: 'finance.invoice_parse', title: 'Invoice & Financial Parser', desc: 'Parse PDF/Image invoices into CSV/JSON tables', latency: '700ms', offline: true, permission: 'fs.read' }
+      { id: 'finance.invoice_parse', title: 'Invoice & Financial Parser', desc: 'Parse PDF/Image invoices into CSV/JSON tables', latency: '700ms', offline: true, permission: 'fs.read' },
+      { id: 'opacus.mpc', title: 'Opacus Privacy & MPC Computation', desc: 'Execute secure multi-party zero-knowledge computation', latency: '1100ms', offline: true, permission: 'ai.local' }
     ] 
   },
   { 
-    name: 'Marketing', 
+    name: 'Marketing & Influencer', 
     icon: Sparkles, 
     skills: [
       { id: 'marketing.social_post', title: 'Social Media Post Generator', desc: 'Generate Instagram, LinkedIn, and X posts with hashtags', latency: '600ms', offline: true, permission: 'ai.local' },
-      { id: 'influencer.content_plan', title: 'Influencer 30-Day Content Plan', desc: 'Generate Reels/TikTok video scripts and content calendars', latency: '900ms', offline: true, permission: 'ai.local' }
+      { id: 'influencer.content_plan', title: 'Influencer 30-Day Content Plan', desc: 'Generate Reels/TikTok video scripts and content calendars', latency: '900ms', offline: true, permission: 'ai.local' },
+      { id: 'x.post', title: 'Post to X (Twitter)', desc: 'Publish tweet to X/Twitter account', latency: '400ms', offline: false, permission: 'network.out' },
+      { id: 'instagram.post', title: 'Post to Instagram Reels', desc: 'Publish short video/image to Instagram', latency: '800ms', offline: false, permission: 'network.out' },
+      { id: 'youtube.upload', title: 'Upload to YouTube Shorts', desc: 'Upload MP4 video to YouTube channel', latency: '2000ms', offline: false, permission: 'network.out' },
+      { id: 'video.generate', title: 'AI Short Video Generator', desc: 'Generate AI short video clips from text script', latency: '3000ms', offline: true, permission: 'ai.vision' },
+      { id: 'youtube.transcribe', title: 'YouTube Video Transcriber', desc: 'Extract subtitles & transcripts from YouTube videos', latency: '600ms', offline: false, permission: 'network.out' },
+      { id: 'twitter.search', title: 'Twitter / X Keyword Search', desc: 'Search viral tweets and trends by keyword', latency: '450ms', offline: false, permission: 'network.out' }
     ] 
   },
   { 
-    name: 'Vision', 
+    name: 'Vision & Media', 
     icon: Image, 
     skills: [
       { id: 'vision.analyze', title: 'Analyze Image', desc: 'Describe visual contents of an image', latency: '1200ms', offline: true, permission: 'ai.vision' },
@@ -79,10 +96,13 @@ const SKILL_CATEGORIES = [
     ] 
   },
   { 
-    name: 'Communication', 
+    name: 'Communication & P2P Mesh', 
     icon: Settings, 
     skills: [
-      { id: 'communication.send', title: 'Send Telegram / Email', desc: 'Send notification message via Telegram or Email', latency: '300ms', offline: false, permission: 'network.out' }
+      { id: 'communication.send', title: 'Universal Communication Send', desc: 'Send message via Email, Telegram, Webhook, or Slack', latency: '300ms', offline: false, permission: 'network.out' },
+      { id: 'telegram.send', title: 'Direct Telegram Dispatcher', desc: 'Send instant notification to Telegram channels/groups', latency: '250ms', offline: false, permission: 'network.out' },
+      { id: 'email.send', title: 'SMTP Email Sender', desc: 'Send automated emails with attachments', latency: '500ms', offline: false, permission: 'network.out' },
+      { id: 'p2p.agent_reach', title: 'P2P Colony Agent Mesh Reach', desc: 'Dispatch tasks to surrounding P2P nodes in Myca Colony', latency: '150ms', offline: true, permission: 'network.mesh' }
     ] 
   }
 ];
@@ -601,7 +621,7 @@ const WorkflowStudioCanvas = () => {
 
             {/* Category Filter Chips */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 18, overflowX: 'auto', paddingBottom: 4 }}>
-              {['All', 'Browser', 'Filesystem', 'AI', 'Enterprise', 'Marketing', 'Vision', 'Communication'].map(cat => (
+              {['All', 'Browser & Web', 'Filesystem & Library', 'AI & Autonomous Agents', 'Enterprise & KOBİ', 'Marketing & Influencer', 'Vision & Media', 'Communication & P2P Mesh'].map(cat => (
                 <button 
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
