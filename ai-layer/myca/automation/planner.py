@@ -73,69 +73,52 @@ Requirements:
 3. Strictly format the JSON response. Do not include markdown codeblocks (e.g., ```json). Just start directly with {{.
 """
 
-        # Priority 1: Check dynamic capability intent fallback match
+        # 1. Generate immediate valid intent fallback DAG
         fallback_plan = self._generate_fallback(user_prompt)
+        
+        # If specific skill matched (not basic chat), return immediately
         if fallback_plan and len(fallback_plan.get("nodes", [])) > 0:
-            if fallback_plan["nodes"][0]["skill"] != "core.chat":
-                logger.info(f"[PLANNER] Matched specific intent for skill '{fallback_plan['nodes'][0]['skill']}'")
+            first_skill = fallback_plan["nodes"][0]["skill"]
+            if first_skill != "core.chat":
+                logger.info(f"[PLANNER] Matched specific intent for skill '{first_skill}'")
                 return fallback_plan
 
-        logger.info(f"[PLANNER] Querying LLM to plan intent: {user_prompt[:60]}...")
-        
-        try:
-            # Generate JSON via inference engine
-            raw_response = await self.inference.generate(user_prompt, system_prompt=system_prompt)
-            raw_response = raw_response.strip()
+        # If LLM inference is available, query LLM for custom DAG structure
+        if self.inference:
+            logger.info(f"[PLANNER] Querying LLM to plan intent: {user_prompt[:60]}...")
+            try:
+                raw_response = await self.inference.generate(user_prompt, system_prompt=system_prompt)
+                if raw_response and isinstance(raw_response, str) and not raw_response.startswith("Internal"):
+                    raw_response = raw_response.strip()
 
-            # Clean markdown code block wraps if LLM outputted them anyway
-            if raw_response.startswith("```"):
-                lines = raw_response.splitlines()
-                if lines[0].startswith("```"):
-                    lines = lines[1:]
-                if lines[-1].startswith("```"):
-                    lines = lines[:-1]
-                raw_response = "\n".join(lines).strip()
+                    if raw_response.startswith("```"):
+                        lines = raw_response.splitlines()
+                        if lines[0].startswith("```"): lines = lines[1:]
+                        if lines[-1].startswith("```"): lines = lines[:-1]
+                        raw_response = "\n".join(lines).strip()
 
-            # Extract JSON/AST from potential conversational text
-            start_idx = raw_response.find('{')
-            end_idx = raw_response.rfind('}')
-            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-                raw_response = raw_response[start_idx:end_idx+1]
-                
-            raw_ast = json.loads(raw_response)
-            
-            # Execution Compiler Pipeline: AST -> Compiled DAG
-            from myca.planner.compiler import ExecutionCompiler
-            from myca.planner.optimizer import GraphOptimizer
-            from myca.planner.validator import GraphValidator
-            from myca.experience.memory import ExperienceMemory
+                    start_idx = raw_response.find('{')
+                    end_idx = raw_response.rfind('}')
+                    if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                        raw_response = raw_response[start_idx:end_idx+1]
+                        raw_ast = json.loads(raw_response)
+                        
+                        if isinstance(raw_ast, dict) and "nodes" in raw_ast:
+                            return {
+                                "id": f"flow-{uuid.uuid4().hex[:8]}",
+                                "name": raw_ast.get("name", f"Dynamic Workflow ({user_prompt[:25]}...)"),
+                                "description": raw_ast.get("description", user_prompt),
+                                "enabled": True,
+                                "trigger": raw_ast.get("trigger", {"type": "manual"}),
+                                "variables": raw_ast.get("variables", {}),
+                                "nodes": raw_ast.get("nodes", []),
+                                "edges": raw_ast.get("edges", []),
+                                "permissions": raw_ast.get("permissions", ["fs.read", "fs.write", "network.out"])
+                            }
+            except Exception as e:
+                logger.warning(f"[PLANNER] LLM planning query exception: {e}. Using intelligent fallback DAG.")
 
-            compiler = ExecutionCompiler()
-            optimizer = GraphOptimizer()
-            validator = GraphValidator()
-            memory = ExperienceMemory()
-
-            compiled_dag = compiler.compile_ast_to_dag(raw_ast)
-            opt_plan = optimizer.optimize(compiled_dag)
-            val_res = validator.validate(opt_plan)
-            if val_res.valid:
-                best_plan, confidence = memory.rank_candidate_dags(user_prompt, [opt_plan])
-                return best_plan
-            return opt_plan
-        except Exception as e:
-            logger.error(f"[PLANNER] Fallback simulation trigger due to parsing error: {e}")
-            fallback = self._generate_fallback(user_prompt)
-
-            from myca.planner.compiler import ExecutionCompiler
-            from myca.planner.optimizer import GraphOptimizer
-            from myca.planner.validator import GraphValidator
-            from myca.experience.memory import ExperienceMemory
-
-            compiled_dag = ExecutionCompiler().compile_ast_to_dag(fallback)
-            opt_plan = GraphOptimizer().optimize(compiled_dag)
-            val_res = GraphValidator().validate(opt_plan)
-            best_plan, confidence = ExperienceMemory().rank_candidate_dags(user_prompt, [opt_plan])
-            return best_plan
+        return fallback_plan
 
     def _generate_fallback(self, prompt: str) -> dict:
         """Domain-Agnostic Dynamic Capability Intent Mapping."""
