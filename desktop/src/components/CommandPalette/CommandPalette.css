@@ -1,0 +1,105 @@
+.palette-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 20vh;
+}
+
+.palette-container {
+  width: 100%;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.palette-search {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.palette-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 20px;
+  width: 100%;
+  color: #1d1d1f;
+}
+
+.palette-search input::placeholder {
+  color: #86868b;
+}
+
+.palette-results {
+  padding: 12px;
+}
+
+.palette-section {
+  font-size: 11px;
+  font-weight: 600;
+  color: #86868b;
+  padding: 8px 12px;
+  letter-spacing: 0.05em;
+}
+
+.palette-results ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.palette-results li {
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #1d1d1f;
+  font-size: 15px;
+}
+
+.palette-results li .icon {
+  font-size: 18px;
+}
+
+.palette-results li:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.palette-results li.active {
+  background: #0066cc;
+  color: #fff;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.98) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@media (prefers-color-scheme: dark) {
+  .palette-overlay { background: rgba(0, 0, 0, 0.5); }
+  .palette-container { background: rgba(30, 30, 30, 0.85); box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1); }
+  .palette-search { border-bottom-color: rgba(255, 255, 255, 0.1); }
+  .palette-search input { color: #f5f5f7; }
+  .palette-results li { color: #f5f5f7; }
+  .palette-results li:hover { background: rgba(255, 255, 255, 0.1); }
+  .palette-results li.active { background: #0a84ff; color: #fff; }
+}

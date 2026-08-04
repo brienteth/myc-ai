@@ -1,0 +1,174 @@
+.settings-container {
+  display: flex;
+  height: 100vh;
+  background: var(--f-cream);
+}
+
+.settings-sidebar {
+  width: 240px;
+  background: var(--f-parchment);
+  border-right: 1px solid var(--f-bark);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-sidebar h2 {
+  font-size: 11px;
+  color: var(--f-stone);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  font-family: var(--f-mono);
+}
+
+.setting-cat {
+  padding: 8px 12px;
+  color: var(--f-soil);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.setting-cat:hover {
+  background: var(--f-linen);
+  color: var(--f-deep);
+}
+
+.setting-cat.active {
+  background: var(--f-cream);
+  color: var(--f-deep);
+  font-weight: 500;
+}
+
+.settings-main {
+  flex-grow: 1;
+  padding: 48px;
+  overflow-y: auto;
+  max-width: 800px;
+}
+
+.settings-header {
+  margin-bottom: 40px;
+}
+
+.settings-header h1 {
+  font-size: 32px;
+  color: var(--f-deep);
+  margin-bottom: 8px;
+}
+
+.settings-header p {
+  color: var(--f-stone);
+  font-family: var(--f-mono);
+  font-size: 12px;
+}
+
+.settings-section-lbl {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--f-stone);
+  text-transform: uppercase;
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 0.5px solid var(--f-bark);
+}
+
+.setting-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-lbl {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--f-deep);
+}
+
+.setting-desc {
+  font-size: 12px;
+  color: var(--f-soil);
+}
+
+/* Custom Toggle */
+.myc-toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  background: var(--f-bark);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border: none;
+}
+
+.myc-toggle.on {
+  background: var(--f-spore);
+}
+
+.myc-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: var(--f-shadow-sm);
+}
+
+.myc-toggle.on .myc-toggle-thumb {
+  transform: translateX(16px);
+}
+
+/* Dropdown */
+.myc-select {
+  background: var(--f-cream);
+  border: 0.5px solid var(--f-bark);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--f-earth);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Lang Pills */
+.lang-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-pill {
+  background: var(--f-parchment);
+  border: 1px solid var(--f-bark);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--f-soil);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lang-pill.active {
+  background: var(--f-moss);
+  color: var(--f-cream);
+  border-color: var(--f-moss);
+}

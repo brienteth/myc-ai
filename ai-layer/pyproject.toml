@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "myca"
+version = "0.1.0"
+description = "Myca Local-First AI Engine & Autonomous Software Factory SDK"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Myca Team" }
+]
+dependencies = [
+    "pydantic>=2.0.0",
+    "httpx>=0.27.0",
+    "aiofiles>=23.0.0",
+    "aiosqlite>=0.20.0",
+]
+
+[project.optional-dependencies]
+local = [
+    "llama-cpp-python>=0.3.0",
+    "html2text>=2024.2.26",
+    "beautifulsoup4>=4.12.0",
+]
+server = [
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "python-multipart>=0.0.9",
+    "websockets>=12.0",
+]
+p2p = [
+    "zeroconf>=0.131.0",
+    "aiortc>=0.9.0",
+    "cryptography>=42.0.0",
+]
+all = [
+    "myca[local,server,p2p]"
+]
+
+[project.scripts]
+myca = "cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["myca*"]

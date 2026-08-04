@@ -1,0 +1,188 @@
+.onboarding-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background: #000; /* Apple-style initial setup dark theme */
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  -webkit-app-region: drag;
+}
+
+.onboarding-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 600px;
+  -webkit-app-region: no-drag;
+}
+
+.onboarding-slide h1 {
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.onboarding-slide h2 {
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #86868b;
+  margin-bottom: 48px;
+}
+
+.ob-btn {
+  padding: 14px 32px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.ob-btn.primary {
+  background: #fff;
+  color: #000;
+}
+
+.ob-btn.primary:hover {
+  background: #e5e5e5;
+  transform: scale(1.02);
+}
+
+.ob-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.ob-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ob-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.progress-bar-container {
+  width: 300px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 32px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #fff;
+  border-radius: 3px;
+}
+
+.progress-bar.infinite {
+  width: 50%;
+  animation: slide 1.5s infinite ease-in-out alternate;
+}
+
+.progress-bar.filling {
+  width: 0%;
+  animation: fillup 3s forwards ease-out;
+}
+
+.status-text {
+  font-size: 14px;
+  color: #86868b;
+}
+
+.ai-choices {
+  display: flex;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+.ai-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px 24px;
+  width: 200px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  text-align: left;
+}
+
+.ai-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ai-card h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+}
+
+.ai-card p {
+  font-size: 14px;
+  color: #86868b;
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.size-badge {
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.ai-card.recommended {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rec-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #000;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes fillup {
+  0% { width: 0%; }
+  50% { width: 60%; }
+  100% { width: 95%; }
+}

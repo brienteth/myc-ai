@@ -1,0 +1,25 @@
+/* App-level global overrides that don't belong in layout or components */
+
+.f-serif-italic {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--f-bark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--f-stone);
+}

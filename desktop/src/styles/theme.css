@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Core palette */
+  --myc-void:      #06060a;   /* deepest background */
+  --myc-soil:      #0d0d12;   /* surface */
+  --myc-underground: #13131a; /* cards */
+  --myc-earth:     #1a1a22;   /* elevated cards */
+  --myc-stone:     #252530;   /* borders */
+  --myc-ash:       #3a3a48;   /* strong borders */
+  
+  /* Mycelium green — the living signal */
+  --myc-spore:     #00e87a;   /* primary accent */
+  --myc-thread:    #00e87a40; /* transparent accent */
+  --myc-glow:      #00e87a18; /* very subtle bg */
+  --myc-deep:      #00b85e;   /* darker green */
+  
+  /* Text */
+  --myc-light:     #f0f0f0;   /* primary text */
+  --myc-mist:      #a0a0b0;   /* secondary text */
+  --myc-shadow:    #606070;   /* muted text */
+  --myc-ghost:     #30303e;   /* very muted */
+  
+  /* Status — organic names */
+  --myc-alive:     #00e87a;   /* healthy/active */
+  --myc-dormant:   #f5a623;   /* sleeping/warning */
+  --myc-dead:      #ff453a;   /* error/offline */
+  --myc-growing:   #4488ff;   /* in progress */
+  
+  /* Typography */
+  --myc-font-ui:   'Instrument Sans', system-ui, sans-serif;
+  --myc-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --myc-font-brand:'Instrument Serif', Georgia, serif;
+  
+  /* Spacing */
+  --myc-radius-sm: 6px;
+  --myc-radius:    12px;
+  --myc-radius-lg: 20px;
+  --myc-radius-xl: 28px;
+  
+  /* Shadows — organic, soft */
+  --myc-shadow-sm: 0 2px 8px rgba(0,0,0,0.4);
+  --myc-shadow:    0 4px 24px rgba(0,0,0,0.5);
+  --myc-glow-sm:   0 0 12px rgba(0,232,122,0.15);
+  --myc-glow-lg:   0 0 32px rgba(0,232,122,0.25);
+}

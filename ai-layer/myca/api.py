@@ -83,6 +83,8 @@ def create_app(node: MycaNode) -> FastAPI:
     from myca.automation.scheduler import AutomationScheduler
     from myca.automation.api import router as automation_router
     import myca.automation.api as automation_api_module
+    from myca.automation.enterprise_api import router as enterprise_router
+    import myca.skills.packages.enterprise_skills
     
     auto_scheduler = AutomationScheduler(runtime)
     auto_scheduler.start()
@@ -91,6 +93,7 @@ def create_app(node: MycaNode) -> FastAPI:
     automation_api_module.scheduler = auto_scheduler
     
     app.include_router(automation_router)
+    app.include_router(enterprise_router)
 
     def get_runtime():
         return runtime

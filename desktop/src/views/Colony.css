@@ -1,0 +1,227 @@
+.colony-container {
+  padding: 40px;
+  background: var(--f-cream);
+  min-height: 100vh;
+}
+
+.colony-header {
+  margin-bottom: 32px;
+}
+
+.colony-header h1 {
+  color: var(--f-deep);
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.colony-header p {
+  color: var(--f-stone);
+  font-family: var(--f-mono);
+  font-size: 12px;
+}
+
+.colony-canvas-wrapper {
+  height: 200px;
+  background: var(--f-parchment);
+  border-radius: 16px;
+  border: 1px solid var(--f-bark);
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Section Labels ── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--f-stone);
+}
+
+.section-count {
+  background: var(--f-bark);
+  color: var(--f-deep);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ── Device Grid ── */
+.device-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.device-card {
+  background: var(--f-cream);
+  border: 1px solid var(--f-bark);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--f-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.device-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--f-shadow);
+}
+
+.device-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.device-card.active::before { background: var(--f-alive); }
+.device-card.sleeping::before { background: var(--f-dormant); }
+.device-card.offline::before { background: var(--f-dead); }
+
+/* Myca nodes get a subtle green tint */
+.device-card.myca-node {
+  border-color: var(--f-glow-mid, var(--f-bark));
+}
+
+/* LAN devices get a subtle blue tint */
+.device-card.lan-device::before {
+  background: var(--f-earth, #5a7c6a);
+}
+
+.device-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--f-earth);
+}
+
+.device-info h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--f-deep);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.device-status {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-family: var(--f-mono);
+  text-transform: lowercase;
+}
+
+.device-status.active {
+  background: var(--f-glow);
+  color: var(--f-thread);
+}
+.device-status.sleeping {
+  background: rgba(176, 137, 59, 0.1);
+  color: var(--f-dormant);
+}
+.device-status.offline {
+  background: rgba(184, 84, 80, 0.1);
+  color: var(--f-dead);
+}
+.device-status.lan {
+  background: rgba(90, 124, 106, 0.1);
+  color: var(--f-earth);
+}
+
+.device-metrics {
+  display: flex;
+  gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--f-stone);
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.device-source {
+  margin-top: 6px;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.device-source.local {
+  background: rgba(90, 124, 106, 0.08);
+  color: var(--f-earth);
+}
+.device-source.global {
+  background: rgba(176, 137, 59, 0.08);
+  color: var(--f-dormant);
+}
+
+/* ── Empty state ── */
+.empty-colony {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--f-stone);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.empty-colony h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--f-deep);
+}
+.empty-colony p {
+  font-size: 13px;
+  max-width: 320px;
+}
+
+/* ── Avoidance card ── */
+.avoidance-card {
+  background: var(--f-glow);
+  border: 1px solid var(--f-glow-mid);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.avoidance-card .big-num {
+  font-size: 48px;
+  color: var(--f-moss);
+}
+
+.avoidance-card .avoid-text h3 {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--f-deep);
+  margin-bottom: 4px;
+}
+
+.avoidance-card .avoid-text p {
+  font-size: 13px;
+  color: var(--f-soil);
+}

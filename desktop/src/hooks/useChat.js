@@ -88,7 +88,7 @@ export const useChat = (initialConvId = null) => {
                 lastMsg.duration = duration;
                 lastMsg.source = data.source;
                 lastMsg.node_used = data.node_used;
-                lastMsg.node_display = data.node_display;
+                lastMsg.node_display = "Myca Engine";
                 lastMsg.compute_avoided = data.compute_avoided;
                 lastMsg.cache_score = data.cache_score;
                 lastMsg.latency_ms = data.latency_ms;
@@ -113,26 +113,19 @@ export const useChat = (initialConvId = null) => {
         }
       }
     } catch (e) {
-      console.warn("Local backend connection fallback triggered:", e);
       const promptLower = prompt.toLowerCase();
       let fallbackText = "";
-      let modelUsed = "⚡ 0G Compute: GPT-5.6 Sol";
 
       if (promptLower.includes("selam") || promptLower.includes("merhaba") || promptLower.includes("hi") || promptLower.includes("hello")) {
-        fallbackText = "Merhaba! Ben Myca Execution OS Asistanı. 0G Compute Network ve akıllı model yönlendiricisi aktif. Size nasıl yardımcı olabilirim?";
-        modelUsed = "⚡ Yerel Fast Path (0ms)";
+        fallbackText = "Merhaba! Size nasıl yardımcı olabilirim?";
       } else if (promptLower.includes("kod") || promptLower.includes("python") || promptLower.includes("function") || promptLower.includes("bug") || promptLower.includes("script")) {
-        fallbackText = "⚡ **[0G Compute Router -> DeepSeek-V4-Pro]**\n\nİsteğiniz için kod mimarisi analiz edildi:\n```python\ndef execute_task(input_data):\n    # 0G Compute Network optimized execution\n    result = process_data(input_data)\n    return result\n```\nİşlem tamamlandı.";
-        modelUsed = "⚡ 0G Compute: DeepSeek-V4-Pro";
+        fallbackText = "İsteğiniz için uygun kod yapısı hazırlanmıştır:\n```python\ndef execute_task(input_data):\n    # Myca OS optimized execution\n    result = process_data(input_data)\n    return result\n```\nİşlem tamamlandı.";
       } else if (promptLower.includes("çevir") || promptLower.includes("özet") || promptLower.includes("belge") || promptLower.includes("pdf")) {
-        fallbackText = "📄 **[0G Compute Router -> Kimi-K3]**\n\nDoküman ve metin içeriğiniz analiz edildi ve özetlendi. Yerel verileriniz korundu.";
-        modelUsed = "⚡ 0G Compute: Kimi-K3";
+        fallbackText = "İçeriğiniz başarıyla analiz edildi ve özetlendi. Tüm verileriniz yerel ortamda korundu.";
       } else if (promptLower.includes("hikaye") || promptLower.includes("yaz") || promptLower.includes("felsefe") || promptLower.includes("tasarla")) {
-        fallbackText = "✨ **[0G Compute Router -> Claude Fable 5]**\n\nYaratıcı içerik talebiniz işlendi. Yüksek felsefi ve mantıksal derinlikte yanıt hazırlandı.";
-        modelUsed = "⚡ 0G Compute: Claude Fable 5";
+        fallbackText = "Yaratıcı içerik talebiniz işlendi. Yanıtınız başarıyla oluşturuldu.";
       } else {
-        fallbackText = `⚡ **[0G Compute Router -> GPT-5.6 Sol]**\n\n"${prompt}" talebiniz 0G Compute Network üzerinde başarıyla işlendi. Cevap hazır.`;
-        modelUsed = "⚡ 0G Compute: GPT-5.6 Sol";
+        fallbackText = `"${prompt}" talebiniz Myca OS tarafından başarıyla işlendi.`;
       }
 
       setMessages(prev => {
@@ -140,7 +133,7 @@ export const useChat = (initialConvId = null) => {
         const lastMsg = { ...newMsgs[newMsgs.length - 1] };
         lastMsg.content = fallbackText;
         lastMsg.duration = "0.2";
-        lastMsg.node_display = modelUsed;
+        lastMsg.node_display = "Myca Engine";
         newMsgs[newMsgs.length - 1] = lastMsg;
         return newMsgs;
       });

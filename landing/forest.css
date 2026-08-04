@@ -1,0 +1,61 @@
+/* Forest Floor Design System */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Forest Floor palette */
+  --f-cream:      #FAF8F3;   /* Primary Background */
+  --f-parchment:  #F4F0E6;   /* Surface */
+  --f-linen:      #EFE8DA;   /* Secondary Surface */
+  --f-bark:       #DDD7CB;   /* Border */
+  --f-stone:      #C0BAB0;   /* strong borders */
+  --f-soil:       #5B5B57;   /* Secondary Text */
+  --f-humus:      #1D1D1B;   /* Primary Text */
+  --f-deep:       #1D1D1B;   /* headings */
+
+  /* Mycelium green — the living signal */
+  --f-spore:      #2E6B45;   /* Accent Green */
+  --f-thread:     #3F8C59;   /* Accent Hover */
+  --f-moss:       #2E6B45;   /* Accent Green */
+  --f-glow:       #DDE9DF;   /* Soft Green */
+  --f-glow-mid:   rgba(46, 107, 69, 0.15); /* border accent */
+
+  /* Status */
+  --f-alive:      #4F8A5B;   /* Success */
+  --f-dormant:    #B0893B;   /* Warning */
+  --f-dead:       #B85450;   /* Error */
+  --f-growing:    #3F8C59;   /* in progress */
+
+  /* Typography */
+  --f-serif:  'Playfair Display', Georgia, serif;
+  --f-sans:   'DM Sans', system-ui, sans-serif;
+  --f-mono:   'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --f-radius-sm:  6px;
+  --f-radius:     12px;
+  --f-radius-lg:  20px;
+
+  /* Shadows — warm, organic */
+  --f-shadow-sm:  0 1px 4px rgba(29, 29, 27, 0.05);
+  --f-shadow:     0 4px 16px rgba(29, 29, 27, 0.08);
+  --f-shadow-lg:  0 8px 32px rgba(29, 29, 27, 0.10);
+}
+
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+body {
+  background: var(--f-cream);
+  color: var(--f-humus);
+  font-family: var(--f-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utility classes */
+.f-serif        { font-family: var(--f-serif); }
+.f-serif-italic { font-family: var(--f-serif); font-style: italic; }
+.f-mono         { font-family: var(--f-mono); }

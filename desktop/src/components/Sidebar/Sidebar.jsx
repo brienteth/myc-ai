@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2 } from 'lucide-react';
+import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2 } from 'lucide-react';
 import '../Layout/Layout.css';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -44,6 +44,10 @@ const Sidebar = () => {
         <NavLink to="/colony" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Network size={18} />
           <span>Colony</span>
+        </NavLink>
+        <NavLink to="/enterprise" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
+          <Building2 size={18} />
+          <span>Enterprise</span>
         </NavLink>
         <NavLink to="/models" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Cpu size={18} />

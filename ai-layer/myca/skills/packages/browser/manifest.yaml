@@ -1,0 +1,18 @@
+id: browser
+version: 1.0.0
+permissions:
+  - browser
+  - network
+tags:
+  - web
+  - automation
+traits:
+  offline: false
+  local_only: false
+  cacheable: false
+  streaming: false
+  supports_parallel: true
+estimates:
+  memory_mb: 500
+  cpu_cores: 1
+  duration_ms: 2000
