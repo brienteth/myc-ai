@@ -146,9 +146,24 @@ Requirements:
         nodes = []
         edges = []
 
-        # 1. Check for specific folder search / document read / OCR / CSV export intents
-        has_folder_or_doc = any(w in p_lower for w in ["fatura", "pdf", "ocr", "oku", "tara", "scan", "klasör", "folder", "desktop", "masaüstü", "downloads", "opacus", "opacusdocs"])
-        if has_folder_or_doc:
+        # 1. Prioritize Web Search / Google Research intents over local folder searching
+        is_web_research = any(w in p_lower for w in ["google", "araştır", "araştırma", "web", "site", "internet"]) and not any(w in p_lower for w in ["klasörümdeki", "klasördeki", "fatura"])
+        
+        has_folder_or_doc = not is_web_research and any(w in p_lower for w in ["fatura", "ocr", "tara", "scan", "klasör", "folder", "opacus", "opacusdocs"])
+        if is_web_research:
+            import re
+            file_match = re.search(r'([\w\-\.]+\.(?:pdf|csv|json|txt))', prompt, re.IGNORECASE)
+            target_filename = file_match.group(1) if file_match else "research_report.pdf"
+            export_path = f"~/Desktop/{target_filename}"
+            export_format = "pdf" if target_filename.endswith(".pdf") else ("csv" if target_filename.endswith(".csv") else "json")
+
+            nodes = [
+                {"id": "search_web", "skill": "browser.search", "inputs": {"query": prompt}, "depends_on": []},
+                {"id": "synthesize_research", "skill": "core.chat", "inputs": {"prompt": f"Web ve Google aramaları sonucu elde edilen konu: '{prompt}'. Bu konuda Türkçe detaylı, teknik ve kapsamlı bir araştırma raporu metni oluştur."}, "depends_on": ["search_web"]},
+                {"id": "export_report", "skill": "table.write", "inputs": {"path": export_path, "content": "{{nodes.synthesize_research.outputs.response}}", "format": export_format}, "depends_on": ["synthesize_research"]}
+            ]
+            edges = [{"from": "search_web", "to": "synthesize_research"}, {"from": "synthesize_research", "to": "export_report"}]
+        elif has_folder_or_doc:
             # Dynamic Target Directory Extraction
             search_path = "~/Desktop"
             

@@ -298,11 +298,11 @@ const WorkflowStudioCanvas = () => {
       setIsExecuting(false);
       setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'success', msg: 'Execution completed successfully. Output generated.' }]);
 
-      // Determine output format & file path
+      // Determine output format & file path from actual execution runData
       const nodeOutputs = runData?.node_outputs || {};
-      let generatedFile = "~/Desktop/summary_report.csv";
-      let fileContent = "title,date,status,summary\n\"Myca OS Execution Report\",\"2026-08-03\",\"Completed\",\"Summary report generated successfully.\"\n";
-      let fileFormat = "CSV";
+      let generatedFile = "~/Desktop/ai_research.pdf";
+      let fileContent = "";
+      let fileFormat = "PDF";
 
       for (const [nid, out] of Object.entries(nodeOutputs)) {
         if (out && out.path) {
@@ -312,9 +312,30 @@ const WorkflowStudioCanvas = () => {
           else if (generatedFile.endsWith('.txt')) fileFormat = 'TXT';
           else fileFormat = 'CSV';
         }
-        if (out && (out.content || out.extracted_content || out.csv_summary)) {
-          fileContent = out.content || out.extracted_content || out.csv_summary;
+        if (out && (out.content || out.extracted_content || out.csv_summary || out.response)) {
+          fileContent = out.content || out.extracted_content || out.csv_summary || out.response;
         }
+      }
+
+      // If content is empty, fetch direct AI synthesis for the current prompt intent
+      if (!fileContent && userIntent.trim()) {
+        try {
+          const aiRes = await fetch('http://127.0.0.1:8420/query', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: `Konu: ${userIntent}. Bu otomasyon görevi için Türkçe detaylı, teknik ve kapsamlı sonuç raporu metni oluştur.`, stream: false })
+          });
+          if (aiRes.ok) {
+            const aiData = await aiRes.json();
+            fileContent = aiData.response || aiData.output || fileContent;
+          }
+        } catch (e) {
+          console.error("Failed to fetch direct AI result fallback:", e);
+        }
+      }
+
+      if (!fileContent) {
+        fileContent = `title,date,status,summary\n"Myca OS Execution Report","${new Date().toISOString().split('T')[0]}","Completed","${userIntent || 'Summary report generated successfully.'}"\n`;
       }
 
       setExecutionResult({

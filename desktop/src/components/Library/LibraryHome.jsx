@@ -23,7 +23,7 @@ const LibraryHome = ({ onSelectDoc, onNavigateCat }) => {
 
   useEffect(() => {
     setIsLoading(true);
-    
+
     Promise.all([
       fetch('http://127.0.0.1:8420/library/files?type=all')
         .then(res => res.json())
@@ -48,7 +48,7 @@ const LibraryHome = ({ onSelectDoc, onNavigateCat }) => {
 
   return (
     <div className="library-home" style={{ padding: '24px 32px' }}>
-      
+
       {/* Hero Welcome Banner */}
       <div className="home-section" style={{
         background: 'linear-gradient(135deg, rgba(46, 107, 69, 0.08) 0%, rgba(20, 22, 34, 0.04) 100%)',
@@ -81,8 +81,8 @@ const LibraryHome = ({ onSelectDoc, onNavigateCat }) => {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
           {recentFiles.map((f, idx) => (
-            <div 
-              key={f.id || idx} 
+            <div
+              key={f.id || idx}
               onClick={() => onSelectDoc && onSelectDoc(f)}
               style={{
                 background: '#ffffff', border: '1px solid var(--f-bark, #e6e0d6)', borderRadius: 12, padding: 16,
