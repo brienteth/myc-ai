@@ -1,0 +1,12 @@
+node_modules
+desktop
+ai-layer
+rust-core
+runtime
+build
+dist
+scratch
+data
+.git
+*.dmg
+*.exe
