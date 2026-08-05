@@ -31,5 +31,8 @@ db.sqlite
 desktop/release/
 desktop/out/
 runtime/target/
+rust-core/target/
 
 .vercel
+desktop/release_final/
+ai-layer/.env

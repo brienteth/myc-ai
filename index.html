@@ -223,7 +223,7 @@ footer {
       <a href="#problem" id="t-nav-1">Neden?</a>
       <a href="#how" id="t-nav-2">Nasıl Çalışır?</a>
       <a href="#compute" id="t-nav-3">Mimari</a>
-      <a href="docs.html" id="t-nav-docs">Dokümantasyon & SDK</a>
+      <a href="/docs" id="t-nav-docs">Dokümantasyon & SDK</a>
       <a href="/app" id="t-nav-app">Web App</a>
       <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
@@ -359,18 +359,92 @@ footer {
   </div>
 </section>
 
+</section>
+
+<section class="section-pad bg-parchment" id="sovereign-stack">
+  <div class="section-label" style="text-align:center;" id="t-sov-lbl">Sovereign Runtime Stack</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-sov-title">Sıfır Bağımlılık. %100 Egemen Altyapı.</h2>
+  <p class="hero-sub" style="margin: 0 auto 48px auto; text-align:center; max-width:680px;">
+    SAP, Oracle, AWS, hatta HTTP/1.1'e bile bağımlı olmayan, %100 kendi kontrolünüzde olan Rust tabanlı Sovereign Runtime.
+  </p>
+  <div class="comparison-grid">
+    <div class="card">
+      <div class="card-tag">L0 - L1 Storage & Identity</div>
+      <div class="card-title">Ed25519 & Content-Addressing</div>
+      <div class="card-body">Cihazlar arasında Ed25519 kriptografik kimlik doğrulama. Blake3, FastCDC chunking ve Merkle DAG ile içerik adresli P2P depolama.</div>
+    </div>
+    <div class="card">
+      <div class="card-tag">L2 - L3 Mesh Transport</div>
+      <div class="card-title">QUIC & HTTP/3 Transport</div>
+      <div class="card-body">Yerel ağ ve Wi-Fi üzerinde kesintisiz QUIC & HTTP/3 protokolu. mDNS P2P peer keşfi ve otomatik yetenek (VRAM/NPU) duyurusu.</div>
+    </div>
+    <div class="card accent">
+      <div class="card-tag">L4 - L5 Execution & PyO3 FFI</div>
+      <div class="card-title f-serif-italic">C-Extension Rust Core Bridge</div>
+      <div class="card-body">Python Execution OS ile 12 parçalı izole Rust workspace arasında PyO3 C-Extension FFI entegrasyonu.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="planner-v3">
+  <div class="section-label" style="text-align:center;">Planner v3 — Multi-Agent Mesh</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;">Deterministik Execution Compiler</h2>
+  <p class="hero-sub" style="margin: 0 auto 48px auto; text-align:center; max-width:720px;">
+    Planner halüsinasyon yapmaz. İstekleri satıcılardan bağımsız (Vendor-Neutral) niyet graflarına çevirir ve 9 uzman ajanla denetler.
+  </p>
+
+  <div class="how-grid" style="grid-template-columns: repeat(3, 1fr); gap: 24px;">
+    <div class="how-step">
+      <div class="how-num f-serif-italic">01</div>
+      <div class="how-title">Intent & Capability Agents</div>
+      <div class="how-body">Prompt'u satıcılardan bağımsız (Communication.Send, Data.Query) soyut niyetlere ayırır. Satıcı seçimi runtime'a bırakılır.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num f-serif-italic">02</div>
+      <div class="how-title">Parameter & Security Agents</div>
+      <div class="how-body">Knowledge OS, Geçmiş Çalıştırmalar ve OS Keychain / Secrets Vault katmanlarını tarayarak parametre ve kimlikleri otomatik bağlar.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num f-serif-italic">03</div>
+      <div class="how-title">Critic & Simulation Agents</div>
+      <div class="how-body">Aday grafları eleştirir, dry-run mock simülasyonu yapar. 8 Metrik üzerinden Quality Score (≥96/100) alana kadar çalıştırılmaz.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad bg-parchment" id="enterprise-platform">
+  <div class="section-label" style="text-align:center;">Kurumsal Platform & Mantar Branding</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;">Passkey Onay Kuyruğu & Politika Motoru</h2>
+  <div class="comparison-grid" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="card">
+      <div class="card-tag" style="background: rgba(46, 107, 69, 0.12); color: var(--f-moss);">Human-in-the-Loop</div>
+      <div class="card-title">Hardware Passkey Approval Queue</div>
+      <div class="card-body">Yüksek riskli SAP ödemeleri ($50k+), AWS sunucu ölçekleme ve Oracle DDL işlemleri için donanım anahtarı / Passkey PIN onayı.</div>
+    </div>
+    <div class="card">
+      <div class="card-tag" style="background: rgba(176, 137, 59, 0.12); color: var(--f-dormant);">Sovereign Governance</div>
+      <div class="card-title">Enterprise Policy Engine</div>
+      <div class="card-body">GDPR Veri Egemenliği, SOX Bütçe Limiti ve ISO27001 kurallarını çalıştırma öncesinde canlı denetleyen kural motoru.</div>
+    </div>
+  </div>
+</section>
+
 <section class="section-pad">
   <div class="section-label" style="text-align:center;" id="t-arch-lbl">MİMARİ</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;">Execution OS</h2>
+  <h2 class="section-title f-serif-italic" style="text-align:center;">Execution OS v3 Core</h2>
   <div class="blocks-grid">
     <div class="block">Need Engine</div>
-    <div class="block">Planner</div>
-    <div class="block">Skill SDK</div>
-    <div class="block">Automation</div>
-    <div class="block">Execution Bus</div>
-    <div class="block">Capability Graph</div>
-    <div class="block">Colony Mesh</div>
-    <div class="block">Execution Graph</div>
+    <div class="block">Planner v3 (Multi-Agent)</div>
+    <div class="block">Capability Registry</div>
+    <div class="block">Skill Manifest</div>
+    <div class="block">Constraint Solver</div>
+    <div class="block">Execution Simulator</div>
+    <div class="block">Quality Scorer (96+)</div>
+    <div class="block">Sovereign Runtime (Rust Core)</div>
+    <div class="block">PyO3 FFI Bridge</div>
+    <div class="block">Passkey Approvals</div>
+    <div class="block">Policy Engine</div>
+    <div class="block">Wi-Fi GPU Mesh</div>
   </div>
 </section>
 
@@ -382,11 +456,11 @@ footer {
       <div class="os-title" id="t-os-card-1-t">GitHub</div>
       <div class="os-desc" id="t-os-card-1-d">Kodları incele, fork et, katkıda bulun.</div>
     </a>
-    <a href="docs.html" class="os-card">
+    <a href="/docs" class="os-card">
       <div class="os-title" id="t-os-card-2-t">Whitepaper</div>
       <div class="os-desc" id="t-os-card-2-d">Yaşayan işletim sistemi vizyonunu oku.</div>
     </a>
-    <a href="docs.html#workflows" class="os-card">
+    <a href="/docs#workflows" class="os-card">
       <div class="os-title" id="t-os-card-3-t">Dokümantasyon</div>
       <div class="os-desc" id="t-os-card-3-d">Dağıtık yürütme ağının teknik detayları.</div>
     </a>
@@ -442,7 +516,7 @@ footer {
   </div>
   <div class="footer-links">
     <a href="https://github.com/brienteth/myc-ai">GitHub</a>
-    <a href="docs.html">Whitepaper</a>
+    <a href="/docs">Whitepaper</a>
     <a href="https://github.com/brienteth/myc-ai/releases">Releases</a>
   </div>
   <div>

@@ -14,7 +14,7 @@ import '@xyflow/react/dist/style.css';
 
 import { 
   Play, Save, Check, UploadCloud, Square, X, Download, FileText, 
-  CheckCircle2, Cpu, Search, Globe, Folder, Image, Settings, Terminal, Sparkles, FileSpreadsheet
+  CheckCircle2, Cpu, Search, Globe, Folder, Image, Settings, Terminal, Sparkles, FileSpreadsheet, RotateCcw
 } from 'lucide-react';
 import WorkflowInspector from './WorkflowInspector';
 import WorkflowDebugger from './WorkflowDebugger';
@@ -394,6 +394,21 @@ const WorkflowStudioCanvas = () => {
     }
   };
 
+  const handleResetCanvas = () => {
+    if (nodes.length === 0 && edges.length === 0) return;
+    if (window.confirm('Reset all canvas modules and clear workflow graph?')) {
+      setNodes([]);
+      setEdges([]);
+      setDraftWorkflow(null);
+      setSelectedNode(null);
+      setExecutionResult(null);
+      localStorage.removeItem('myca_studio_nodes');
+      localStorage.removeItem('myca_studio_edges');
+      localStorage.removeItem('myca_studio_draft');
+      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'info', msg: 'Canvas modules reset by user.' }]);
+    }
+  };
+
   const handleAIGenerate = async (prompt) => {
     setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'planner', msg: `Planner processing intent: "${prompt}"` }]);
     setExecutionResult(null);
@@ -551,6 +566,9 @@ const WorkflowStudioCanvas = () => {
             <Cpu size={14} /> Skill Registry
           </button>
 
+          <button className="toolbar-btn" onClick={handleResetCanvas} title="Reset all canvas modules" style={{ color: 'var(--f-dead, #b85450)', borderColor: 'rgba(184, 84, 80, 0.4)', background: 'rgba(184, 84, 80, 0.08)' }}>
+            <RotateCcw size={14} /> Reset Canvas
+          </button>
           <button className="toolbar-btn" onClick={handleSave}><Save size={14} /> Save</button>
           <button className="toolbar-btn"><Check size={14} /> Validate</button>
           <button className="toolbar-btn"><UploadCloud size={14} /> Deploy</button>

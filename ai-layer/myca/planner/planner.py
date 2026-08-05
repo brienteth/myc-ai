@@ -1,81 +1,132 @@
 """
-Myca Planner (Layer 2)
+Myca Planner v3 — Execution Intelligence & Multi-Agent Autonomous Engine
 
-The ONLY place where the LLM is used, and only if necessary.
-Converts a Need into a JSON Execution Graph (DAG).
+Coordinates the Multi-Agent Mesh:
+1. Intent Agent -> Vendor-neutral Intent Graph
+2. Capability Agent -> Abstract Capability Mapping
+3. Parameter Agent -> Knowledge, Contacts & Env Reasoning
+4. Security Agent -> Multi-Layer Credential Resolver (Keychain, Env, Vault)
+5. Cost Agent -> Compute Dispatch (Local MLX, Colony Mesh, 0G Compute)
+6. Graph Agent -> Multi-Candidate Candidate Graphs (Candidates A, B, C, D)
+7. Critic Agent -> Graph Critique & Hallucination Check
+8. Repair Agent -> Iterative Auto-Graph Repair
+9. Simulation Agent -> Mock Sandbox Execution
+10. Quality Scorer -> 8-Metric Quality Index (Score >= 96/100)
+11. Learning Engine -> Evolution Feedback to Knowledge OS
 """
-import json
+
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
+from myca.planner.agents.intent_agent import IntentAgent, IntentGraph
+from myca.planner.agents.capability_agent import CapabilityAgent, CapabilityGraph
+from myca.planner.agents.parameter_agent import ParameterAgent
+from myca.planner.agents.security_agent import SecurityAgent
+from myca.planner.agents.cost_agent import CostAgent
+from myca.planner.agents.graph_agent import GraphAgent, CandidateGraph
+from myca.planner.agents.critic_agent import CriticAgent
+from myca.planner.agents.repair_agent import RepairAgent
+from myca.planner.agents.simulation_agent import SimulationAgent
+from myca.planner.quality_scorer import QualityScorer, GraphQualityReport
+from myca.planner.learning_engine import LearningEngine
+from myca.planner.compiler import ExecutionCompiler
+from myca.skills.core.registry import SkillRegistry
+from myca.skills.manifest import SkillManifest
 
 logger = logging.getLogger("myca.planner")
 
+
 class Planner:
-    def __init__(self, inference_backend):
+    def __init__(self, inference_backend=None, secrets_vault=None):
         self.inference = inference_backend
-        
-    async def create_plan(self, need_prompt: str, available_skills: list[dict]) -> dict:
+        self.intent_agent = IntentAgent()
+        self.capability_agent = CapabilityAgent()
+        self.parameter_agent = ParameterAgent()
+        self.security_agent = SecurityAgent(secrets_vault=secrets_vault)
+        self.cost_agent = CostAgent()
+        self.graph_agent = GraphAgent()
+        self.critic_agent = CriticAgent()
+        self.repair_agent = RepairAgent()
+        self.simulation_agent = SimulationAgent()
+        self.scorer = QualityScorer(target_score_threshold=96.0)
+        self.learning_engine = LearningEngine()
+        self.compiler = ExecutionCompiler()
+
+    async def create_plan(self, need_prompt: str, available_skills: Optional[List[dict]] = None) -> dict:
         """
-        Uses the LLM to output a strict JSON DAG mapping the Need to available skills,
-        built via ContextBuilder and enriched by ExecutionRegistry.
+        Planner v3 Multi-Agent Autonomous Pipeline
         """
-        from myca.planner.context_builder import ContextBuilder
-        builder = ContextBuilder()
-        planner_context = builder.build_context(need_prompt, available_skills)
-        system_prompt = planner_context.build_system_prompt(available_skills)
-        
-        logger.info(f"Invoking LLM to plan Need: {need_prompt[:50]}")
-        
-        # We assume inference_backend has a generate_json or similar method
-        # For now, we simulate a response if we don't have a real model connected for this test.
-        try:
-            # Here we'd call: response = await self.inference.generate_json(system_prompt, need_prompt)
-            prompt_l = need_prompt.lower()
-            
-            # Complex multi-step intent decomposition
-            if ("oku" in prompt_l or "read" in prompt_l or "dosya" in prompt_l or "rapor" in prompt_l) and ("mail" in prompt_l or "eposta" in prompt_l or "gönder" in prompt_l or "@" in prompt_l):
-                # Extract email if present
-                import re
-                email_match = re.search(r'[\w\.-]+@[\w\.-]+', need_prompt)
-                target_email = email_match.group(0) if email_match else "user@company.com"
-                
-                return {
-                    "nodes": [
-                        {"id": "node_read", "skill": "fs.read", "inputs": {"path": "~/Desktop/rapor.txt"}, "deps": []},
-                        {"id": "node_summarize", "skill": "document.extract", "inputs": {"query": "Özetle", "document_ref": "{{nodes.node_read.outputs.content}}"}, "deps": ["node_read"]},
-                        {"id": "node_send_email", "skill": "communication.send", "inputs": {"recipient": target_email, "subject": "Rapor Özeti", "body": "{{nodes.node_summarize.outputs.summary}}"}, "deps": ["node_summarize"]}
-                    ]
-                }
-            elif "context document:" in prompt_l:
-                return {
-                    "nodes": [
-                        {"id": "A", "skill": "core.chat", "inputs": {"prompt": need_prompt}, "deps": []}
-                    ]
-                }
-            elif "file" in prompt_l or "read" in prompt_l or "oku" in prompt_l or "tara" in prompt_l:
-                return {
-                    "nodes": [
-                        {"id": "A", "skill": "fs.list", "inputs": {"path": "."}, "deps": []}
-                    ]
-                }
-            elif "browser" in prompt_l or "go to" in prompt_l or "site" in prompt_l:
-                return {
-                    "nodes": [
-                        {"id": "A", "skill": "browser.goto", "inputs": {"url": "https://example.com"}, "deps": []}
-                    ]
-                }
-            elif "opacus" in prompt_l or "mpc" in prompt_l or "kinetic" in prompt_l or "gizlilik" in prompt_l:
-                return {
-                    "nodes": [
-                        {"id": "A", "skill": "opacus.mpc", "inputs": {"action": "tools"}, "deps": []}
-                    ]
-                }
-            else:
-                return {
-                    "nodes": [
-                        {"id": "A", "skill": "core.chat", "inputs": {"prompt": need_prompt}, "deps": []}
-                    ]
-                }
-        except Exception as e:
-            logger.error(f"Planning failed: {e}")
-            raise e
+        logger.info(f"[PLANNER V3 MULTI-AGENT MESH] Executing Multi-Agent Pipeline for: '{need_prompt[:60]}'")
+
+        # Step 1: Intent Agent -> Extract Vendor-Neutral Intent Graph
+        intent_graph: IntentGraph = self.intent_agent.extract_intents(need_prompt)
+
+        # Step 2: Capability Agent -> Map to Abstract Capabilities
+        cap_graph: CapabilityGraph = self.capability_agent.map_intents_to_capabilities(intent_graph)
+
+        # Step 3: Graph Agent -> Multi-Candidate Candidate Graph Generation
+        candidates: List[CandidateGraph] = self.graph_agent.generate_candidates(cap_graph)
+
+        selected_candidate: Optional[CandidateGraph] = None
+        best_score_report: Optional[GraphQualityReport] = None
+
+        # Process each candidate through Parameter, Security, Critic, Repair, Simulation & Quality Scorer
+        for cand in candidates:
+            # Parameter Agent & Security Agent Binding
+            repaired_nodes = []
+            for node in cand.nodes:
+                n = dict(node)
+                skill_id = n.get("skill", "core.chat")
+                inputs = dict(n.get("inputs", {}))
+
+                manifest_dict = SkillRegistry.get_manifest(skill_id)
+                manifest = SkillManifest(**manifest_dict)
+
+                # Parameter Reasoning
+                inputs = self.parameter_agent.infer_and_bind(manifest, inputs, need_prompt)
+
+                # Multi-Layer Credential Binding
+                creds = self.security_agent.resolve_all_credentials(manifest.required_credentials)
+                inputs.update(creds)
+
+                n["inputs"] = inputs
+                repaired_nodes.append(n)
+
+            cand.nodes = repaired_nodes
+
+            # Critic Agent Review
+            critic_review = self.critic_agent.critique_candidate(cand)
+
+            # Repair Agent Cycle if flaws found
+            if not critic_review.is_approved:
+                cand = self.repair_agent.repair_graph(cand, critic_review)
+                critic_review = self.critic_agent.critique_candidate(cand)
+
+            # Simulation Agent Sandbox Execution
+            sim_result = self.simulation_agent.simulate_execution(cand)
+
+            # Quality Scorer Evaluation (8 Metrics)
+            quality_report = self.scorer.score_graph(cand, critic_review, sim_result)
+            cand.quality_score = quality_report.overall_score
+
+            if selected_candidate is None or quality_report.overall_score > best_score_report.overall_score:
+                selected_candidate = cand
+                best_score_report = quality_report
+
+        # Lower Selected Candidate AST -> IR -> Target DAG
+        ast_payload = {
+            "intent": intent_graph.user_prompt[:40],
+            "nodes": selected_candidate.nodes
+        }
+        dag = self.compiler.compile_ast_to_dag(ast_payload)
+
+        # Attach v3 Execution Intelligence Metadata
+        dag["candidate_selected"] = selected_candidate.candidate_id
+        dag["quality_score"] = best_score_report.overall_score
+        dag["quality_breakdown"] = best_score_report.metrics_breakdown
+        dag["is_valid"] = best_score_report.passed_threshold
+
+        # Post-execution learning simulation update
+        self.learning_engine.record_execution_outcome(dag["id"], dag["is_valid"], selected_candidate.estimated_latency_ms, retries=0)
+
+        logger.info(f"[PLANNER V3] Selected {selected_candidate.candidate_id} with Quality Score {best_score_report.overall_score}/100.")
+        return dag

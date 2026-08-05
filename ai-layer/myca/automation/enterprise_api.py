@@ -544,8 +544,50 @@ async def get_analytics_live():
     from myca.execution.enterprise.analytics_service import analytics_service
     return {"live": analytics_service.get_live_metrics()}
 
-# ── Secrets ────────────────────────────────────────────────────────────
+# ── Secrets (Enterprise Secrets OS) ────────────────────────────────────
 
-@router.get("/secrets")
-async def get_secrets():
-    return {"secrets": SecretsManager.get_secrets_metadata()}
+@router.get("/secrets/overview")
+async def get_secrets_overview():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"overview": secrets_service.get_overview()}
+
+@router.get("/secrets/vault")
+async def get_secrets_vault():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"vault": secrets_service.get_vault()}
+
+@router.get("/secrets/connections")
+async def get_secrets_connections():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"connections": secrets_service.get_connections()}
+
+@router.get("/secrets/certificates")
+async def get_secrets_certificates():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"certificates": secrets_service.get_certificates()}
+
+@router.get("/secrets/ssh")
+async def get_secrets_ssh():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"ssh": secrets_service.get_ssh()}
+
+@router.get("/secrets/wallets")
+async def get_secrets_wallets():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"wallets": secrets_service.get_wallets()}
+
+@router.get("/secrets/rotation")
+async def get_secrets_rotation():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"rotation": secrets_service.get_rotation()}
+
+@router.get("/secrets/audit")
+async def get_secrets_audit():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"audit": secrets_service.get_audit()}
+
+@router.get("/secrets/live")
+async def get_secrets_live():
+    from myca.execution.enterprise.secrets_service import secrets_service
+    return {"live": secrets_service.get_live_metrics()}
+

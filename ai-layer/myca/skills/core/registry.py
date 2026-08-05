@@ -253,4 +253,28 @@ class SkillRegistry:
     @classmethod
     def get_manifests(cls) -> list[dict]:
         cls._ensure_loaded()
-        return [s.manifest.model_dump() for s in cls._skills.values()]
+        manifests = [s.manifest.model_dump() for s in cls._skills.values()]
+        
+        # Merge pre-registered Capability Skill Manifests
+        from myca.skills.manifests import CORE_SKILL_MANIFESTS
+        for m in CORE_SKILL_MANIFESTS:
+            if not any(item.get("id") == m.skill or item.get("skill") == m.skill for item in manifests):
+                manifests.append(m.model_dump())
+        return manifests
+
+    @classmethod
+    def get_manifest(cls, skill_id: str) -> dict:
+        """Retrieves self-describing SkillManifest for a registered skill capability."""
+        from myca.skills.manifests import CORE_SKILL_MANIFESTS
+        for m in CORE_SKILL_MANIFESTS:
+            if m.skill == skill_id:
+                return m.model_dump()
+
+        cls._ensure_loaded()
+        if skill_id in cls._skills:
+            return cls._skills[skill_id].manifest.model_dump()
+
+        # Fallback default manifest
+        from myca.skills.manifest import SkillManifest
+        return SkillManifest(skill=skill_id, description=f"Capability {skill_id}").model_dump()
+

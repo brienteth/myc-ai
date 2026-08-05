@@ -1,0 +1,19 @@
+[package]
+name = "ffi"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+common = { path = "../common" }
+runtime = { path = "../runtime" }
+compute = { path = "../compute" }
+storage = { path = "../storage" }
+identity = { path = "../identity" }
+mesh = { path = "../mesh" }
+pyo3 = { version = "0.20", features = ["extension-module"] }
+tokio = { version = "1.0", features = ["full"] }
+uuid = { version = "1.0", features = ["v4"] }
+blake3 = "1.0"

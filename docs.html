@@ -565,22 +565,26 @@ npm run electron:start</pre>
 
       <!-- SECTION: Concepts - Planner -->
       <div id="concepts-planner" class="doc-section">
-        <h1 id="t-plan-title">Planlayıcı (Planner)</h1>
-        <p id="t-plan-p1">Planlayıcı, niyet ifadesini analiz eder ve kullanılabilir becerileri (Skills) kullanarak sıralı/paralel adımlardan oluşan deterministik bir plan hazırlar.</p>
+        <h1 id="t-plan-title">Planlayıcı (Planner v3 Multi-Agent Engine)</h1>
+        <p id="t-plan-p1">Planner v3, isteği serbest LLM tahminleriyle üretmek yerine <strong>Deterministik bir Execution Compiler</strong> olarak çalışır. İstek önce satıcılardan bağımsız (Vendor-Neutral) niyet grafına çevrilir ve 9 otonom ajanla denetlenir.</p>
         
         <pre>
-# planner.py içindeki örnek girdi/çıktı akışı
-Input: "Faturayı oku ve Excel'e yaz"
-Output: ExecutionGraph JSON [fs.read ➔ ai.summary ➔ fs.write]</pre>
+# Planner v3 Multi-Agent Akış Sırası
+User Prompt ➔ Intent Agent ➔ Capability Agent (Abstract Primitives)
+➔ Parameter Reasoning Agent (Knowledge/Env/Vault Search)
+➔ Security Agent (Keychain/Vault Resolver) ➔ Cost Agent (Compute Dispatch)
+➔ Graph Agent (Multi-Candidate A, B, C, D) ➔ Critic Agent ➔ Repair Agent
+➔ Simulation Agent (Sandbox Dry-Run) ➔ Quality Scorer (Target ≥ 96/100) ➔ Runtime</pre>
 
-        <h2 id="t-plan-h2">Yapay Zeka Destekli Planlama ve Hızlı Yol (Bypass)</h2>
-        <p id="t-plan-p2">Myca, yaygın niyetler için önceden eğitilmiş hızlı şablonlar (Heuristic bypass) sunarak yerel CPU/GPU yükünü en aza indirir. E-posta, dosya işlemleri, sosyal medya paylaşımları anında deterministik birer grafiğe dönüştürülür.</p>
+        <h2 id="t-plan-h2">Multi-Agent Planlama Ağı ve Simülasyon Denetimi</h2>
+        <p id="t-plan-p2">Myca Planner v3 halüsinasyonları sıfıra indirmek için aday grafları simüle eder. Aday graf 8 metrik üzerinden (Doğruluk, Gecikme, Güvenlik, Maliyet, Gizlilik, Güvenilirlik, Karmaşıklık, Onarılabilirlik) değerlendirilir ve 96/100 eşik puanını geçene kadar yürütülmez.</p>
 
         <div class="related-box">
           <h4 id="t-rel-lbl-3">İlişkili Konseptler</h4>
           <div class="related-links">
             <a href="#" onclick="showSection('concepts-graph')" class="related-link">Execution Graph</a>
             <a href="#" onclick="showSection('concepts-skills')" class="related-link">Skills</a>
+            <a href="#" onclick="showSection('architecture')" class="related-link">Sovereign Runtime Architecture</a>
           </div>
         </div>
       </div>
@@ -884,25 +888,43 @@ Response:
 
       <!-- SECTION: Architecture -->
       <div id="architecture" class="doc-section">
-        <h1 id="t-arch-title-detail">Myca OS Mimarisi</h1>
-        <p id="t-arch-p1">Myca OS, donanım kaynaklarını ve yapay zeka becerilerini koordine eden yerel bir mikro-çekirdek gibi çalışır.</p>
+        <h1 id="t-arch-title-detail">Myca OS v3 Mimarisi & Sovereign Runtime</h1>
+        <p id="t-arch-p1">Myca OS, donanım kaynaklarını, GPU VRAM hafızasını ve yapay zeka becerilerini 0-bağımlılıkla koordine eden %100 egemen bir mikro-çekirdek (Rust Core) üzerinde çalışır.</p>
 
         <div class="flow-chart">
-          [Need Engine] ➔ (Niyeti Çözümle)<br>
+          [Need Engine] ➔ (Kullanıcı Niyetini Al)<br>
           <div class="arrow">↓</div>
-          [Planner] ➔ (DAG Grafiği Oluştur)<br>
+          [Planner v3 (Multi-Agent Mesh)] ➔ (Constraint Solve & 8-Metric Quality Score ≥96)<br>
           <div class="arrow">↓</div>
-          [Execution Bus] ➔ (Becerileri Ağda Dağıt)<br>
+          [Sovereign Runtime Stack (Rust Core)] ➔ (Ed25519 Identity & FastCDC/Blake3 DAG Storage)<br>
           <div class="arrow">↓</div>
-          [Colony Mesh] ➔ (WebRTC Üzerinden Diğer Cihazlarla Eşle)
+          [P2P Transport (QUIC / HTTP3)] ➔ (Wi-Fi GPU Mesh & Mobile Offloading)
         </div>
 
-        <h2 id="t-arch-h2">Model Context Protocol ve Skill ABI</h2>
-        <p id="t-arch-p2">Beceri Yürütme Motoru, her MCP sunucusunu izole bir alt işlem (process) olarak çalıştırır ve standart girdi/çıktı (stdio) boruları üzerinden güvenle haberleşir. Bilgisayarınızın kaynaklarına izinsiz erişim engellenir.</p>
+        <h2>Sovereign Runtime Stack (12 İzole Rust Crate)</h2>
+        <p>Myca Runtime, herhangi bir bulut sağlayıcısına veya HTTP/1.1'e bağımlı olmayan izole bir Rust workspace olarak yapılandırılmıştır:</p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+          <li><strong>crates/common & identity</strong>: Ed25519 kriptografik anahtar çiftleri ve düğüm kimlik yönetimi.</li>
+          <li><strong>crates/storage</strong>: Blake3 içerik adresleme, FastCDC chunking ve Merkle DAG veri yapıları.</li>
+          <li><strong>crates/mesh & transport</strong>: mDNS P2P keşif, QUIC ve HTTP/3 ağ protokol katmanları.</li>
+          <li><strong>crates/compute & runtime</strong>: Vulkan/Metal GPU takibi ve Tokio asenkron görev zamanlayıcı.</li>
+          <li><strong>crates/ffi</strong>: Python AI katmanı ile Rust çekirdeği arasındaki PyO3 C-Extension köprüsü.</li>
+        </ul>
+
+        <h2>Kurumsal Platform: Hardware Passkey Approval & Policy Engine</h2>
+        <p>Mantar (Forest Floor) tasarım sistemiyle korunan kurumsal güvenlik katmanı:</p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+          <li><strong>Passkey Approval Queue</strong>: $50.000+ SAP ödemeleri, AWS düğüm ölçeklemeleri ve Oracle DDL işlemleri için donanım anahtarı / Passkey PIN onayı.</li>
+          <li><strong>Enterprise Policy Engine</strong>: GDPR Veri Egemenliği, SOX ve ISO27001 kurallarını çalıştırma öncesinde denetleyen canlı kural motoru.</li>
+        </ul>
+
+        <h2>Wi-Fi P2P GPU Mesh & Mobil Bağlantı</h2>
+        <p>Aynı Wi-Fi ağındaki bilgisayar, telefon veya sunucular mDNS ile birbirini tanır. Cihazlar GPU VRAM kapasitelerini ağa duyurur ve ağır yükler Wi-Fi üzerinden en uygun cihazın GPU'suna (iOS Metal / Android Vulkan NDK / Termux) aktarılır.</p>
 
         <div class="related-box">
           <h4 id="t-rel-lbl-11">İlişkili Konseptler</h4>
           <div class="related-links">
+            <a href="#" onclick="showSection('concepts-planner')" class="related-link">Planner v3</a>
             <a href="#" onclick="showSection('concepts-colony')" class="related-link">Colony</a>
             <a href="#" onclick="showSection('benchmarks')" class="related-link">Benchmarks</a>
           </div>
