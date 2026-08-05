@@ -37,6 +37,17 @@
   margin-top: auto;
 }
 
+.nav-section-label {
+  font-size: 10px;
+  font-family: var(--f-mono, monospace);
+  font-weight: 700;
+  color: var(--f-soil, #5B5B57);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  padding-left: 4px;
+}
+
 .nav-item {
   display: flex;
   align-items: center;
