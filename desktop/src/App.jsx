@@ -36,7 +36,7 @@ function App() {
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
+            <Route index element={<Chat />} />
             <Route path="chat" element={<Chat />} />
             <Route path="library" element={<Library />} />
             <Route path="automation" element={<Automation />} />

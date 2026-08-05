@@ -34,10 +34,6 @@ const Sidebar = () => {
       <nav className="sidebar-nav" style={{ padding: '12px 10px' }}>
         <div className="nav-section-label">MYCA EXECUTION OS</div>
         <NavLink to="/" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
-          <Home size={16} />
-          <span>Home</span>
-        </NavLink>
-        <NavLink to="/chat" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Share2 size={16} />
           <span>Assistant</span>
         </NavLink>

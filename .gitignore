@@ -36,3 +36,5 @@ rust-core/target/
 .vercel
 desktop/release_final/
 ai-layer/.env
+.env*
+docs/.env

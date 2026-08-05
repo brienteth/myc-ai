@@ -40,6 +40,17 @@
   --f-shadow-sm:  0 1px 4px rgba(29, 29, 27, 0.05);
   --f-shadow:     0 4px 16px rgba(29, 29, 27, 0.08);
   --f-shadow-lg:  0 8px 32px rgba(29, 29, 27, 0.10);
+
+  /* Compatibility aliases for Mantar Branding */
+  --surface:        var(--f-parchment);
+  --border:         var(--f-bark);
+  --card:           var(--f-cream);
+  --accent:         var(--f-moss);
+  --text-secondary: var(--f-soil);
+  --text-primary:   var(--f-humus);
+  --myc-void:       var(--f-cream);
+  --myc-light:      var(--f-humus);
+  --myc-font-ui:    var(--f-sans);
 }
 
 * { 
