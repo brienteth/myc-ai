@@ -2,9 +2,9 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/docs-web", "destination": "/docs.html" },
-    { "source": "/docs", "destination": "/docs.html" },
-    { "source": "/app", "destination": "/app.html" },
-    { "source": "/landing", "destination": "/landing.html" }
+    { "source": "/docs-web", "destination": "/docs" },
+    { "source": "/docs-web/(.*)", "destination": "/docs" },
+    { "source": "/app", "destination": "/app.html" }
   ]
 }
+
