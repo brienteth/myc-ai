@@ -215,8 +215,8 @@ const EnterpriseApprovals = () => {
                       fontSize: 12,
                       cursor: 'pointer',
                       display: 'flex',
-                      align-items: 'center',
-                      justify-content: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       gap: 6,
                       transition: 'background 0.15s ease'
                     }}
@@ -236,8 +236,8 @@ const EnterpriseApprovals = () => {
                       fontSize: 12,
                       cursor: 'pointer',
                       display: 'flex',
-                      align-items: 'center',
-                      justify-content: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       gap: 4,
                       transition: 'all 0.15s ease'
                     }}

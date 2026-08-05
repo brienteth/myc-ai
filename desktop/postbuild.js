@@ -1,12 +1,29 @@
 import fs from 'fs';
 import path from 'path';
 
-const file = path.join('dist', 'index.html');
-if (fs.existsSync(file)) {
-  let content = fs.readFileSync(file, 'utf8');
+const distIndex = path.join('dist', 'index.html');
+const rootAppHtml = path.resolve('..', 'app.html');
+const distAssets = path.join('dist', 'assets');
+const rootAssets = path.resolve('..', 'assets');
+
+if (fs.existsSync(distIndex)) {
+  let content = fs.readFileSync(distIndex, 'utf8');
   content = content.replace(/crossorigin/g, '');
-  fs.writeFileSync(file, content, 'utf8');
-  console.log('Postbuild: Removed crossorigin from dist/index.html');
+  fs.writeFileSync(distIndex, content, 'utf8');
+  fs.writeFileSync(rootAppHtml, content, 'utf8');
+  console.log('Postbuild: Synchronized dist/index.html to root app.html');
 } else {
   console.error('Postbuild: dist/index.html not found');
 }
+
+if (fs.existsSync(distAssets)) {
+  if (!fs.existsSync(rootAssets)) {
+    fs.mkdirSync(rootAssets, { recursive: true });
+  }
+  const files = fs.readdirSync(distAssets);
+  for (const f of files) {
+    fs.copyFileSync(path.join(distAssets, f), path.join(rootAssets, f));
+  }
+  console.log('Postbuild: Synchronized dist/assets to root assets/');
+}
+

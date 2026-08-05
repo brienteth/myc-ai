@@ -138,7 +138,7 @@ const EnterprisePolicies = () => {
               fontSize: 12,
               cursor: 'pointer',
               display: 'flex',
-              align-items: 'center',
+              alignItems: 'center',
               gap: 6
             }}
           >

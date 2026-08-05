@@ -13,6 +13,8 @@ import Onboarding from './views/Onboarding';
 import Chat from './screens/Chat';
 import SetupScreen from './screens/SetupScreen';
 import EnterpriseDomain from './views/Enterprise/EnterpriseDomain';
+import SecondBrain from './views/SecondBrain';
+import SkillsView from './views/SkillsView';
 import './App.css';
 
 function App() {
@@ -38,6 +40,8 @@ function App() {
             <Route path="chat" element={<Chat />} />
             <Route path="library" element={<Library />} />
             <Route path="automation" element={<Automation />} />
+            <Route path="brain" element={<SecondBrain />} />
+            <Route path="skills" element={<SkillsView />} />
             <Route path="enterprise/*" element={<EnterpriseDomain />} />
             <Route path="colony" element={<Colony />} />
             <Route path="workflows" element={<Workflows />} />
