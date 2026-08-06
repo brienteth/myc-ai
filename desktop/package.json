@@ -1,5 +1,6 @@
 {
-  "name": "Myca",
+  "name": "myca",
+  "productName": "Myca Execution OS",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -15,6 +16,8 @@
   },
   "build": {
     "appId": "com.myca.desktop",
+    "productName": "Myca Execution OS",
+    "executableName": "myca",
     "directories": {
       "output": "release"
     },
@@ -36,6 +39,8 @@
       ]
     },
     "win": {
+      "icon": "public/icon.png",
+      "executableName": "myca",
       "target": [
         "nsis",
         "zip"
@@ -52,7 +57,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "shortcutName": "Myca Execution OS"
     },
     "extraResources": [
       {

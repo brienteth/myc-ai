@@ -68,9 +68,9 @@ function startBackend() {
     detached: false,
     env: {
       ...process.env,
-      MYCA_MODEL_PATH: process.env.MYCA_MODEL_PATH || 'sk-1aa505ff-0da9-470f-b63d-4713949622cb',
+      MYCA_MODEL_PATH: process.env.MYCA_MODEL_PATH || 'sk-be89b760-6b96-4828-b075-03566a5f50a4',
       ZG_COMPUTE_URL: process.env.ZG_COMPUTE_URL || 'https://router-api.0g.ai/v1',
-      MYCA_MODEL: process.env.MYCA_MODEL || 'claude-fable-5'
+      MYCA_MODEL: process.env.MYCA_MODEL || 'gpt-5.6-sol'
     },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
