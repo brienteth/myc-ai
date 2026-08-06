@@ -317,13 +317,15 @@ const WorkflowStudioCanvas = () => {
         }
       }
 
+      const activeIntent = draftWorkflow?.intent || 'Otonom Otomasyon Görevi';
+
       // If content is empty, fetch direct AI synthesis for the current prompt intent
-      if (!fileContent && userIntent.trim()) {
+      if (!fileContent && activeIntent.trim()) {
         try {
           const aiRes = await fetch('http://127.0.0.1:8420/query', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: `Konu: ${userIntent}. Bu otomasyon görevi için Türkçe detaylı, teknik ve kapsamlı sonuç raporu metni oluştur.`, stream: false })
+            body: JSON.stringify({ prompt: `Konu: ${activeIntent}. Bu otomasyon görevi için Türkçe detaylı, teknik ve kapsamlı sonuç raporu metni oluştur.`, stream: false })
           });
           if (aiRes.ok) {
             const aiData = await aiRes.json();
@@ -335,7 +337,7 @@ const WorkflowStudioCanvas = () => {
       }
 
       if (!fileContent) {
-        fileContent = `title,date,status,summary\n"Myca OS Execution Report","${new Date().toISOString().split('T')[0]}","Completed","${userIntent || 'Summary report generated successfully.'}"\n`;
+        fileContent = `title,date,status,summary\n"Myca OS Execution Report","${new Date().toISOString().split('T')[0]}","Completed","${activeIntent || 'Summary report generated successfully.'}"\n`;
       }
 
       setExecutionResult({
