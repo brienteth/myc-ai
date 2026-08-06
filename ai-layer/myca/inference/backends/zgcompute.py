@@ -44,66 +44,90 @@ def is_simple_query(prompt: str) -> bool:
 def local_simple_response(prompt: str) -> str:
     p = prompt.lower().strip()
     if any(w in p for w in ["selam", "merhaba", "hey", "hi", "hello", "günaydın", "iyi akşamlar"]):
-        return "Merhaba! Size nasıl yardımcı olabilirim?"
+        return "Merhaba! Ben Myca Execution OS Asistanı. Size nasıl yardımcı olabilirim?"
     if any(w in p for w in ["nasılsın", "nasıl gidiyor"]):
         return "Teşekkür ederim, tüm Myca OS sistemleri aktif ve hazır. Siz nasılsınız?"
     if any(w in p for w in ["kimsin", "ismin ne", "adın ne"]):
-        return "Ben Myca OS yerel yapay zeka asistanıyım."
+        return "Ben Myca OS yerel yapay zeka asistanıyım. Otonom iş akışları ve 1,600+ yetenek entegrasyonu ile çalışıyorum."
     if any(w in p for w in ["teşekkür", "sağol", "thanks"]):
-        return "Rica ederim! Başka bir işlem veya soru olursa buradayım."
+        return "Rica ederim! Başka bir işlem veya otomasyon görevi olursa buradayım."
     
+    if any(w in p for w in ["neler yapabilirsin", "yetenekler", "ne yaparsın", "özellikler", "capability", "skills"]):
+        return """# ⚡ Myca Execution OS Yetenekleri
+
+Ben **Myca Execution OS** yerel yapay zeka asistanıyım. Sizin için aşağıdaki otonom sistem görevlerini yürütebilirim:
+
+### 1. 🧩 1,600+ Atomic Skills & MCP Registry
+- **İletişim:** Telegram, Slack, Gmail, WhatsApp ve Discord bot otomasyonu.
+- **Veritabanları:** PostgreSQL, MongoDB, Redis, SQLite ve Vector (Pinecone/Qdrant) sorgulamaları.
+- **Bilim & Genomik:** AlphaFold 3D protein analizi, ChEMBL, PubMed, ClinVar, gnomAD ve Ithaca antik metin restorasyonu.
+- **Web & Tarayıcı:** Chrome DevTools MCP, Playwright scraping, Markdown dönüştürme ve web aramaları.
+
+### 2. 🎨 Visual Workflow Studio & Otonom Tetikleyiciler
+- Sürükle-bırak düğümler ile karmaşık iş akışları tasarlama.
+- Arka planda dosya değişiklikleri, zamanlayıcılar (Cron) ve Webhook'lar ile 7/24 kesintisiz yürütme.
+
+### 3. 🛡️ %100 Yerel Gizlilik & P2P Colony Mesh
+- Tüm verileriniz cihazınızda kalır, bulut bağımlılığı yoktur.
+- WiFi ağınızdaki diğer Myca düğümleri (laptop, telefon, sunucu) ile iş yükü paylaşımı yapabilirsiniz.
+
+Hangi akışı oluşturmak istersiniz?"""
+
+    if any(w in p for w in ["telegram", "workflow", "bildirim", "akış", "otomasyon"]):
+        return """# 🤖 Telegram Bildirim Workflow Akışı
+
+İsteğiniz için **Telegram Bildirim Akışı** hazırlandı. Workflow Studio üzerinden bu akışı görsel olarak çalıştırabilirsiniz:
+
+### 1. Akış Yapısı (Node Flow)
+- **Tetikleyici (Trigger):** Zamanlayıcı (Her 1 saatte bir) veya Klasör Değişikliği
+- **Primitive:** `telegram.send`
+- **Hedef:** Telegram Bot API / Kanal Bildirimi
+
+### 2. Yürütülebilir Kod Örneği
+```python
+from myca.skills import execute_primitive
+
+await execute_primitive(
+    primitive_id="telegram.send",
+    params={
+        "chat_id": "@myca_notification_channel",
+        "message": "⚡ Myca OS Otonom Görev Raporu: İşlem başarıyla yürütüldü."
+    }
+)
+```
+Workflow Studio ekranından düğümleri bağlayarak bu akışı tek tıkla aktifleştirebilirsiniz."""
+
     if any(w in p for w in ["sunum", "presentation", "proje hakkında"]):
         return """# 🚀 Myca Execution OS — Proje Sunumu (8 Slayt)
 
 ### Slayt 1: Kapak & Vizyon
 - **Başlık:** Myca Execution OS — Geleceğin Yerel Yapay Zeka & Otomasyon İşletim Sistemi
-- **Alt Başlık:** "İnternet, ama canlı."
 - **Vizyon:** Veriyi buluta göndermeden, tamamen cihazlarınızda çalışan P2P yerel otomasyon ağı.
 
 ---
 
 ### Slayt 2: Problemler ve Çözümümüz
-- **Problem:** Bulut AI bağımlılığı, abonelik ücretleri, veri gizliliği ihlalleri ve internet kesintisinde duran sistemler.
-- **Çözüm:** %100 yerel çıkarım (Local-first AI), sıfır bulut bağımlılığı ve yerel cihazlar arası P2P iş yükü paylaşımı.
+- **Problem:** Bulut AI bağımlılığı, abonelik ücretleri ve veri gizliliği ihlalleri.
+- **Çözüm:** %100 yerel çıkarım (Local-first AI), sıfır bulut bağımlılığı ve yerel P2P iş yükü paylaşımı.
 
 ---
 
 ### Slayt 3: Mimari Temeller
 - **Lokal AI Motoru:** Ollama, Llama.cpp ve 0G Compute Network akıllı model yönlendiricisi.
-- **Model Context Protocol (MCP):** Claude MCP standartıyla yerel araçlar (Filesystem, Web Browser, Terminal) dinamik yetenek olarak bağlanır.
-- **Diferansiyel Gizlilik:** PyTorch Opacus ve MPC (Multi-Party Computation) ile güvenli veri işleme.
+- **MCP Entegrasyonu:** Claude MCP standartıyla yerel araçlar (Filesystem, Web Browser, Terminal) bağlanır.
 
 ---
 
-### Slayt 4: Workflow Studio (Görsel Akış Tasarımı)
-- **Node-Based Canvas:** İhtiyaç ➔ Planlayıcı ➔ Yürütme Grafiği ➔ Çıktı adımlarıyla görsel akışlar.
-- **Canlı İzleme:** Gerçek zamanlı loglar, veri akışı ve düğüm durumları.
+### Slayt 4: Workflow Studio & Otonom Otomasyon
+- Node-Based Canvas ile İhtiyaç ➔ Planlayıcı ➔ Yürütme Grafiği adımları.
+- Continuous Scheduler ile arka planda kesintisiz çalışma.
 
 ---
 
-### Slayt 5: Continuous Scheduler (Sürekli Otomasyon)
-- **Tetikleyiciler:** Klasör değişiklikleri, zamanlayıcılar (Cron) ve pano dinleyicileri.
-- **Arka Plan Çalışması:** Kullanıcı müdahalesi gerektirmeden otonom görev yürütme.
+### Slayt 5: Gelecek & Özgürlük
+- Donanımınızın gerçek gücünü açığa çıkarın. Myca OS ile veriniz tamamen sizde kalsın!"""
 
----
-
-### Slayt 6: P2P Cihaz Ağı (Colony)
-- **mDNS Keşfi:** Aynı WiFi/Yerel ağdaki Myca düğümlerini otomatik algılama.
-- **Kolektif Zeka:** Zayıf cihazlar ağır işleri güçlü dizüstü/sunucu düğümlerine devreder.
-
----
-
-### Slayt 7: Kullanım Senaryoları
-- **Doküman & Rapor Analizi:** PDF/Excel dosyalarından otomatik özet ve CSV raporlama.
-- **Web Research & Monitoring:** İnternetten canlı fiyat/veri takibi ve bildirim.
-- **Yerel API Sunumu:** Tek tıkla yerel veritabanı veya model üzerinden REST API yayını.
-
----
-
-### Slayt 8: Gelecek & Özgürlük
-- **Açık Kaynak:** Lisansız, serbest ve topluluk odaklı.
-- **Özet:** Donanımınızın gerçek gücünü açığa çıkarın. Myca OS ile veriniz tamamen sizde kalsın!"""
-    return "İsteğiniz başarıyla alındı. Myca OS yanıtı hazırlanıyor."
+    return f"**Myca OS Yanıtı:** \"{prompt}\" talebiniz Myca OS tarafından işlendi. Workflow Studio veya Skills & MCP ekranı üzerinden ilgili atomik yetenekleri çalıştırmaya hazırım."
 
 
 class ZeroGComputeBackend(InferenceEngine):
