@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2, Brain } from 'lucide-react';
 import '../Layout/Layout.css';
 import { useTranslation } from '../../hooks/useTranslation';
+import logoImg from '../../assets/logo.png';
 
 const Sidebar = () => {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ const Sidebar = () => {
     <div className="sidebar">
       <div className="sidebar-header-row" style={{ padding: '16px 20px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--f-bark, #DDD7CB)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src="/logo.png" alt="Myca OS" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'contain' }} />
+          <img src={logoImg} alt="Myca OS" style={{ width: 28, height: 28, borderRadius: 6, objectFit: 'contain' }} />
           <span style={{ fontSize: '18px', fontWeight: '700', fontFamily: 'var(--f-serif)', color: 'var(--f-deep)', fontStyle: 'italic' }}>myca os</span>
         </div>
         <span style={{ fontSize: '10px', fontFamily: 'var(--f-mono)', background: 'var(--f-bark)', padding: '2px 6px', borderRadius: '4px' }}>v0.1.0</span>

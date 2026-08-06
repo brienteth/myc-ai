@@ -27,3 +27,15 @@ if (fs.existsSync(distAssets)) {
   console.log('Postbuild: Synchronized dist/assets to root assets/');
 }
 
+// Copy top-level dist static files (e.g. logo.png, icon.png) to root
+if (fs.existsSync('dist')) {
+  const distFiles = fs.readdirSync('dist');
+  for (const f of distFiles) {
+    const fullPath = path.join('dist', f);
+    if (!fs.lstatSync(fullPath).isDirectory() && f !== 'index.html') {
+      fs.copyFileSync(fullPath, path.resolve('..', f));
+    }
+  }
+  console.log('Postbuild: Synchronized dist root static files to main root');
+}
+
