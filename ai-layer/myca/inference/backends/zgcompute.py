@@ -16,7 +16,8 @@ from ..registry import BackendRegistry
 logger = logging.getLogger("myca.inference.zgcompute")
 
 ZG_ROUTER_URL = os.getenv("ZG_COMPUTE_URL", "https://router-api.0g.ai/v1")
-DEFAULT_MODEL = "claude-fable-5"
+DEFAULT_MODEL = os.getenv("MYCA_MODEL", "gpt-5.6-sol")
+DEFAULT_KEY = os.getenv("MYCA_MODEL_PATH", "sk-be89b760-6b96-4828-b075-03566a5f50a4")
 
 MYCA_SYSTEM_PROMPT = """Sen Myca Execution OS'in resmi ve son derece zeki yerel AI asistanısın.
 Myca Execution OS; yerel yapay zeka çıkarımı, dağıtık P2P cihaz ağı, Model Context Protocol (MCP) araçları ve görsel Workflow Studio ile çalışan tam donanımlı bir otomasyon işletim sistemidir.

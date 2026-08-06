@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, X, Bot, Languages, Table, Users, Zap, List, Download } from 'lucide-react';
+import { FileText, X, Bot, Languages, Table, Users, Zap, List, Download, Send } from 'lucide-react';
+import { queryAI } from '../../services/aiService';
 import '../../views/Library.css';
 
 const formatBytes = (bytes) => {
@@ -18,7 +19,7 @@ const cleanFilename = (filename) => {
 
 const DocumentSplitView = ({ document, onClose }) => {
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: "Hi! I'm ready to analyze this document. What would you like to know?" }
+    { role: 'assistant', text: "Merhaba! Bu dokümanı analiz etmeye hazırım. Neyi öğrenmek istersiniz?" }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -39,32 +40,47 @@ const DocumentSplitView = ({ document, onClose }) => {
 
   const askAi = async (prompt) => {
     setIsTyping(true);
-    setMessages(prev => [...prev, { role: 'user', text: prompt }]);
+    setMessages(prev => [
+      ...prev,
+      { role: 'user', text: prompt },
+      { role: 'assistant', text: '' }
+    ]);
     
-    // Build context from actual document or image metadata
+    // Build context from actual document content or metadata
     const contentContext = docContent?.content 
       ? `\n\nDocument Content:\n${docContent.content}` 
       : `\n\nMedia Document Info: ${displayName} (${document.type}, Size: ${formatBytes(document.size_bytes)})`;
     
-    const fullPrompt = `Context Document: ${displayName}${contentContext}\n\nUser Question: ${prompt}\n\nPlease answer accurately and directly based on the document content or image file metadata provided.`;
+    const fullPrompt = `Context Document: ${displayName}${contentContext}\n\nUser Question: ${prompt}\n\nPlease answer accurately and directly based on the document content or file metadata provided.`;
 
-    try {
-      const res = await fetch('http://127.0.0.1:8420/query', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: fullPrompt, stream: false })
-      });
-      const data = await res.json();
-      
-      setMessages(prev => [...prev, { role: 'assistant', text: data.response || data.error || 'Done.' }]);
-    } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', text: "Sorry, I couldn't connect to the local model. Make sure Myca backend is running." }]);
-    }
+    const result = await queryAI({
+      prompt: fullPrompt,
+      onToken: (token) => {
+        setMessages(prev => {
+          const newMsgs = [...prev];
+          const lastMsg = { ...newMsgs[newMsgs.length - 1] };
+          lastMsg.text += token;
+          newMsgs[newMsgs.length - 1] = lastMsg;
+          return newMsgs;
+        });
+      }
+    });
+
+    setMessages(prev => {
+      const newMsgs = [...prev];
+      const lastMsg = { ...newMsgs[newMsgs.length - 1] };
+      if (!lastMsg.text) {
+        lastMsg.text = result || "Analiz tamamlandı.";
+      }
+      newMsgs[newMsgs.length - 1] = lastMsg;
+      return newMsgs;
+    });
+
     setIsTyping(false);
   };
 
   const handleSend = (e) => {
-    if (e.key === 'Enter' && input.trim()) {
+    if ((e.key === 'Enter' || e.type === 'click') && input.trim()) {
       const q = input.trim();
       setInput('');
       askAi(q);
@@ -132,40 +148,34 @@ const DocumentSplitView = ({ document, onClose }) => {
           <div className="split-content ai-panel">
             
             <div className="ai-actions-grid">
-              <button className="ai-action-btn" onClick={() => askAi("Summarize this document in 3 bullet points.")} disabled={isTyping}><List size={16} /> Summarize</button>
-              <button className="ai-action-btn" onClick={() => askAi("Translate the summary of this document to Turkish.")} disabled={isTyping}><Languages size={16} /> Translate</button>
-              <button className="ai-action-btn" onClick={() => askAi("Extract any data tables into Markdown format.")} disabled={isTyping}><Table size={16} /> Extract Tables</button>
-              <button className="ai-action-btn" onClick={() => askAi("Extract all people and contact info mentioned.")} disabled={isTyping}><Users size={16} /> Extract Contacts</button>
+              <button className="ai-action-btn" onClick={() => askAi("Bu dokümanı 3 ana maddede özetle.")} disabled={isTyping}><List size={15} /> Özet Çıkar</button>
+              <button className="ai-action-btn" onClick={() => askAi("Bu dokümanın özetini Türkçe'ye çevir.")} disabled={isTyping}><Languages size={15} /> Çevir</button>
+              <button className="ai-action-btn" onClick={() => askAi("Dokümandaki tablo ve sayısal verileri Markdown olarak çıkar.")} disabled={isTyping}><Table size={15} /> Tabloları Çıkar</button>
+              <button className="ai-action-btn" onClick={() => askAi("Dokümanda geçen tüm kişi, kurum ve iletişim bilgilerini listele.")} disabled={isTyping}><Users size={15} /> İletişim Bilgileri</button>
             </div>
 
             <div className="ai-chat-box">
-              <div className="chat-history" style={{maxHeight: 300, overflowY: 'auto', marginBottom: 16}}>
+              <div className="chat-history">
                 {messages.map((m, i) => (
-                  <p key={i} className={m.role === 'user' ? 'user-msg' : 'ai-msg'} style={{
-                    background: m.role === 'user' ? 'var(--f-linen)' : 'transparent',
-                    padding: m.role === 'user' ? '8px 12px' : '4px 0',
-                    borderRadius: 8,
-                    color: m.role === 'user' ? 'var(--f-deep)' : 'var(--f-earth)',
-                    fontSize: 13,
-                    marginBottom: 12,
-                    lineHeight: 1.6,
-                    whiteSpace: 'pre-wrap'
-                  }}>
-                    {m.text}
-                  </p>
+                  <div key={i} className={m.role === 'user' ? 'user-msg-bubble' : 'ai-msg-bubble'}>
+                    <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{m.text}</p>
+                  </div>
                 ))}
-                {isTyping && <p className="ai-msg" style={{color: 'var(--f-soil)', fontSize: 13}}>⏳ Thinking...</p>}
+                {isTyping && <div className="ai-msg-bubble thinking"><p style={{ margin: 0 }}>⏳ Analiz yapılıyor...</p></div>}
               </div>
               
               <div className="ai-input-area">
                 <input 
                   type="text" 
-                  placeholder="Ask questions about this document... (Press Enter)" 
+                  placeholder="Doküman hakkında soru sorun..." 
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={handleSend}
                   disabled={isTyping}
                 />
+                <button className="ai-send-btn" onClick={handleSend} disabled={isTyping || !input.trim()}>
+                  <Send size={15} />
+                </button>
               </div>
             </div>
           </div>
