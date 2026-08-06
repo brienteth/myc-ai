@@ -3,8 +3,7 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/docs-web", "destination": "/docs" },
-    { "source": "/docs-web/(.*)", "destination": "/docs" },
-    { "source": "/app", "destination": "/app.html" }
+    { "source": "/docs-web/(.*)", "destination": "/docs" }
   ]
 }
 
