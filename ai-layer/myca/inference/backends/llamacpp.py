@@ -73,13 +73,23 @@ Kurallar:
         logger.info(f"Loading {Path(self.model_path).name}...")
         start = time.time()
         
+        model_name_lower = Path(self.model_path).name.lower()
+        if "qwen" in model_name_lower:
+            chat_fmt = "qwen"
+        elif "phi" in model_name_lower:
+            chat_fmt = "phi-3"
+        elif "gemma" in model_name_lower:
+            chat_fmt = "gemma"
+        else:
+            chat_fmt = "llama-3"
+
         self._llm = Llama(
             model_path=self.model_path,
             n_ctx=self.n_ctx,
             n_threads=self.n_threads,
             n_gpu_layers=self.n_gpu_layers,
             verbose=self.verbose,
-            chat_format="llama-3",
+            chat_format=chat_fmt,
         )
         
         elapsed = time.time() - start
@@ -125,7 +135,8 @@ Kurallar:
     # InferenceEngine API implementations
     async def generate(self, prompt: str, **kwargs) -> str:
         if not self._llm:
-            raise RuntimeError("Model not loaded. Call load() first.")
+            logger.info("[LLAMACPP] Auto-loading model on demand...")
+            self.load()
             
         async with self._lock:
             loop = asyncio.get_running_loop()
@@ -150,7 +161,8 @@ Kurallar:
 
     async def stream(self, prompt: str, **kwargs) -> AsyncGenerator[str, None]:
         if not self._llm:
-            raise RuntimeError("Model not loaded. Call load() first.")
+            logger.info("[LLAMACPP] Auto-loading model on demand...")
+            self.load()
             
         loop = asyncio.get_running_loop()
         queue = asyncio.Queue()

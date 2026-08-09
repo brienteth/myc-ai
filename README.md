@@ -51,10 +51,11 @@ Myca is not a "cloud-dependent AI", but a local living organism formed by your o
 
 | Platform | Download Link | Format |
 |---|---|---|
-| **macOS** | [Download Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
+| **macOS (DMG)** | [Download Myca-macOS.dmg (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
+| **macOS (ZIP)** | [Download Myca-macOS.zip (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip) | `.zip` |
 | **Windows** | [Download Myca-Setup-0.1.0.exe](https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe) | `.exe` |
 | **Linux** | *Coming soon* | `.AppImage` |
-| **All Versions** | [View All Releases](https://github.com/brienteth/myc-ai/releases) | |
+| **All Releases** | [View Latest GitHub Releases](https://github.com/brienteth/myc-ai/releases) | |
 
 > 💡 **macOS "Hasar Görmüş / Çöp Sepetine Taşı" Uyarısı Çözümü:**  
 > Bağımsız açık kaynaklı uygulamalarda macOS sertifika kontrolü nedeniyle bu uyarıyı verir. İki kolay yöntemle anında açabilirsiniz:  

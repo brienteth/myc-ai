@@ -68,12 +68,22 @@ async def ensure_model_ready(broadcast_fn=None) -> str:
     except Exception as e:
         logger.warning(f"[STARTUP] Ollama unreachable: {e}")
 
-    # 2. Pick first preferred model that is installed
+    # 2. Pick first preferred model that is installed in Ollama
     for model in PREFERRED_MODELS:
         if any(model in m for m in installed):
-            logger.info(f"[STARTUP] Using installed model: {model}")
+            logger.info(f"[STARTUP] Using installed Ollama model: {model}")
             await emit("MODEL_READY", {"model": model})
             return model
+
+    # 2.5 Check for local GGUF models in ~/.myca/models/
+    models_dir = Path("~/.myca/models").expanduser()
+    if models_dir.exists():
+        ggufs = list(models_dir.glob("*.gguf"))
+        if ggufs:
+            selected_gguf = ggufs[0].name
+            logger.info(f"[STARTUP] Using local GGUF model: {selected_gguf}")
+            await emit("MODEL_READY", {"model": selected_gguf})
+            return selected_gguf
 
     # 3. Nothing found — download fallback
     logger.info(f"[STARTUP] No model found — downloading {FALLBACK_DOWNLOAD}")

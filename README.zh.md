@@ -43,10 +43,11 @@
 
 | 支持平台 | 下载链接 | 格式 |
 |---|---|---|
-| **macOS** | [下载 Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
+| **macOS (DMG)** | [下载 Myca-macOS.dmg (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
+| **macOS (ZIP)** | [下载 Myca-macOS.zip (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip) | `.zip` |
 | **Windows** | [下载 Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip) | `.zip` / `.exe` |
 | **Linux** | [下载 Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip) | `.zip` / `.AppImage` |
-| **所有版本** | [查看 GitHub Releases Tag v1.0.0](https://github.com/brienteth/myc-ai/releases/tag/v1.0.0) | `Release v1.0.0` |
+| **所有版本** | [查看 GitHub Releases](https://github.com/brienteth/myc-ai/releases) | |
 
 ---
 
