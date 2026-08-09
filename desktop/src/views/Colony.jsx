@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Monitor, Smartphone, Server, Laptop, Wifi, Router, Tv, Printer, HardDrive, Globe, Shield } from 'lucide-react';
 import MyceliumCanvas from '../components/MyceliumCanvas';
 import { useNodes, nodeNickname } from '../hooks/useNodes';
@@ -17,6 +17,14 @@ const Devices = () => {
     declineNode,
     revokeNode
   } = useNodes();
+
+  const [ipInput, setIpInput] = useState(() => {
+    try {
+      return localStorage.getItem('myca_desktop_ip') || '';
+    } catch (e) {
+      return '';
+    }
+  });
 
   const getIcon = (role) => {
     switch(role) {
@@ -73,6 +81,60 @@ const Devices = () => {
               <span>Waiting for approval on desktop…</span>
             </div>
           )}
+
+          {/* Desktop IP Address override input block */}
+          <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', textAlign: 'left' }}>
+            <span style={{ fontSize: '11px', textTransform: 'uppercase', opacity: 0.6, display: 'block', marginBottom: '8px', fontWeight: 'bold', color: 'rgba(255,255,255,0.7)' }}>
+              Desktop Node IP Address
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input 
+                type="text" 
+                placeholder="e.g. 192.168.2.204" 
+                value={ipInput} 
+                onChange={(e) => setIpInput(e.target.value)} 
+                style={{
+                  flex: 1,
+                  padding: '10px 12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  fontSize: '14px',
+                  outline: 'none'
+                }}
+              />
+              <button 
+                onClick={() => {
+                  try {
+                    const cleaned = ipInput.trim();
+                    if (cleaned) {
+                      localStorage.setItem('myca_desktop_ip', cleaned);
+                    } else {
+                      localStorage.removeItem('myca_desktop_ip');
+                    }
+                    window.location.reload();
+                  } catch (e) {}
+                }}
+                style={{
+                  padding: '10px 16px',
+                  background: '#6366f1',
+                  border: 'none',
+                  borderRadius: '6px',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: 'bold',
+                  transition: 'background 0.2s'
+                }}
+              >
+                Connect
+              </button>
+            </div>
+            <p style={{ fontSize: '11px', opacity: 0.5, marginTop: '8px', lineHeight: '1.4' }}>
+              Enter your computer's local IP address above to connect your mobile browser directly to the desktop backend.
+            </p>
+          </div>
         </div>
       </div>
     );

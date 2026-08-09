@@ -34,6 +34,11 @@ export const useNodes = () => {
     const hostParam = params.get('host');
     if (hostParam) return `http://${hostParam}:8420`;
     
+    try {
+      const storedIp = localStorage.getItem('myca_desktop_ip');
+      if (storedIp) return `http://${storedIp}:8420`;
+    } catch (e) {}
+    
     const isElectron = /Electron/i.test(navigator.userAgent);
     const isFileProtocol = window.location.protocol === 'file:';
     const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
