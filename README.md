@@ -43,7 +43,7 @@
 
 | Platform | Download Link | Format |
 |---|---|---|
-| **macOS** | [Download Myca-0.1.0.dmg](https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-0.1.0.dmg) | `.dmg` |
+| **macOS** | [Download Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
 | **Windows** | [Download Myca-Setup-0.1.0.exe](https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe) | `.exe` |
 | **Linux** | *Coming soon* | `.AppImage` |
 | **All Versions** | [View All Releases](https://github.com/brienteth/myc-ai/releases) | |

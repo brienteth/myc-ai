@@ -310,8 +310,11 @@ class MycaDiscovery:
             except asyncio.CancelledError:
                 pass
         if self._zeroconf and self._service_info:
-            self._zeroconf.unregister_service(self._service_info)
-            self._zeroconf.close()
+            try:
+                self._zeroconf.unregister_service(self._service_info)
+                self._zeroconf.close()
+            except Exception as e:
+                logger.warning(f"Error closing zeroconf: {e}")
 
     async def _cleanup_loop(self):
         """Remove dead nodes every second."""

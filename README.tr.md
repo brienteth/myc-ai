@@ -43,7 +43,7 @@
 
 | Platform | İndirme Linki | Format |
 |---|---|---|
-| **macOS** | [İndir: Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-macOS.dmg) | `.dmg` |
+| **macOS** | [İndir: Myca-macOS.dmg](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
 | **Windows** | [İndir: Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip) | `.zip` / `.exe` |
 | **Linux** | [İndir: Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip) | `.zip` / `.AppImage` |
 | **Tüm Sürümler** | [GitHub Releases Tag v1.0.0 İncele](https://github.com/brienteth/myc-ai/releases/tag/v1.0.0) | `Release v1.0.0` |
