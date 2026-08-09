@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import naclLib from 'tweetnacl';
+
+const nacl = naclLib?.sign ? naclLib : (naclLib?.default || {});
 
 export const nodeNickname = (node_id) => {
   if (!node_id) return 'Unknown Device';
@@ -49,7 +52,7 @@ export const useNodes = () => {
     return window.location.origin;
   }, []);
 
-  // ── Cryptographic helper functions (WebCrypto Ed25519) ──
+  // ── Cryptographic helper functions (tweetnacl Ed25519) ──
   const bufToHex = useCallback((buffer) => {
     return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
   }, []);
@@ -68,17 +71,10 @@ export const useNodes = () => {
         return { pubHex, privHex, nodeId };
       }
 
-      const keyPair = await window.crypto.subtle.generateKey(
-        { name: 'Ed25519' },
-        true,
-        ['sign', 'verify']
-      );
-
-      const rawPubKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
-      const pkcs8PrivKey = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
-
-      pubHex = bufToHex(rawPubKey);
-      privHex = bufToHex(pkcs8PrivKey);
+      // Generate using tweetnacl (works in insecure contexts/HTTP)
+      const keyPair = nacl.sign.keyPair();
+      pubHex = bufToHex(keyPair.publicKey);
+      privHex = bufToHex(keyPair.secretKey);
       nodeId = 'm_' + pubHex.substring(0, 12);
 
       localStorage.setItem('myca_node_pubkey', pubHex);
@@ -87,7 +83,7 @@ export const useNodes = () => {
 
       return { pubHex, privHex, nodeId };
     } catch (e) {
-      console.error('Failed to initialize WebCrypto identity:', e);
+      console.error('Failed to initialize tweetnacl identity:', e);
       const fallbackId = 'm_' + Math.random().toString(36).substring(2, 14);
       return { pubHex: 'mock_pubkey', privHex: 'mock_privkey', nodeId: fallbackId };
     }
@@ -95,20 +91,10 @@ export const useNodes = () => {
 
   const signChallengeBytes = useCallback(async (privHex, challenge) => {
     try {
-      const privKeyBytes = hexToBuf(privHex);
-      const privateKey = await window.crypto.subtle.importKey(
-        'pkcs8',
-        privKeyBytes,
-        { name: 'Ed25519' },
-        true,
-        ['sign']
-      );
+      const secretKeyBytes = hexToBuf(privHex);
       const encoder = new TextEncoder();
-      const sig = await window.crypto.subtle.sign(
-        { name: 'Ed25519' },
-        privateKey,
-        encoder.encode(challenge)
-      );
+      const msgBytes = encoder.encode(challenge);
+      const sig = nacl.sign.detached(msgBytes, secretKeyBytes);
       return bufToHex(sig);
     } catch (e) {
       console.error('Signature failed:', e);
