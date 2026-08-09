@@ -23,39 +23,41 @@ export const useNodes = () => {
   const [mobileId, setMobileId] = useState(null);
   const wsRef = useRef(null);
   const retryCountRef = useRef(0);
+  const backendOnlineRef = useRef(false);
+
+  // Keep ref in sync so callbacks never read stale state
+  useEffect(() => { backendOnlineRef.current = backendOnline; }, [backendOnline]);
 
   const getBackendUrl = useCallback(() => {
     const params = new URLSearchParams(window.location.search);
     const hostParam = params.get('host');
     if (hostParam) return `http://${hostParam}:8420`;
     
-    // If running remotely (e.g. Localtunnel or Vercel edge)
-    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      return window.location.origin;
+    const isElectron = /Electron/i.test(navigator.userAgent);
+    const isFileProtocol = window.location.protocol === 'file:';
+    const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    if (isLocalHost || isElectron || isFileProtocol || !window.location.hostname) {
+      return 'http://127.0.0.1:8420';
     }
-    return 'http://127.0.0.1:8420';
+    return window.location.origin;
   }, []);
 
+  // ── Remote client pairing ──
   useEffect(() => {
-    // Correctly identify if this is the desktop host app or a remote client
     const isElectron = /Electron/i.test(navigator.userAgent);
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const isHostApp = isElectron || isLocal;
+    const isFileProtocol = window.location.protocol === 'file:';
+    const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isHostApp = isElectron || isFileProtocol || isLocalHost || !window.location.hostname;
     const isRemoteClient = !isHostApp;
     
     if (isRemoteClient) {
       let localId = null;
-      try {
-        localId = localStorage.getItem('myca_mobile_id');
-      } catch (e) {
-        console.warn('localStorage access blocked:', e);
-      }
+      try { localId = localStorage.getItem('myca_mobile_id'); } catch (e) {}
       
       if (!localId) {
         localId = Math.random().toString(36).substring(2, 8);
-        try {
-          localStorage.setItem('myca_mobile_id', localId);
-        } catch (e) {}
+        try { localStorage.setItem('myca_mobile_id', localId); } catch (e) {}
       }
       
       const generatedId = 'mobile-' + localId;
@@ -69,9 +71,7 @@ export const useNodes = () => {
       };
 
       const backendUrl = getBackendUrl();
-      const endpoints = ['/api/registry/register', `${backendUrl}/api/registry/register`];
-      
-      endpoints.forEach(ep => {
+      ['/api/registry/register', `${backendUrl}/api/registry/register`].forEach(ep => {
         fetch(ep, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,6 @@ export const useNodes = () => {
         }).catch(() => {});
       });
 
-      // Poll registration status every 3s
       const pollUrl = `${window.location.origin}/api/registry/status?node_id=${generatedId}`;
       const interval = setInterval(async () => {
         try {
@@ -100,6 +99,7 @@ export const useNodes = () => {
     }
   }, [getBackendUrl]);
 
+  // ── Core data fetcher — uses refs, never stale ──
   const fetchNodes = useCallback(async () => {
     const backendUrl = getBackendUrl();
     try {
@@ -107,7 +107,10 @@ export const useNodes = () => {
       if (!res.ok) throw new Error('not ok');
       const data = await res.json();
 
-      if (!backendOnline) setBackendOnline(true);
+      if (!backendOnlineRef.current) {
+        setBackendOnline(true);
+        backendOnlineRef.current = true;
+      }
       retryCountRef.current = 0;
 
       const localNode = {
@@ -130,7 +133,7 @@ export const useNodes = () => {
         else if (p.source === 'mdns_local') name = `LAN Node (${name})`;
         return {
           id: p.node_id,
-          name: name,
+          name,
           role: p.role,
           status: p.status,
           latency: p.latency_ms,
@@ -148,7 +151,7 @@ export const useNodes = () => {
       const lan = (data.lan_devices || []).map(d => ({
         id: `lan_${d.ip}`,
         name: d.hostname || `Device (${d.ip})`,
-        role: d.device_type,
+        role: d.device_type || 'unknown',
         status: 'online',
         latency: d.latency_ms,
         load_pct: 0,
@@ -163,12 +166,13 @@ export const useNodes = () => {
 
       setNodes([localNode, ...peerNodes]);
       setLanDevices(lan);
+
       const activePeers = peerNodes.filter(n => n.status !== 'dead');
       setStatus(activePeers.length > 0 || lan.length > 0 ? 'connected' : 'single');
+
     } catch (e) {
       retryCountRef.current++;
-      // If backend is not reachable, keep status as loading
-      if (!backendOnline) {
+      if (!backendOnlineRef.current) {
         setStatus('loading');
         return;
       }
@@ -191,7 +195,7 @@ export const useNodes = () => {
             if (p.source === 'h3_global') name = `H3 Global (${name})`;
             else if (p.source === 'mdns_local') name = `LAN Node (${name})`;
             return {
-              id: p.node_id, name: name, role: p.role,
+              id: p.node_id, name, role: p.role,
               status: p.status, latency: p.latency_ms,
               load_pct: p.load_pct ?? 0, tokens_per_second: p.tokens_per_second ?? 0,
               model_loaded: p.model_loaded ?? false, isLocal: false, source: p.source,
@@ -209,17 +213,23 @@ export const useNodes = () => {
         }
       }
     }
-  }, [backendOnline]);
+  }, [getBackendUrl]); // NO backendOnline dependency — uses ref instead
 
-  // WebSocket for real-time events
+  // ── WebSocket for real-time events ──
   useEffect(() => {
+    const backendUrl = getBackendUrl();
+    const wsUrl = backendUrl.replace(/^http/, 'ws') + '/ws';
+
     const connectWS = () => {
       try {
-        const ws = new WebSocket('ws://127.0.0.1:8420/ws');
+        const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {
-          if (!backendOnline) setBackendOnline(true);
+          if (!backendOnlineRef.current) {
+            setBackendOnline(true);
+            backendOnlineRef.current = true;
+          }
         };
 
         ws.onmessage = (e) => {
@@ -232,7 +242,6 @@ export const useNodes = () => {
                   : n
               ));
             } else if (event.type === 'NODE_READY') {
-              // Backend fully booted — refetch everything
               fetchNodes();
             } else if (event.type === 'INFERENCE_NODE') {
               setActiveInferenceNode(event.node_id);
@@ -245,14 +254,16 @@ export const useNodes = () => {
                 n.id === event.node_id ? { ...n, status: 'dead' } : n
               ));
             } else if (event.type === 'MDNS_DISCOVER' && event.reason === 'recovery') {
-              fetchNodes(); // refresh on recovery
+              fetchNodes();
+            } else if (event.type === 'LAN_SCAN_COMPLETE') {
+              fetchNodes(); // Refresh when LAN scan finishes
             }
           } catch (err) {}
         };
 
         ws.onerror = () => {};
         ws.onclose = () => {
-          setTimeout(connectWS, 3000); // reconnect
+          setTimeout(connectWS, 3000);
         };
       } catch (e) {
         console.error("WS error:", e);
@@ -268,6 +279,7 @@ export const useNodes = () => {
         ipcRenderer.on('backend-ready', () => {
           console.log('[useNodes] Backend ready signal received via IPC');
           setBackendOnline(true);
+          backendOnlineRef.current = true;
           fetchNodes();
         });
       } catch (e) {}
@@ -276,7 +288,7 @@ export const useNodes = () => {
     return () => {
       if (wsRef.current) wsRef.current.close();
     };
-  }, []);
+  }, [fetchNodes, getBackendUrl]);
 
   const approveNode = useCallback(async (nodeId) => {
     const backendUrl = getBackendUrl();
@@ -306,9 +318,9 @@ export const useNodes = () => {
     }
   }, [getBackendUrl, fetchNodes]);
 
+  // ── Polling loop ──
   useEffect(() => {
     fetchNodes();
-    // Poll faster when backend isn't online yet
     const interval = setInterval(fetchNodes, backendOnline ? 5000 : 2000);
     return () => clearInterval(interval);
   }, [backendOnline, fetchNodes]);

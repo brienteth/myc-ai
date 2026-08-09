@@ -32,7 +32,12 @@ const Devices = () => {
   // Trigger a manual LAN scan when backend comes online
   useEffect(() => {
     if (backendOnline) {
-      fetch('http://127.0.0.1:8420/lan/scan', { method: 'POST' }).catch(() => {});
+      const isElectron = /Electron/i.test(navigator.userAgent);
+      const isFileProtocol = window.location.protocol === 'file:';
+      const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const backendUrl = (isLocalHost || isElectron || isFileProtocol || !window.location.hostname)
+        ? 'http://127.0.0.1:8420' : window.location.origin;
+      fetch(`${backendUrl}/lan/scan`, { method: 'POST' }).catch(() => {});
     }
   }, [backendOnline]);
 
@@ -229,11 +234,18 @@ const Devices = () => {
           <p>Loading AI model and scanning your network. This may take up to a minute.</p>
         </div>
       )}
-      {backendOnline && nodes.length <= 1 && lanDevices.length === 0 && (
+      {backendOnline && status === 'loading' && nodes.length <= 1 && lanDevices.length === 0 && (
         <div className="empty-colony">
           <Wifi size={48} strokeWidth={1} />
           <h3>Scanning your network…</h3>
           <p>Looking for devices on this WiFi / LAN. This takes a few seconds.</p>
+        </div>
+      )}
+      {backendOnline && status !== 'loading' && nodes.length <= 1 && lanDevices.length === 0 && (
+        <div className="empty-colony">
+          <Wifi size={48} strokeWidth={1} />
+          <h3>Only this device found</h3>
+          <p>No other Myca nodes or network devices detected. Connect more devices to the same WiFi to grow your Colony.</p>
         </div>
       )}
 

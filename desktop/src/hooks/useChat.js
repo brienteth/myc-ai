@@ -7,8 +7,13 @@ export const useChat = (initialConvId = null) => {
   const [convId, setConvId] = useState(initialConvId || crypto.randomUUID());
 
   useEffect(() => {
+    const isElectron = /Electron/i.test(navigator.userAgent);
+    const isFileProtocol = window.location.protocol === 'file:';
+    const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const backendUrl = (isLocalHost || isElectron || isFileProtocol || !window.location.hostname)
+      ? 'http://127.0.0.1:8420' : window.location.origin;
     if (initialConvId) {
-      fetch(`http://127.0.0.1:8420/history/${initialConvId}`)
+      fetch(`${backendUrl}/history/${initialConvId}`)
         .then(res => res.json())
         .then(data => {
           if (data.messages) {

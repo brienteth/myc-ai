@@ -13,9 +13,16 @@ Kullanıcının isteklerini açık, anlaşılır, doğru ve profesyonel bir şek
 Doküman analizi istendiğinde, sağlanan doküman bağlamını dikkate alarak detaylı ve faydalı yanıtlar üret.`;
 
 export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, onMeta, convId, skipPlanner = false }) {
+  // Determine backend URL dynamically
+  const isElectron = /Electron/i.test(navigator.userAgent);
+  const isFileProtocol = window.location.protocol === 'file:';
+  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const backendUrl = (isLocalHost || isElectron || isFileProtocol || !window.location.hostname)
+    ? 'http://127.0.0.1:8420' : window.location.origin;
+
   // 1. First attempt: Local Myca Engine Backend
   try {
-    const localRes = await fetch('http://127.0.0.1:8420/query', {
+    const localRes = await fetch(`${backendUrl}/query`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt, stream: !!onToken, conv_id: convId, skip_planner: skipPlanner }),
