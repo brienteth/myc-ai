@@ -31,8 +31,11 @@ async def main():
 
     # ── Step 1: Initialize databases
     init_db()
-    from myca.automation.history import AutomationDB
-    AutomationDB.init_db()
+    try:
+        from myca_intelligence.automation.history import AutomationDB
+        AutomationDB.init_db()
+    except ImportError:
+        logger.info("[MAIN] Automation history database setup skipped (private automation module missing)")
     logger.info("[MAIN] Databases ready")
 
     # ── Step 2: Persistent node identity

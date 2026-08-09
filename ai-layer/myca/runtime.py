@@ -5,9 +5,18 @@ from typing import AsyncGenerator
 import json
 
 from .core.need import Need, Experience, Capability, PrivacyLevel
-from .experience.memory import ExperienceMemory
-from .planner.planner import Planner
-from .planner.execution_graph import ExecutionGraph
+try:
+    from myca_intelligence.memory_intelligence.memory import ExperienceMemory
+except ImportError:
+    class ExperienceMemory:
+        def __init__(self, *args, **kwargs): pass
+        def clear(self): pass
+
+try:
+    from myca_intelligence.planner.planner import Planner
+except ImportError:
+    Planner = None
+from myca.contracts.execution import ExecutionGraph
 from .skills.core.registry import SkillRegistry
 
 logger = logging.getLogger("myca.runtime")
@@ -47,7 +56,7 @@ class RuntimeEngine:
         self.node = node
         self.memory = ExperienceMemory()
         # self.necessity_engine = NecessityEngine(self.memory) # Deprecated legacy for now
-        self.planner = Planner(self.node.inference_engine)
+        self.planner = Planner(self.node.inference_engine) if Planner is not None else None
         self.analytics = Analytics()
         
         from myca.execution.bus import ExecutionBus
@@ -61,22 +70,35 @@ class RuntimeEngine:
         self.analytics.total_needs += 1
         start_time = time.time()
         
+        if self.planner is None:
+            logger.info("Planner is not available. Executing fallback direct task inference.")
+            if self.node.inference_engine:
+                response = await self.node.inference_engine.generate(need.prompt)
+            else:
+                response = "Myca local inference engine not ready."
+            return {
+                "status": "success",
+                "result": response,
+                "latency_s": time.time() - start_time,
+                "plan": None
+            }
+
         # 1. Planning Phase (Need -> AST)
         available_skills = SkillRegistry.get_manifests()
         plan_json = await self.planner.create_plan(need.prompt, available_skills)
         
         # 2. Compilation Phase (AST -> IR -> DAG)
-        from myca.planner.compiler import ExecutionCompiler
+        from myca_intelligence.planner.compiler import ExecutionCompiler
         compiler = ExecutionCompiler()
         dag_plan = compiler.compile_ast_to_dag(plan_json)
         
         # 3. Optimization Phase (DAG -> Optimized DAG)
-        from myca.planner.optimizer import GraphOptimizer
+        from myca_intelligence.planner.optimizer import GraphOptimizer
         optimizer = GraphOptimizer()
         optimized_plan = optimizer.optimize(dag_plan)
         
         # 4. Validation Phase (Optimized DAG -> Validated DAG)
-        from myca.planner.validator import GraphValidator
+        from myca_intelligence.planner.validator import GraphValidator
         validator = GraphValidator()
         validation_res = validator.validate(optimized_plan)
         if not validation_res.valid:
@@ -85,6 +107,7 @@ class RuntimeEngine:
         # 5. Execution Pipeline (Scheduler + EventBus + Artifacts + Verifier)
         from myca.skills.core.context import SkillContext
         from myca.skills.core.permissions import PermissionManager
+
         from myca.execution.scheduler import ExecutionScheduler
         from myca.execution.event_bus import ExecutionEventBus
         from myca.execution.artifacts import ArtifactStore

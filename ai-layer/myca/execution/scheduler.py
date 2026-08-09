@@ -23,7 +23,7 @@ import time
 import logging
 from typing import Any, Dict, List, Optional, Set
 
-from myca.planner.execution_graph import ExecutionGraph, ExecutionNode, NodeState
+from myca.contracts.execution import ExecutionGraph, ExecutionNode, NodeState
 from myca.execution.event_bus import ExecutionEventBus, EventType, ExecutionEvent
 from myca.execution.cache import ExecutionCache, is_cacheable
 

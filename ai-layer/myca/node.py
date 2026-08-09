@@ -20,9 +20,14 @@ from myca.inference.engine import InferenceEngine
 from myca.inference.registry import BackendRegistry
 from myca.inference.manager import InferenceManager
 import myca.inference.backends  # triggers registration
-from myca.library import LibraryService
-from myca.library.embedding import EmbeddingEngine
-from myca.library.indexer import FileIndexer
+try:
+    from myca_intelligence.library import LibraryService
+    from myca_intelligence.library.embedding import EmbeddingEngine
+    from myca_intelligence.library.indexer import FileIndexer
+except ImportError:
+    LibraryService = None
+    EmbeddingEngine = None
+    FileIndexer = None
 from myca.network_scanner import NetworkScanner
 
 logger = logging.getLogger("myca.node")
@@ -62,7 +67,7 @@ class MycaNode:
 
         # Layer instances
         self.crypto = MycaCrypto(event_callback=self.event_callback)
-        self.library = LibraryService(data_dir=data_dir)
+        self.library = LibraryService(data_dir=data_dir) if LibraryService is not None else None
         
         if self.simulate:
             self.discovery = SimulatedDiscovery(
@@ -108,8 +113,9 @@ class MycaNode:
         """Boot sequence: Crypto → Discovery → Connection → Inference → Ready."""
         self.started_at = time.time()
         
-        # Init library DB
-        await self.library.init_db()
+        # Init library DB if available
+        if self.library is not None:
+            await self.library.init_db()
 
         await self._emit("NODE_BOOT", {
             "node_id": self.node_id,
@@ -172,14 +178,15 @@ class MycaNode:
         # Layer 5: Inference
         self.inference_engine = BackendRegistry.create_backend("auto")
         self.inference_manager = InferenceManager(self.inference_engine)
-        self.library.inference_engine = self.inference_engine
-        
-        # Load local embeddings engine
-        self.library.embedding_engine = EmbeddingEngine()
-        
-        # Initialize and start background file indexer
-        self.library.indexer = FileIndexer(self.library)
-        self.library.indexer.start()
+        if self.library is not None:
+            self.library.inference_engine = self.inference_engine
+            # Load local embeddings engine
+            if EmbeddingEngine is not None:
+                self.library.embedding_engine = EmbeddingEngine()
+            # Initialize and start background file indexer
+            if FileIndexer is not None:
+                self.library.indexer = FileIndexer(self.library)
+                self.library.indexer.start()
         
         # Boot the default chat capability
         try:

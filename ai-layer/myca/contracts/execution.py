@@ -1,7 +1,6 @@
 """
 Execution Graph (DAG) Runner & OS NodeReference Data Pipe
-Executes the JSON/Object DAG produced by the Planner and Graph Optimizer.
-Resolves OS NodeReferences natively and manages parallel execution across nodes.
+Shared execution structures for both Public Core and Private Intelligence packages.
 """
 
 import asyncio
@@ -9,7 +8,7 @@ import logging
 from enum import Enum
 from typing import Dict, Any, Optional, List
 
-logger = logging.getLogger("myca.planner.dag")
+logger = logging.getLogger("myca.contracts.execution")
 
 class NodeState(str, Enum):
     CREATED = "created"
@@ -167,3 +166,9 @@ class ExecutionGraph:
             logger.error(f"Node {node.id} failed: {e}")
             node.status = NodeState.FAILED
             return False
+
+class ExecutionEngine:
+    """Abstract Interface for Execution/Orchestration Engine."""
+    async def execute(self, workflow_id: str, inputs: Dict[str, Any] = None) -> Dict[str, Any]:
+        """Execute a target agent workflow graph."""
+        pass

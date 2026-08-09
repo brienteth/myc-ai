@@ -1,8 +1,8 @@
 import pytest
 import asyncio
 import time
-from myca.inference.assistant import MycaAssistant
-from myca.automation.brain import VaultDB
+from myca_intelligence.inference.assistant import MycaAssistant
+from myca_intelligence.automation.brain import VaultDB
 
 def test_assistant_cognitive_loop():
     async def run_test():

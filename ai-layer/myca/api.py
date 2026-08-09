@@ -31,7 +31,14 @@ import aiosqlite
 
 from myca.node import MycaNode
 from myca.core.need import Need, PrivacyLevel
-from myca.experience.memory import ExperienceMemory
+try:
+    from myca_intelligence.memory_intelligence.memory import ExperienceMemory
+except ImportError:
+    class ExperienceMemory:
+        def __init__(self, *args, **kwargs):
+            pass
+        def clear(self):
+            pass
 from myca.runtime import RuntimeEngine
 from myca.speculative import SpeculativeDecoder
 from myca.skills.core.registry import SkillRegistry
@@ -74,26 +81,33 @@ def create_app(node: MycaNode) -> FastAPI:
     memory = ExperienceMemory()
     runtime = RuntimeEngine(node)
     
-    # Initialize and start Automation Scheduler daemon
-    from myca.automation.scheduler import AutomationScheduler
-    from myca.automation.api import router as automation_router
-    import myca.automation.api as automation_api_module
-    from myca.automation.enterprise_api import router as enterprise_router
-    import myca.skills.packages.enterprise_skills
-    from myca.execution.intelligence.api import router as exec_intelligence_router
-    
-    auto_scheduler = AutomationScheduler(runtime)
-    auto_scheduler.start()
-    
-    from myca.inference.assistant import MycaAssistant
-    assistant = MycaAssistant(node)
-    
-    # Inject scheduler dependency into automation router module
-    automation_api_module.scheduler = auto_scheduler
-    
-    app.include_router(automation_router)
-    app.include_router(enterprise_router)
-    app.include_router(exec_intelligence_router)
+    # Load dynamic intelligence provider (Private Layer)
+    from myca.intelligence_loader import load_intelligence_provider
+    assistant = load_intelligence_provider(node)
+    if assistant is None:
+        logger.warning("Proprietary assistant layer not found. Running in open fallback assistant mode.")
+
+    # ── Initialize and start Automation Scheduler dynamically ──
+    try:
+        from myca_intelligence.automation.scheduler import AutomationScheduler
+        from myca_intelligence.automation.api import router as automation_router
+        import myca_intelligence.automation.api as automation_api_module
+        from myca_intelligence.automation.enterprise_api import router as enterprise_router
+        from myca_intelligence.execution_intelligence.api import router as exec_intelligence_router
+        
+        auto_scheduler = AutomationScheduler(runtime)
+        auto_scheduler.start()
+        
+        # Inject scheduler dependency into automation router module
+        automation_api_module.scheduler = auto_scheduler
+        
+        app.include_router(automation_router)
+        app.include_router(enterprise_router)
+        app.include_router(exec_intelligence_router)
+        logger.info("Automation & Enterprise Intelligence modules loaded successfully.")
+    except ImportError as imp_err:
+        logger.warning(f"Automation/Enterprise intelligence modules not loaded: {imp_err}")
+
 
     def get_runtime():
         return runtime
@@ -196,20 +210,44 @@ def create_app(node: MycaNode) -> FastAPI:
         conv_id = body.get("conv_id") or str(_uuid.uuid4())
         stream = body.get("stream", True)
 
-        # Call the unified MycaAssistant
-        res = await assistant.process_prompt(prompt)
-        response_text = res.get("response", "")
+        # Call the unified MycaAssistant or fallback to direct local inference
+        if assistant is not None:
+            res = await assistant.process_prompt(prompt)
+            response_text = res.get("response", "")
+            node_used = res.get("route", "LOCAL")
+            node_display = f"{res.get('provider', 'Myca Engine')} ({res.get('route', 'LOCAL')})"
+            mode = res.get("mode", "KNOWLEDGE_MODE")
+            cost = res.get("cost", 0.00)
+            context_details = res.get("context_details", {})
+            latency_s = res.get("latency_s", 1.2)
+        else:
+            logger.info("Assistant provider not available. Using direct InferenceEngine fallback.")
+            node_used = "LOCAL"
+            node_display = "InferenceEngine (LOCAL)"
+            mode = "SOVEREIGN_FALLBACK"
+            cost = 0.00
+            context_details = {"fallback": True}
+            
+            # Direct generate query on active inference engine
+            if node and node.inference_engine:
+                try:
+                    response_text = await node.inference_engine.generate(prompt)
+                except Exception as ex:
+                    response_text = f"Local engine execution failed: {ex}"
+            else:
+                response_text = "Myca local inference engine is not ready."
+            latency_s = 0.5
 
         # Auto-save history
         try:
             db.save_message(conv_id, "user", prompt)
             db.save_message(conv_id, "assistant", response_text, meta={
-                "node_used": res.get("route", "LOCAL"),
-                "node_display": f"{res.get('provider')} ({res.get('route')})",
-                "source": res.get("mode", "KNOWLEDGE_MODE"),
+                "node_used": node_used,
+                "node_display": node_display,
+                "source": mode,
                 "compute_avoided": False,
-                "cost": res.get("cost", 0.00),
-                "context_details": res.get("context_details", {})
+                "cost": cost,
+                "context_details": context_details
             })
         except Exception as db_err:
             logger.warning(f"History save failed: {db_err}")
@@ -218,31 +256,24 @@ def create_app(node: MycaNode) -> FastAPI:
             async def assistant_stream():
                 try:
                     # Stream response word-by-word to simulate token stream
-                    words = response_text.split(" ")
-                    for i, word in enumerate(words):
-                        token = word + (" " if i < len(words) - 1 else "")
-                        # Mimic Need stream output format
-                        yield f"data: {json.dumps({'token': token})}\n\n"
-                        await asyncio.sleep(0.01)
-
-                    # Send final metadata packet
+                                        # Send final metadata packet
                     done_payload = {
                         "done": True,
                         "response": response_text,
-                        "node_used": res.get("route", "LOCAL"),
-                        "node_display": f"{res.get('provider')} ({res.get('route')})",
+                        "node_used": node_used,
+                        "node_display": node_display,
                         "tps": 22.5,
-                        "latency_ms": res.get("latency_s", 1.2) * 1000,
-                        "mode": res.get("mode", "KNOWLEDGE_MODE"),
-                        "cost": res.get("cost", 0.00),
-                        "context_details": res.get("context_details", {}),
+                        "latency_ms": latency_s * 1000,
+                        "mode": mode,
+                        "cost": cost,
+                        "context_details": context_details,
                         "conv_id": conv_id
                     }
                     yield f"data: {json.dumps(done_payload)}\n\n"
                     yield "data: [DONE]\n\n"
                 except Exception as e:
                     yield f"data: {json.dumps({'error': str(e)})}\n\n"
-
+ 
             return StreamingResponse(
                 assistant_stream(),
                 media_type="text/event-stream",
@@ -255,13 +286,13 @@ def create_app(node: MycaNode) -> FastAPI:
         else:
             return JSONResponse({
                 "response": response_text,
-                "node_used": res.get("route", "LOCAL"),
-                "node_display": f"{res.get('provider')} ({res.get('route')})",
+                "node_used": node_used,
+                "node_display": node_display,
                 "tps": 22.5,
-                "latency_ms": res.get("latency_s", 1.2) * 1000,
-                "mode": res.get("mode", "KNOWLEDGE_MODE"),
-                "cost": res.get("cost", 0.00),
-                "context_details": res.get("context_details", {}),
+                "latency_ms": latency_s * 1000,
+                "mode": mode,
+                "cost": cost,
+                "context_details": context_details,
                 "done": True,
                 "conv_id": conv_id
             })
