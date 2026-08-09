@@ -12,7 +12,7 @@ const SYSTEM_PROMPT = `Sen Myca Execution OS'in resmi ve son derece yetenekli ya
 Kullanıcının isteklerini açık, anlaşılır, doğru ve profesyonel bir şekilde yanıtla. 
 Doküman analizi istendiğinde, sağlanan doküman bağlamını dikkate alarak detaylı ve faydalı yanıtlar üret.`;
 
-export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, convId, skipPlanner = false }) {
+export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, onMeta, convId, skipPlanner = false }) {
   // 1. First attempt: Local Myca Engine Backend
   try {
     const localRes = await fetch('http://127.0.0.1:8420/query', {
@@ -45,6 +45,10 @@ export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, c
               if (token) {
                 fullText += token;
                 onToken(token);
+              }
+              // Pass metadata event to receiver
+              if (parsed.done && onMeta) {
+                onMeta(parsed);
               }
             } catch (e) {}
           }

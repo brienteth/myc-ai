@@ -1,5 +1,6 @@
 import logging
 import uuid
+import time
 from typing import Dict, Any
 from myca.execution.intelligence.db import ExecutionDB
 from myca.execution.intelligence.graph_runtime import GraphRuntime
@@ -118,6 +119,21 @@ class ExecutionIntelligenceEngine:
             # 3. SAVE
             CheckpointManager.save_state(execution_id, {"final_artifact": final_artifact})
             ExecutionDB.update_execution_status(execution_id, "COMPLETED")
+            
+            # Save outcome to VaultDB as Experience Memory
+            try:
+                from myca.automation.brain import VaultDB
+                VaultDB.save_note({
+                    "id": f"exp-{execution_id}",
+                    "title": f"Execution Success: {intent[:50]}",
+                    "content_preview": f"Goal completed successfully. Artifact: {str(final_artifact)[:300]}",
+                    "tags": ["experience", "execution", "success"],
+                    "links": [],
+                    "source_type": "experience",
+                    "created_at": time.time()
+                })
+            except Exception as e:
+                logger.warning(f"[ENGINE] Failed to save experience memory: {e}")
             
             # Emit ExecutionCompleted & ComputeConsumed
             EconomicLedgerDB.record_event(EconomicEvent(

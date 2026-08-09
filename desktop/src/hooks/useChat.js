@@ -31,6 +31,7 @@ export const useChat = (initialConvId = null) => {
     setMessages([...newMessages, { role: 'myca', content: '', nodes: ['Myca Engine'] }]);
     
     let startTime = Date.now();
+    let metaData = {};
 
     const result = await queryAI({
       prompt,
@@ -43,6 +44,9 @@ export const useChat = (initialConvId = null) => {
           newMsgs[newMsgs.length - 1] = lastMsg;
           return newMsgs;
         });
+      },
+      onMeta: (meta) => {
+        metaData = meta;
       }
     });
 
@@ -54,7 +58,10 @@ export const useChat = (initialConvId = null) => {
         lastMsg.content = result || "İşlem tamamlandı.";
       }
       lastMsg.duration = duration;
-      lastMsg.node_display = "Myca Engine (0G)";
+      lastMsg.node_display = metaData.node_display || "Myca Engine (LOCAL)";
+      lastMsg.context_details = metaData.context_details || {};
+      lastMsg.mode = metaData.mode || "KNOWLEDGE_MODE";
+      lastMsg.cost = metaData.cost || 0.00;
       newMsgs[newMsgs.length - 1] = lastMsg;
       return newMsgs;
     });

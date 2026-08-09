@@ -72,6 +72,10 @@ const Home = () => {
           <button className="icon-btn" onClick={() => startNew()} title="New Chat">
             <Plus size={18} />
           </button>
+          <div className="status-pill" style={{ cursor: 'pointer', background: 'rgba(46, 107, 69, 0.08)', border: '1px solid rgba(46, 107, 69, 0.25)', color: 'var(--f-moss)' }} onClick={() => navigate('/colony')}>
+            <span className="status-dot" style={{ background: 'var(--f-alive)' }}></span>
+            <span style={{ fontWeight: 700, fontSize: '11px', letterSpacing: '0.5px' }}>SOVEREIGN MODE</span>
+          </div>
           <div className="status-pill" style={{ cursor: 'pointer' }} onClick={() => navigate('/colony')}>
             <span className="status-dot" style={{ background: isNetworkActive ? 'var(--f-alive)' : '#ffaa00' }}></span>
             {isNetworkActive ? `${activePeers + 1} devices` : 'local only'}
@@ -127,6 +131,11 @@ const Home = () => {
               }
             }
 
+            const hasMemory = m.context_details && (
+              (m.context_details.notes && m.context_details.notes.length > 0) ||
+              (m.context_details.decisions && m.context_details.decisions.length > 0)
+            );
+
             return (
               <div key={idx} className={`chat-bubble ${m.role}`} style={{ alignSelf: isUser ? 'flex-end' : 'flex-start', background: isUser ? 'var(--f-moss)' : 'transparent', color: isUser ? 'var(--f-cream)' : 'var(--f-humus)' }}>
                 <div style={{ whiteSpace: 'pre-wrap' }}>
@@ -135,6 +144,23 @@ const Home = () => {
                     <span style={{ display: 'inline-block', width: '4px', height: '14px', background: 'var(--f-spore)', marginLeft: '4px', animation: 'blink 1s infinite' }}></span>
                   )}
                 </div>
+
+                {hasMemory && (
+                  <details style={{ marginTop: '8px', fontSize: '11px', borderTop: '1px dashed rgba(90, 90, 110, 0.2)', paddingTop: '6px', textAlign: 'left' }}>
+                    <summary style={{ cursor: 'pointer', fontWeight: 600, color: 'var(--f-moss)', listStyle: 'none' }}>
+                      🧠 Context & Memory Used ({ (m.context_details.notes?.length || 0) + (m.context_details.decisions?.length || 0) } items)
+                    </summary>
+                    <div style={{ marginTop: '4px', paddingLeft: '8px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      {m.context_details.notes?.map((n, i) => (
+                        <div key={i} style={{ color: 'var(--f-soil)' }}>• Reference: {n}</div>
+                      ))}
+                      {m.context_details.decisions?.map((d, i) => (
+                        <div key={i} style={{ color: 'var(--f-soil)' }}>• Decision: {d}</div>
+                      ))}
+                    </div>
+                  </details>
+                )}
+
                 {metaText && <div className="chat-meta" style={{ color: metaColor }}>{metaText}</div>}
               </div>
             );
