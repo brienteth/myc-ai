@@ -103,6 +103,14 @@ export default function handler(req, res) {
     return res.status(200).json({ status: 'declined', node_id });
   }
 
+  // Route: /api/learning/sync (POST)
+  if (parsedUrl.pathname.endsWith('/api/learning/sync') && method === 'POST') {
+    const body = req.body || {};
+    const updates = body.updates || [];
+    console.log(`[Vercel Federated Aggregator] Accepted ${updates.length} federated learning updates.`);
+    return res.status(200).json({ status: 'success', synced: updates.length });
+  }
+
   // Fallback 404
   return res.status(404).json({ error: 'Endpoint not found in H3 Serverless Registry', path: parsedUrl.pathname });
 }

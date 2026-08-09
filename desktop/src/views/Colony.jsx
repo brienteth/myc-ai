@@ -145,6 +145,12 @@ const Devices = () => {
                     <span>{n.tokens_per_second?.toFixed(1) || 0} tok/s</span>
                     <span>{n.latency ? n.latency + 'ms' : 'local'}</span>
                   </div>
+                  <div style={{ marginTop: '8px', padding: '4px 8px', background: 'rgba(46, 107, 69, 0.05)', border: '1px dashed rgba(46, 107, 69, 0.15)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--f-humus)', fontWeight: 500 }}>Mycelium Score</span>
+                    <span style={{ fontSize: '11px', color: 'var(--f-moss)', fontWeight: 700, fontFamily: 'var(--f-mono)' }}>
+                      {n.mycelium_score?.toFixed(1) || '70.0'}
+                    </span>
+                  </div>
                   {n.source && (
                     <div className={`device-source ${n.source === 'h3_global' ? 'global' : 'local'}`}>
                       {n.source === 'h3_global' ? 'H3 Global' : 'LAN / mDNS'}

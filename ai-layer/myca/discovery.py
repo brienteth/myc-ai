@@ -47,6 +47,37 @@ class PeerInfo:
     source: str = "mdns_local"  # mdns_local or h3_global
     capabilities: list[str] = field(default_factory=list)
 
+    def get_mycelium_score(self) -> float:
+        """
+        Calculate a composite score (0-100) representing this node's suitability for running work.
+        Based on: Capabilities, Latency, Load/Resource availability, and connection stability.
+        """
+        score = 50.0
+        
+        # 1. Hardware capability (Inference role is high score)
+        if self.role == "inference":
+            score += 25.0
+            if self.model_loaded:
+                score += 10.0
+        elif self.role == "relay":
+            score += 10.0
+            
+        # 2. Latency Penalty (no penalty for LAN <= 10ms, subtract up to 15 points for slow WAN)
+        if self.latency_ms > 10.0:
+            penalty = min(15.0, (self.latency_ms - 10.0) / 10.0)
+            score -= penalty
+            
+        # 3. Load Penalty (heavy load reduces score)
+        score -= min(20.0, (self.load_pct / 100.0) * 20.0)
+        
+        # 4. LAN Bonus vs WAN Penalty
+        if self.source == "mdns_local":
+            score += 10.0
+        else:
+            score -= 5.0
+            
+        return max(0.0, min(100.0, score))
+
     def is_alive(self) -> bool:
         return (time.time() - self.last_seen) < DEAD_NODE_TIMEOUT
 
@@ -65,6 +96,7 @@ class PeerInfo:
             "model_loaded": self.model_loaded,
             "source": self.source,
             "capabilities": self.capabilities,
+            "mycelium_score": round(self.get_mycelium_score(), 1),
         }
 
 class H3GlobalDiscovery:

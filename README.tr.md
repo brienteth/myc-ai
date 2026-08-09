@@ -39,6 +39,14 @@
 - **Secrets Vault (Kasa):** Yerel API anahtarlarını, bot tokenlarını ve veritabanı şifrelerini güvenli bir şekilde saklayın.
 - **Yürütme Kontrolü:** Aktif çalışan işlerin gerçek zamanlı izlenmesi ve anında iptal/durdurma işlemleri.
 
+## 🌐 Üç Katmanlı Mycelium Mimarisi
+
+Myca, **"buluta bağlı bir yapay zeka" değil, kendi cihazlarınızın oluşturduğu yerel bir canlı organizmadır.** Sistem üç katmanda çalışır:
+
+1. **Device (Yerel Çıkarım):** Tek bir cihaz kendi başına, internete ihtiyaç duymadan yerel modeller (Ollama / Llama.cpp) ve yerel veritabanı ile çalışmaya devam eder.
+2. **Home Mesh (Yerel Cihaz Ağı):** Aynı Wi-Fi veya LAN üzerindeki cihazlarınız (MacBook, PC, Telefon, NAS) mDNS ile otomatik keşif yapar ve QUIC protokolü ile şifreli P2P bağlantı kurar. Cihazlar kendi aralarında **Mycelium Score** (GPU gücü, şarj durumu, gecikme süresi) değerine göre en verimli olana iş atar (Capability Routing) veya büyük modelleri bölüşerek çalıştırır (Model Sharding). **Home Mesh'in çalışması için internet gerekmez.**
+3. **Global Learning Network (Küresel Öğrenme Ağı):** İnternet olduğunda, cihazlardan **ham verileriniz veya konuşmalarınız değil**, yalnızca izin verilen adaptör (LoRA) güncellemeleri ve performans metrikleri **Federated Learning** yöntemiyle merkezi sisteme gönderilir. İnternet yoksa güncellemeler yerelde kuyruğa alınır (offline queue) ve bağlantı sağlandığında senkronize edilir.
+
 ## İndirmeler
 
 | Platform | İndirme Linki | Format |

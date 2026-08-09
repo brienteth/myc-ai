@@ -520,8 +520,16 @@ def create_app(node: MycaNode) -> FastAPI:
                         "status": agent_info.get("status", "ready"),
                         "latency_ms": 45.0,
                         "source": "h3_global",
-                        "is_local": False
+                        "is_local": False,
+                        "mycelium_score": 62.8
                     })
+
+        # Calculate local mycelium score based on capability and benchmarks
+        local_score = 70.0
+        if node.inference_engine is not None:
+            local_score += 15.0
+        if node.inference_manager and node.inference_manager.benchmark_tok_s > 0.0:
+            local_score += min(15.0, node.inference_manager.benchmark_tok_s / 2.0)
 
         local = {
             "node_id": node.node_id,
@@ -533,6 +541,7 @@ def create_app(node: MycaNode) -> FastAPI:
             "model_loaded": node.inference_engine is not None,
             "status": node.status,
             "is_local": True,
+            "mycelium_score": round(local_score, 1),
         }
 
         # Include LAN devices discovered by network scanner

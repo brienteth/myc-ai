@@ -14,28 +14,37 @@ class FlowScheduler:
         self.flow = flow_layer
 
     def score_bloom_for_intent(self, bloom: ResourceBloom, intent: Intent) -> float:
-        """Calculate a single routing score based on flow dimensions."""
-        score = 0.0
+        """Calculate a single routing score based on Mycelium Score, capability alignment, and trust."""
+        # 1. Mycelium Score calculation (0-100 representation of device suitability)
+        mycelium_score = 50.0
         
-        # Battery dimension (avoid dead nodes)
-        if bloom.battery < 0.2:
-            return -1.0 # Impossible to route
+        # 1.1 Hardware speed (tps benchmarks)
+        if bloom.tokens_per_second > 0.0:
+            mycelium_score += min(15.0, bloom.tokens_per_second / 2.0)
             
-        score += bloom.battery * 10
+        # 1.2 Battery level
+        if bloom.battery < 0.15:
+            return -1.0  # Critically low battery - do not route to this node
+        mycelium_score += bloom.battery * 15.0
         
-        # Latency dimension (prefer closer nodes)
-        # Latency is usually small, so we penalize high latency
-        score -= bloom.latency * 100 
-        
-        # Skill / Knowledge dimension
-        # Check if the node advertises the required skills in its knowledge topics or models
+        # 1.3 Latency penalty (prefer closer/local nodes)
+        latency_ms = bloom.latency * 1000.0  # Convert to ms
+        if latency_ms > 10.0:
+            penalty = min(15.0, (latency_ms - 10.0) / 10.0)
+            mycelium_score -= penalty
+            
+        # 1.4 LAN bonus (mDNS local discovery is faster/more private)
+        if latency_ms <= 15.0:
+            mycelium_score += 10.0
+            
+        # 2. Skill & Knowledge Capability Matching
         overlap = sum(1 for skill in intent.required_skills if skill in bloom.knowledge_topics or skill in bloom.models)
-        score += overlap * 20
+        skill_score = overlap * 25.0
         
-        # Trust / Experience
-        score *= bloom.trust_score
+        # 3. Final compound routing score weighted by Trust & Experience
+        total_score = (mycelium_score + skill_score) * bloom.trust_score
         
-        return score
+        return total_score
 
     def route(self, intent: Intent) -> Optional[ResourceBloom]:
         """Find the optimal flow destination for an intent."""

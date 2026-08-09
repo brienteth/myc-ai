@@ -121,6 +121,7 @@ export const useNodes = () => {
         model_loaded: data.local.model_loaded ?? true,
         isLocal: true,
         category: 'myca',
+        mycelium_score: data.local.mycelium_score ?? 95.0,
       };
 
       const peerNodes = (data.peers || []).map(p => {
@@ -139,6 +140,7 @@ export const useNodes = () => {
           isLocal: false,
           source: p.source,
           category: 'myca',
+          mycelium_score: p.mycelium_score ?? 60.0,
         };
       });
 

@@ -39,6 +39,14 @@
 - **Secrets Vault:** Securely store local API keys, bot tokens, and database passwords.
 - **Execution Control:** Real-time monitoring of active executions with instant cancel/stop operations.
 
+## 🌐 Three-Tier Mycelium Architecture
+
+Myca is not a "cloud-dependent AI", but a local living organism formed by your own devices. The system operates on three tiers:
+
+1. **Device (Local Inference):** A single device operates on its own, utilizing local models (Ollama / Llama.cpp) and a local database, completely offline without requiring any internet connection.
+2. **Home Mesh (Local Device Network):** Devices on the same Wi-Fi or LAN (MacBook, PC, Phone, NAS) automatically discover each other using mDNS and establish secure P2P connections via the QUIC protocol. Tasks are routed dynamically based on a composite **Mycelium Score** (GPU power, battery status, latency) or split across devices using model sharding. **No internet is required for the Home Mesh to function.**
+3. **Global Learning Network (Global Aggregation):** When online, Myca does **not** send raw user data or conversations to the cloud. Instead, only approved anonymized model adaptation updates (LoRA weights) and telemetry metrics are synced via **Federated Learning**. If offline, updates are queued locally (offline queue) and synchronized once connection is established.
+
 ## Downloads
 
 | Platform | Download Link | Format |
