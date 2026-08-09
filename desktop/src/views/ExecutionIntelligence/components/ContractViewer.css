@@ -1,0 +1,149 @@
+/* ContractViewer.css */
+.contract-viewer {
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-bark);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  color: var(--ei-dark);
+}
+
+.cv-header h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ei-moss);
+}
+
+.cv-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cv-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-label {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+}
+
+.cv-value-large {
+  font-size: 1.15rem;
+  font-weight: 500;
+  font-style: italic;
+  margin: 0;
+  color: var(--ei-dark);
+  background-color: var(--ei-parchment);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--ei-bark);
+}
+
+.cv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--ei-bark);
+}
+
+.cv-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cv-list li {
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+.cv-list li .check {
+  margin-right: 0.5rem;
+  font-weight: bold;
+  color: var(--ei-moss);
+}
+
+.cv-list li.missing-cred {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.cv-list li.missing-cred .check {
+  color: #dc2626;
+}
+
+.cv-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.5rem;
+}
+
+.cv-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.cv-metric .cv-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.cv-economics {
+  margin-top: 1rem;
+  background-color: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.cve-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ei-moss);
+  margin-bottom: 1rem;
+}
+
+.cve-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1.5rem;
+}
+
+.cve-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.cve-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.cve-value {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ei-dark);
+}
+
+.cve-value.highlight {
+  color: #2563eb;
+}
+
+.cve-value.success {
+  color: #059669;
+}

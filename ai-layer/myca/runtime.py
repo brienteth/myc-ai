@@ -168,7 +168,10 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
         prompt_l = need.prompt.lower()
         
         # Check if this is an explicit execution command (e.g. read file, scan downloads, send email, opacus/mpc tools) vs conversational chat
-        is_execution_command = any(k in prompt_l for k in ["dosya", "file", "oku", "read", "mail", "eposta", "yaz", "sil", "delete", "tara", "scan", "analiz", "extract", "browser", "site", "opacus", "mpc", "kinetic", "tool", "arac"])
+        if getattr(need, "skip_planner", False):
+            is_execution_command = False
+        else:
+            is_execution_command = any(k in prompt_l for k in ["dosya", "file", "oku", "read", "mail", "eposta", "yaz", "sil", "delete", "tara", "scan", "analiz", "extract", "browser", "site", "opacus", "mpc", "kinetic", "tool", "arac"])
 
         if is_execution_command:
             yield {"type": "token", "token": "🔍 [Planner] Niyet analizi yapılıyor...\n"}
@@ -233,12 +236,18 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
             execution_results = {}
             for n_id, node in graph.nodes.items():
                 status_val = getattr(node.status, "value", str(node.status))
-                status_icon = "✅" if status_val == "completed" else "❌"
-                yield {"type": "token", "token": f"{status_icon} Düğüm [{n_id}] ({node.skill_name}) -> {status_val}\n"}
-                if node.result and node.result.success:
+                status_icon = "✅" if status_val in ["completed", "NodeState.COMPLETED"] else "❌"
+                
+                error_msg = ""
+                if status_icon == "❌" and node.result and hasattr(node.result, "error") and node.result.error:
+                    error_msg = f" (Hata: {node.result.error})"
+                
+                yield {"type": "token", "token": f"{status_icon} Düğüm [{n_id}] ({node.skill_name}) -> {status_val}{error_msg}\n"}
+                
+                if node.result and getattr(node.result, "success", False):
                     execution_results[n_id] = node.result.outputs
                 else:
-                    execution_results[n_id] = {"status": status_val, "error": getattr(node.result, "error", None)}
+                    execution_results[n_id] = {"status": status_val, "error": getattr(node.result, "error", None) if node.result else "Bilinmeyen hata"}
             
             # Direct response or LLM explainer
             direct_response = None
@@ -259,11 +268,13 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
                         elif "extracted_text" in outs:
                             files_found.append(outs["extracted_text"][:200])
 
-                if files_found:
+                if not success:
+                    summary_msg = "\n⚠️ İşlem sırasında bazı adımlar başarısız oldu. Lütfen yukarıdaki hata çıktılarını inceleyin."
+                elif files_found:
                     sample_files = ", ".join(files_found[:6])
-                    summary_msg = f"İsteğinizi tamamladım! Klasörde/dosyada bulunan öğeler: {sample_files}. Toplam {len(files_found)} öge tarandı ve işlendi."
+                    summary_msg = f"\nİsteğinizi tamamladım! Klasörde/dosyada bulunan öğeler: {sample_files}. Toplam {len(files_found)} öge tarandı ve işlendi."
                 else:
-                    summary_msg = "İstediğiniz işlem ve otomasyon akışı başarıyla tamamlandı!"
+                    summary_msg = "\nİstediğiniz işlem ve otomasyon akışı başarıyla tamamlandı!"
 
                 yield {"type": "token", "token": summary_msg}
         else:

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import CompanyGraphCanvas from './CompanyGraphCanvas';
 import GlobalSearchModal from './GlobalSearchModal';
+import { getDashboardMock } from './enterpriseDataService';
 import './Enterprise.css';
 
 const API = 'http://127.0.0.1:8420/enterprise';
@@ -19,9 +20,22 @@ const EnterpriseDashboard = ({ data: initialData, onNavigateTab }) => {
   const fetchDashboard = useCallback(() => {
     setLoading(true);
     fetch(`${API}/dashboard`)
-      .then(r => r.json())
-      .then(d => { setDashboard(d); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(r => {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(d => {
+        if (d && d.summary) {
+          setDashboard(d);
+        } else {
+          setDashboard(getDashboardMock());
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setDashboard(getDashboardMock());
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {

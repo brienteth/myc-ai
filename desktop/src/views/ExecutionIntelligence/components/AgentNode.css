@@ -1,0 +1,74 @@
+/* AgentNode.css */
+.agent-node {
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-moss);
+  border-radius: 8px;
+  width: 220px;
+  box-shadow: 0 4px 12px rgba(46, 107, 69, 0.1);
+  font-family: 'Inter', sans-serif;
+}
+
+.agent-header {
+  background-color: var(--ei-parchment);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ei-bark);
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+}
+
+.agent-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.agent-status-dot.running {
+  background-color: var(--ei-moss);
+  box-shadow: 0 0 8px rgba(46, 107, 69, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.agent-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ei-dark);
+}
+
+.agent-body {
+  padding: 12px;
+}
+
+.agent-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+}
+
+.meta-label {
+  color: #666;
+}
+
+.meta-value {
+  font-weight: 600;
+  color: var(--ei-dark);
+}
+
+.status-running {
+  color: var(--ei-moss);
+}
+
+.node-handle {
+  width: 8px;
+  height: 8px;
+  background-color: var(--ei-moss);
+  border: 2px solid var(--ei-cream);
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

@@ -12,13 +12,13 @@ const SYSTEM_PROMPT = `Sen Myca Execution OS'in resmi ve son derece yetenekli ya
 Kullanıcının isteklerini açık, anlaşılır, doğru ve profesyonel bir şekilde yanıtla. 
 Doküman analizi istendiğinde, sağlanan doküman bağlamını dikkate alarak detaylı ve faydalı yanıtlar üret.`;
 
-export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, convId }) {
+export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, convId, skipPlanner = false }) {
   // 1. First attempt: Local Myca Engine Backend
   try {
     const localRes = await fetch('http://127.0.0.1:8420/query', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, stream: !!onToken, conv_id: convId }),
+      body: JSON.stringify({ prompt, stream: !!onToken, conv_id: convId, skip_planner: skipPlanner }),
     });
 
     if (localRes.ok) {
@@ -137,7 +137,7 @@ export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, c
 }
 
 function generateIntelligentFallback(prompt) {
-  const p = prompt.toLowerCase().strip ? prompt.toLowerCase().strip() : prompt.toLowerCase();
+  const p = prompt.toLowerCase().trim();
 
   if (p.includes('selam') || p.includes('merhaba') || p.includes('hey') || p.includes('hi') || p.includes('hello')) {
     return "Merhaba! Ben Myca Execution OS Asistanı. Size nasıl yardımcı olabilirim?";

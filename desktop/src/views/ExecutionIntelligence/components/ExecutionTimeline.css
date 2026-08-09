@@ -1,0 +1,61 @@
+/* ExecutionTimeline.css */
+.execution-timeline {
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-bark);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.et-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--ei-bark);
+  background-color: var(--ei-parchment);
+}
+
+.et-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #666;
+}
+
+.et-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.5rem;
+  max-height: 400px;
+}
+
+.et-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.et-item {
+  display: flex;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.et-time {
+  font-family: monospace;
+  color: #888;
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.et-text {
+  color: var(--ei-dark);
+}
+
+/* Event Types */
+.et-item.info .et-text { color: #666; }
+.et-item.running .et-text { color: var(--ei-moss); font-weight: 500; }
+.et-item.success .et-text { color: var(--ei-dark); font-weight: 600; }
+.et-item.error .et-text { color: #dc2626; font-weight: 600; }
+.et-item.warning .et-text { color: #d97706; font-weight: 600; }

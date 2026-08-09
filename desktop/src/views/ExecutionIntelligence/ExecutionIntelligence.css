@@ -1,0 +1,134 @@
+/* ExecutionIntelligence.css */
+:root {
+  --ei-cream: #FAF8F3;
+  --ei-parchment: #F4F0E6;
+  --ei-moss: #2E6B45;
+  --ei-bark: #DDD7CB;
+  --ei-dark: #17251C;
+  --ei-text: #17251C;
+}
+
+.execution-intelligence-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--ei-cream);
+  color: var(--ei-text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.ei-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--ei-bark);
+  background-color: var(--ei-parchment);
+}
+
+.ei-brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ei-brand h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0;
+  color: var(--ei-dark);
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-bark);
+}
+
+.status-badge.ready {
+  color: var(--ei-moss);
+}
+
+.ei-main {
+  flex: 1;
+  padding: 4rem 2rem;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.ei-hero {
+  max-width: 800px;
+  width: 100%;
+}
+
+.ei-hero h2 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  color: var(--ei-dark);
+}
+
+.ei-error {
+  background-color: #fef2f2;
+  color: #dc2626;
+  padding: 1rem;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.ei-recent {
+  margin-top: 4rem;
+  border-top: 1px solid var(--ei-bark);
+  padding-top: 2rem;
+}
+
+.ei-recent h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ei-dark);
+  margin-bottom: 1.5rem;
+}
+
+.recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--ei-parchment);
+  border: 1px solid var(--ei-bark);
+  border-radius: 6px;
+  align-items: center;
+}
+
+.recent-title {
+  font-weight: 500;
+  flex: 2;
+}
+
+.recent-score {
+  flex: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--ei-dark);
+}
+
+.recent-status {
+  flex: 1;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.recent-status.success {
+  color: var(--ei-moss);
+}

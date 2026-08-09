@@ -1,0 +1,19 @@
+/* AgentGraph.css */
+.agent-graph-wrapper {
+  width: 100%;
+  height: 600px;
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-bark);
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+}
+
+.react-flow__node-default {
+  background-color: var(--ei-parchment);
+  border: 1px solid var(--ei-bark);
+  border-radius: 6px;
+  color: var(--ei-dark);
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  padding: 10px 20px;
+}

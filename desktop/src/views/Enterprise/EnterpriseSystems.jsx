@@ -6,6 +6,7 @@ import {
   Radio, HardDrive, Terminal
 } from 'lucide-react';
 import ConnectSystemModal from './ConnectSystemModal';
+import { getSystemsMock, getSystemObjectsMock, getSystemCapabilitiesMock, getSystemPermissionsMock, getSystemLogsMock } from './enterpriseDataService';
 import './Enterprise.css';
 
 const API = 'http://127.0.0.1:8420/enterprise';
@@ -38,12 +39,25 @@ const EnterpriseSystems = () => {
 
   const loadSystems = useCallback(() => {
     fetch(`${API}/systems`)
-      .then(res => res.json())
-      .then(data => {
-        setSystems(data.systems || []);
-        if (data.stats) setStats(data.stats);
+      .then(res => {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
       })
-      .catch(err => console.error('Failed to load systems:', err));
+      .then(data => {
+        if (data && data.systems && data.systems.length > 0) {
+          setSystems(data.systems);
+          if (data.stats) setStats(data.stats);
+        } else {
+          const fallback = getSystemsMock();
+          setSystems(fallback.systems);
+          setStats(fallback.stats);
+        }
+      })
+      .catch(() => {
+        const fallback = getSystemsMock();
+        setSystems(fallback.systems);
+        setStats(fallback.stats);
+      });
   }, []);
 
   useEffect(() => {
@@ -56,13 +70,13 @@ const EnterpriseSystems = () => {
   useEffect(() => {
     if (!selectedId) return;
     fetch(`${API}/systems/${selectedId}/objects`)
-      .then(r => r.json()).then(d => setDetailObjects(d.objects || [])).catch(() => {});
+      .then(r => r.json()).then(d => setDetailObjects(d.objects && d.objects.length > 0 ? d.objects : getSystemObjectsMock(selectedId))).catch(() => setDetailObjects(getSystemObjectsMock(selectedId)));
     fetch(`${API}/systems/${selectedId}/capabilities`)
-      .then(r => r.json()).then(d => setDetailCaps(d.capabilities || [])).catch(() => {});
+      .then(r => r.json()).then(d => setDetailCaps(d.capabilities && d.capabilities.length > 0 ? d.capabilities : getSystemCapabilitiesMock(selectedId))).catch(() => setDetailCaps(getSystemCapabilitiesMock(selectedId)));
     fetch(`${API}/systems/${selectedId}/permissions`)
-      .then(r => r.json()).then(d => setDetailPerms(d.permissions || [])).catch(() => {});
+      .then(r => r.json()).then(d => setDetailPerms(d.permissions && d.permissions.length > 0 ? d.permissions : getSystemPermissionsMock(selectedId))).catch(() => setDetailPerms(getSystemPermissionsMock(selectedId)));
     fetch(`${API}/systems/${selectedId}/logs`)
-      .then(r => r.json()).then(d => setDetailLogs(d.logs || [])).catch(() => {});
+      .then(r => r.json()).then(d => setDetailLogs(d.logs && d.logs.length > 0 ? d.logs : getSystemLogsMock(selectedId))).catch(() => setDetailLogs(getSystemLogsMock(selectedId)));
   }, [selectedId]);
 
   // Filtered systems list

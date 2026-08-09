@@ -1,0 +1,100 @@
+/* LiveExecutionView.css */
+.live-execution-view {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 2rem;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.lev-main {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.lev-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background-color: var(--ei-parchment);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--ei-bark);
+}
+
+.lev-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.lev-title h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ei-dark);
+}
+
+.status-badge.running {
+  color: var(--ei-moss);
+  border-color: var(--ei-moss);
+  animation: pulse-border 2s infinite;
+}
+
+.lev-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ei-dark);
+}
+
+.stat-value.running-val {
+  color: var(--ei-moss);
+}
+
+.lev-graph-container {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lev-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+  min-width: 300px;
+}
+
+.lev-inspectors {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(46, 107, 69, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(46, 107, 69, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 107, 69, 0); }
+}

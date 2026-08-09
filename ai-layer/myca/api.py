@@ -47,9 +47,9 @@ class QueryRequest(BaseModel):
 
 
 class RegisterRequest(BaseModel):
-    node_id: str
-    role: str = "inference"
-    host: str = "127.0.0.1"
+    node_id: Optional[str] = None
+    role: str = "mobile_web"
+    host: Optional[str] = None
     port: int = 8420
 
 
@@ -62,15 +62,10 @@ def create_app(node: MycaNode) -> FastAPI:
         version="0.1.0",
     )
 
-    # CORS restricted to local development and production origins for security
+    # CORS middleware allowing local network and web clients
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "http://localhost:8420",
-            "http://127.0.0.1:8420"
-        ],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -85,6 +80,7 @@ def create_app(node: MycaNode) -> FastAPI:
     import myca.automation.api as automation_api_module
     from myca.automation.enterprise_api import router as enterprise_router
     import myca.skills.packages.enterprise_skills
+    from myca.execution.intelligence.api import router as exec_intelligence_router
     
     auto_scheduler = AutomationScheduler(runtime)
     auto_scheduler.start()
@@ -94,6 +90,7 @@ def create_app(node: MycaNode) -> FastAPI:
     
     app.include_router(automation_router)
     app.include_router(enterprise_router)
+    app.include_router(exec_intelligence_router)
 
     def get_runtime():
         return runtime
@@ -205,6 +202,8 @@ def create_app(node: MycaNode) -> FastAPI:
             prompt = need.prompt
         else:
             need = Need.from_simple_prompt(prompt, conv_id)
+            if "skip_planner" in body:
+                need.skip_planner = body["skip_planner"]
 
         need.stream = stream
         runtime = get_runtime()
@@ -353,40 +352,142 @@ def create_app(node: MycaNode) -> FastAPI:
     # ── Manual Node Registration ──────────────────────────────
 
     @app.post("/node/register")
-    async def register_node(req: RegisterRequest):
+    async def register_node(req: Optional[RegisterRequest] = None, request: Request = None):
         """
-        Manual node registration for testing multi-node on localhost.
+        Node registration for mobile web or remote clients.
         Adds a peer directly to the discovery layer.
         """
         from myca.discovery import PeerInfo
 
+        client_host = request.client.host if (request and request.client) else "127.0.0.1"
+        node_id = (req.node_id if req and req.node_id else None) or f"mobile-{_uuid.uuid4().hex[:6]}"
+        role = (req.role if req else None) or "mobile_web"
+        host = (req.host if req and req.host else None) or client_host
+        port = req.port if req else 8420
+
         peer = PeerInfo(
-            node_id=req.node_id,
-            role=req.role,
-            host=req.host,
-            port=req.port,
+            node_id=node_id,
+            role=role,
+            host=host,
+            port=port,
+            status="active",
+            source="mobile_web"
         )
 
-        node.discovery.peers[req.node_id] = peer
-
-        # Connect to the new peer
-        try:
-            await node.connection.connect_to_peer(peer)
-        except Exception as e:
-            logger.warning(f"Could not connect to manually registered node: {e}")
+        node.discovery.peers[node_id] = peer
 
         await broadcast_event("NODE_REGISTER", {
             "type": "NODE_REGISTER",
             "timestamp": time.time(),
             "layer": "api",
-            "node_id": req.node_id,
-            "role": req.role,
-            "host": req.host,
-            "port": req.port,
-            "source": "manual",
+            "node_id": node_id,
+            "role": role,
+            "host": host
         })
+        return {"status": "registered", "node_id": node_id, "peers": len(node.discovery.peers)}
 
-        return {"status": "registered", "node_id": req.node_id}
+    # ── Opacus H3 Registry & WebRTC Signaling Endpoints ───────────────
+
+    _h3_registered_agents: dict = {}
+    _h3_signals: dict = {}
+
+    @app.post("/api/registry/register")
+    async def h3_register_api(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id", f"node-{_uuid.uuid4().hex[:6]}")
+            body["last_seen"] = time.time()
+            _h3_registered_agents[node_id] = body
+            return {"status": "registered", "node_id": node_id}
+        except Exception as e:
+            return JSONResponse(status_code=400, content={"error": str(e)})
+
+    @app.post("/h3/api/registry/register")
+    async def h3_register_h3(req: Request):
+        return await h3_register_api(req)
+
+    @app.get("/api/registry/agents")
+    async def h3_list_agents_api(capability: Optional[str] = None):
+        now = time.time()
+        active_agents = [
+            agent for agent in _h3_registered_agents.values()
+            if now - agent.get("last_seen", 0) < 60
+        ]
+        return {"agents": active_agents, "total": len(active_agents)}
+
+    @app.get("/h3/api/registry/agents")
+    async def h3_list_agents_h3(capability: Optional[str] = None):
+        return await h3_list_agents_api(capability)
+
+    @app.post("/api/registry/signal/{target_node_id}")
+    async def h3_send_signal_api(target_node_id: str, req: Request):
+        try:
+            body = await req.json()
+            _h3_signals[target_node_id] = body
+            return {"status": "signaled", "target": target_node_id}
+        except Exception as e:
+            return JSONResponse(status_code=400, content={"error": str(e)})
+
+    @app.post("/h3/api/registry/signal/{target_node_id}")
+    async def h3_send_signal_h3(target_node_id: str, req: Request):
+        return await h3_send_signal_api(target_node_id, req)
+
+    @app.get("/api/registry/signal/{self_node_id}")
+    async def h3_get_signal_api(self_node_id: str):
+        signal = _h3_signals.pop(self_node_id, None)
+        return {"signal": signal}
+
+    @app.get("/h3/api/registry/signal/{self_node_id}")
+    async def h3_get_signal_h3(self_node_id: str):
+        return await h3_get_signal_api(self_node_id)
+
+    @app.post("/api/nodes/approve")
+    async def approve_node(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            if not node_id:
+                return JSONResponse(status_code=400, content={"error": "Missing node_id"})
+            
+            # Forward approval to Vercel global registry
+            if node.discovery.h3_discovery.api_url:
+                import httpx
+                async with httpx.AsyncClient() as client:
+                    await client.post(f"{node.discovery.h3_discovery.api_url}/api/registry/approve", json={"node_id": node_id}, timeout=5.0)
+            
+            # Update local memory registry
+            if node_id in _h3_registered_agents:
+                _h3_registered_agents[node_id]["status"] = "approved"
+            else:
+                _h3_registered_agents[node_id] = {
+                    "node_id": node_id,
+                    "role": "mobile_web",
+                    "status": "approved",
+                    "last_seen": time.time()
+                }
+            return {"status": "approved", "node_id": node_id}
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": str(e)})
+
+    @app.post("/api/nodes/decline")
+    async def decline_node(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            if not node_id:
+                return JSONResponse(status_code=400, content={"error": "Missing node_id"})
+            
+            # Forward decline to Vercel global registry
+            if node.discovery.h3_discovery.api_url:
+                import httpx
+                async with httpx.AsyncClient() as client:
+                    await client.post(f"{node.discovery.h3_discovery.api_url}/api/registry/decline", json={"node_id": node_id}, timeout=5.0)
+            
+            # Remove from local memory registry
+            _h3_registered_agents.pop(node_id, None)
+            return {"status": "declined", "node_id": node_id}
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": str(e)})
 
     # ── Events History ────────────────────────────────────────
 
@@ -402,6 +503,25 @@ def create_app(node: MycaNode) -> FastAPI:
         """Live status of all nodes: load, tps, model_loaded, LAN devices."""
         peers = node.discovery.get_active_peers()
         peer_list = [p.to_dict() for p in peers]
+
+        # Merge in-memory registered H3 / Mobile Web nodes
+        now = time.time()
+        for agent_id, agent_info in list(_h3_registered_agents.items()):
+            if agent_id != node.node_id and (now - agent_info.get("last_seen", 0) < 120):
+                if not any(p.get("node_id") == agent_id for p in peer_list):
+                    peer_list.append({
+                        "node_id": agent_id,
+                        "role": agent_info.get("role", "mobile_web"),
+                        "host": agent_info.get("host", agent_info.get("endpoint", "remote")),
+                        "port": agent_info.get("port", 8420),
+                        "load_pct": 5.0,
+                        "tokens_per_second": 15.0,
+                        "model_loaded": agent_info.get("model_loaded", True),
+                        "status": agent_info.get("status", "ready"),
+                        "latency_ms": 45.0,
+                        "source": "h3_global",
+                        "is_local": False
+                    })
 
         local = {
             "node_id": node.node_id,

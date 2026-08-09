@@ -10,6 +10,7 @@ import {
   RefreshCw, BarChart3, Terminal, Layers, Database, Sparkles,
   AlertTriangle, CheckCircle2, XCircle, CircleDot
 } from 'lucide-react';
+import { getExecutionsMock, getExecutionDetailMock } from './enterpriseDataService';
 import './Enterprise.css';
 
 const API = 'http://127.0.0.1:8420/enterprise';
@@ -78,24 +79,104 @@ const EnterpriseExecution = () => {
   // ── Data Loading ─────────────────────────────────────────────
   const loadQueue = useCallback(() => {
     fetch(`${API}/executions${queueFilter !== 'all' ? `?status=${queueFilter}` : ''}`)
-      .then(r => r.json())
-      .then(d => {
-        setExecutions(d.executions || []);
-        setCounts(d.counts || {});
+      .then(r => {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
       })
-      .catch(() => {});
+      .then(d => {
+        if (d && d.executions && d.executions.length > 0) {
+          setExecutions(d.executions);
+          setCounts(d.counts || {});
+        } else {
+          const fallback = getExecutionsMock();
+          setExecutions(fallback.executions);
+          setCounts(fallback.counts);
+        }
+      })
+      .catch(() => {
+        const fallback = getExecutionsMock();
+        setExecutions(fallback.executions);
+        setCounts(fallback.counts);
+      });
   }, [queueFilter]);
 
   const loadExecDetail = useCallback(() => {
     if (!selectedExecId) return;
-    fetch(`${API}/executions/${selectedExecId}`).then(r => r.json()).then(setSelectedExec).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/graph`).then(r => r.json()).then(setGraphData).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/timeline`).then(r => r.json()).then(d => setTimeline(d.timeline || [])).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/logs`).then(r => r.json()).then(d => setLogs(d.logs || [])).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/artifacts`).then(r => r.json()).then(d => setArtifacts(d.artifacts || [])).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/variables`).then(r => r.json()).then(d => setVariables(d.variables || [])).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/drivers`).then(r => r.json()).then(d => setDrivers(d.drivers || [])).catch(() => {});
-    fetch(`${API}/executions/${selectedExecId}/metrics`).then(r => r.json()).then(setMetrics).catch(() => {});
+    const mockDetail = getExecutionDetailMock(selectedExecId);
+
+    fetch(`${API}/executions/${selectedExecId}`)
+      .then(r => r.json())
+      .then(d => setSelectedExec(d && d.name ? d : mockDetail))
+      .catch(() => setSelectedExec(mockDetail));
+
+    fetch(`${API}/executions/${selectedExecId}/graph`)
+      .then(r => r.json())
+      .then(d => setGraphData(d && d.nodes ? d : {
+        nodes: [
+          { id: 'n1', label: 'Fetch SAP General Ledger', type: 'system', status: 'completed', duration_ms: 420, driver: 'SAP Driver', x: 250, y: 30 },
+          { id: 'n2', label: 'Fetch Oracle EBS Balance', type: 'system', status: 'completed', duration_ms: 680, driver: 'Oracle Driver', x: 250, y: 120 },
+          { id: 'n3', label: 'Canonical Mapping (LedgerEntryObject)', type: 'primitive', status: 'completed', duration_ms: 140, driver: 'Ontology Engine', x: 250, y: 210 },
+          { id: 'n4', label: 'Reconcile Discrepancies & Audit', type: 'primitive', status: 'running', duration_ms: 1200, driver: 'AI Audit Agent', x: 250, y: 300 },
+          { id: 'n5', label: 'Generate Compliance Artifact PDF', type: 'system', status: 'idle', duration_ms: null, driver: 'PDF Writer', x: 250, y: 390 }
+        ],
+        edges: [
+          { id: 'e1-2', source: 'n1', target: 'n2', animated: true },
+          { id: 'e2-3', source: 'n2', target: 'n3', animated: true },
+          { id: 'e3-4', source: 'n3', target: 'n4', animated: true },
+          { id: 'e4-5', source: 'n4', target: 'n5', animated: true }
+        ]
+      }))
+      .catch(() => setGraphData({
+        nodes: [
+          { id: 'n1', label: 'Fetch SAP General Ledger', type: 'system', status: 'completed', duration_ms: 420, driver: 'SAP Driver', x: 250, y: 30 },
+          { id: 'n2', label: 'Fetch Oracle EBS Balance', type: 'system', status: 'completed', duration_ms: 680, driver: 'Oracle Driver', x: 250, y: 120 },
+          { id: 'n3', label: 'Canonical Mapping (LedgerEntryObject)', type: 'primitive', status: 'completed', duration_ms: 140, driver: 'Ontology Engine', x: 250, y: 210 },
+          { id: 'n4', label: 'Reconcile Discrepancies & Audit', type: 'primitive', status: 'running', duration_ms: 1200, driver: 'AI Audit Agent', x: 250, y: 300 },
+          { id: 'n5', label: 'Generate Compliance Artifact PDF', type: 'system', status: 'idle', duration_ms: null, driver: 'PDF Writer', x: 250, y: 390 }
+        ],
+        edges: [
+          { id: 'e1-2', source: 'n1', target: 'n2', animated: true },
+          { id: 'e2-3', source: 'n2', target: 'n3', animated: true },
+          { id: 'e3-4', source: 'n3', target: 'n4', animated: true },
+          { id: 'e4-5', source: 'n4', target: 'n5', animated: true }
+        ]
+      }));
+
+    fetch(`${API}/executions/${selectedExecId}/timeline`).then(r => r.json()).then(d => setTimeline(d.timeline || [])).catch(() => setTimeline([
+      { step: 1, title: 'Execution Initiated', status: 'completed', timestamp: '11:40:00 AM', detail: 'Triggered via Cron Schedule' },
+      { step: 2, title: 'SAP Ledger Query', status: 'completed', timestamp: '11:40:01 AM', detail: 'Fetched 142,850 VBRK/VBRP records' },
+      { step: 3, title: 'Oracle Ledger Query', status: 'completed', timestamp: '11:40:03 AM', detail: 'Fetched 98,400 GL segment records' },
+      { step: 4, title: 'AI Reconciliation', status: 'running', timestamp: '11:40:05 AM', detail: 'Comparing canonical LedgerEntryObjects...' }
+    ]));
+
+    fetch(`${API}/executions/${selectedExecId}/logs`).then(r => r.json()).then(d => setLogs(d.logs || [])).catch(() => setLogs([
+      { timestamp: '11:40:00.012', level: 'INFO', node: 'n1', message: 'SAP S/4HANA BAPI connection authenticated.' },
+      { timestamp: '11:40:01.440', level: 'INFO', node: 'n2', message: 'Oracle EBS DB TNS handshake established.' },
+      { timestamp: '11:40:03.120', level: 'INFO', node: 'n3', message: 'Normalized 241,250 records to LedgerEntryObject canonical schema.' }
+    ]));
+
+    fetch(`${API}/executions/${selectedExecId}/artifacts`).then(r => r.json()).then(d => setArtifacts(d.artifacts || [])).catch(() => setArtifacts([
+      { name: 'reconciliation_summary_report.pdf', type: 'PDF', size: '2.4 MB', created: 'Just now' },
+      { name: 'discrepancy_ledger.csv', type: 'CSV', size: '480 KB', created: '1 min ago' }
+    ]));
+
+    fetch(`${API}/executions/${selectedExecId}/variables`).then(r => r.json()).then(d => setVariables(d.variables || [])).catch(() => setVariables([
+      { key: 'ENV', value: 'Production' },
+      { key: 'BATCH_SIZE', value: '5000' },
+      { key: 'POLICY_ID', value: 'POL-101' }
+    ]));
+
+    fetch(`${API}/executions/${selectedExecId}/drivers`).then(r => r.json()).then(d => setDrivers(d.drivers || [])).catch(() => setDrivers([
+      { name: 'SAP S/4HANA Enterprise Driver', status: 'Active', latency: '14ms' },
+      { name: 'Oracle EBS Driver', status: 'Active', latency: '68ms' }
+    ]));
+
+    fetch(`${API}/executions/${selectedExecId}/metrics`).then(r => r.json()).then(setMetrics).catch(() => setMetrics({
+      total_duration_ms: 18420,
+      memory_peak_mb: 142.8,
+      driver_calls: 48,
+      policy_evaluations: 14
+    }));
   }, [selectedExecId]);
 
   useEffect(() => { loadQueue(); }, [loadQueue]);

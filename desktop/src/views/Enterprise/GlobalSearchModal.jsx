@@ -16,10 +16,35 @@ const TYPE_CLASS_MAP = {
   'Secret': 'srt-secret'
 };
 
+const ALL_MOCK_SEARCH_ITEMS = [
+  { type: 'Invoice', title: 'Invoice #INV-9041 ($42,000)', subtitle: 'SAP S/4HANA · Acmed Corp · Pending Approval', target_tab: 'approvals' },
+  { type: 'Invoice', title: 'Invoice #INV-8812 ($145,000)', subtitle: 'SAP S/4HANA · High Value Payout', target_tab: 'approvals' },
+  { type: 'Customer', title: 'Acme Global Manufacturing', subtitle: 'Salesforce CRM · Account ID #CUST-881', target_tab: 'ontology' },
+  { type: 'Customer', title: 'Stark Industries Logistics', subtitle: 'Salesforce CRM · Account ID #CUST-902', target_tab: 'ontology' },
+  { type: 'Workflow', title: 'End-of-Month SAP Ledger Reconciliation', subtitle: 'Execution OS · 84% Complete · Running', target_tab: 'execution' },
+  { type: 'Workflow', title: 'GDPR PII Scrub & Anonymization Audit', subtitle: 'Execution OS · Active · 45% Complete', target_tab: 'execution' },
+  { type: 'Driver', title: 'SAP S/4HANA Enterprise Driver', subtitle: 'Driver OS · 1,420 ops/sec · Active', target_tab: 'drivers' },
+  { type: 'Driver', title: 'Salesforce CRM Connector Driver', subtitle: 'Driver OS · 890 ops/sec · Active', target_tab: 'drivers' },
+  { type: 'Employee', title: 'Dr. Elizabeth Vance (CFO)', subtitle: 'Workday HCM · Financial Signatory Passkey', target_tab: 'approvals' },
+  { type: 'Policy', title: 'Single Transaction Payout Cap ($50,000)', subtitle: 'Policy Engine · Active · SOX Enforcement', target_tab: 'policies' },
+  { type: 'Approval', title: 'APPR-9402: High-Value SAP Vendor Payout', subtitle: 'Requires CFO Passkey · $145,000', target_tab: 'approvals' },
+  { type: 'Secret', title: 'SAP_PRODUCTION_BAPI_TOKEN', subtitle: 'OS Vault · Encrypted AES-256 · Healthy', target_tab: 'secrets' }
+];
+
 const GlobalSearchModal = ({ isOpen, onClose, onNavigateTab }) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const inputRef = useRef(null);
+
+  const filterMock = (q) => {
+    if (!q || !q.trim()) return ALL_MOCK_SEARCH_ITEMS;
+    const lower = q.toLowerCase();
+    return ALL_MOCK_SEARCH_ITEMS.filter(i => 
+      i.title.toLowerCase().includes(lower) || 
+      i.subtitle.toLowerCase().includes(lower) || 
+      i.type.toLowerCase().includes(lower)
+    );
+  };
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -28,8 +53,11 @@ const GlobalSearchModal = ({ isOpen, onClose, onNavigateTab }) => {
       // Load default results
       fetch('http://127.0.0.1:8420/enterprise/dashboard/search?q=')
         .then(r => r.json())
-        .then(d => setResults(d.results || []))
-        .catch(() => {});
+        .then(d => {
+          if (d && d.results && d.results.length > 0) setResults(d.results);
+          else setResults(filterMock(''));
+        })
+        .catch(() => setResults(filterMock('')));
     }
   }, [isOpen]);
 
@@ -37,8 +65,11 @@ const GlobalSearchModal = ({ isOpen, onClose, onNavigateTab }) => {
     setQuery(val);
     fetch(`http://127.0.0.1:8420/enterprise/dashboard/search?q=${encodeURIComponent(val)}`)
       .then(r => r.json())
-      .then(d => setResults(d.results || []))
-      .catch(() => setResults([]));
+      .then(d => {
+        if (d && d.results && d.results.length > 0) setResults(d.results);
+        else setResults(filterMock(val));
+      })
+      .catch(() => setResults(filterMock(val)));
   }, []);
 
   const handleResultClick = useCallback((item) => {

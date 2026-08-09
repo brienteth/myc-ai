@@ -1,0 +1,97 @@
+/* ArtifactPanel.css */
+.artifact-panel {
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-moss);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 300px;
+  font-family: 'Inter', sans-serif;
+  color: var(--ei-dark);
+}
+
+.art-header h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ei-moss);
+}
+
+.art-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--ei-bark);
+}
+
+.art-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.art-label {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.art-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.art-value.success {
+  color: var(--ei-moss);
+}
+
+.art-files h4 {
+  margin: 0 0 1rem 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.art-file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.art-file-list li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--ei-parchment);
+  border: 1px solid var(--ei-bark);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.file-icon {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 0.85rem;
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-action {
+  background: none;
+  border: none;
+  color: var(--ei-moss);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.file-action:hover {
+  text-decoration: underline;
+}

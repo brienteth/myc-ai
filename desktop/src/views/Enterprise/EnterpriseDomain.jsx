@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Server, Cpu, Network, Zap, CheckSquare, ShieldCheck, PlayCircle, History, BarChart3, Key, Sparkles, Building2 } from 'lucide-react';
+import { LayoutDashboard, Server, Cpu, Network, Zap, CheckSquare, ShieldCheck, PlayCircle, History, BarChart3, Key, Sparkles, Building2, DollarSign } from 'lucide-react';
 import './Enterprise.css';
 
 import EnterpriseDashboard from './EnterpriseDashboard';
@@ -12,6 +12,7 @@ import EnterprisePolicies from './EnterprisePolicies';
 import EnterpriseExecution from './EnterpriseExecution';
 import EnterpriseAudit from './EnterpriseAudit';
 import EnterpriseAnalytics from './EnterpriseAnalytics';
+import EnterpriseEconomics from './EnterpriseEconomics';
 import EnterpriseSecrets from './EnterpriseSecrets';
 
 const TABS = [
@@ -25,6 +26,7 @@ const TABS = [
   { id: 'execution', label: 'Execution', icon: <PlayCircle size={15} /> },
   { id: 'audit', label: 'Audit', icon: <History size={15} /> },
   { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={15} /> },
+  { id: 'economics', label: 'Economics', icon: <DollarSign size={15} /> },
   { id: 'secrets', label: 'Secrets', icon: <Key size={15} /> }
 ];
 
@@ -51,6 +53,7 @@ const EnterpriseDomain = () => {
       case 'execution': return <EnterpriseExecution />;
       case 'audit': return <EnterpriseAudit />;
       case 'analytics': return <EnterpriseAnalytics />;
+      case 'economics': return <EnterpriseEconomics />;
       case 'secrets': return <EnterpriseSecrets />;
       default: return <EnterpriseDashboard data={dashboardData} onNavigateTab={setActiveTab} />;
     }

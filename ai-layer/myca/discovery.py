@@ -107,7 +107,7 @@ class H3GlobalDiscovery:
         import httpx
         try:
             async with httpx.AsyncClient() as client:
-                resp = await client.get(f"{self.api_url}/api/registry/agents?capability=myca-v1", timeout=5.0)
+                resp = await client.get(f"{self.api_url}/api/registry/agents", timeout=5.0)
                 if resp.status_code == 200:
                     data = resp.json()
                     peers = []
@@ -127,12 +127,13 @@ class H3GlobalDiscovery:
                         
                         peers.append(PeerInfo(
                             node_id=agent.get("node_id"),
-                            role="inference",
+                            role=agent.get("role", "inference"),
                             host=host,
                             port=port,
                             model_loaded=agent.get("model_loaded", False),
                             source="h3_global",
-                            latency_ms=100.0  # Default higher latency for global peers
+                            latency_ms=100.0,
+                            status=agent.get("status", "active")
                         ))
                     return peers
         except Exception as e:

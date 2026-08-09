@@ -225,3 +225,238 @@
   font-size: 13px;
   color: var(--f-soil);
 }
+
+/* ── Pairing Overlay for Mobile ── */
+.pairing-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--f-cream);
+  z-index: 1000;
+  padding: 24px;
+}
+
+.pairing-card {
+  background: var(--f-parchment);
+  border: 1px solid var(--f-bark);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: var(--f-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.pairing-icon {
+  color: var(--f-moss);
+  margin-bottom: 8px;
+}
+
+.pairing-card h2 {
+  color: var(--f-deep);
+  font-size: 24px;
+  margin: 0;
+}
+
+.pairing-subtitle {
+  font-size: 14px;
+  color: var(--f-soil);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.pairing-code-box {
+  background: var(--f-cream);
+  border: 1px dashed var(--f-stone);
+  border-radius: 12px;
+  padding: 16px 24px;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.pairing-code-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--f-stone);
+  letter-spacing: 1px;
+}
+
+.pairing-code {
+  font-family: var(--f-mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--f-deep);
+  letter-spacing: 4px;
+}
+
+.pairing-pulse-loader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--f-moss);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--f-moss);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.5; }
+}
+
+.pairing-declined-alert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--f-dead);
+  font-family: var(--f-mono);
+  font-size: 12px;
+  width: 100%;
+}
+
+.retry-btn {
+  background: var(--f-deep);
+  color: var(--f-cream);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: var(--f-sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  width: 100%;
+}
+
+.retry-btn:hover {
+  opacity: 0.9;
+}
+
+/* ── Pairing Banners for Desktop ── */
+.pending-approvals-section {
+  background: rgba(176, 137, 59, 0.05);
+  border: 1px solid var(--f-glow-mid);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.approval-section-label {
+  color: var(--f-dormant);
+  margin-bottom: 12px;
+}
+
+.alert-count {
+  background: var(--f-dormant) !important;
+  color: var(--f-cream) !important;
+}
+
+.approval-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approval-card {
+  background: var(--f-cream);
+  border: 1px solid var(--f-bark);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.approval-card-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.approval-device-icon {
+  color: var(--f-dormant);
+}
+
+.approval-card-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--f-deep);
+  margin: 0 0 2px 0;
+}
+
+.approval-card-info p {
+  font-size: 12px;
+  color: var(--f-soil);
+  margin: 0;
+}
+
+.code-highlight {
+  font-family: var(--f-mono);
+  background: rgba(176, 137, 59, 0.15);
+  color: var(--f-dormant);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.approval-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-btn {
+  background: var(--f-moss);
+  color: var(--f-cream);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.decline-btn {
+  background: var(--f-cream);
+  color: var(--f-dead);
+  border: 1px solid var(--f-dead);
+  padding: 7px 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.approve-btn:hover {
+  opacity: 0.9;
+}
+
+.decline-btn:hover {
+  background: rgba(184, 84, 80, 0.05);
+}

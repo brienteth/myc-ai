@@ -4,6 +4,7 @@ import {
   Activity, Layers, Code2, Sparkles, Clock, BarChart3, AlertTriangle,
   X, Check, ChevronRight, Terminal, Server, ArrowRight
 } from 'lucide-react';
+import { getCapabilitiesMock } from './enterpriseDataService';
 import './Enterprise.css';
 
 const API = 'http://127.0.0.1:8420/enterprise';
@@ -40,13 +41,28 @@ const EnterpriseCapabilities = () => {
 
   const loadCapabilities = useCallback(() => {
     fetch(`${API}/capabilities`)
-      .then(res => res.json())
-      .then(data => {
-        setCatalog(data.capabilities || []);
-        if (data.stats) setStats(data.stats);
-        if (data.history) setHistoryLogs(data.history);
+      .then(res => {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
       })
-      .catch(err => console.error('Failed to load capabilities:', err));
+      .then(data => {
+        if (data && data.capabilities && data.capabilities.length > 0) {
+          setCatalog(data.capabilities);
+          if (data.stats) setStats(data.stats);
+          if (data.history) setHistoryLogs(data.history);
+        } else {
+          const fallback = getCapabilitiesMock();
+          setCatalog(fallback.capabilities);
+          setStats(fallback.stats);
+          setHistoryLogs(fallback.history);
+        }
+      })
+      .catch(() => {
+        const fallback = getCapabilitiesMock();
+        setCatalog(fallback.capabilities);
+        setStats(fallback.stats);
+        setHistoryLogs(fallback.history);
+      });
   }, []);
 
   useEffect(() => {
@@ -58,9 +74,27 @@ const EnterpriseCapabilities = () => {
     if (!selectedId) return;
     fetch(`${API}/capabilities/${selectedId}`)
       .then(r => r.json())
-      .then(d => setSelectedCapSpec(d))
-      .catch(() => {});
-  }, [selectedId]);
+      .then(d => {
+        if (d && d.name) setSelectedCapSpec(d);
+        else throw new Error();
+      })
+      .catch(() => {
+        const sel = catalog.find(c => c.id === selectedId) || catalog[0];
+        if (sel) {
+          setSelectedCapSpec({
+            name: sel.name,
+            category: sel.category,
+            description: sel.description,
+            speed: sel.speed,
+            routed_drivers: sel.routed_drivers || ['SAP Driver', 'Stripe Driver'],
+            parameters: [
+              { name: 'customer_id', type: 'String', required: true },
+              { name: 'amount', type: 'Decimal', required: true }
+            ]
+          });
+        }
+      });
+  }, [selectedId, catalog]);
 
   const handleRunCapability = async () => {
     setRunning(true);

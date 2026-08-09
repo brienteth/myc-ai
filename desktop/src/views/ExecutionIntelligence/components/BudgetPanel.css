@@ -1,0 +1,67 @@
+/* BudgetPanel.css */
+.budget-panel {
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-bark);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 300px;
+  font-family: 'Inter', sans-serif;
+}
+
+.bp-header h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #666;
+}
+
+.bp-metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.bp-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.bp-label {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.4rem;
+}
+
+.bp-bar-container {
+  height: 6px;
+  background-color: var(--ei-bark);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.4rem;
+}
+
+.bp-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.bp-bar-fill.safe {
+  background-color: var(--ei-moss);
+}
+
+.bp-bar-fill.warning {
+  background-color: #d97706; /* amber */
+}
+
+.bp-bar-fill.danger {
+  background-color: #dc2626; /* red */
+}
+
+.bp-value {
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--ei-dark);
+  align-self: flex-end;
+}

@@ -1,0 +1,120 @@
+/* VerificationPanel.css */
+.verification-panel {
+  background-color: var(--ei-cream);
+  border: 1px solid var(--ei-bark);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 300px;
+  font-family: 'Inter', sans-serif;
+  color: var(--ei-dark);
+}
+
+.vp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.vp-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #666;
+}
+
+.vp-finding-id {
+  font-size: 0.75rem;
+  font-family: monospace;
+  background-color: var(--ei-parchment);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--ei-bark);
+}
+
+.vp-checks {
+  margin-bottom: 1.5rem;
+}
+
+.vp-check {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--ei-bark);
+  font-size: 0.85rem;
+}
+
+.vp-check:last-child {
+  border-bottom: none;
+}
+
+.vp-check.pass {
+  color: var(--ei-dark);
+}
+
+.vp-check.pass .check-icon {
+  color: var(--ei-moss);
+  font-weight: bold;
+}
+
+.vp-check.fail {
+  color: #dc2626; /* red */
+  font-weight: 500;
+}
+
+.vp-check.fail .check-icon {
+  font-weight: bold;
+}
+
+.vp-verdict-section,
+.vp-reason-section,
+.vp-action-section {
+  margin-bottom: 1.5rem;
+}
+
+.vp-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.vp-verdict {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.vp-verdict.reject {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+.vp-reason-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.vp-action-btn {
+  width: 100%;
+  background-color: var(--ei-parchment);
+  border: 1px solid var(--ei-bark);
+  color: var(--ei-dark);
+  padding: 0.6rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vp-action-btn:hover {
+  background-color: var(--ei-bark);
+}

@@ -1,0 +1,109 @@
+/* LoopPanel.css */
+.loop-panel {
+  background-color: var(--ei-parchment);
+  border: 1px solid var(--ei-bark);
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 300px;
+  font-family: 'Inter', sans-serif;
+  color: var(--ei-dark);
+}
+
+.lp-header h3 {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #666;
+}
+
+.lp-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--ei-bark);
+}
+
+.lp-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.lp-label {
+  color: #666;
+  font-weight: 500;
+}
+
+.lp-value {
+  font-weight: 600;
+}
+
+.score-warning {
+  color: #d97706; /* amber */
+}
+
+.lp-criterion {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #d97706;
+}
+
+.action-section {
+  background-color: var(--ei-cream);
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--ei-bark);
+  border-bottom: none;
+  margin-bottom: 1.5rem;
+}
+
+.lp-action-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.lp-progress-bar {
+  height: 6px;
+  background-color: var(--ei-bark);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.lp-progress-fill {
+  height: 100%;
+  background-color: var(--ei-moss);
+}
+
+.lp-progress-text {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: monospace;
+}
+
+.lp-history h4 {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 0.75rem 0;
+}
+
+.lp-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lp-history-list li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+  color: #666;
+}
+
+.lp-history-list li.current {
+  color: var(--ei-dark);
+  font-weight: 600;
+}

@@ -19,12 +19,91 @@ export const useNodes = () => {
   const [status, setStatus] = useState('loading'); // loading, single, connected
   const [activeInferenceNode, setActiveInferenceNode] = useState(null);
   const [backendOnline, setBackendOnline] = useState(false);
+  const [pairingStatus, setPairingStatus] = useState('not_applicable');
+  const [mobileId, setMobileId] = useState(null);
   const wsRef = useRef(null);
   const retryCountRef = useRef(0);
 
+  const getBackendUrl = useCallback(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hostParam = params.get('host');
+    if (hostParam) return `http://${hostParam}:8420`;
+    
+    // If running remotely (e.g. Localtunnel or Vercel edge)
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return window.location.origin;
+    }
+    return 'http://127.0.0.1:8420';
+  }, []);
+
+  useEffect(() => {
+    // Correctly identify if this is the desktop host app or a remote client
+    const isElectron = /Electron/i.test(navigator.userAgent);
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isHostApp = isElectron || isLocal;
+    const isRemoteClient = !isHostApp;
+    
+    if (isRemoteClient) {
+      let localId = null;
+      try {
+        localId = localStorage.getItem('myca_mobile_id');
+      } catch (e) {
+        console.warn('localStorage access blocked:', e);
+      }
+      
+      if (!localId) {
+        localId = Math.random().toString(36).substring(2, 8);
+        try {
+          localStorage.setItem('myca_mobile_id', localId);
+        } catch (e) {}
+      }
+      
+      const generatedId = 'mobile-' + localId;
+      setMobileId(generatedId);
+      setPairingStatus('pending');
+
+      const payload = {
+        node_id: generatedId,
+        role: 'mobile_web',
+        capabilities: ['inference', 'webgpu', 'sensors']
+      };
+
+      const backendUrl = getBackendUrl();
+      const endpoints = ['/api/registry/register', `${backendUrl}/api/registry/register`];
+      
+      endpoints.forEach(ep => {
+        fetch(ep, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => {});
+      });
+
+      // Poll registration status every 3s
+      const pollUrl = `${window.location.origin}/api/registry/status?node_id=${generatedId}`;
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(pollUrl);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'approved') {
+              setPairingStatus('approved');
+              clearInterval(interval);
+            } else if (data.status === 'declined') {
+              setPairingStatus('declined');
+            }
+          }
+        } catch (e) {}
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [getBackendUrl]);
+
   const fetchNodes = useCallback(async () => {
+    const backendUrl = getBackendUrl();
     try {
-      const res = await fetch('http://127.0.0.1:8420/nodes/status');
+      const res = await fetch(`${backendUrl}/nodes/status`);
       if (!res.ok) throw new Error('not ok');
       const data = await res.json();
 
@@ -94,8 +173,8 @@ export const useNodes = () => {
       // Fallback: try old /peers + /health
       try {
         const [peersRes, healthRes] = await Promise.all([
-          fetch('http://127.0.0.1:8420/peers'),
-          fetch('http://127.0.0.1:8420/health'),
+          fetch(`${backendUrl}/peers`),
+          fetch(`${backendUrl}/health`),
         ]);
         if (peersRes.ok && healthRes.ok) {
           const peersData = await peersRes.json();
@@ -197,6 +276,34 @@ export const useNodes = () => {
     };
   }, []);
 
+  const approveNode = useCallback(async (nodeId) => {
+    const backendUrl = getBackendUrl();
+    try {
+      await fetch(`${backendUrl}/api/nodes/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ node_id: nodeId })
+      });
+      fetchNodes();
+    } catch (e) {
+      console.error('Approve failed', e);
+    }
+  }, [getBackendUrl, fetchNodes]);
+
+  const declineNode = useCallback(async (nodeId) => {
+    const backendUrl = getBackendUrl();
+    try {
+      await fetch(`${backendUrl}/api/nodes/decline`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ node_id: nodeId })
+      });
+      fetchNodes();
+    } catch (e) {
+      console.error('Decline failed', e);
+    }
+  }, [getBackendUrl, fetchNodes]);
+
   useEffect(() => {
     fetchNodes();
     // Poll faster when backend isn't online yet
@@ -204,5 +311,15 @@ export const useNodes = () => {
     return () => clearInterval(interval);
   }, [backendOnline, fetchNodes]);
 
-  return { nodes, lanDevices, status, activeInferenceNode, backendOnline };
+  return { 
+    nodes, 
+    lanDevices, 
+    status, 
+    activeInferenceNode, 
+    backendOnline, 
+    pairingStatus, 
+    mobileId, 
+    approveNode, 
+    declineNode 
+  };
 };

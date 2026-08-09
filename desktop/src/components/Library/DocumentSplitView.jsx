@@ -55,6 +55,7 @@ const DocumentSplitView = ({ document, onClose }) => {
 
     const result = await queryAI({
       prompt: fullPrompt,
+      skipPlanner: true,
       onToken: (token) => {
         setMessages(prev => {
           const newMsgs = [...prev];

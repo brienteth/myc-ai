@@ -71,7 +71,8 @@ async def main():
         asyncio.create_task(bg_startup())
 
     # ── Step 5: Run API server (FastAPI will execute background startup)
-    config = uvicorn.Config(app, host="127.0.0.1", port=8420, log_level="info")
+    host = os.environ.get("MYCA_HOST", "0.0.0.0")
+    config = uvicorn.Config(app, host=host, port=8420, log_level="info")
     server = uvicorn.Server(config)
     await server.serve()
 

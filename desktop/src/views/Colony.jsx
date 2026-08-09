@@ -5,11 +5,21 @@ import { useNodes, nodeNickname } from '../hooks/useNodes';
 import './Colony.css';
 
 const Devices = () => {
-  const { nodes, lanDevices, status, backendOnline } = useNodes();
+  const { 
+    nodes, 
+    lanDevices, 
+    status, 
+    backendOnline, 
+    pairingStatus, 
+    mobileId, 
+    approveNode, 
+    declineNode 
+  } = useNodes();
 
   const getIcon = (role) => {
     switch(role) {
       case 'phone': return <Smartphone size={22} />;
+      case 'mobile_web': return <Smartphone size={22} />;
       case 'server': return <Server size={22} />;
       case 'laptop': return <Laptop size={22} />;
       case 'router': return <Router size={22} />;
@@ -26,7 +36,40 @@ const Devices = () => {
     }
   }, [backendOnline]);
 
-  const allDeviceCount = nodes.length + lanDevices.length;
+  const pendingNodes = nodes.filter(n => n.status === 'pending');
+  const activeNodes = nodes.filter(n => n.status !== 'pending');
+  const allDeviceCount = activeNodes.length + lanDevices.length;
+
+  // Render Mobile/Remote client pairing screen
+  if (pairingStatus === 'pending' || pairingStatus === 'declined') {
+    const code = mobileId ? String(mobileId.replace('mobile-', '')).substring(0, 4).toUpperCase() : '----';
+    return (
+      <div className="pairing-overlay">
+        <div className="pairing-card">
+          <Smartphone size={48} className="pairing-icon" />
+          <h2 className="f-serif-italic">Pair Device to Colony</h2>
+          <p className="pairing-subtitle">
+            To securely connect this mobile device to your Myca cluster, please approve it on your desktop app.
+          </p>
+          <div className="pairing-code-box">
+            <span className="pairing-code-label">SECURITY CODE</span>
+            <span className="pairing-code">{code}</span>
+          </div>
+          {pairingStatus === 'declined' ? (
+            <div className="pairing-declined-alert">
+              <span>Connection was declined.</span>
+              <button onClick={() => window.location.reload()} className="retry-btn">Retry Connection</button>
+            </div>
+          ) : (
+            <div className="pairing-pulse-loader">
+              <span className="pulse-dot"></span>
+              <span>Waiting for approval on desktop…</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="colony-container">
@@ -47,20 +90,51 @@ const Devices = () => {
         <MyceliumCanvas nodeCount={allDeviceCount > 0 ? allDeviceCount * 3 + 10 : 25} connectDist={100} pulseEvery={2000} speed={0.1} />
       </div>
 
+      {/* ── Pending Pairing Requests ── */}
+      {pendingNodes.length > 0 && (
+        <div className="pending-approvals-section">
+          <div className="section-label approval-section-label">
+            <Smartphone size={14} />
+            <span>Pairing Requests</span>
+            <span className="section-count alert-count">{pendingNodes.length}</span>
+          </div>
+          <div className="approval-list">
+            {pendingNodes.map(pn => {
+              const code = pn.id ? String(pn.id.replace('mobile-', '')).substring(0, 4).toUpperCase() : '----';
+              return (
+                <div key={pn.id} className="approval-card">
+                  <div className="approval-card-info">
+                    <Smartphone className="approval-device-icon" size={24} />
+                    <div>
+                      <h4>{pn.name}</h4>
+                      <p>Wishes to pair with your cluster • Security Code: <strong className="code-highlight">{code}</strong></p>
+                    </div>
+                  </div>
+                  <div className="approval-actions">
+                    <button className="approve-btn" onClick={() => approveNode(pn.id)}>Approve</button>
+                    <button className="decline-btn" onClick={() => declineNode(pn.id)}>Decline</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ── Myca Nodes ── */}
-      {nodes.length > 0 && (
+      {activeNodes.length > 0 && (
         <>
           <div className="section-label">
             <Globe size={14} />
             <span>Myca Nodes</span>
-            <span className="section-count">{nodes.length}</span>
+            <span className="section-count">{activeNodes.length}</span>
           </div>
           <div className="device-grid">
-            {nodes.map(n => (
-              <div key={n.id} className={`device-card myca-node ${n.status === 'dead' ? 'offline' : (n.status === 'ready' || n.status === 'processing' ? 'active' : 'sleeping')}`}>
+            {activeNodes.map(n => (
+              <div key={n.id} className={`device-card myca-node ${n.status === 'dead' ? 'offline' : (n.status === 'ready' || n.status === 'processing' || n.status === 'approved' ? 'active' : 'sleeping')}`}>
                 <div className="device-card-header">
                   {n.isLocal ? <Monitor size={22} /> : getIcon(n.role)}
-                  <span className={`device-status ${n.status === 'dead' ? 'offline' : (n.status === 'ready' || n.status === 'processing' ? 'active' : 'sleeping')}`}>
+                  <span className={`device-status ${n.status === 'dead' ? 'offline' : (n.status === 'ready' || n.status === 'processing' || n.status === 'approved' ? 'active' : 'sleeping')}`}>
                     {n.isLocal ? 'this device' : n.status}
                   </span>
                 </div>
@@ -82,6 +156,33 @@ const Devices = () => {
           </div>
         </>
       )}
+
+      {/* ── Tensor Parallelism Visualizer ── */}
+      <div style={{ background: 'var(--f-parchment)', border: '1px solid var(--f-bark)', borderRadius: '16px', padding: '24px', margin: '24px 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div>
+            <h3 style={{ fontSize: '16px', color: 'var(--f-deep)', fontFamily: 'var(--f-serif)' }}>Tensor Parallelism & Model Sharding</h3>
+            <p style={{ fontSize: '12px', color: 'var(--f-soil)', margin: 0 }}>Model layers automatically split across available network nodes for zero-vram-bottleneck inference.</p>
+          </div>
+          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '11px', background: 'rgba(46, 107, 69, 0.12)', color: 'var(--f-moss)', padding: '4px 10px', borderRadius: '6px', fontWeight: 600 }}>
+            QUIC HTTP/3 Active
+          </span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+          <div style={{ background: 'var(--f-cream)', border: '1px solid var(--f-bark)', padding: '14px', borderRadius: '10px' }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '11px', color: 'var(--f-moss)', fontWeight: 600 }}>Local Node (This Device)</div>
+            <div style={{ fontSize: '13px', color: 'var(--f-humus)', margin: '4px 0 8px 0', fontWeight: 500 }}>Layers 0 – 16 (Attention Head 0-16)</div>
+            <div style={{ height: '4px', background: 'var(--f-moss)', borderRadius: '2px' }} />
+          </div>
+          <div style={{ background: 'var(--f-cream)', border: '1px solid var(--f-bark)', padding: '14px', borderRadius: '10px' }}>
+            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '11px', color: 'var(--f-moss)', fontWeight: 600 }}>
+              {nodes.length > 1 ? nodes[1].name : 'Colony Mesh Peer'}
+            </div>
+            <div style={{ fontSize: '13px', color: 'var(--f-humus)', margin: '4px 0 8px 0', fontWeight: 500 }}>Layers 17 – 32 (FeedForward 17-32)</div>
+            <div style={{ height: '4px', background: '#3F8C59', borderRadius: '2px' }} />
+          </div>
+        </div>
+      </div>
 
       {/* ── LAN Devices ── */}
       {lanDevices.length > 0 && (
@@ -142,3 +243,4 @@ const Devices = () => {
 };
 
 export default Devices;
+

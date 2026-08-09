@@ -1,0 +1,57 @@
+/* DependencyEdge.css */
+.react-flow__edge-path.fake-edge {
+  stroke: #ff4d4f;
+  stroke-width: 2;
+  stroke-dasharray: 5, 5;
+  animation: dashdraw 1s linear infinite;
+}
+
+.fake-edge-label {
+  background-color: #fff;
+  border: 1px solid #ff4d4f;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', sans-serif;
+  z-index: 1000;
+}
+
+.fake-warning {
+  color: #ff4d4f;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.fake-reason {
+  color: #666;
+  font-size: 0.75rem;
+  text-align: center;
+  max-width: 150px;
+  margin-bottom: 8px;
+}
+
+.remove-edge-btn {
+  background-color: transparent;
+  border: 1px solid #ff4d4f;
+  color: #ff4d4f;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.remove-edge-btn:hover {
+  background-color: #ff4d4f;
+  color: #fff;
+}
+
+@keyframes dashdraw {
+  from {
+    stroke-dashoffset: 10;
+  }
+}

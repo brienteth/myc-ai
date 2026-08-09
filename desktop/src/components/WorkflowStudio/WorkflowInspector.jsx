@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, X, Key, ShieldCheck, Lock, AlertCircle } from 'lucide-react';
+import { Settings, X, Key, ShieldCheck, Lock, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
 import './WorkflowStudio.css';
 
 const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
   const [activeTab, setActiveTab] = useState('inputs');
   const [localInputs, setLocalInputs] = useState({});
+  const [showOptional, setShowOptional] = useState(false);
 
   useEffect(() => {
     if (selectedNode) {
@@ -27,20 +28,28 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
   };
 
   // Derive inputs & credentials from manifest if available
-  const skillId = data?.title || id;
+  const skillId = data?.id || data?.title || id;
   const manifest = data?.manifest || {};
   const requiredInputs = manifest.required_inputs || data?.inputs || [];
   const optionalInputs = manifest.optional_inputs || [];
   const requiredCredentials = manifest.required_credentials || [];
+
+  // Validation: check which required fields are missing
+  const missingRequired = requiredInputs.filter(inp => {
+    const paramName = typeof inp === 'string' ? inp : inp.name;
+    return !localInputs[paramName] || localInputs[paramName].trim() === '';
+  });
+  const missingCredentials = requiredCredentials.filter(cred => !localInputs[cred] || localInputs[cred].trim() === '');
+  const isValid = missingRequired.length === 0 && missingCredentials.length === 0;
 
   return (
     <div style={{
       position: 'absolute',
       top: 24,
       right: 24,
-      width: 400,
+      width: 420,
       background: 'linear-gradient(145deg, rgba(20, 22, 34, 0.95) 0%, rgba(12, 14, 24, 0.98) 100%)',
-      border: '1px solid rgba(0, 232, 122, 0.35)',
+      border: `1px solid ${isValid ? 'rgba(0, 232, 122, 0.35)' : 'rgba(255, 170, 0, 0.45)'}`,
       borderRadius: 16,
       boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 232, 122, 0.12)',
       color: '#f4f4f6',
@@ -66,15 +75,27 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
             <span style={{ fontSize: 11, color: '#a0a0b2', fontFamily: 'monospace' }}>{skillId}</span>
           </div>
         </div>
-        <button 
-          onClick={onClose} 
-          style={{
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8, padding: 6, color: '#a0a0b2', cursor: 'pointer', display: 'flex'
-          }}
-        >
-          <X size={16} />
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* Validation Badge */}
+          {isValid ? (
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: '#00e87a', fontWeight: 700, padding: '3px 8px', borderRadius: 6, background: 'rgba(0, 232, 122, 0.12)' }}>
+              <CheckCircle2 size={12} /> READY
+            </span>
+          ) : (
+            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: '#ffb703', fontWeight: 700, padding: '3px 8px', borderRadius: 6, background: 'rgba(255, 170, 0, 0.12)' }}>
+              <AlertCircle size={12} /> {missingRequired.length + missingCredentials.length} EKSİK
+            </span>
+          )}
+          <button 
+            onClick={onClose} 
+            style={{
+              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 8, padding: 6, color: '#a0a0b2', cursor: 'pointer', display: 'flex'
+            }}
+          >
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -104,87 +125,161 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
       </div>
 
       {/* Content */}
-      <div style={{ padding: 20, maxHeight: 420, overflowY: 'auto' }}>
+      <div style={{ padding: 20, maxHeight: 480, overflowY: 'auto' }}>
         {activeTab === 'inputs' && (
           <div>
+            {/* Validation Warning */}
+            {!isValid && (
+              <div style={{ marginBottom: 16, padding: '10px 14px', background: 'rgba(255, 170, 0, 0.06)', borderRadius: 10, border: '1px solid rgba(255, 170, 0, 0.2)', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <AlertCircle size={16} color="#ffb703" style={{ flexShrink: 0, marginTop: 2 }} />
+                <div style={{ fontSize: 12, color: '#ffc300', lineHeight: 1.5 }}>
+                  <strong>Dikkat:</strong> Bu modülün çalışması için {missingRequired.length > 0 ? `${missingRequired.length} zorunlu parametre` : ''}{missingRequired.length > 0 && missingCredentials.length > 0 ? ' ve ' : ''}{missingCredentials.length > 0 ? `${missingCredentials.length} API anahtarı` : ''} eksik.
+                </div>
+              </div>
+            )}
+
             {/* Required Credentials Section */}
             {requiredCredentials.length > 0 && (
               <div style={{ marginBottom: 20, padding: 12, background: 'rgba(255, 170, 0, 0.08)', borderRadius: 10, border: '1px solid rgba(255, 170, 0, 0.25)' }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: '#ffb703', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6, textTransform: 'uppercase' }}>
                   <Key size={13} /> Required Secret Credentials:
                 </div>
-                {requiredCredentials.map((cred, i) => (
-                  <div key={i} style={{ marginBottom: 10 }}>
-                    <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#ffc300', marginBottom: 4 }}>
-                      {cred} <span style={{ color: '#ff4d4d' }}>*</span>
-                    </label>
-                    <input 
-                      type="password" 
-                      placeholder={`Secret Vault key for ${cred}`}
-                      value={localInputs[cred] || ''}
-                      onChange={e => handleInputChange(cred, e.target.value)}
-                      style={{
-                        width: '100%', padding: '8px 12px', borderRadius: 8,
-                        background: '#090b14', border: '1px solid rgba(255, 195, 0, 0.3)',
-                        color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
-                      }}
-                    />
-                  </div>
-                ))}
+                {requiredCredentials.map((cred, i) => {
+                  const isFilled = localInputs[cred] && localInputs[cred].trim() !== '';
+                  return (
+                    <div key={i} style={{ marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: '#ffc300' }}>
+                          {cred} <span style={{ color: '#ff4d4d' }}>*</span>
+                        </label>
+                        {isFilled ? (
+                          <span style={{ fontSize: 10, color: '#00e87a', display: 'flex', alignItems: 'center', gap: 3 }}>
+                            <CheckCircle2 size={10} /> Configured
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: 10, color: '#ff6b6b', display: 'flex', alignItems: 'center', gap: 3 }}>
+                            <AlertCircle size={10} /> Missing
+                          </span>
+                        )}
+                      </div>
+                      <input 
+                        type="password" 
+                        placeholder={`Secret Vault key for ${cred}`}
+                        value={localInputs[cred] || ''}
+                        onChange={e => handleInputChange(cred, e.target.value)}
+                        style={{
+                          width: '100%', padding: '8px 12px', borderRadius: 8,
+                          background: '#090b14', border: `1px solid ${isFilled ? 'rgba(0, 232, 122, 0.3)' : 'rgba(255, 107, 107, 0.3)'}`,
+                          color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             )}
 
-            {/* Input Parameters Section */}
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#00e87a', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Skill Parameters:
-            </div>
-
-            {requiredInputs.map((inp, i) => {
-              const paramName = typeof inp === 'string' ? inp : inp.name;
-              const paramType = typeof inp === 'object' ? inp.type : 'string';
-              const paramDesc = typeof inp === 'object' ? inp.description : '';
-
-              return (
-                <div key={i} style={{ marginBottom: 14 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <label style={{ fontSize: 11, fontWeight: 600, color: '#00e87a' }}>
-                      {paramName} <span style={{ color: '#ff4d4d' }}>*</span>
-                    </label>
-                    {paramDesc && <span style={{ fontSize: 10, color: '#a0a0b2' }}>{paramDesc}</span>}
-                  </div>
-
-                  {paramType === 'textarea' ? (
-                    <textarea
-                      rows={3}
-                      placeholder={`Value for ${paramName} or {{variables}}`}
-                      value={localInputs[paramName] || ''}
-                      onChange={e => handleInputChange(paramName, e.target.value)}
-                      style={{
-                        width: '100%', padding: '8px 12px', borderRadius: 8,
-                        background: '#090b14', border: '1px solid rgba(0, 232, 122, 0.25)',
-                        color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box',
-                        fontFamily: 'sans-serif'
-                      }}
-                    />
-                  ) : (
-                    <input 
-                      type={paramType === 'password' ? 'password' : 'text'}
-                      placeholder={`Value for ${paramName}`}
-                      value={localInputs[paramName] || ''}
-                      onChange={e => handleInputChange(paramName, e.target.value)}
-                      style={{
-                        width: '100%', padding: '8px 12px', borderRadius: 8,
-                        background: '#090b14', border: '1px solid rgba(0, 232, 122, 0.25)',
-                        color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
-                      }}
-                    />
-                  )}
+            {/* Required Input Parameters Section */}
+            {requiredInputs.length > 0 && (
+              <>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#00e87a', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Zorunlu Parametreler:
                 </div>
-              );
-            })}
 
-            {requiredInputs.length === 0 && requiredCredentials.length === 0 && (
-              <p style={{ color: '#a0a0b2', fontSize: 12, margin: 0, fontStyle: 'italic' }}>No configurable input parameters required.</p>
+                {requiredInputs.map((inp, i) => {
+                  const paramName = typeof inp === 'string' ? inp : inp.name;
+                  const paramType = typeof inp === 'object' ? inp.type : 'string';
+                  const paramDesc = typeof inp === 'object' ? inp.description : '';
+                  const isFilled = localInputs[paramName] && localInputs[paramName].trim() !== '';
+
+                  return (
+                    <div key={i} style={{ marginBottom: 14 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: isFilled ? '#00e87a' : '#ff6b6b' }}>
+                          {paramName} <span style={{ color: '#ff4d4d' }}>*</span>
+                        </label>
+                        {paramDesc && <span style={{ fontSize: 10, color: '#a0a0b2', maxWidth: '60%', textAlign: 'right' }}>{paramDesc}</span>}
+                      </div>
+
+                      {paramType === 'textarea' ? (
+                        <textarea
+                          rows={3}
+                          placeholder={paramDesc || `Değer girin: ${paramName}`}
+                          value={localInputs[paramName] || ''}
+                          onChange={e => handleInputChange(paramName, e.target.value)}
+                          style={{
+                            width: '100%', padding: '8px 12px', borderRadius: 8,
+                            background: '#090b14', border: `1px solid ${isFilled ? 'rgba(0, 232, 122, 0.25)' : 'rgba(255, 107, 107, 0.25)'}`,
+                            color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box',
+                            fontFamily: 'sans-serif', resize: 'vertical'
+                          }}
+                        />
+                      ) : (
+                        <input 
+                          type={paramType === 'password' ? 'password' : 'text'}
+                          placeholder={paramDesc || `Değer girin: ${paramName}`}
+                          value={localInputs[paramName] || ''}
+                          onChange={e => handleInputChange(paramName, e.target.value)}
+                          style={{
+                            width: '100%', padding: '8px 12px', borderRadius: 8,
+                            background: '#090b14', border: `1px solid ${isFilled ? 'rgba(0, 232, 122, 0.25)' : 'rgba(255, 107, 107, 0.25)'}`,
+                            color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
+                          }}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Optional Input Parameters Section (collapsible) */}
+            {optionalInputs.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <button 
+                  onClick={() => setShowOptional(!showOptional)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: '10px 0',
+                    border: 'none', background: 'transparent', color: '#a0a0b2', cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px'
+                  }}
+                >
+                  {showOptional ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  Opsiyonel Parametreler ({optionalInputs.length})
+                </button>
+                
+                {showOptional && optionalInputs.map((inp, i) => {
+                  const paramName = typeof inp === 'string' ? inp : inp.name;
+                  const paramType = typeof inp === 'object' ? inp.type : 'text';
+                  const paramDesc = typeof inp === 'object' ? inp.description : '';
+
+                  return (
+                    <div key={`opt_${i}`} style={{ marginBottom: 14 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: '#a0a0b2' }}>
+                          {paramName} <span style={{ fontSize: 9, color: '#666', fontStyle: 'italic' }}>(opsiyonel)</span>
+                        </label>
+                        {paramDesc && <span style={{ fontSize: 10, color: '#666', maxWidth: '60%', textAlign: 'right' }}>{paramDesc}</span>}
+                      </div>
+                      <input 
+                        type="text"
+                        placeholder={paramDesc || `Opsiyonel: ${paramName}`}
+                        value={localInputs[paramName] || ''}
+                        onChange={e => handleInputChange(paramName, e.target.value)}
+                        style={{
+                          width: '100%', padding: '8px 12px', borderRadius: 8,
+                          background: '#090b14', border: '1px solid rgba(255,255,255,0.08)',
+                          color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {requiredInputs.length === 0 && requiredCredentials.length === 0 && optionalInputs.length === 0 && (
+              <p style={{ color: '#a0a0b2', fontSize: 12, margin: 0, fontStyle: 'italic' }}>Bu modül için yapılandırma gerekmiyor. Doğrudan çalıştırılabilir.</p>
             )}
           </div>
         )}
@@ -196,14 +291,38 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
               <code style={{ color: '#00e87a', background: 'rgba(0,232,122,0.1)', padding: '2px 6px', borderRadius: 4 }}>{id}</code>
             </div>
             <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#a0a0b2' }}>Skill ID:</span>
+              <code style={{ color: '#00e87a', background: 'rgba(0,232,122,0.1)', padding: '2px 6px', borderRadius: 4 }}>{skillId}</code>
+            </div>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: '#a0a0b2' }}>Status:</span>
-              <span style={{ color: data?.status === 'completed' ? '#00e87a' : '#ffb703', fontWeight: 700, textTransform: 'uppercase' }}>
+              <span style={{ color: data?.status === 'completed' ? '#00e87a' : data?.status === 'running' ? '#ffb703' : '#a0a0b2', fontWeight: 700, textTransform: 'uppercase' }}>
                 {data?.status || 'idle'}
               </span>
             </div>
             <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
               <span style={{ color: '#a0a0b2' }}>Runtime Target:</span>
-              <span style={{ color: '#ffffff', fontWeight: 600 }}>{manifest.runtime || 'network'}</span>
+              <span style={{ color: '#ffffff', fontWeight: 600 }}>{manifest.runtime || 'local'}</span>
+            </div>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#a0a0b2' }}>Required Inputs:</span>
+              <span style={{ color: '#ffffff', fontWeight: 600 }}>{requiredInputs.length}</span>
+            </div>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#a0a0b2' }}>Optional Inputs:</span>
+              <span style={{ color: '#ffffff', fontWeight: 600 }}>{optionalInputs.length}</span>
+            </div>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#a0a0b2' }}>Credentials:</span>
+              <span style={{ color: requiredCredentials.length > 0 ? '#ffb703' : '#00e87a', fontWeight: 600 }}>
+                {requiredCredentials.length > 0 ? `${requiredCredentials.length} required` : 'None'}
+              </span>
+            </div>
+            <div style={{ marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#a0a0b2' }}>Validation:</span>
+              <span style={{ color: isValid ? '#00e87a' : '#ff6b6b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                {isValid ? <><CheckCircle2 size={12} /> Ready</> : <><AlertCircle size={12} /> Missing {missingRequired.length + missingCredentials.length} fields</>}
+              </span>
             </div>
           </div>
         )}
@@ -213,3 +332,4 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
 };
 
 export default WorkflowInspector;
+

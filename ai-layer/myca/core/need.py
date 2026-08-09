@@ -59,6 +59,7 @@ class Need:
     need_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     created_at: float = field(default_factory=time.time)
     stream: bool = True
+    skip_planner: bool = False
 
     # Data reference (NOT the data itself)
     data_refs: list = field(default_factory=list)
@@ -75,6 +76,7 @@ class Need:
             "max_latency_ms": self.max_latency_ms,
             "conv_id": self.conv_id,
             "stream": self.stream,
+            "skip_planner": self.skip_planner,
             "data_refs": self.data_refs,
         }
 
@@ -89,6 +91,7 @@ class Need:
             conv_id=d.get("conv_id", str(uuid.uuid4())),
             need_id=d.get("need_id", str(uuid.uuid4())),
             stream=d.get("stream", True),
+            skip_planner=d.get("skip_planner", False),
             data_refs=d.get("data_refs", []),
         )
 
@@ -111,6 +114,7 @@ class Need:
             action=action,
             prompt=prompt,
             conv_id=conv_id or str(uuid.uuid4()),
+            skip_planner=False
         )
 
 

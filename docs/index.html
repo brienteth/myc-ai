@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Myca OS — Dokümantasyon & Teknik Rapor</title>
-  <!-- Google Fonts -->
+  <title>Myca OS — Documentation</title>
+  <meta name="description" content="Myca is a local-first Execution OS that turns your devices into an autonomous AI network. Zero dependencies. Full sovereignty.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -23,13 +23,11 @@
       --font-serif: 'Playfair Display', Georgia, serif;
       --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+      --moss: #2E6B45;
+      --spore: #2E6B45;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-warm);
@@ -73,9 +71,8 @@
       text-decoration: none;
       color: var(--primary);
     }
-
-    .logo-icon { width: 28px; height: 28px; fill: var(--primary); }
-    .logo-text { font-family: var(--font-serif); font-weight: 700; font-size: 22px; letter-spacing: -0.5px; }
+    .logo-text { font-family: var(--font-serif); font-weight: 700; font-size: 22px; letter-spacing: -0.5px; font-style: italic; }
+    .logo-badge { font-size: 10px; font-family: var(--font-mono); background: rgba(30, 58, 39, 0.1); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
 
     .header-right { display: flex; align-items: center; gap: 20px; }
     .header-right a { color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
@@ -122,6 +119,8 @@
     h2 { font-family: var(--font-serif); font-size: 24px; color: var(--primary); margin: 36px 0 16px 0; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
     h3 { font-family: var(--font-sans); font-size: 18px; color: var(--text); margin: 24px 0 12px 0; font-weight: 600; }
     p { margin-bottom: 16px; color: var(--text); font-size: 15px; }
+    ul { margin-bottom: 16px; padding-left: 20px; }
+    li { margin-bottom: 8px; font-size: 15px; color: var(--text); }
 
     pre {
       background: #181E19; color: #E2E8F0; padding: 20px; border-radius: 12px;
@@ -144,121 +143,957 @@
 
     .flow-chart {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
-      padding: 32px; text-align: center; margin: 24px 0; font-family: var(--font-mono); font-size: 14px;
+      padding: 32px; text-align: center; margin: 24px 0; font-family: var(--font-mono); font-size: 14px; line-height: 2;
     }
-    .flow-chart .arrow { color: var(--accent); margin: 8px 0; font-weight: bold; }
+    .flow-chart .arrow { color: var(--accent); margin: 4px 0; font-weight: bold; }
 
     .bench-table { width: 100%; border-collapse: collapse; margin: 24px 0; background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
     .bench-table th, .bench-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
     .bench-table th { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+
+    .phase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 24px; }
+    .phase-card { background: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border); }
+    .phase-card.highlight { border-left: 3px solid var(--accent); }
+    .phase-card h3 { margin-top: 0; font-size: 15px; color: var(--primary); }
+    .phase-card ul { font-size: 14px; color: var(--text-muted); padding-left: 16px; margin-bottom: 0; }
+    .phase-card li { margin-bottom: 6px; font-size: 14px; color: var(--text-muted); }
+
+    .layer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; }
+    .layer-block {
+      background: var(--card-bg); border: 1.5px solid var(--border); padding: 18px 14px; border-radius: 10px;
+      text-align: center; font-family: var(--font-mono); font-size: 12px; color: var(--moss);
+      font-weight: 500; transition: all .2s;
+    }
+    .layer-block:hover { border-color: var(--moss); transform: translateY(-2px); }
+    .layer-block small { display: block; margin-top: 4px; font-family: var(--font-sans); font-size: 11px; color: var(--text-muted); font-weight: 400; }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 24px 0; }
+    .pricing-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 32px 24px; text-align: center; }
+    .pricing-card.featured { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .pricing-card.featured .pc-name, .pricing-card.featured .pc-price, .pricing-card.featured .pc-desc { color: #fff; }
+    .pricing-card.featured .pc-feature { color: rgba(255,255,255,0.8); }
+    .pc-name { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--moss); margin-bottom: 12px; }
+    .pc-price { font-family: var(--font-serif); font-size: 36px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .pc-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .pc-features { list-style: none; padding: 0; text-align: left; }
+    .pc-feature { font-size: 13px; color: var(--text); padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .pricing-card.featured .pc-feature { border-color: rgba(255,255,255,0.15); }
+
+    @media (max-width: 900px) {
+      aside { display: none; }
+      main { padding: 24px; }
+      .phase-grid, .layer-grid, .pricing-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
   <header>
     <a href="/" class="logo-area">
-      <svg class="logo-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      <span class="logo-text">myca</span>
+      <span class="logo-text">myca os</span>
+      <span class="logo-badge">docs</span>
     </a>
     <div class="header-right">
-      <a href="/">Geri dön</a>
+      <a href="/">Home</a>
       <a href="https://github.com/brienteth/myc-ai" target="_blank" class="btn-github">GitHub</a>
     </div>
   </header>
 
   <div class="docs-container">
     <aside>
-      <div class="menu-group-label">Başlangıç</div>
-      <div class="menu-item active" onclick="showSection('getting-started')">Getting Started</div>
+      <div class="menu-group-label">Overview</div>
+      <div class="menu-item active" onclick="showSection('overview')">What is Myca?</div>
+      <div class="menu-item" onclick="showSection('getting-started')">Getting Started</div>
       
-      <div class="menu-group-label">Konseptler</div>
-      <div class="menu-item" onclick="showSection('concepts-need')">Need (Niyet)</div>
-      <div class="menu-item" onclick="showSection('concepts-planner')">Planner v3</div>
-      <div class="menu-item" onclick="showSection('concepts-graph')">Execution Graph</div>
-      <div class="menu-item" onclick="showSection('concepts-skills')">Skills (Beceriler)</div>
-      <div class="menu-item" onclick="showSection('concepts-colony')">Colony (Koloni)</div>
-      
-      <div class="menu-group-label">Geliştirici & Mimariler</div>
-      <div class="menu-item" onclick="showSection('architecture')">Sovereign Runtime</div>
+      <div class="menu-group-label">Architecture</div>
+      <div class="menu-item" onclick="showSection('five-layers')">The 5-Layer Stack</div>
+      <div class="menu-item" onclick="showSection('planner-v3')">Planner v3 (Multi-Agent)</div>
+      <div class="menu-item" onclick="showSection('sovereign-runtime')">Sovereign Runtime (Rust)</div>
+      <div class="menu-item" onclick="showSection('colony')">Colony (P2P Mesh)</div>
+      <div class="menu-item" onclick="showSection('skills-drivers')">Skills & Drivers</div>
+
+      <div class="menu-group-label">Execution Intelligence v4</div>
+      <div class="menu-item" onclick="showSection('exec-intelligence')">Agent → Graph → Verify</div>
+      <div class="menu-item" onclick="showSection('playground-sim')">Live Flow Playground</div>
+      <div class="menu-item" onclick="showSection('fourteen-phases')">The 14 Phases</div>
+
+      <div class="menu-group-label">Fiyatlandırma & Ekonomi</div>
+      <div class="menu-item" onclick="showSection('pricing-economics')">Fiyatlandırma (Pricing)</div>
+      <div class="menu-item" onclick="showSection('economics-ledger')">Work Economics & Ledger</div>
+
+      <div class="menu-group-label">Rehberler & Tarifler</div>
+      <div class="menu-item" onclick="showSection('workflows-recipes')">Workflows (İş Akışları)</div>
+      <div class="menu-item" onclick="showSection('guides-recipes')">Hazır Tarifler (Recipes)</div>
+
+      <div class="menu-group-label">Enterprise & Dev</div>
+      <div class="menu-item" onclick="showSection('enterprise')">Enterprise Platform</div>
+      <div class="menu-item" onclick="showSection('sdk')">Python SDK</div>
       <div class="menu-item" onclick="showSection('benchmarks')">Benchmarks</div>
     </aside>
 
     <main>
-      <!-- SECTION: Getting Started -->
-      <div id="getting-started" class="doc-section active">
-        <h1>Myca OS v3'e Hoş Geldiniz</h1>
-        <p>Myca, bilgisayarlarınızı ve mobil cihazlarınızı otonom bir yapay zeka ağına dönüştüren 0-bağımlılıklı, yerel öncelikli bir otomasyon işletim sistemidir.</p>
 
-        <h2>5 Dakikada Hızlı Kurulum</h2>
+      <!-- OVERVIEW -->
+      <div id="overview" class="doc-section active">
+        <h1>Myca — The Execution OS</h1>
+        <p>Myca is a <strong>local-first, zero-dependency AI operating system</strong> that turns your devices into an autonomous execution network. Instead of chatting with a model, you describe an outcome — Myca plans, executes, verifies, and delivers.</p>
+
+        <h2>Core Philosophy</h2>
+        <p>Every AI product today is a chat interface bolted onto a language model. Myca takes a fundamentally different approach:</p>
+        <ul>
+          <li><strong>Intent, not conversation.</strong> You describe what you need done. Myca's multi-agent planner decomposes it into an execution graph, validates it against 8 quality metrics, and only runs it when the score reaches ≥96/100.</li>
+          <li><strong>Local-first, always.</strong> Models run on your hardware (Apple Silicon MLX, NVIDIA CUDA, or CPU). Your data never leaves your device unless you explicitly route work to your Colony mesh.</li>
+          <li><strong>Sovereign infrastructure.</strong> A 12-crate Rust workspace provides Ed25519 identity, Blake3 content-addressed storage, QUIC/HTTP3 transport, and PyO3 FFI bridging — zero external dependencies.</li>
+        </ul>
+
+        <h2>What Myca Actually Does</h2>
+        <table class="bench-table">
+          <tr><th>Capability</th><th>Description</th></tr>
+          <tr><td><strong>Workflow Studio</strong></td><td>Visual node canvas to design, inspect, and debug execution pipelines with live telemetry.</td></tr>
+          <tr><td><strong>Planner v3</strong></td><td>9-agent deterministic compiler that turns prompts into vendor-neutral execution graphs.</td></tr>
+          <tr><td><strong>Colony Mesh</strong></td><td>P2P device network via mDNS + WebRTC. Split model layers across devices for distributed inference.</td></tr>
+          <tr><td><strong>Skill System</strong></td><td>Modular skills (chat, summarize, scrape, Telegram, filesystem, browser) with auto-coercion and telemetry.</td></tr>
+          <tr><td><strong>MCP Support</strong></td><td>Connect Claude-compatible MCP servers (stdio/SSE) to register external tools as dynamic skills.</td></tr>
+          <tr><td><strong>Secrets Vault</strong></td><td>Encrypted local storage for API keys, bot tokens, and credentials — never sent to cloud.</td></tr>
+          <tr><td><strong>Enterprise Platform</strong></td><td>Passkey approvals, policy engine (GDPR/SOX), audit trails, driver marketplace, and ontology mapping.</td></tr>
+          <tr><td><strong>Execution Intelligence</strong></td><td>Agent spawning, dependency graphs, parallel DAG execution, loop/self-healing, and independent verification.</td></tr>
+        </table>
+
+        <div class="related-box">
+          <h4>Start Here</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('getting-started')" class="related-link">Getting Started</a>
+            <a href="#" onclick="showSection('five-layers')" class="related-link">Architecture</a>
+            <a href="#" onclick="showSection('planner-v3')" class="related-link">Planner v3</a>
+            <a href="#" onclick="showSection('economics')" class="related-link">Pricing</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- GETTING STARTED -->
+      <div id="getting-started" class="doc-section">
+        <h1>Getting Started</h1>
+        <p>Myca runs as a native desktop application (Electron) backed by a Python execution engine. Get up and running in under 5 minutes.</p>
+
+        <h2>Download</h2>
+        <table class="bench-table">
+          <tr><th>Platform</th><th>Format</th><th>Link</th></tr>
+          <tr><td>macOS (Apple Silicon)</td><td>.dmg</td><td><a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-0.1.0.dmg" style="color:var(--moss);">Download</a></td></tr>
+          <tr><td>Windows</td><td>.exe</td><td><a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe" style="color:var(--moss);">Download</a></td></tr>
+          <tr><td>Linux</td><td>.AppImage</td><td>Coming soon</td></tr>
+        </table>
+
+        <h2>Build from Source</h2>
         <pre>
+# Clone the repository
 git clone https://github.com/brienteth/myc-ai.git
-cd myc-ai/rust-core
-cargo build --release -p cli
-./target/release/myca-cli start --mesh</pre>
+cd myc-ai
+
+# Start the AI backend
+cd ai-layer
+pip install -r requirements.txt
+python main.py
+
+# In a separate terminal — start the desktop app
+cd desktop
+npm install
+npm run electron:start</pre>
+
+        <h2>System Requirements</h2>
+        <table class="bench-table">
+          <tr><th>OS</th><th>Minimum</th><th>Recommended</th></tr>
+          <tr><td>macOS</td><td>13.6+, 8GB RAM</td><td>Apple Silicon, 16GB</td></tr>
+          <tr><td>Windows</td><td>10+, 8GB RAM</td><td>NVIDIA GPU, 16GB</td></tr>
+          <tr><td>Linux</td><td>Ubuntu 22.04+, 8GB</td><td>CUDA GPU, 16GB</td></tr>
+        </table>
 
         <div class="related-box">
-          <h4>İlişkili Konseptler</h4>
+          <h4>Next Steps</h4>
           <div class="related-links">
-            <a href="#" onclick="showSection('concepts-planner')" class="related-link">Planner v3</a>
-            <a href="#" onclick="showSection('architecture')" class="related-link">Sovereign Runtime</a>
+            <a href="#" onclick="showSection('sdk')" class="related-link">Python SDK</a>
+            <a href="#" onclick="showSection('five-layers')" class="related-link">Architecture</a>
           </div>
         </div>
       </div>
 
-      <!-- SECTION: Concepts - Planner -->
-      <div id="concepts-planner" class="doc-section">
-        <h1>Planlayıcı (Planner v3 Multi-Agent Engine)</h1>
-        <p>Planner v3, halüsinasyon yapmayan deterministik bir <strong>Execution Compiler</strong> mimarisidir. Kullanıcı istekleri 9 uzman otonom ajan tarafından denetlenir.</p>
-
-        <pre>
-User Prompt ➔ Intent Agent ➔ Capability Agent ➔ Parameter Agent ➔ Security Agent
-➔ Cost Agent ➔ Graph Agent (Candidates A, B, C, D) ➔ Critic Agent ➔ Repair Agent
-➔ Simulation Agent (Sandbox Dry-Run) ➔ Quality Scorer (Target ≥ 96/100) ➔ Runtime</pre>
-
-        <h2>Multi-Agent Denetimi ve 8 Metrik Kalite Puanlaması</h2>
-        <p>Graflar 8 metrik üzerinden (Doğruluk, Gecikme, Güvenlik, Maliyet, Gizlilik, Güvenilirlik, Karmaşıklık, Onarılabilirlik) puanlanır. 96/100 eşik puanına ulaşamayan graflar yürütülmez ve otomatik onarım döngüsüne alınır.</p>
-
-        <div class="related-box">
-          <h4>İlişkili Konseptler</h4>
-          <div class="related-links">
-            <a href="#" onclick="showSection('concepts-graph')" class="related-link">Execution Graph</a>
-            <a href="#" onclick="showSection('architecture')" class="related-link">Sovereign Runtime</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION: Architecture -->
-      <div id="architecture" class="doc-section">
-        <h1>Myca OS v3 Mimarisi & Sovereign Runtime</h1>
-        <p>Myca OS, donanım kaynaklarını ve GPU VRAM kapasitelerini 0-bağımlılıkla koordine eden izole bir Rust Core workspace'i üzerinde çalışır.</p>
+      <!-- 5-LAYER STACK -->
+      <div id="five-layers" class="doc-section">
+        <h1>The 5-Layer Architecture</h1>
+        <p>Every Myca node is a self-contained participant in a peer-to-peer execution network. The stack is layered for isolation, security, and composability.</p>
 
         <div class="flow-chart">
-          [Need Engine] ➔ (Kullanıcı Niyetini Al)<br>
+          <strong>Layer 1 — Discovery</strong> (mDNS / Opacus H3 Global)
           <div class="arrow">↓</div>
-          [Planner v3 (Multi-Agent Mesh)] ➔ (Constraint Solve & Quality Score ≥96)<br>
+          <strong>Layer 2 — Connection</strong> (HTTP/2 Direct + WebRTC DataChannel)
           <div class="arrow">↓</div>
-          [Sovereign Runtime Stack (Rust Core)] ➔ (Ed25519 Identity & FastCDC/Blake3 Storage)<br>
+          <strong>Layer 3 — Coordination</strong> (HTTP 103 Early Hints + Tensor Parallelism)
           <div class="arrow">↓</div>
-          [P2P Transport (QUIC / HTTP3)] ➔ (Wi-Fi GPU Mesh & Mobile Offloading)
+          <strong>Layer 4 — Trust</strong> (X25519 ECDH + AES-256-GCM, Key Rotation 60s)
+          <div class="arrow">↓</div>
+          <strong>Layer 5 — Inference</strong> (llama.cpp / Ollama / 0G Compute / Mock)
         </div>
 
-        <h2>Sovereign Runtime (12 Crate Rust Workspace)</h2>
-        <p>Ed25519 kriptografik kimlik doğrulama, Blake3 / Merkle DAG içerik adresli depolama, QUIC & HTTP/3 ağ protokolleri ve PyO3 C-Extension FFI entegrasyonu.</p>
+        <h2>Layer 1: Discovery</h2>
+        <p>Uses <code>zeroconf</code> (mDNS) to discover <code>_myca._tcp.local.</code> peers on LAN. Each node broadcasts its <code>node_id</code>, <code>role</code> (inference/storage/relay), <code>load_pct</code>, and <code>model_shards</code>. Dead nodes are garbage-collected after a 3-second heartbeat timeout. For WAN peers, Opacus H3 global registry provides signaling and WebRTC NAT traversal via STUN.</p>
 
-        <h2>Kurumsal Platform: Passkey Approvals & Policy Engine</h2>
-        <p>Yüksek riskli SAP/AWS/Oracle işlemleri için donanım anahtarı / Passkey PIN onayı ve canlı GDPR & SOX politika denetimi.</p>
+        <h2>Layer 2: Connection</h2>
+        <p>Local peers connect via HTTP/2 direct. Global (H3) peers use WebRTC DataChannel with STUN NAT traversal. Signaling happens through the Opacus H3 registry mailbox (<code>POST/GET /api/registry/signal/{id}</code>). Simulation mode uses <code>asyncio.Queue</code> message passing with 8-25ms configurable fake latency.</p>
 
-        <h2>Wi-Fi P2P GPU Mesh & Mobil Bağlantı</h2>
-        <p>Wi-Fi ağındaki cihazlar mDNS ile birbirini bulur, GPU VRAM kapasitelerini ağa açar ve ağır yükleri en uygun cihaza (iOS Metal / Android Vulkan NDK / Termux) yönlendirir.</p>
+        <h2>Layer 3: Coordination</h2>
+        <p>The Orchestrator sends HTTP 103 Early Hints to all participating nodes <strong>before</strong> inference begins — storage nodes start fetching context, inference nodes load model shards. With 2+ nodes, model layers are split via tensor parallelism (Node A: layers 0-16, Node B: layers 17-32). Shard timeout at 200ms triggers one automatic retry.</p>
+
+        <h2>Layer 4: Trust</h2>
+        <p>PQC-ready encryption using X25519 ECDH key exchange + AES-256-GCM. Key rotation every 60 seconds; on failure, cached keys extend 30s. When <code>liboqs</code> ships for Python 3.14+, X25519 swaps to CRYSTALS-Kyber.</p>
+
+        <h2>Layer 5: Inference</h2>
+        <p>Pluggable backends via <code>BackendRegistry</code>: <code>llamacpp</code> (local GPU), <code>ollama</code>, <code>0g_compute</code> (decentralized cloud), <code>mock</code> (testing), and <code>remote</code> (connect to another Myca node). Speculative inference optionally runs a fast draft model + verification model pipeline.</p>
 
         <div class="related-box">
-          <h4>İlişkili Konseptler</h4>
+          <h4>Related</h4>
           <div class="related-links">
-            <a href="#" onclick="showSection('concepts-planner')" class="related-link">Planner v3</a>
+            <a href="#" onclick="showSection('sovereign-runtime')" class="related-link">Sovereign Runtime (Rust)</a>
+            <a href="#" onclick="showSection('colony')" class="related-link">Colony Mesh</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANNER v3 -->
+      <div id="planner-v3" class="doc-section">
+        <h1>Planner v3 — Multi-Agent Execution Compiler</h1>
+        <p>The Planner is not a prompt router. It is a <strong>deterministic Execution Compiler</strong> that decomposes user intent into validated, vendor-neutral execution graphs through an 11-stage multi-agent pipeline.</p>
+
+        <div class="flow-chart">
+          User Prompt<br>
+          <div class="arrow">↓</div>
+          <strong>Intent Agent</strong> → Vendor-neutral Intent Graph<br>
+          <div class="arrow">↓</div>
+          <strong>Capability Agent</strong> → Abstract Capability Mapping<br>
+          <div class="arrow">↓</div>
+          <strong>Parameter Agent</strong> → Knowledge, Contacts & Env Reasoning<br>
+          <div class="arrow">↓</div>
+          <strong>Security Agent</strong> → Multi-Layer Credential Resolver<br>
+          <div class="arrow">↓</div>
+          <strong>Cost Agent</strong> → Compute Dispatch (Local / Colony / 0G)<br>
+          <div class="arrow">↓</div>
+          <strong>Graph Agent</strong> → Multi-Candidate Graphs (A, B, C, D)<br>
+          <div class="arrow">↓</div>
+          <strong>Critic Agent</strong> → Hallucination Check & Graph Critique<br>
+          <div class="arrow">↓</div>
+          <strong>Repair Agent</strong> → Iterative Auto-Repair<br>
+          <div class="arrow">↓</div>
+          <strong>Simulation Agent</strong> → Sandbox Dry-Run<br>
+          <div class="arrow">↓</div>
+          <strong>Quality Scorer</strong> → 8-Metric Index (≥ 96/100)<br>
+          <div class="arrow">↓</div>
+          <strong>Learning Engine</strong> → Feedback to Knowledge OS
+        </div>
+
+        <h2>The 8 Quality Metrics</h2>
+        <p>Every candidate graph is scored across 8 dimensions. Graphs below 96/100 are rejected and sent to the Repair Agent for iterative correction.</p>
+        <table class="bench-table">
+          <tr><th>Metric</th><th>What it measures</th></tr>
+          <tr><td>Accuracy</td><td>Does the graph fulfill the original intent?</td></tr>
+          <tr><td>Latency</td><td>Estimated execution time within acceptable bounds?</td></tr>
+          <tr><td>Security</td><td>Are all credentials resolved and encrypted?</td></tr>
+          <tr><td>Cost</td><td>Is compute allocation optimized?</td></tr>
+          <tr><td>Privacy</td><td>Does the graph respect data sovereignty constraints?</td></tr>
+          <tr><td>Reliability</td><td>Are fallback paths defined for critical nodes?</td></tr>
+          <tr><td>Complexity</td><td>Is the graph minimal for the task?</td></tr>
+          <tr><td>Repairability</td><td>Can the graph self-heal on partial failure?</td></tr>
+        </table>
+
+        <div class="related-box">
+          <h4>Related</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('exec-intelligence')" class="related-link">Execution Intelligence</a>
+            <a href="#" onclick="showSection('skills-drivers')" class="related-link">Skills & Drivers</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOVEREIGN RUNTIME -->
+      <div id="sovereign-runtime" class="doc-section">
+        <h1>Sovereign Runtime — 12-Crate Rust Workspace</h1>
+        <p>Myca's infrastructure layer is a pure Rust workspace with <strong>zero external service dependencies</strong>. No AWS. No Firebase. No third-party auth. Every protocol is owned and auditable.</p>
+
+        <div class="layer-grid">
+          <div class="layer-block">cli<small>Command Line</small></div>
+          <div class="layer-block">common<small>Shared Types</small></div>
+          <div class="layer-block">compute<small>GPU Dispatch</small></div>
+          <div class="layer-block">drivers<small>System Drivers</small></div>
+          <div class="layer-block">ffi<small>PyO3 Bridge</small></div>
+          <div class="layer-block">identity<small>Ed25519 Keys</small></div>
+          <div class="layer-block">mesh<small>P2P Topology</small></div>
+          <div class="layer-block">runtime<small>Task Execution</small></div>
+          <div class="layer-block">sdk<small>Rust SDK</small></div>
+          <div class="layer-block">storage<small>Blake3 / DAG</small></div>
+          <div class="layer-block">transport<small>QUIC / HTTP3</small></div>
+        </div>
+
+        <h2>Key Design Decisions</h2>
+        <ul>
+          <li><strong>Identity:</strong> Every device gets an Ed25519 keypair at first run. All inter-node messages are signed — no central identity provider.</li>
+          <li><strong>Storage:</strong> Content-addressed via Blake3 hashing with FastCDC chunking and Merkle DAG structures. Deduplication is automatic across the mesh.</li>
+          <li><strong>Transport:</strong> QUIC + HTTP/3 for low-latency, multiplexed connections. mDNS for LAN discovery, WebRTC for NAT-traversed global peers.</li>
+          <li><strong>FFI:</strong> PyO3 C-Extension bridge connects the Python Execution OS to the Rust Core. The Python layer handles orchestration; Rust handles performance-critical paths.</li>
+        </ul>
+
+        <div class="related-box">
+          <h4>Related</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('five-layers')" class="related-link">5-Layer Stack</a>
+            <a href="#" onclick="showSection('colony')" class="related-link">Colony Mesh</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLONY -->
+      <div id="colony" class="doc-section">
+        <h1>Colony — P2P Device Mesh</h1>
+        <p>Colony is Myca's distributed compute layer. Every device running Myca — laptop, phone, cloud GPU — joins a peer-to-peer mesh where work is automatically routed to the most capable node.</p>
+
+        <h2>How Devices Find Each Other</h2>
+        <ul>
+          <li><strong>LAN (Same Wi-Fi):</strong> mDNS broadcasts <code>_myca._tcp.local.</code> with TXT records containing node capabilities (VRAM, model shards, load %). Zero configuration required.</li>
+          <li><strong>WAN (Internet):</strong> Opacus H3 global registry at <code>www.mycai.pro/api/registry</code> provides signaling. Devices exchange WebRTC offers/answers via the H3 mailbox, then connect directly via DataChannel with STUN NAT traversal.</li>
+        </ul>
+
+        <h2>Tensor Parallelism</h2>
+        <p>When a model doesn't fit on a single device, Myca automatically splits layers across mesh peers:</p>
+        <pre>
+# Single device: all layers local
+Node A: layers 0-32 (full model)
+
+# Two devices: automatic split
+Node A: layers 0-16
+Node B: layers 17-32
+
+# Activation flow: A computes → sends intermediate tensor → B completes</pre>
+
+        <h2>Compute Avoidance Hierarchy</h2>
+        <p>Myca always resolves at the cheapest, fastest layer first:</p>
+        <table class="bench-table">
+          <tr><th>Layer</th><th>Latency</th><th>Cost</th></tr>
+          <tr><td>Experience Memory (cached answer)</td><td>0ms</td><td>$0</td></tr>
+          <tr><td>Semantic Cache</td><td>~1ms</td><td>$0</td></tr>
+          <tr><td>Library (local RAG)</td><td>~5ms</td><td>$0</td></tr>
+          <tr><td>Colony (mesh peer)</td><td>~20ms</td><td>$0</td></tr>
+          <tr><td>Local GPU Inference</td><td>~200ms</td><td>$0</td></tr>
+          <tr><td>0G Compute (decentralized cloud)</td><td>~500ms</td><td>Per-token</td></tr>
+          <tr><td>Cloud</td><td>—</td><td>Disabled by default</td></tr>
+        </table>
+      </div>
+
+      <!-- SKILLS & DRIVERS -->
+      <div id="skills-drivers" class="doc-section">
+        <h1>Skills & Enterprise Drivers</h1>
+        <p>Skills are the atomic execution units of Myca. Each skill is a self-contained module with a manifest, typed inputs/outputs, and built-in telemetry.</p>
+
+        <h2>Built-in Skills</h2>
+        <table class="bench-table">
+          <tr><th>Package</th><th>Skills</th></tr>
+          <tr><td><code>core</code></td><td>chat, summarize, verify</td></tr>
+          <tr><td><code>filesystem</code></td><td>read, write, watch, list</td></tr>
+          <tr><td><code>browser</code></td><td>scrape, crawl, extract</td></tr>
+          <tr><td><code>network</code></td><td>HTTP requests, API calls</td></tr>
+          <tr><td><code>document</code></td><td>PDF parse, OCR, table extraction, translation</td></tr>
+          <tr><td><code>enterprise</code></td><td>ERP queries, CRM sync, report generation</td></tr>
+          <tr><td><code>anthropic_agent</code></td><td>Claude integration for complex reasoning</td></tr>
+          <tr><td><code>youtube_shorts</code></td><td>Video processing and content analysis</td></tr>
+        </table>
+
+        <h2>Skill Registry & Auto-Coercion</h2>
+        <p>The <code>SkillRegistry</code> provides automatic discovery, telemetry tracking (usage count, failure rate, avg latency), and a <strong>Universal Auto-Coercion Layer</strong> that normalizes parameter names, converts data types, and handles synonyms — so skills always execute successfully regardless of how the Planner formats its output.</p>
+
+        <h2>MCP (Model Context Protocol)</h2>
+        <p>Myca supports Claude-compatible MCP servers. Connect any stdio or SSE MCP server to instantly register its tools as dynamic Myca skills. The MCP bridge handles protocol translation, so external tools appear native in the Planner's capability graph.</p>
+
+        <h2>Enterprise Drivers</h2>
+        <p>The Enterprise platform extends skills with organizational context. Drivers connect Myca to enterprise systems (SAP, Salesforce, Jira, Slack, AWS, Oracle) through a standardized <code>BaseDriver</code> interface. Each driver provides:</p>
+        <ul>
+          <li>Connection lifecycle management</li>
+          <li>Credential resolution via Secrets Vault</li>
+          <li>Ontology mapping (your business terms → driver APIs)</li>
+          <li>Audit trail for every operation</li>
+        </ul>
+      </div>
+
+      <!-- EXECUTION INTELLIGENCE -->
+      <div id="exec-intelligence" class="doc-section">
+        <h1>Execution Intelligence v4</h1>
+        <p>Execution Intelligence is the brain that sits between the Planner and the runtime. Instead of running a flat sequence of steps, it orchestrates <strong>Agents</strong>, <strong>Dependency Graphs</strong>, <strong>Parallel Execution</strong>, <strong>Verification</strong>, and <strong>Self-Healing Loops</strong>.</p>
+
+        <div class="flow-chart">
+          <strong>User Intent</strong><br>
+          <div class="arrow">↓</div>
+          <strong>Intent Contract</strong> (goal, inputs, credentials, budget)<br>
+          <div class="arrow">↓</div>
+          <strong>Agent Generation</strong> (spawn N specialized agents)<br>
+          <div class="arrow">↓</div>
+          <strong>Dependency Analysis</strong> (build DAG from agent dependencies)<br>
+          <div class="arrow">↓</div>
+          <strong>Parallel Execution</strong> (run independent branches concurrently)<br>
+          <div class="arrow">↓</div>
+          <strong>Verification</strong> (independent verifiers check each output)<br>
+          <div class="arrow">↓</div>
+          <strong>Loop / Repair</strong> (retry failed nodes up to max_retries)<br>
+          <div class="arrow">↓</div>
+          <strong>Artifact</strong> (persist results to Knowledge OS)
+        </div>
+
+        <h2>The Four Primitives</h2>
+        <table class="bench-table">
+          <tr><th>Primitive</th><th>Purpose</th></tr>
+          <tr><td><strong>Agent</strong></td><td>A scoped execution unit with a specific goal, tools, and context. Agents are spawned dynamically based on task decomposition.</td></tr>
+          <tr><td><strong>Graph</strong></td><td>A Directed Acyclic Graph (DAG) of dependencies between agents. Independent branches execute in parallel via <code>asyncio.gather</code>.</td></tr>
+          <tr><td><strong>Verifier</strong></td><td>An independent checker that validates each agent's output against success criteria (format, completeness, accuracy).</td></tr>
+          <tr><td><strong>Loop</strong></td><td>Self-healing retry mechanism. Failed nodes are sent to the Repair Controller with error context, then re-executed.</td></tr>
+        </table>
+
+        <h2>Budget & Policy Gates</h2>
+        <p>Every execution has an <code>ExecutionBudget</code> with hard limits on cost, time, and token consumption. If the budget is exceeded, the engine performs a hard stop — no further nodes execute. This is enforced at the <code>GraphRuntime</code> level, before each node dispatch.</p>
+
+        <div class="related-box">
+          <h4>Related</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('fourteen-phases')" class="related-link">The 14 Phases</a>
+            <a href="#" onclick="showSection('planner-v3')" class="related-link">Planner v3</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE FLOW PLAYGROUND -->
+      <div id="playground-sim" class="doc-section">
+        <h1>Live Execution Flow Playground</h1>
+        <p>Experience Myca's <strong>Agent → Graph → Verify → Loop</strong> execution engine across 3 distinct real-world execution scenarios. Each frame demonstrates isolated multi-agent planning, governance, and output verification.</p>
+
+        <style>
+          .doc-pg-grid { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
+          .doc-flow-card {
+            background: #181E19;
+            border: 1px solid rgba(46, 107, 69, 0.3);
+            border-radius: 14px;
+            overflow: hidden;
+            color: #E2E8F0;
+            font-family: var(--font-sans);
+          }
+          .df-header {
+            background: #111512;
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-mono);
+            font-size: 12px;
+          }
+          .df-title { color: #2E6B45; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+          .df-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+          .df-prompt { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 10px 14px; border-radius: 8px; font-size: 13px; color: #F4F0E6; }
+          .df-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+          .df-step { background: rgba(0,0,0,0.3); border-top: 2px solid #2E6B45; padding: 10px; border-radius: 6px; font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+          .df-step.waiting { border-top-color: #d4a373; }
+          .df-step.pending { border-top-color: #555; opacity: 0.5; }
+          .df-footer { padding: 12px 18px; background: #111512; border-top: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 11px; }
+          .df-btn { background: #2E6B45; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: var(--font-mono); font-size: 11px; }
+          .df-btn:hover { background: #3F8C59; }
+          @media (max-width: 768px) { .df-steps { grid-template-columns: 1fr 1fr; } }
+        </style>
+
+        <div class="doc-pg-grid">
+          <!-- FRAME 1 -->
+          <div class="doc-flow-card">
+            <div class="df-header">
+              <div class="df-title">Frame 1: Telegram & Secrets Vault Flow</div>
+              <span style="color:#00e87a;">LOCAL RUNTIME</span>
+            </div>
+            <div class="df-body">
+              <div class="df-prompt"><strong>Prompt:</strong> "Müşteriye Telegram üzerinden haftalık rapor özeti gönder"</div>
+              <div class="df-steps" id="doc-flow1">
+                <div class="df-step">
+                  <span style="color:#889988;">01. Contract</span>
+                  <strong>Intent Resolved</strong>
+                </div>
+                <div class="df-step">
+                  <span style="color:#889988;">02. Secrets</span>
+                  <strong>Token Vault OK</strong>
+                </div>
+                <div class="df-step">
+                  <span style="color:#889988;">03. Driver</span>
+                  <strong>send_msg Exec</strong>
+                </div>
+                <div class="df-step">
+                  <span style="color:#889988;">04. Verifier</span>
+                  <strong style="color:#00e87a;">200 OK Verified</strong>
+                </div>
+              </div>
+            </div>
+            <div class="df-footer">
+              <span style="color:#889988;">Score: 98/100 • Cost: $0.00</span>
+              <button class="df-btn" onclick="runDocSim(1)">▶ Run Simulation</button>
+            </div>
+          </div>
+
+          <!-- FRAME 2 -->
+          <div class="doc-flow-card">
+            <div class="df-header">
+              <div class="df-title">Frame 2: Parallel Scraper & Report Flow</div>
+              <span style="color:#00e87a;">PARALLEL DAG</span>
+            </div>
+            <div class="df-body">
+              <div class="df-prompt"><strong>Prompt:</strong> "En büyük 3 rakibin fiyatlarını tara, doğrula ve rapor oluştur"</div>
+              <div class="df-steps" id="doc-flow2">
+                <div class="df-step">
+                  <span style="color:#889988;">01. Graph</span>
+                  <strong>DAG Compiled</strong>
+                </div>
+                <div class="df-step">
+                  <span style="color:#889988;">02. Scrapers</span>
+                  <strong>3 Nodes Parallel</strong>
+                </div>
+                <div class="df-step">
+                  <span style="color:#889988;">03. Critic</span>
+                  <strong>Sanity Check OK</strong>
+                </div>
+                <div class="df-step">
+                  <span style="color:#889988;">04. Artifact</span>
+                  <strong style="color:#00e87a;">Report Generated</strong>
+                </div>
+              </div>
+            </div>
+            <div class="df-footer">
+              <span style="color:#889988;">Score: 99/100 • Savings: $14.50</span>
+              <button class="df-btn" onclick="runDocSim(2)">▶ Run Simulation</button>
+            </div>
+          </div>
+
+          <!-- FRAME 3 -->
+          <div class="doc-flow-card">
+            <div class="df-header">
+              <div class="df-title">Frame 3: SAP ERP & Passkey Approval Flow</div>
+              <span style="color:#d4a373;">PASSKEY GATEWAY</span>
+            </div>
+            <div class="df-body">
+              <div class="df-prompt"><strong>Prompt:</strong> "SAP ERP üzerinden $75,000 ödeme talimatını işleme al"</div>
+              <div class="df-steps" id="doc-flow3">
+                <div class="df-step">
+                  <span style="color:#889988;">01. Policy</span>
+                  <strong>SOX Passed</strong>
+                </div>
+                <div class="df-step waiting">
+                  <span style="color:#d4a373;">02. Passkey</span>
+                  <strong style="color:#d4a373;">PIN Required</strong>
+                </div>
+                <div class="df-step pending">
+                  <span style="color:#666;">03. SAP Driver</span>
+                  <span style="color:#666;">Pending</span>
+                </div>
+                <div class="df-step pending">
+                  <span style="color:#666;">04. Ledger DB</span>
+                  <span style="color:#666;">Pending</span>
+                </div>
+              </div>
+            </div>
+            <div class="df-footer">
+              <span style="color:#d4a373;">Approval Required</span>
+              <button class="df-btn" style="background:#d4a373; color:#181E19;" onclick="runDocSim(3)">🔑 Approve with Passkey</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function runDocSim(id) {
+          const container = document.getElementById(`doc-flow${id}`);
+          if (!container) return;
+          const steps = container.children;
+          Array.from(steps).forEach((s, idx) => {
+            setTimeout(() => {
+              s.style.transform = 'translateY(-2px)';
+              s.style.borderColor = '#00e87a';
+              setTimeout(() => { s.style.transform = 'translateY(0)'; }, 300);
+            }, idx * 200);
+          });
+        }
+      </script>
+
+      <!-- 14 PHASES -->
+      <div id="fourteen-phases" class="doc-section">
+        <h1>The 14 Development Phases</h1>
+        <p>Execution Intelligence v4 was built incrementally across 14 phases — each one adding a production-ready capability to the Myca stack.</p>
+
+        <div class="phase-grid">
+          <div class="phase-card">
+            <h3>Phase 1-2: Engine & Contracts</h3>
+            <ul>
+              <li>ExecutionIntelligenceEngine core orchestrator</li>
+              <li>Intent → Contract conversion (goal, inputs, credentials, budget)</li>
+              <li>ExecutionDB for persistent state tracking</li>
+              <li>CheckpointManager for execution resumption</li>
+            </ul>
+          </div>
+          <div class="phase-card">
+            <h3>Phase 3-4: Agents & Graphs</h3>
+            <ul>
+              <li>AgentRuntime: dynamic agent spawning and context injection</li>
+              <li>DependencyAnalyzer: build DAGs from agent relationships</li>
+              <li>GraphRuntime: topological sort + parallel execution</li>
+              <li>Parallelism module: concurrent branch execution via asyncio</li>
+            </ul>
+          </div>
+          <div class="phase-card">
+            <h3>Phase 5-6: Verification & Loops</h3>
+            <ul>
+              <li>VerifierRuntime: independent output validation</li>
+              <li>SuccessCriteria: format, completeness, accuracy checks</li>
+              <li>LoopRuntime: self-healing retry with max_retries</li>
+              <li>RepairController: error-context-aware re-execution</li>
+            </ul>
+          </div>
+          <div class="phase-card">
+            <h3>Phase 7: Budget & Policy</h3>
+            <ul>
+              <li>ExecutionBudget: hard cost/time/token limits</li>
+              <li>Budget enforcement at GraphRuntime dispatch level</li>
+              <li>Policy gates: GDPR, SOX, ISO27001 compliance checks</li>
+              <li>Passkey approval queue for high-risk operations</li>
+            </ul>
+          </div>
+          <div class="phase-card">
+            <h3>Phase 8-10: Studio UI</h3>
+            <ul>
+              <li>ExecutionIntelligence Studio: full control surface</li>
+              <li>ContractViewer: intent → graph → cost visualization</li>
+              <li>Live node telemetry: status, duration, output per agent</li>
+              <li>Secrets & Credentials management UI</li>
+            </ul>
+          </div>
+          <div class="phase-card">
+            <h3>Phase 11-12: Enterprise UI</h3>
+            <ul>
+              <li>Enterprise Domain: Dashboard, Systems, Drivers, Ontology</li>
+              <li>Capabilities, Approvals, Policies, Execution, Audit</li>
+              <li>Analytics: ROI, hours saved, workflow performance</li>
+              <li>Global Search across all enterprise entities</li>
+            </ul>
+          </div>
+          <div class="phase-card">
+            <h3>Phase 13: E2E Validation</h3>
+            <ul>
+              <li>Real Telegram execution with credential resolution</li>
+              <li>Parallel branch execution verified end-to-end</li>
+              <li>Loop/repair cycle tested with intentional failures</li>
+              <li>Budget hard-stop verified at runtime level</li>
+            </ul>
+          </div>
+          <div class="phase-card highlight">
+            <h3>Phase 14: Economics</h3>
+            <ul>
+              <li>EconomicLedger: event-driven cost tracking</li>
+              <li>ExecutionOptimizer: runtime cost/latency evaluation</li>
+              <li>SavingsEngine: verified savings claims with confidence</li>
+              <li>Enterprise Economics Dashboard with spend breakdown</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENTERPRISE -->
+      <div id="enterprise" class="doc-section">
+        <h1>Enterprise Platform</h1>
+        <p>Myca's enterprise layer provides the governance, visibility, and control that organizations need to deploy autonomous AI execution at scale.</p>
+
+        <h2>Enterprise Domain Modules</h2>
+        <div class="layer-grid">
+          <div class="layer-block">Dashboard<small>KPIs & Health</small></div>
+          <div class="layer-block">Systems<small>Connected Infra</small></div>
+          <div class="layer-block">Drivers<small>SAP / CRM / AWS</small></div>
+          <div class="layer-block">Ontology<small>Business Mapping</small></div>
+          <div class="layer-block">Capabilities<small>Skill Catalog</small></div>
+          <div class="layer-block">Approvals<small>Passkey Queue</small></div>
+          <div class="layer-block">Policies<small>GDPR / SOX</small></div>
+          <div class="layer-block">Execution<small>Live Runs</small></div>
+          <div class="layer-block">Audit<small>Full History</small></div>
+          <div class="layer-block">Analytics<small>ROI & Usage</small></div>
+          <div class="layer-block">Economics<small>Cost & Savings</small></div>
+          <div class="layer-block">Secrets<small>Credential Vault</small></div>
+        </div>
+
+        <h2>Passkey Approval Queue</h2>
+        <p>High-risk operations — SAP payments above $50k, AWS infrastructure scaling, Oracle DDL changes — require hardware Passkey/PIN approval before execution. The approval queue is embedded in the Execution Intelligence pipeline: the engine pauses at the approval gate and only resumes after biometric or PIN confirmation.</p>
+
+        <h2>Policy Engine</h2>
+        <p>Pre-execution policy checks for GDPR data sovereignty, SOX budget limits, and ISO27001 security controls. Policies are evaluated <strong>before</strong> the Planner commits a graph to runtime — violations block execution and surface actionable remediation steps.</p>
+
+        <h2>Audit Trail</h2>
+        <p>Every execution, approval, policy evaluation, and driver call is logged to an append-only audit trail with tamper-evident hashing. Exportable for compliance reporting.</p>
+      </div>
+
+      <!-- PRICING & ECONOMICS -->
+      <div id="pricing-economics" class="doc-section">
+        <h1>Fiyatlandırma (Pricing) & Koltuksuz İş Modeli</h1>
+        <p style="font-size: 20px; font-family: var(--font-serif); color: var(--primary); font-style: italic; margin-bottom: 24px;">"Myca doesn't charge for seats. It charges for work."</p>
+        <p>Geleneksel SaaS platformları ne kadar değer üretildiğine bakmaksızın kullanıcı/koltuk başına aylık lisans faturası keser. Myca fiyatlandırmayı çalışan sayısından bağımsızlaştırır ve doğrudan <strong>gerçekleştirilen iş yüküne (executed work)</strong> bağlar.</p>
+
+        <h2>Hesaplama & Maliyet Katmanı Matrisi (Compute Tiers)</h2>
+        <table class="bench-table">
+          <tr><th>Çalışma Katmanı</th><th>Hesaplama Ücreti</th><th>Gizlilik Seviyesi</th><th>İdeal Kullanım Senaryosu</th></tr>
+          <tr><td><strong>LOCAL (Apple Silicon / CUDA)</strong></td><td><strong>$0.00 / token</strong></td><td>Hava Yalıtımlı (Air-Gapped)</td><td>İç belgeler, yerel şifreler, maksimum gizlilik</td></tr>
+          <tr><td><strong>COLONY (P2P Wi-Fi Mesh)</strong></td><td><strong>$0.00 / token</strong></td><td>Uçtan Uca Şifreli Mesh</td><td>Çoklu cihaz ile ağır paralel iş akışları</td></tr>
+          <tr><td><strong>0G COMPUTE (Merkeziyetsiz Bulut)</strong></td><td>Kullanım Başına Token</td><td>Sıfır Bilgi (Zero-Knowledge)</td><td>Yüksek ölçekli web tarama ve büyük veri sentezi</td></tr>
+          <tr><td><strong>ENTERPRISE GPU CLUSTERS</strong></td><td>Özel Kullanım Tarifesi</td><td>İzole Kurumsal Kiracı</td><td>SAP/ERP büyük matris ve finansal veri işleme</td></tr>
+        </table>
+
+        <h2>Fiyatlandırma Paketleri (Pricing Tiers)</h2>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="pc-name">Community</div>
+            <div class="pc-price">$0</div>
+            <div class="pc-desc">Açık kaynak. Kendi donanımınızda %100 ücretsiz çalıştırın.</div>
+            <ul class="pc-features">
+              <li class="pc-feature">Tam yerel execution OS</li>
+              <li class="pc-feature">Colony P2P LAN Mesh</li>
+              <li class="pc-feature">Tüm temel beceriler (Skills)</li>
+              <li class="pc-feature">MIT Özgür Lisansı</li>
+            </ul>
+          </div>
+          <div class="pricing-card featured">
+            <div class="pc-name">Enterprise</div>
+            <div class="pc-price">İş Başına</div>
+            <div class="pc-desc">Koltuk lisansı yok. Sadece üretilen iş için ödeyin.</div>
+            <ul class="pc-features">
+              <li class="pc-feature">Community Özelliklerinin Tamamı</li>
+              <li class="pc-feature">SAP, Oracle & CRM Sürücüleri</li>
+              <li class="pc-feature">Donanım Passkey Onay Kuyruğu</li>
+              <li class="pc-feature">GDPR / SOX Politika Motoru</li>
+              <li class="pc-feature">0G & GPU Compute Erişimi</li>
+              <li class="pc-feature">Verified Savings Raporlaması</li>
+            </ul>
+          </div>
+          <div class="pricing-card">
+            <div class="pc-name">Sovereign</div>
+            <div class="pc-price">Özel</div>
+            <div class="pc-desc">Kendi altyapınız. Kendi kurallarınız.</div>
+            <ul class="pc-features">
+              <li class="pc-feature">Enterprise Özelliklerinin Tamamı</li>
+              <li class="pc-feature">On-Premise Rust Core Kurulumu</li>
+              <li class="pc-feature">Özel Kurumsal Sürücü Geliştirme</li>
+              <li class="pc-feature">7/24 Kesintisiz Destek</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2>Maliyet Hesaplama Formülü</h2>
+        <pre>
+Toplam İş Maliyeti = Platform Taban Ücreti + (Çalıştırma Sayısı × Execution Ücreti) + Compute Ücreti
+
+* Not: Local (Kendi Donanımınız) üzerinde çalışan işlerde Compute Ücreti = $0.00'dır.</pre>
+      </div>
+
+      <!-- WORK ECONOMICS & LEDGER -->
+      <div id="economics-ledger" class="doc-section">
+        <h1>Work Economics & Economic Ledger DB</h1>
+        <p>Myca'nın maliyet ve tasarruf takibi doğrudan <strong>Economic Ledger</strong> servisi (`myca/economics/ledger.py`) tarafından olay bazlı (event-driven) olarak yönetilir.</p>
+
+        <h2>EconomicEvent Mimarisi</h2>
+        <p>Execution Engine bir görevi çalıştırırken fiyat hesaplamakla vakit kaybetmez; olayları deftere (Ledger) kaydeder:</p>
+        <ul>
+          <li><code>ExecutionStarted</code>: Görev başlatıldığında hedef ve tahmin bütçe kaydı.</li>
+          <li><code>ComputeConsumed</code>: Tüketilen GPU saniyesi ve token miktarının kaydı.</li>
+          <li><code>VerificationCompleted</code>: Bağımsız Verifier onay verdiğinde finansal değerleşme.</li>
+          <li><code>ArtifactGenerated</code>: Üretilen rapor/dosya çıktısının ekonomiye katılımı.</li>
+        </ul>
+
+        <h2>ExecutionOptimizer Algoritması</h2>
+        <p><code>ExecutionOptimizer.evaluate(intent, requires_privacy)</code> metodu, prompt geldiğinde 4 altyapıyı karşılaştırır ve en düşük gecikme/maliyet çiftini seçer.</p>
+
+        <h2>Verified Savings Engine Formülleri</h2>
+        <table class="bench-table">
+          <tr><th>Tasarruf Kaynağı</th><th>Hesaplama Formülü</th><th>Güven Oranı</th></tr>
+          <tr><td><strong>İnsan Eforu Tasarrufu</strong></td><td>(Myca Öncesi Manuel Saat - Myca Sonrası Saat) × $80/saat</td><td>96%</td></tr>
+          <tr><td><strong>Yazılım İptal Tasarrufu</strong></td><td>İptal Edilen Legacy SaaS Abonelik Toplamı</td><td>100%</td></tr>
+          <tr><td><strong>Hızlandırma Tasarrufu</strong></td><td>(14 Gün → 2 Saat) İvmelenen Nakit Akışı Değeri</td><td>88%</td></tr>
+          <tr><td><strong>Compute Optimizasyonu</strong></td><td>Bulut Faturası ($95k) - Myca Compute ($21k)</td><td>100%</td></tr>
+        </table>
+      </div>
+
+      <!-- REHBERLER & TARİFLER: WORKFLOWS -->
+      <div id="workflows-recipes" class="doc-section">
+        <h1>Workflows (İş Akışları) Rehberi</h1>
+        <p>Myca Workflow Studio, niyetlerin (Intent) adım adım görsel düğümlere (Nodes) ve doğrudan yürütülebilir DAG grafiklerine dönüştürüldüğü ortamdır.</p>
+
+        <h2>İş Akışı (Workflow) Mimarisi</h2>
+        <div class="flow-chart">
+          [Trigger / İhtiyaç] ➔ [Planner v3 Compilation] ➔ [Capability & Skill Binding]<br>
+          <div class="arrow">↓</div>
+          [Dependency Analyzer (DAG Generation)] ➔ [Parallel Graph Runtime]<br>
+          <div class="arrow">↓</div>
+          [Verification Engine (Criteria Match)] ➔ [State Checkpoint & Memory Storage]
+        </div>
+
+        <h2>4 Detaylı Üretim İş Akışı</h2>
+
+        <h3>1. Günlük Otonom Pazar Araştırması & Telegram Bildirimi</h3>
+        <p><strong>Amaç:</strong> Rakip sitelerin fiyatlarını sabah 08:00'de tara, sapmaları analiz et, Telegram'a gönder.</p>
+        <pre>
+{
+  "workflow_id": "market_research_daily",
+  "trigger": { "type": "cron", "expression": "0 8 * * *" },
+  "nodes": [
+    { "id": "scrape_n1", "skill": "browser.scrape", "url": "https://competitor1.com" },
+    { "id": "scrape_n2", "skill": "browser.scrape", "url": "https://competitor2.com" },
+    { "id": "critic", "skill": "core.verify", "depends_on": ["scrape_n1", "scrape_n2"] },
+    { "id": "notify", "skill": "communication.send", "target": "telegram", "depends_on": ["critic"] }
+  ]
+}</pre>
+
+        <h3>2. SAP ERP Ödeme Talimatı & Hardware Passkey Onayı</h3>
+        <p><strong>Amaç:</strong> Fatura tutarı $50,000 üzerindeyse biyometrik TouchID/Passkey PIN onayı alarak SAP'ye işle.</p>
+        <pre>
+{
+  "workflow_id": "sap_payment_approval",
+  "policy": { "sox_limit": 50000 },
+  "nodes": [
+    { "id": "policy_check", "skill": "enterprise.policy_eval" },
+    { "id": "passkey_gate", "skill": "enterprise.passkey_verify", "condition": "amount > 50000" },
+    { "id": "sap_post", "skill": "enterprise.sap_driver", "depends_on": ["passkey_gate"] },
+    { "id": "ledger_log", "skill": "economics.ledger_write", "depends_on": ["sap_post"] }
+  ]
+}</pre>
+
+        <h3>3. Çevrimdışı Doküman RAG & Bilgi OS Sentezi</h3>
+        <p><strong>Amaç:</strong> Yerel klasördeki PDF/Word dosyalarını Blake3 ile indeksle ve internete çıkmadan cevap üret.</p>
+
+        <h3>4. Koloni P2P Mesh Model Katman Bölümleme</h3>
+        <p><strong>Amaç:</strong> 70B modeli iki yerel Mac cihazı arasında QUIC transport üzerinden katman katman böler.</p>
+      </div>
+
+      <!-- REHBERLER & TARİFLER: HAZIR TARİFLER -->
+      <div id="guides-recipes" class="doc-section">
+        <h1>Hazır Tarifler (Recipes)</h1>
+        <p>Geliştiriciler ve sistem yöneticileri için hemen kopyalayıp kullanabilecekleri 6 hazır kod ve otomasyon tarifi.</p>
+
+        <h2>Tarif A: Klasör İzleyici & Telegram Anlık Bildirim</h2>
+        <pre>
+from myca.sdk import Myca
+
+async with Myca() as ai:
+    # Watch desktop folder for new PDFs and auto-summarize to Telegram
+    await ai.watch_folder("~/Desktop/Invoices", pattern="*.pdf", action="summarize_and_send_telegram")</pre>
+
+        <h2>Tarif B: Claude MCP (Model Context Protocol) Server Bağlama</h2>
+        <pre>
+# terminal
+myca-cli mcp register --name github-mcp --cmd "npx -y @modelcontextprotocol/server-github"</pre>
+
+        <h2>Tarif C: Paralel Web Taraması ve Critic Agent Doğrulaması</h2>
+        <pre>
+from myca.execution.intelligence.engine import ExecutionIntelligenceEngine
+
+engine = ExecutionIntelligenceEngine(inference_engine=None, secrets_vault=None)
+plan = await engine.plan("Research competitor pricing and verify claims")</pre>
+
+        <h2>Tarif D: Özel Kurumsal Sürücü (Custom Enterprise Driver) Yazımı</h2>
+        <pre>
+from myca.execution.enterprise.drivers.base_driver import BaseDriver
+
+class CustomCRMDriver(BaseDriver):
+    async def execute(self, action: str, params: dict):
+        # Implementation for custom internal CRM
+        return {"status": "success", "crm_id": "CRM-9842"}</pre>
+
+        <h2>Tarif E: Biyometrik Passkey Onay Kapısı Entegrasyonu</h2>
+        <pre>
+from myca.execution.enterprise.approval_engine import PasskeyApprovalEngine
+
+approval = await PasskeyApprovalEngine.request_approval(
+    task_id="task_998",
+    description="Transfer $75,000 via SAP Driver",
+    risk_level="HIGH"
+)</pre>
+
+        <h2>Tarif F: Spekülatif Çıkarım Motoru (Draft + Verify)</h2>
+        <pre>
+# .env ayarları ile hızlı taslak (Phi-3) + doğrulama (Llama-3.2) çift model çalıştırma
+MYCA_SPECULATIVE=true
+MYCA_DRAFT_MODEL=phi3:mini
+MYCA_VERIFY_MODEL=llama3.2:3b</pre>
+      </div>
+
+      <!-- SDK -->
+      <div id="sdk" class="doc-section">
+        <h1>Python SDK</h1>
+        <p>Embed Myca's execution engine into any Python application. The SDK provides a unified interface to LLM inference, web scraping, session memory, and the Software Factory.</p>
+
+        <pre>
+from myca.sdk import Myca
+
+async with Myca() as ai:
+    # Text generation
+    result = await ai.generate("Explain quantum computing in 2 sentences.")
+    
+    # Streaming
+    async for token in ai.stream("Write a haiku about distributed systems"):
+        print(token, end="", flush=True)
+    
+    # Embeddings
+    vec = await ai.embed("Hello world")
+    
+    # Web scraping
+    page = await ai.scrape("https://example.com")
+    
+    # Session memory (handover between sessions)
+    await ai.handover("Today's progress", next_steps=["Write tests"])
+    ctx = await ai.resume()</pre>
+
+        <h2>SDK Capabilities</h2>
+        <table class="bench-table">
+          <tr><th>Module</th><th>Methods</th></tr>
+          <tr><td><strong>LLM</strong></td><td><code>generate</code>, <code>stream</code>, <code>embed</code>, <code>classify</code>, <code>rerank</code></td></tr>
+          <tr><td><strong>Web</strong></td><td><code>scrape</code>, <code>crawl</code>, <code>extract</code></td></tr>
+          <tr><td><strong>Brain</strong></td><td><code>handover</code>, <code>resume</code>, <code>index</code>, <code>search</code>, <code>ingest</code></td></tr>
+          <tr><td><strong>Factory</strong></td><td><code>spec</code>, <code>build</code>, <code>review</code>, <code>loop</code></td></tr>
+        </table>
+
+        <h2>Supported Backends</h2>
+        <ul>
+          <li><code>llamacpp</code> — Local in-process inference (Apple Silicon MLX / CUDA)</li>
+          <li><code>ollama</code> — Connect to local Ollama server</li>
+          <li><code>0g_compute</code> — Decentralized compute via 0G Network</li>
+          <li><code>remote</code> — Connect to a running Myca node via HTTP</li>
+          <li><code>mock</code> — Lightweight test backend (no GPU needed)</li>
+          <li><code>auto</code> — Auto-detect best available backend</li>
+        </ul>
+      </div>
+
+      <!-- BENCHMARKS -->
+      <div id="benchmarks" class="doc-section">
+        <h1>Benchmarks & Comparison</h1>
+
+        <h2>Myca vs. Alternatives</h2>
+        <table class="bench-table">
+          <tr><th>Feature</th><th>Myca</th><th>ChatGPT</th><th>Jan.ai</th><th>LangChain</th></tr>
+          <tr><td>Runs 100% locally</td><td>✓</td><td>✗</td><td>✓</td><td>✗</td></tr>
+          <tr><td>No account / login</td><td>✓</td><td>✗</td><td>✓</td><td>✓</td></tr>
+          <tr><td>P2P device mesh</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+          <tr><td>Multi-agent planner</td><td>✓ (9 agents)</td><td>✗</td><td>✗</td><td>Partial</td></tr>
+          <tr><td>Execution graphs (DAG)</td><td>✓</td><td>✗</td><td>✗</td><td>✓</td></tr>
+          <tr><td>Independent verification</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+          <tr><td>Enterprise governance</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+          <tr><td>Sovereign Rust runtime</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+          <tr><td>Works offline</td><td>✓</td><td>✗</td><td>✓</td><td>✗</td></tr>
+          <tr><td>Open source</td><td>MIT</td><td>✗</td><td>MIT</td><td>MIT</td></tr>
+        </table>
+
+        <div class="related-box">
+          <h4>Resources</h4>
+          <div class="related-links">
+            <a href="https://github.com/brienteth/myc-ai" class="related-link">GitHub Repository</a>
             <a href="#" onclick="showSection('getting-started')" class="related-link">Getting Started</a>
           </div>
         </div>
       </div>
+
     </main>
   </div>
 
@@ -268,8 +1103,27 @@ User Prompt ➔ Intent Agent ➔ Capability Agent ➔ Parameter Agent ➔ Securi
       document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
       
       const sec = document.getElementById(id);
-      if (sec) sec.classList.add('active');
+      if (sec) {
+        sec.classList.add('active');
+      } else {
+        const fallback = document.getElementById('overview');
+        if (fallback) fallback.classList.add('active');
+      }
+      
+      document.querySelectorAll(`.menu-item[onclick="showSection('${id}')"]`).forEach(el => el.classList.add('active'));
+      
+      const mainEl = document.querySelector('main');
+      if (mainEl) mainEl.scrollTo(0, 0);
+      window.scrollTo(0, 0);
     }
+
+    // Hash navigation handler
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        showSection(hash);
+      }
+    });
   </script>
 </body>
 </html>
