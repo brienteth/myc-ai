@@ -3,7 +3,8 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/docs-web", "destination": "/docs" },
-    { "source": "/docs-web/(.*)", "destination": "/docs" }
+    { "source": "/docs-web/(.*)", "destination": "/docs" },
+    { "source": "/api/(.*)", "destination": "/api/registry/[...path]" }
   ]
 }
 
