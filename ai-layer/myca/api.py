@@ -42,6 +42,13 @@ except ImportError:
 from myca.runtime import RuntimeEngine
 from myca.speculative import SpeculativeDecoder
 from myca.skills.core.registry import SkillRegistry
+from myca.identity import (
+    get_or_create_identity_key,
+    get_public_key_hex,
+    get_fingerprint,
+    sign_message,
+    verify_signature
+)
 import myca.database as db
 
 logger = logging.getLogger("myca.api")
@@ -408,12 +415,274 @@ def create_app(node: MycaNode) -> FastAPI:
         return {"status": "registered", "node_id": node_id, "peers": len(node.discovery.peers)}
 
     # ── Opacus H3 Registry & WebRTC Signaling Endpoints ───────────────
-
     _h3_registered_agents: dict = {}
     _h3_signals: dict = {}
+    _pending_pairings: dict = {}
+
+    # Initialize Desktop identity public references
+    try:
+        _desktop_private_key = get_or_create_identity_key()
+        _desktop_public_hex = get_public_key_hex(_desktop_private_key)
+        _desktop_fingerprint = get_fingerprint(_desktop_public_hex)
+    except Exception as _e:
+        logger.error(f"Failed to load desktop cryptographic credentials: {_e}")
+        _desktop_private_key = None
+        _desktop_public_hex = ""
+        _desktop_fingerprint = ""
+
+    @app.post("/api/registry/pair/request")
+    async def pairing_request(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            pub_hex = body.get("public_key")
+            device_name = body.get("device_name", "Remote Device")
+            device_type = body.get("device_type", "mobile")
+            capabilities = body.get("capabilities", [])
+
+            if not node_id or not pub_hex:
+                return JSONResponse(status_code=400, content={"error": "Missing node_id or public_key"})
+
+            # Check if already trusted in SQLite DB
+            trusted = db.get_trusted_node(node_id)
+            if trusted:
+                # Return challenge for fast reconnection
+                challenge = _uuid.uuid4().hex
+                _pending_pairings[node_id] = {
+                    "node_id": node_id,
+                    "public_key": pub_hex,
+                    "device_name": device_name,
+                    "device_type": device_type,
+                    "capabilities": capabilities,
+                    "challenge": challenge,
+                    "status": "reconnecting",
+                    "created_at": time.time()
+                }
+                return {
+                    "status": "reconnecting",
+                    "challenge": challenge,
+                    "desktop_pubkey": _desktop_public_hex,
+                    "desktop_fingerprint": _desktop_fingerprint
+                }
+
+            # Generate random 6-digit pairing code
+            import random
+            code = f"{random.randint(100000, 999999)}"
+            challenge = _uuid.uuid4().hex
+
+            _pending_pairings[node_id] = {
+                "node_id": node_id,
+                "public_key": pub_hex,
+                "device_name": device_name,
+                "device_type": device_type,
+                "capabilities": capabilities,
+                "code": code,
+                "challenge": challenge,
+                "status": "pending",
+                "created_at": time.time()
+            }
+
+            logger.info(f"[PAIRING] Request from {device_name} ({node_id}) with code {code}")
+            return {
+                "status": "pending",
+                "code": code,
+                "challenge": challenge,
+                "desktop_pubkey": _desktop_public_hex,
+                "desktop_fingerprint": _desktop_fingerprint
+            }
+        except Exception as e:
+            return JSONResponse(status_code=400, content={"error": str(e)})
+
+    @app.post("/api/registry/pair/approve")
+    async def pairing_approve(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            if not node_id or node_id not in _pending_pairings:
+                return JSONResponse(status_code=400, content={"error": "No pending request found for node_id"})
+
+            pair_info = _pending_pairings[node_id]
+            pair_info["status"] = "approved"
+            
+            # Sign the remote challenge using Desktop private key
+            if not _desktop_private_key:
+                return JSONResponse(status_code=500, content={"error": "Desktop key material unavailable"})
+            
+            chal_bytes = pair_info["challenge"].encode("utf-8")
+            desktop_sig = sign_message(_desktop_private_key, chal_bytes).hex()
+            pair_info["desktop_signature"] = desktop_sig
+
+            logger.info(f"[PAIRING] Request approved for {pair_info['device_name']} ({node_id})")
+            return {"status": "approved", "desktop_signature": desktop_sig}
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": str(e)})
+
+    @app.post("/api/registry/pair/decline")
+    async def pairing_decline(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            if node_id in _pending_pairings:
+                _pending_pairings.pop(node_id)
+            return {"status": "declined", "node_id": node_id}
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": str(e)})
+
+    @app.post("/api/registry/pair/verify")
+    async def pairing_verify(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            sig_hex = body.get("signature") # remote node's signature over the challenge
+
+            if not node_id or not sig_hex:
+                return JSONResponse(status_code=400, content={"error": "Missing node_id or signature"})
+
+            if node_id not in _pending_pairings:
+                return JSONResponse(status_code=400, content={"error": "No pending pairing session found"})
+
+            pair_info = _pending_pairings[node_id]
+            if pair_info["status"] != "approved":
+                return {"status": pair_info["status"]}
+
+            # Verify remote signature over our desktop challenge
+            desktop_challenge = pair_info["challenge"]
+            remote_pubkey = pair_info["public_key"]
+            
+            is_valid = verify_signature(
+                public_key_hex=remote_pubkey,
+                message=desktop_challenge.encode("utf-8"),
+                signature_hex=sig_hex
+            )
+
+            if not is_valid:
+                return JSONResponse(status_code=400, content={"error": "Cryptographic signature verification failed"})
+
+            # Cryptographically trusted! Save to SQLite DB
+            import json
+            db.add_trusted_node(
+                node_id=node_id,
+                public_key=remote_pubkey,
+                device_name=pair_info["device_name"],
+                device_type=pair_info["device_type"],
+                capabilities=json.dumps(pair_info["capabilities"])
+            )
+
+            # Insert into active registered agents
+            _h3_registered_agents[node_id] = {
+                "node_id": node_id,
+                "role": pair_info["device_type"] + "_web",
+                "status": "approved",
+                "last_seen": time.time()
+            }
+
+            _pending_pairings.pop(node_id, None)
+            logger.info(f"[PAIRING] Node {pair_info['device_name']} ({node_id}) is now TRUSTED.")
+
+            return {
+                "status": "approved",
+                "desktop_signature": pair_info.get("desktop_signature")
+            }
+        except Exception as e:
+            return JSONResponse(status_code=400, content={"error": str(e)})
+
+    @app.post("/api/registry/pair/reconnect")
+    async def pairing_reconnect(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            timestamp = body.get("timestamp") # float
+            sig_hex = body.get("signature") # signature of timestamp
+
+            if not node_id or not timestamp or not sig_hex:
+                return JSONResponse(status_code=400, content={"error": "Missing reconnect params"})
+
+            # Replay attack prevention: must be within last 120s
+            if abs(time.time() - float(timestamp)) > 120.0:
+                return JSONResponse(status_code=400, content={"error": "Timestamp verification failed (clock drift or replay attack)"})
+
+            # Check DB
+            trusted_peer = db.get_trusted_node(node_id)
+            if not trusted_peer:
+                return JSONResponse(status_code=401, content={"error": "Device is not trusted"})
+
+            # Verify signature
+            is_valid = verify_signature(
+                public_key_hex=trusted_peer["public_key"],
+                message=str(timestamp).encode("utf-8"),
+                signature_hex=sig_hex
+            )
+
+            if not is_valid:
+                return JSONResponse(status_code=401, content={"error": "Authentication failed"})
+
+            # Approved & Reconnected!
+            import json
+            caps = []
+            try:
+                caps = json.loads(trusted_peer.get("capabilities", "[]"))
+            except Exception:
+                pass
+
+            _h3_registered_agents[node_id] = {
+                "node_id": node_id,
+                "role": trusted_peer.get("device_type", "mobile") + "_web",
+                "status": "approved",
+                "last_seen": time.time()
+            }
+            db.update_node_last_seen(node_id)
+
+            logger.info(f"[PAIRING] Reconnection authenticated for trusted device: {trusted_peer.get('device_name')} ({node_id})")
+            return {"status": "connected"}
+        except Exception as e:
+            return JSONResponse(status_code=400, content={"error": str(e)})
+
+    @app.get("/api/nodes/trusted")
+    async def get_trusted_nodes():
+        return {"trusted": db.list_trusted_nodes()}
+
+    @app.post("/api/nodes/revoke")
+    async def revoke_node_trust(req: Request):
+        try:
+            body = await req.json()
+            node_id = body.get("node_id")
+            if not node_id:
+                return JSONResponse(status_code=400, content={"error": "Missing node_id"})
+            
+            db.remove_trusted_node(node_id)
+            _h3_registered_agents.pop(node_id, None)
+            logger.info(f"[PAIRING] Trust revoked for node_id: {node_id}")
+            return {"status": "revoked", "node_id": node_id}
+        except Exception as e:
+            return JSONResponse(status_code=500, content={"error": str(e)})
+
+    @app.get("/api/registry/agents")
+    async def h3_list_agents_api(capability: Optional[str] = None):
+        # Return merged pending pairings and active registered agents
+        now = time.time()
+        agents = []
+        # Return pending pairing requests so desktop Colony can show approvals
+        for node_id, p in _pending_pairings.items():
+            if p.get("status") == "pending" and now - p.get("created_at", 0) < 120:
+                agents.append({
+                    "node_id": p["node_id"],
+                    "public_key": p["public_key"],
+                    "device_name": p["device_name"],
+                    "device_type": p["device_type"],
+                    "capabilities": p["capabilities"],
+                    "code": p["code"],
+                    "status": "pending",
+                    "last_seen": p["created_at"]
+                })
+        # Add active reconnects
+        for node_id, agent in _h3_registered_agents.items():
+            if now - agent.get("last_seen", 0) < 120:
+                agents.append(agent)
+        return {"agents": agents, "total": len(agents)}
 
     @app.post("/api/registry/register")
     async def h3_register_api(req: Request):
+        # Fallback register endpoint mapping
         try:
             body = await req.json()
             node_id = body.get("node_id", f"node-{_uuid.uuid4().hex[:6]}")
@@ -422,23 +691,6 @@ def create_app(node: MycaNode) -> FastAPI:
             return {"status": "registered", "node_id": node_id}
         except Exception as e:
             return JSONResponse(status_code=400, content={"error": str(e)})
-
-    @app.post("/h3/api/registry/register")
-    async def h3_register_h3(req: Request):
-        return await h3_register_api(req)
-
-    @app.get("/api/registry/agents")
-    async def h3_list_agents_api(capability: Optional[str] = None):
-        now = time.time()
-        active_agents = [
-            agent for agent in _h3_registered_agents.values()
-            if now - agent.get("last_seen", 0) < 60
-        ]
-        return {"agents": active_agents, "total": len(active_agents)}
-
-    @app.get("/h3/api/registry/agents")
-    async def h3_list_agents_h3(capability: Optional[str] = None):
-        return await h3_list_agents_api(capability)
 
     @app.post("/api/registry/signal/{target_node_id}")
     async def h3_send_signal_api(target_node_id: str, req: Request):
@@ -449,14 +701,22 @@ def create_app(node: MycaNode) -> FastAPI:
         except Exception as e:
             return JSONResponse(status_code=400, content={"error": str(e)})
 
-    @app.post("/h3/api/registry/signal/{target_node_id}")
-    async def h3_send_signal_h3(target_node_id: str, req: Request):
-        return await h3_send_signal_api(target_node_id, req)
-
     @app.get("/api/registry/signal/{self_node_id}")
     async def h3_get_signal_api(self_node_id: str):
         signal = _h3_signals.pop(self_node_id, None)
         return {"signal": signal}
+
+    @app.post("/h3/api/registry/register")
+    async def h3_register_h3(req: Request):
+        return await h3_register_api(req)
+
+    @app.get("/h3/api/registry/agents")
+    async def h3_list_agents_h3(capability: Optional[str] = None):
+        return await h3_list_agents_api(capability)
+
+    @app.post("/h3/api/registry/signal/{target_node_id}")
+    async def h3_send_signal_h3(target_node_id: str, req: Request):
+        return await h3_send_signal_api(target_node_id, req)
 
     @app.get("/h3/api/registry/signal/{self_node_id}")
     async def h3_get_signal_h3(self_node_id: str):
@@ -525,24 +785,53 @@ def create_app(node: MycaNode) -> FastAPI:
         peers = node.discovery.get_active_peers()
         peer_list = [p.to_dict() for p in peers]
 
-        # Merge in-memory registered H3 / Mobile Web nodes
+        # Merge trusted SQLite nodes and pending pairings
         now = time.time()
-        for agent_id, agent_info in list(_h3_registered_agents.items()):
-            if agent_id != node.node_id and (now - agent_info.get("last_seen", 0) < 120):
-                if not any(p.get("node_id") == agent_id for p in peer_list):
+        trusted_list = db.list_trusted_nodes()
+        import json
+        for t in trusted_list:
+            t_id = t["node_id"]
+            if t_id == node.node_id:
+                continue
+            
+            # Is it active in memory?
+            mem_info = _h3_registered_agents.get(t_id)
+            is_active = mem_info and (now - mem_info.get("last_seen", 0) < 120)
+            
+            # Skip if already in peer_list (LAN MDNS peer)
+            if any(p.get("node_id") == t_id for p in peer_list):
+                continue
+                
+            peer_list.append({
+                "node_id": t_id,
+                "role": t.get("device_type", "mobile") + "_web",
+                "host": mem_info.get("host", "remote") if is_active else "offline",
+                "port": mem_info.get("port", 8420) if is_active else 0,
+                "load_pct": 5.0 if is_active else 0.0,
+                "tokens_per_second": 15.0 if is_active else 0.0,
+                "model_loaded": True,
+                "status": "connected" if is_active else "offline",
+                "latency_ms": 45.0 if is_active else 0.0,
+                "source": "trusted_db",
+                "is_local": False,
+                "mycelium_score": 95.0 if is_active else 0.0,
+                "fingerprint": get_fingerprint(t["public_key"]),
+                "device_name": t.get("device_name", "Remote Peer")
+            })
+            
+        # Add currently pending pairings (to allow UI to display them for approval)
+        for t_id, p in _pending_pairings.items():
+            if p.get("status") == "pending" and (now - p.get("created_at", 0) < 120):
+                if not any(pl.get("node_id") == t_id for pl in peer_list):
                     peer_list.append({
-                        "node_id": agent_id,
-                        "role": agent_info.get("role", "mobile_web"),
-                        "host": agent_info.get("host", agent_info.get("endpoint", "remote")),
-                        "port": agent_info.get("port", 8420),
-                        "load_pct": 5.0,
-                        "tokens_per_second": 15.0,
-                        "model_loaded": agent_info.get("model_loaded", True),
-                        "status": agent_info.get("status", "ready"),
-                        "latency_ms": 45.0,
-                        "source": "h3_global",
-                        "is_local": False,
-                        "mycelium_score": 62.8
+                        "node_id": t_id,
+                        "role": p["device_type"] + "_web",
+                        "host": "pairing",
+                        "port": 8420,
+                        "status": "pending",
+                        "code": p["code"],
+                        "device_name": p["device_name"],
+                        "fingerprint": get_fingerprint(p["public_key"])
                     })
 
         # Calculate local mycelium score based on capability and benchmarks

@@ -47,6 +47,17 @@ def init_db():
             value TEXT
         );
 
+        CREATE TABLE IF NOT EXISTS trusted_nodes (
+            node_id       TEXT PRIMARY KEY,
+            public_key    TEXT NOT NULL,
+            device_name   TEXT,
+            device_type   TEXT,
+            capabilities  TEXT,
+            trust_status  TEXT DEFAULT 'trusted',
+            paired_at     REAL,
+            last_seen     REAL
+        );
+
         CREATE INDEX IF NOT EXISTS idx_messages_conv
             ON messages(conversation_id);
         CREATE INDEX IF NOT EXISTS idx_conv_updated
@@ -345,4 +356,54 @@ def delete_custom_api(api_id: str) -> bool:
     deleted = cur.rowcount > 0
     conn.close()
     return deleted
+
+
+def add_trusted_node(node_id: str, public_key: str, device_name: str, device_type: str, capabilities: str, trust_status: str = 'trusted') -> None:
+    """Add or update a trusted node key in the database."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(
+        """INSERT OR REPLACE INTO trusted_nodes
+           (node_id, public_key, device_name, device_type, capabilities, trust_status, paired_at, last_seen)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        (node_id, public_key, device_name, device_type, capabilities, trust_status, time.time(), time.time())
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_trusted_node(node_id: str) -> Optional[dict]:
+    """Retrieve a trusted node details by its ID."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM trusted_nodes WHERE node_id = ?", (node_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def remove_trusted_node(node_id: str) -> bool:
+    """Remove trust from a node (revoke trust)."""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.execute("DELETE FROM trusted_nodes WHERE node_id = ?", (node_id,))
+    conn.commit()
+    deleted = cur.rowcount > 0
+    conn.close()
+    return deleted
+
+
+def list_trusted_nodes() -> list[dict]:
+    """Retrieve all trusted nodes."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT * FROM trusted_nodes ORDER BY paired_at DESC").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def update_node_last_seen(node_id: str) -> None:
+    """Update the last seen timestamp of a trusted node."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("UPDATE trusted_nodes SET last_seen = ? WHERE node_id = ?", (time.time(), node_id))
+    conn.commit()
+    conn.close()
+
 

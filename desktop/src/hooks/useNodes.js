@@ -21,6 +21,7 @@ export const useNodes = () => {
   const [backendOnline, setBackendOnline] = useState(false);
   const [pairingStatus, setPairingStatus] = useState('not_applicable');
   const [mobileId, setMobileId] = useState(null);
+  const [pairingCode, setPairingCode] = useState(null);
   const wsRef = useRef(null);
   const retryCountRef = useRef(0);
   const backendOnlineRef = useRef(false);
@@ -43,6 +44,73 @@ export const useNodes = () => {
     return window.location.origin;
   }, []);
 
+  // ── Cryptographic helper functions (WebCrypto Ed25519) ──
+  const bufToHex = useCallback((buffer) => {
+    return Array.from(new Uint8Array(buffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }, []);
+
+  const hexToBuf = useCallback((hex) => {
+    return new Uint8Array(hex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  }, []);
+
+  const getOrCreateBrowserIdentity = useCallback(async () => {
+    try {
+      let pubHex = localStorage.getItem('myca_node_pubkey');
+      let privHex = localStorage.getItem('myca_node_privkey');
+      let nodeId = localStorage.getItem('myca_node_id');
+
+      if (pubHex && privHex && nodeId) {
+        return { pubHex, privHex, nodeId };
+      }
+
+      const keyPair = await window.crypto.subtle.generateKey(
+        { name: 'Ed25519' },
+        true,
+        ['sign', 'verify']
+      );
+
+      const rawPubKey = await window.crypto.subtle.exportKey('raw', keyPair.publicKey);
+      const pkcs8PrivKey = await window.crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+
+      pubHex = bufToHex(rawPubKey);
+      privHex = bufToHex(pkcs8PrivKey);
+      nodeId = 'm_' + pubHex.substring(0, 12);
+
+      localStorage.setItem('myca_node_pubkey', pubHex);
+      localStorage.setItem('myca_node_privkey', privHex);
+      localStorage.setItem('myca_node_id', nodeId);
+
+      return { pubHex, privHex, nodeId };
+    } catch (e) {
+      console.error('Failed to initialize WebCrypto identity:', e);
+      const fallbackId = 'm_' + Math.random().toString(36).substring(2, 14);
+      return { pubHex: 'mock_pubkey', privHex: 'mock_privkey', nodeId: fallbackId };
+    }
+  }, [bufToHex]);
+
+  const signChallengeBytes = useCallback(async (privHex, challenge) => {
+    try {
+      const privKeyBytes = hexToBuf(privHex);
+      const privateKey = await window.crypto.subtle.importKey(
+        'pkcs8',
+        privKeyBytes,
+        { name: 'Ed25519' },
+        true,
+        ['sign']
+      );
+      const encoder = new TextEncoder();
+      const sig = await window.crypto.subtle.sign(
+        { name: 'Ed25519' },
+        privateKey,
+        encoder.encode(challenge)
+      );
+      return bufToHex(sig);
+    } catch (e) {
+      console.error('Signature failed:', e);
+      return 'mock_signature';
+    }
+  }, [hexToBuf, bufToHex]);
+
   // ── Remote client pairing ──
   useEffect(() => {
     const isElectron = /Electron/i.test(navigator.userAgent);
@@ -50,54 +118,102 @@ export const useNodes = () => {
     const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const isHostApp = isElectron || isFileProtocol || isLocalHost || !window.location.hostname;
     const isRemoteClient = !isHostApp;
-    
+
     if (isRemoteClient) {
-      let localId = null;
-      try { localId = localStorage.getItem('myca_mobile_id'); } catch (e) {}
-      
-      if (!localId) {
-        localId = Math.random().toString(36).substring(2, 8);
-        try { localStorage.setItem('myca_mobile_id', localId); } catch (e) {}
-      }
-      
-      const generatedId = 'mobile-' + localId;
-      setMobileId(generatedId);
-      setPairingStatus('pending');
+      let isCancelled = false;
+      let interval = null;
 
-      const payload = {
-        node_id: generatedId,
-        role: 'mobile_web',
-        capabilities: ['inference', 'webgpu', 'sensors']
-      };
+      const runPairing = async () => {
+        setPairingStatus('pending');
+        const identity = await getOrCreateBrowserIdentity();
+        if (isCancelled) return;
+        setMobileId(identity.nodeId);
 
-      const backendUrl = getBackendUrl();
-      ['/api/registry/register', `${backendUrl}/api/registry/register`].forEach(ep => {
-        fetch(ep, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(() => {});
-      });
+        const backendUrl = getBackendUrl();
+        const payload = {
+          node_id: identity.nodeId,
+          public_key: identity.pubHex,
+          device_name: navigator.userAgent.includes('Mobile') ? 'Mobile Phone' : 'Web Client',
+          device_type: navigator.userAgent.includes('Mobile') ? 'mobile' : 'laptop',
+          capabilities: ['inference', 'webgpu', 'sensors']
+        };
 
-      const pollUrl = `${window.location.origin}/api/registry/status?node_id=${generatedId}`;
-      const interval = setInterval(async () => {
         try {
-          const res = await fetch(pollUrl);
-          if (res.ok) {
-            const data = await res.json();
-            if (data.status === 'approved') {
+          const res = await fetch(`${backendUrl}/api/registry/pair/request`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error('Request rejected');
+          const data = await res.json();
+          if (isCancelled) return;
+          if (data.code) setPairingCode(data.code);
+
+          // Reconnecting auth
+          if (data.status === 'reconnecting') {
+            const timestamp = (Date.now() / 1000).toString();
+            const signatureRec = await signChallengeBytes(identity.privHex, timestamp);
+            const authRes = await fetch(`${backendUrl}/api/registry/pair/reconnect`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                node_id: identity.nodeId,
+                timestamp: parseFloat(timestamp),
+                signature: signatureRec
+              })
+            });
+            if (authRes.ok) {
               setPairingStatus('approved');
-              clearInterval(interval);
-            } else if (data.status === 'declined') {
-              setPairingStatus('declined');
+              return;
             }
           }
-        } catch (e) {}
-      }, 3000);
 
-      return () => clearInterval(interval);
+          // Generate or get desktop challenge
+          const desktopChallenge = data.challenge;
+
+          // Start polling verify status
+          interval = setInterval(async () => {
+            if (isCancelled) {
+              clearInterval(interval);
+              return;
+            }
+            try {
+              const clientSignature = await signChallengeBytes(identity.privHex, desktopChallenge);
+              const verifyRes = await fetch(`${backendUrl}/api/registry/pair/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  node_id: identity.nodeId,
+                  signature: clientSignature
+                })
+              });
+              if (verifyRes.ok) {
+                const verifyData = await verifyRes.json();
+                if (verifyData.status === 'approved') {
+                  setPairingStatus('approved');
+                  clearInterval(interval);
+                } else if (verifyData.status === 'declined') {
+                  setPairingStatus('declined');
+                  clearInterval(interval);
+                }
+              }
+            } catch (e) {
+              console.error('Verify poll failed:', e);
+            }
+          }, 3000);
+        } catch (err) {
+          console.error('Pair request failed:', err);
+          setPairingStatus('declined');
+        }
+      };
+
+      runPairing();
+      return () => {
+        isCancelled = true;
+        if (interval) clearInterval(interval);
+      };
     }
-  }, [getBackendUrl]);
+  }, [getBackendUrl, getOrCreateBrowserIdentity, signChallengeBytes]);
 
   // ── Core data fetcher — uses refs, never stale ──
   const fetchNodes = useCallback(async () => {
@@ -128,15 +244,17 @@ export const useNodes = () => {
       };
 
       const peerNodes = (data.peers || []).map(p => {
-        let name = nodeNickname(p.node_id);
+        let name = p.device_name || nodeNickname(p.node_id);
         if (p.source === 'h3_global') name = `H3 Global (${name})`;
         else if (p.source === 'mdns_local') name = `LAN Node (${name})`;
+        else if (p.source === 'trusted_db') name = `${name}`;
+        
         return {
           id: p.node_id,
           name,
           role: p.role,
           status: p.status,
-          latency: p.latency_ms,
+          latency: p.latency_ms || 0,
           load_pct: p.load_pct ?? 0,
           tokens_per_second: p.tokens_per_second ?? 0,
           model_loaded: p.model_loaded ?? false,
@@ -144,6 +262,8 @@ export const useNodes = () => {
           source: p.source,
           category: 'myca',
           mycelium_score: p.mycelium_score ?? 60.0,
+          code: p.code,
+          fingerprint: p.fingerprint
         };
       });
 
@@ -293,7 +413,7 @@ export const useNodes = () => {
   const approveNode = useCallback(async (nodeId) => {
     const backendUrl = getBackendUrl();
     try {
-      await fetch(`${backendUrl}/api/nodes/approve`, {
+      await fetch(`${backendUrl}/api/registry/pair/approve`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ node_id: nodeId })
@@ -307,7 +427,7 @@ export const useNodes = () => {
   const declineNode = useCallback(async (nodeId) => {
     const backendUrl = getBackendUrl();
     try {
-      await fetch(`${backendUrl}/api/nodes/decline`, {
+      await fetch(`${backendUrl}/api/registry/pair/decline`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ node_id: nodeId })
@@ -315,6 +435,20 @@ export const useNodes = () => {
       fetchNodes();
     } catch (e) {
       console.error('Decline failed', e);
+    }
+  }, [getBackendUrl, fetchNodes]);
+
+  const revokeNode = useCallback(async (nodeId) => {
+    const backendUrl = getBackendUrl();
+    try {
+      await fetch(`${backendUrl}/api/nodes/revoke`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ node_id: nodeId })
+      });
+      fetchNodes();
+    } catch (e) {
+      console.error('Revoke failed', e);
     }
   }, [getBackendUrl, fetchNodes]);
 
@@ -333,7 +467,9 @@ export const useNodes = () => {
     backendOnline, 
     pairingStatus, 
     mobileId, 
+    pairingCode,
     approveNode, 
-    declineNode 
+    declineNode,
+    revokeNode
   };
 };

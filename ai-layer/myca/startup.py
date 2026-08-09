@@ -33,20 +33,16 @@ NODE_ID_FILE = Path("~/.myca/node_id").expanduser()
 def get_or_create_node_id() -> str:
     """
     Return this device's permanent Myca node ID.
-    Creates one on first launch and stores it at ~/.myca/node_id.
-    ID starts with 'm_' so it's always distinguishable from simulated nodes.
+    Cryptographically derived from the persistent Ed25519 public key.
     """
+    from myca.identity import get_or_create_identity_key, get_public_key_hex
+    private_key = get_or_create_identity_key()
+    pub_hex = get_public_key_hex(private_key)
+    node_id = "m_" + pub_hex[:12]
+    
     NODE_ID_FILE.parent.mkdir(parents=True, exist_ok=True)
-
-    if NODE_ID_FILE.exists():
-        stored = NODE_ID_FILE.read_text().strip()
-        if stored:
-            logger.info(f"[STARTUP] Node identity: {stored}")
-            return stored
-
-    node_id = "m_" + uuid.uuid4().hex[:12]
     NODE_ID_FILE.write_text(node_id)
-    logger.info(f"[STARTUP] First launch — created node_id: {node_id}")
+    logger.info(f"[STARTUP] Node identity loaded: {node_id} (Pubkey: {pub_hex[:16]}...)")
     return node_id
 
 

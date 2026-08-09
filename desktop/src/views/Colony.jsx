@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Monitor, Smartphone, Server, Laptop, Wifi, Router, Tv, Printer, HardDrive, Globe } from 'lucide-react';
+import { Monitor, Smartphone, Server, Laptop, Wifi, Router, Tv, Printer, HardDrive, Globe, Shield } from 'lucide-react';
 import MyceliumCanvas from '../components/MyceliumCanvas';
 import { useNodes, nodeNickname } from '../hooks/useNodes';
 import './Colony.css';
@@ -12,8 +12,10 @@ const Devices = () => {
     backendOnline, 
     pairingStatus, 
     mobileId, 
+    pairingCode,
     approveNode, 
-    declineNode 
+    declineNode,
+    revokeNode
   } = useNodes();
 
   const getIcon = (role) => {
@@ -47,7 +49,7 @@ const Devices = () => {
 
   // Render Mobile/Remote client pairing screen
   if (pairingStatus === 'pending' || pairingStatus === 'declined') {
-    const code = mobileId ? String(mobileId.replace('mobile-', '')).substring(0, 4).toUpperCase() : '----';
+    const code = pairingCode ? String(pairingCode).replace(/(\d{3})(\d{3})/, '$1 $2') : '------';
     return (
       <div className="pairing-overlay">
         <div className="pairing-card">
@@ -105,7 +107,7 @@ const Devices = () => {
           </div>
           <div className="approval-list">
             {pendingNodes.map(pn => {
-              const code = pn.id ? String(pn.id.replace('mobile-', '')).substring(0, 4).toUpperCase() : '----';
+              const code = pn.code ? String(pn.code).replace(/(\d{3})(\d{3})/, '$1 $2') : '------';
               return (
                 <div key={pn.id} className="approval-card">
                   <div className="approval-card-info">
@@ -194,6 +196,47 @@ const Devices = () => {
           </div>
         </div>
       </div>
+
+      {/* ── Trusted Devices ── */}
+      {nodes.some(n => n.source === 'trusted_db') && (
+        <>
+          <div className="section-label">
+            <Shield size={14} />
+            <span>Trusted Paired Devices</span>
+            <span className="section-count">{nodes.filter(n => n.source === 'trusted_db').length}</span>
+          </div>
+          <div className="device-grid">
+            {nodes.filter(n => n.source === 'trusted_db').map(n => (
+              <div key={n.id} className={`device-card trusted-device ${n.status === 'connected' ? 'active' : 'offline'}`}>
+                <div className="device-card-header">
+                  {getIcon(n.role)}
+                  <span className={`device-status ${n.status === 'connected' ? 'ready' : 'offline'}`}>
+                    {n.status === 'connected' ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+                <div className="device-info">
+                  <h3>{n.name}</h3>
+                  <div className="device-metrics">
+                    {n.fingerprint && <span style={{ fontSize: '10px', opacity: 0.6 }}>Fingerprint: {n.fingerprint}</span>}
+                  </div>
+                  <div className="device-actions" style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
+                    <button className="revoke-btn" style={{
+                      padding: '4px 8px',
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      border: '1px solid rgba(239, 68, 68, 0.4)',
+                      borderRadius: '4px',
+                      color: '#ef4444',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }} onClick={() => revokeNode(n.id)}>Revoke Trust</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* ── LAN Devices ── */}
       {lanDevices.length > 0 && (
