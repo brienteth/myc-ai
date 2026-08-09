@@ -7,6 +7,7 @@ Identifies which ones are Myca-capable and regular network devices.
 
 import asyncio
 import logging
+import platform
 import re
 import socket
 import subprocess
@@ -126,7 +127,7 @@ class NetworkScanner:
         try:
             result = subprocess.run(
                 ["arp", "-a"],
-                capture_output=True, text=True, timeout=15
+                capture_output=True, text=True, timeout=5
             )
             for line in result.stdout.strip().split("\n"):
                 match = re.search(
@@ -135,17 +136,27 @@ class NetworkScanner:
                 )
                 if match:
                     ip = match.group(1)
-                    mac = match.group(2)
-                    if mac == "(incomplete)" or mac == "ff:ff:ff:ff:ff:ff":
+                    raw_mac = match.group(2)
+                    if raw_mac == "(incomplete)" or raw_mac == "ff:ff:ff:ff:ff:ff":
                         continue
                     if ip == self._local_ip or ip == "127.0.0.1":
                         continue
                     if ip.startswith("224.") or ip.startswith("239."):
                         continue
 
+                    # Standardize MAC format (e.g. b4:a:d8:72:1c:87 -> b4:0a:d8:72:1c:87)
+                    parts = raw_mac.split(":")
+                    if len(parts) == 6:
+                        mac = ":".join(p.zfill(2) for p in parts)
+                    else:
+                        mac = raw_mac
+
                     hostname = ""
                     try:
-                        hostname = socket.gethostbyaddr(ip)[0]
+                        hostname = await asyncio.wait_for(
+                            asyncio.to_thread(lambda: socket.gethostbyaddr(ip)[0]),
+                            timeout=0.15
+                        )
                     except Exception:
                         pass
 
@@ -171,30 +182,33 @@ class NetworkScanner:
         if subnet == "127.0.0":
             return []
 
-        # Broadcast ping
+        is_darwin = platform.system() == "Darwin"
+
+        # Broadcast ping sweep to wake up ARP tables quickly
         try:
+            cmd = ["ping", "-c", "2", "-W", "500" if is_darwin else "1", f"{subnet}.255"]
             proc = await asyncio.create_subprocess_exec(
-                "ping", "-c", "2", "-t", "1", f"{subnet}.255",
+                *cmd,
                 stdout=asyncio.subprocess.DEVNULL,
                 stderr=asyncio.subprocess.DEVNULL,
             )
-            await asyncio.wait_for(proc.wait(), timeout=2.0)
+            await asyncio.wait_for(proc.wait(), timeout=0.8)
         except Exception:
             pass
 
-        # Parallel sweep across all 1..254 IPs
-        sem = asyncio.Semaphore(50)
-        reachable = []
+        # High-concurrency parallel sweep across all 1..254 IPs
+        sem = asyncio.Semaphore(100)
 
         async def ping_one(ip: str):
             async with sem:
                 try:
+                    cmd = ["ping", "-c", "1", "-W", "300" if is_darwin else "1", ip]
                     proc = await asyncio.create_subprocess_exec(
-                        "ping", "-c", "1", "-t", "1", ip,
+                        *cmd,
                         stdout=asyncio.subprocess.DEVNULL,
                         stderr=asyncio.subprocess.DEVNULL,
                     )
-                    await asyncio.wait_for(proc.wait(), timeout=1.2)
+                    await asyncio.wait_for(proc.wait(), timeout=0.4)
                     if proc.returncode == 0:
                         return ip
                 except Exception:
