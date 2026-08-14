@@ -22,8 +22,8 @@ class SkillDefinition:
 
 def _create_pydantic_model_from_fields(model_name: str, fields: List[str]) -> Type[BaseModel]:
     """Helper to dynamically generate Pydantic model from a list of field names."""
-    field_definitions = {field: (Any, None) for field in fields}
-    return create_model(model_name, **field_definitions)
+    field_definitions = {field: (str, "") for field in fields}
+    return create_model(model_name, __module__="myca.skills.core.decorator", **field_definitions)
 
 def skill(
     id: str,
@@ -47,20 +47,20 @@ def skill(
         # Resolve Input Schema
         resolved_inputs_schema = inputs_schema  # prefer explicit inputs_schema kwarg
         if resolved_inputs_schema is None:
-            if inputs is None:
+            if isinstance(inputs, list):
+                resolved_inputs_schema = _create_pydantic_model_from_fields(f"{id}_Inputs", inputs)
+            elif inputs is not None and not isinstance(inputs, list):
+                resolved_inputs_schema = inputs
+            else:
                 # Inspect function parameters to dynamically build schema
                 sig = inspect.signature(func)
                 field_definitions = {}
                 for name_p, param in sig.parameters.items():
                     if name_p == "ctx": continue
-                    p_type = param.annotation if param.annotation is not inspect.Parameter.empty else Any
-                    default = param.default if param.default is not inspect.Parameter.empty else ...
+                    p_type = str
+                    default = param.default if param.default is not inspect.Parameter.empty else ""
                     field_definitions[name_p] = (p_type, default)
-                resolved_inputs_schema = create_model(f"{id}_Inputs", **field_definitions)
-            elif isinstance(inputs, list):
-                resolved_inputs_schema = _create_pydantic_model_from_fields(f"{id}_Inputs", inputs)
-            else:
-                resolved_inputs_schema = inputs
+                resolved_inputs_schema = create_model(f"{id}_Inputs", __module__="myca.skills.core.decorator", **field_definitions)
 
         # Resolve Output Schema
         if outputs is None or isinstance(outputs, list):

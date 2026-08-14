@@ -32,7 +32,17 @@ class NodeReference:
     def resolve(self, completed_nodes: Dict[str, "ExecutionNode"]) -> Any:
         dep_node = completed_nodes.get(self.node_id)
         if dep_node and dep_node.result and dep_node.result.success:
-            return dep_node.result.outputs.get(self.output_field, "")
+            outputs = dep_node.result.outputs
+            if isinstance(outputs, dict):
+                if self.output_field in outputs:
+                    return outputs[self.output_field]
+                # Fallback to standard keys like content, text, response, output
+                for fallback_key in ["content", "text", "response", "output", "extracted_text", "summary", "result"]:
+                    if fallback_key in outputs:
+                        return outputs[fallback_key]
+                if outputs:
+                    return next(iter(outputs.values()))
+            return outputs
         return ""
 
 class ExecutionNode:
@@ -156,7 +166,8 @@ class ExecutionGraph:
                         else:
                             logger.warning(f"Node '{node.id}' post-execution verification failed.")
                 except Exception as exc:
-                    logger.error(f"Attempt {attempt + 1}/{max_attempts} failed for node '{node.id}': {exc}")
+                    import traceback
+                    logger.error(f"Attempt {attempt + 1}/{max_attempts} failed for node '{node.id}': {exc}\n{traceback.format_exc()}")
                     if attempt == max_attempts - 1:
                         break
             

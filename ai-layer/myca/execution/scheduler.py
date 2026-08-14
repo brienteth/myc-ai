@@ -25,7 +25,8 @@ from typing import Any, Dict, List, Optional, Set
 
 from myca.contracts.execution import ExecutionGraph, ExecutionNode, NodeState
 from myca.execution.event_bus import ExecutionEventBus, EventType, ExecutionEvent
-from myca.execution.cache import ExecutionCache, is_cacheable
+from myca.execution.cache import ExecutionCache, is_cacheable, global_execution_cache
+from myca.skills.core.result import SkillResult
 
 logger = logging.getLogger("myca.execution.scheduler")
 
@@ -38,7 +39,7 @@ class ExecutionScheduler:
 
     def __init__(self, event_bus: Optional[ExecutionEventBus] = None, cache: Optional[ExecutionCache] = None):
         self.event_bus = event_bus or ExecutionEventBus()
-        self.cache = cache or ExecutionCache()
+        self.cache = cache or global_execution_cache
 
     async def run(self, graph: ExecutionGraph, ctx: Any, workflow_id: str = "wf-unknown") -> bool:
         """
@@ -99,6 +100,7 @@ class ExecutionScheduler:
                         node_id=node.id,
                         skill_id=node.skill_name,
                     ))
+                    node.result = SkillResult(success=True, outputs=cached)
                     node.status = NodeState.COMPLETED
                     await self._emit_node_event(EventType.NODE_COMPLETED, workflow_id, node,
                                                  {"from_cache": True})

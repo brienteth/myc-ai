@@ -8,8 +8,11 @@ from pydantic import BaseModel, Field
 
 from myca.skills.core.decorator import skill
 from myca.skills.core.result import SkillResult
-from myca.execution.enterprise.driver_resolver import DriverResolver
-from myca.execution.enterprise.digital_twin import digital_twin_engine
+try:
+    from myca_intelligence.automation.enterprise_api import router
+    from myca_intelligence.execution_intelligence.api import router as exec_router
+except ImportError:
+    pass
 
 class EnterpriseInventoryInputs(BaseModel):
     sku: Optional[str] = Field(default=None, description="Optional SKU string")

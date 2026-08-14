@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useChat } from '../hooks/useChat';
 import { useNodes, nodeNickname } from '../hooks/useNodes';
 import Network from './Network';
@@ -38,6 +38,7 @@ const NetworkPill = ({ nodes, status, onClick }) => {
 
 const Chat = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { messages, isGenerating, sendMessage } = useChat(location.state?.convId);
   const { nodes, status } = useNodes();
   const [input, setInput] = useState('');
@@ -78,6 +79,7 @@ const Chat = () => {
       });
       setPlanModal(null);
       alert("Automation Workflow created and enabled successfully!");
+      navigate('/automation');
     } catch (e) {
       console.error("Failed to save workflow:", e);
     }

@@ -100,6 +100,7 @@ class ExecutionCache:
         if key in self._store:
             del self._store[key]
 
+
     def invalidate_skill(self, skill_id: str):
         """Remove all entries for a given skill."""
         keys_to_remove = [k for k, v in self._store.items() if v.get("skill_id") == skill_id]
@@ -135,3 +136,6 @@ NON_CACHEABLE_SKILLS = {
 def is_cacheable(skill_id: str) -> bool:
     """Returns True if the skill is safe to cache (no side-effects)."""
     return skill_id not in NON_CACHEABLE_SKILLS
+
+# Global cache instance for Execution Studio persistence
+global_execution_cache = ExecutionCache()

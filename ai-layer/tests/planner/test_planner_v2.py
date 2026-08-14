@@ -6,9 +6,9 @@ import unittest
 import asyncio
 from myca.skills.manifest import SkillManifest, InputParam
 from myca.skills.core.registry import SkillRegistry
-from myca.planner.requirement_detector import RequirementDetector
-from myca.planner.constraint_solver import ConstraintSolver
-from myca.planner.planner import Planner
+from myca_intelligence.planner.requirement_detector import RequirementDetector
+from myca_intelligence.planner.constraint_solver import ConstraintSolver
+from myca_intelligence.planner.planner import Planner
 
 
 class TestPlannerV2(unittest.TestCase):
@@ -65,7 +65,8 @@ class TestPlannerV2(unittest.TestCase):
 
     def test_planner_v2_compilation(self):
         planner = Planner(secrets_vault={"telegram_bot_token": "secret_vault_token"})
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         dag = loop.run_until_complete(planner.create_plan("Send Telegram notification chat_id:@mychannel Hello World"))
 
         self.assertIn("nodes", dag)

@@ -48,10 +48,17 @@ const DocumentSplitView = ({ document, onClose }) => {
     
     // Build context from actual document content or metadata
     const contentContext = docContent?.content 
-      ? `\n\nDocument Content:\n${docContent.content}` 
-      : `\n\nMedia Document Info: ${displayName} (${document.type}, Size: ${formatBytes(document.size_bytes)})`;
+      ? `\n\nDoküman İçeriği:\n${docContent.content}` 
+      : `\n\nMedya/Doküman Bilgisi: ${displayName} (${document.type}, Boyut: ${formatBytes(document.size_bytes)})`;
     
-    const fullPrompt = `Context Document: ${displayName}${contentContext}\n\nUser Question: ${prompt}\n\nPlease answer accurately and directly based on the document content or file metadata provided.`;
+    const fullPrompt = `Aşağıdaki doküman bilgisini veya metnini detaylıca inceleyerek kullanıcının sorusuna doğrudan, öz ve net Türkçe yanıt ver:
+
+Doküman Adı: ${displayName}
+${contentContext}
+
+Kullanıcı İsteği: ${prompt}
+
+Lütfen doküman içeriğine tam bağlı kalarak Türkçe olarak yanıtla.`;
 
     const result = await queryAI({
       prompt: fullPrompt,

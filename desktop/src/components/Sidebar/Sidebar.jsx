@@ -3,10 +3,13 @@ import { NavLink } from 'react-router-dom';
 import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2, Brain } from 'lucide-react';
 import '../Layout/Layout.css';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useNodes } from '../../hooks/useNodes';
 import logoImg from '../../assets/logo.png';
 
 const Sidebar = () => {
   const { t } = useTranslation();
+  const { nodes } = useNodes();
+  const pendingCount = nodes.filter(n => n.status === 'pending').length;
 
   return (
     <div className="sidebar">
@@ -34,7 +37,20 @@ const Sidebar = () => {
         </NavLink>
         <NavLink to="/colony" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Network size={16} />
-          <span>Colony Mesh</span>
+          <span style={{ flex: 1 }}>Colony Mesh</span>
+          {pendingCount > 0 && (
+            <span style={{
+              background: '#ef4444',
+              color: '#ffffff',
+              fontSize: '10px',
+              fontWeight: 'bold',
+              padding: '2px 6px',
+              borderRadius: '10px',
+              lineHeight: '1'
+            }}>
+              {pendingCount}
+            </span>
+          )}
         </NavLink>
         <NavLink to="/brain" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Brain size={16} />

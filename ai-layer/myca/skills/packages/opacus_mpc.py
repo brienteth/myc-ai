@@ -27,22 +27,46 @@ class OpacusMpcInputs(BaseModel):
 async def opacus_mpc(ctx, action: str = "tools", endpoint: str = "https://opacus.xyz/api/kinetic/mcp", session_token: str = "opak_ea73a5cf85f3561f1acaba4aa4e7618617d271c6") -> SkillResult:
     logger.info(f"[SKILL] opacus.mpc action='{action}' endpoint='{endpoint}'")
     
-    tools_info = [
-        {"name": "kinetic_encrypt_data", "description": "Encrypts private dataset via Multi-Party Computation (MPC) secret sharing."},
-        {"name": "kinetic_compute_aggregate", "description": "Performs zero-knowledge privacy-preserving data aggregation over encrypted shares."},
-        {"name": "kinetic_differential_privacy", "description": "Applies PyTorch Opacus Differential Privacy noise budget to query outputs."},
-        {"name": "kinetic_verify_proof", "description": "Verifies cryptographic zero-knowledge proof of MPC execution."}
-    ]
-    
-    formatted_tools = "\n".join([f"- **{t['name']}**: {t['description']}" for t in tools_info])
-    
-    return SkillResult(
-        success=True,
-        outputs={
-            "status": "success",
-            "tools": tools_info,
-            "session_active": True,
-            "response": f"🔒 **Opacus Kinetic MPC Entegre Yetenekleri & Araçları (Tools):**\n\n{formatted_formatted_tools if 'formatted_formatted_tools' in locals() else formatted_tools}\n\n*Oturum Jetonu:* `{session_token[:12]}...` (Aktif ve Doğrulandı)"
-        },
-        logs=[f"Successfully queried Opacus Kinetic MPC tools (Token: {session_token[:8]}...)"]
-    )
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            resp = await client.post(endpoint, json={"action": action, "session_token": session_token})
+            resp.raise_for_status()
+            data = resp.json()
+            
+            tools_info = data.get("tools", [])
+            formatted_tools = "\n".join([f"- **{t.get('name', 'Unknown')}**: {t.get('description', '')}" for t in tools_info])
+            response_text = data.get("response", f"🔒 **Opacus Kinetic MPC Entegre Yetenekleri & Araçları (Tools):**\n\n{formatted_tools}\n\n*Oturum Jetonu:* `{session_token[:12]}...` (Aktif ve Doğrulandı)")
+            
+            return SkillResult(
+                success=True,
+                outputs={
+                    "status": "success",
+                    "tools": tools_info,
+                    "session_active": True,
+                    "response": response_text,
+                    "raw_data": data
+                },
+                logs=[f"Successfully queried Opacus Kinetic MPC tools (Token: {session_token[:8]}...)"]
+            )
+    except Exception as e:
+        logger.error(f"[SKILL] opacus.mpc connection failed: {e}")
+        # Fallback to local hardcoded data if API is unreachable, to avoid completely breaking the workflow.
+        tools_info = [
+            {"name": "kinetic_encrypt_data", "description": "Encrypts private dataset via Multi-Party Computation (MPC) secret sharing."},
+            {"name": "kinetic_compute_aggregate", "description": "Performs zero-knowledge privacy-preserving data aggregation over encrypted shares."},
+            {"name": "kinetic_differential_privacy", "description": "Applies PyTorch Opacus Differential Privacy noise budget to query outputs."},
+            {"name": "kinetic_verify_proof", "description": "Verifies cryptographic zero-knowledge proof of MPC execution."}
+        ]
+        formatted_tools = "\n".join([f"- **{t['name']}**: {t['description']}" for t in tools_info])
+        
+        return SkillResult(
+            success=True,
+            outputs={
+                "status": "fallback",
+                "tools": tools_info,
+                "session_active": True,
+                "response": f"⚠️ *Opacus MPC API'ye ulaşılamadı. Fallback (Yerel) mod kullanılıyor.* 🔒 **Opacus Kinetic MPC Entegre Yetenekleri & Araçları (Tools):**\n\n{formatted_tools}\n\n*Oturum Jetonu:* `{session_token[:12]}...` (Aktif ve Doğrulandı)",
+                "error": str(e)
+            },
+            logs=[f"Failed to query Opacus API. Used fallback. Error: {str(e)}"]
+        )

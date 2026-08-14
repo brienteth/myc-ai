@@ -28,8 +28,10 @@ export const useChat = (initialConvId = null) => {
     }
   }, [initialConvId]);
 
-  const sendMessage = async (prompt) => {
+  const sendMessage = async (prompt, options = {}) => {
     if (!prompt.trim() || isGenerating) return;
+
+    const skipPlanner = options.skipPlanner !== undefined ? options.skipPlanner : true; // Default Assistant to Chatbot mode
 
     const newMessages = [...messages, { role: 'user', content: prompt }];
     setIsGenerating(true);
@@ -41,6 +43,7 @@ export const useChat = (initialConvId = null) => {
     const result = await queryAI({
       prompt,
       convId,
+      skipPlanner,
       onToken: (token) => {
         setMessages(prev => {
           const newMsgs = [...prev];
@@ -64,6 +67,10 @@ export const useChat = (initialConvId = null) => {
       }
       lastMsg.duration = duration;
       lastMsg.node_display = metaData.node_display || "Myca Engine (LOCAL)";
+      lastMsg.node_used = metaData.node_used || "LOCAL";
+      lastMsg.tps = metaData.tps || null;
+      lastMsg.tokens_per_second = metaData.tps || null;
+      lastMsg.latency_ms = metaData.latency_ms || null;
       lastMsg.context_details = metaData.context_details || {};
       lastMsg.mode = metaData.mode || "KNOWLEDGE_MODE";
       lastMsg.cost = metaData.cost || 0.00;

@@ -4,18 +4,18 @@ Unit Tests for Myca Planner v3 (Execution Intelligence & Multi-Agent Planning En
 
 import unittest
 import asyncio
-from myca.planner.agents.intent_agent import IntentAgent
-from myca.planner.agents.capability_agent import CapabilityAgent
-from myca.planner.agents.parameter_agent import ParameterAgent
-from myca.planner.agents.security_agent import SecurityAgent
-from myca.planner.agents.cost_agent import CostAgent
-from myca.planner.agents.graph_agent import GraphAgent
-from myca.planner.agents.critic_agent import CriticAgent
-from myca.planner.agents.repair_agent import RepairAgent
-from myca.planner.agents.simulation_agent import SimulationAgent
-from myca.planner.quality_scorer import QualityScorer
-from myca.planner.learning_engine import LearningEngine
-from myca.planner.planner import Planner
+from myca_intelligence.planner.agents.intent_agent import IntentAgent
+from myca_intelligence.planner.agents.capability_agent import CapabilityAgent
+from myca_intelligence.planner.agents.parameter_agent import ParameterAgent
+from myca_intelligence.planner.agents.security_agent import SecurityAgent
+from myca_intelligence.planner.agents.cost_agent import CostAgent
+from myca_intelligence.planner.agents.graph_agent import GraphAgent
+from myca_intelligence.planner.agents.critic_agent import CriticAgent
+from myca_intelligence.planner.agents.repair_agent import RepairAgent
+from myca_intelligence.planner.agents.simulation_agent import SimulationAgent
+from myca_intelligence.planner.quality_scorer import QualityScorer
+from myca_intelligence.planner.learning_engine import LearningEngine
+from myca_intelligence.planner.planner import Planner
 
 
 class TestPlannerV3(unittest.TestCase):
@@ -81,7 +81,8 @@ class TestPlannerV3(unittest.TestCase):
 
     def test_full_planner_v3_pipeline(self):
         planner = Planner(secrets_vault={"telegram_bot_token": "token_999"})
-        loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         dag = loop.run_until_complete(planner.create_plan("Send Telegram alert @mychannel Hello World"))
 
         self.assertIn("quality_score", dag)

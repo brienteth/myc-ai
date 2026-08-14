@@ -39,6 +39,10 @@ def get_or_create_identity_key() -> ed25519.Ed25519PrivateKey:
     logger.info(f"Generated new Ed25519 node identity key at {IDENTITY_KEY_FILE}")
     return private_key
 
+def generate_keypair() -> ed25519.Ed25519PrivateKey:
+    """Generate an ephemeral in-memory Ed25519 keypair."""
+    return ed25519.Ed25519PrivateKey.generate()
+
 def get_public_key_bytes(private_key: ed25519.Ed25519PrivateKey) -> bytes:
     """Return the raw public key bytes (32 bytes)."""
     return private_key.public_key().public_bytes(

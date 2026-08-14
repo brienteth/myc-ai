@@ -190,11 +190,11 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
         start_time = time.time()
         prompt_l = need.prompt.lower()
         
-        # Check if this is an explicit execution command (e.g. read file, scan downloads, send email, opacus/mpc tools) vs conversational chat
+        # Check if this is an explicit execution command (e.g. read file, scan downloads, send email) vs conversational chat
         if getattr(need, "skip_planner", False):
             is_execution_command = False
         else:
-            is_execution_command = any(k in prompt_l for k in ["dosya", "file", "oku", "read", "mail", "eposta", "yaz", "sil", "delete", "tara", "scan", "analiz", "extract", "browser", "site", "opacus", "mpc", "kinetic", "tool", "arac"])
+            is_execution_command = any(k in prompt_l for k in ["otomasyon çalıştır", "workflow çalıştır", "pipeline çalıştır", "görev yürüt"])
 
         if is_execution_command:
             yield {"type": "token", "token": "🔍 [Planner] Niyet analizi yapılıyor...\n"}
@@ -205,13 +205,13 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
             yield {"type": "token", "token": "📋 [Compiler] AST oluşturuldu, IR formatına derleniyor...\n"}
             await asyncio.sleep(0.05)
             
-            from myca.planner.compiler import ExecutionCompiler
+            from myca_intelligence.planner.compiler import ExecutionCompiler
             compiler = ExecutionCompiler()
             dag_plan = compiler.compile_ast_to_dag(plan_json)
             yield {"type": "token", "token": "⚡ [Optimizer] Akış optimize ediliyor ve paralel yollar belirleniyor...\n"}
             await asyncio.sleep(0.05)
             
-            from myca.planner.validator import GraphValidator
+            from myca_intelligence.planner.validator import GraphValidator
             validator = GraphValidator()
             validation_res = validator.validate(dag_plan)
             if not validation_res.valid:
@@ -253,7 +253,7 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
                     if not v_res.passed:
                         logger.warning(f"Post-execution verification failed for node {n_id}: {v_res.checks}")
             
-            success = all(getattr(n.status, "value", str(n.status)) in ["completed", "NodeState.COMPLETED"] for n in graph.nodes.values())
+            success = all(getattr(n.status, "value", str(n.status)) in ["completed", "NodeState.COMPLETED"] for n in graph.nodes.values()) and len(graph.nodes) > 0
             elapsed_ms = (time.time() - start_time) * 1000
             
             execution_results = {}
@@ -272,6 +272,12 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
                 else:
                     execution_results[n_id] = {"status": status_val, "error": getattr(node.result, "error", None) if node.result else "Bilinmeyen hata"}
             
+            # If not successful, force the error message as the summary
+            if not success:
+                summary_msg = "\n⚠️ İşlem sırasında bazı adımlar başarısız oldu. Lütfen yukarıdaki hata çıktılarını inceleyin."
+                yield {"type": "token", "token": summary_msg}
+                return
+
             # Direct response or LLM explainer
             direct_response = None
             for n_id, outs in execution_results.items():
@@ -280,7 +286,7 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
                     break
             
             if direct_response:
-                yield {"type": "token", "token": direct_response}
+                yield {"type": "token", "token": "\n" + direct_response}
             else:
                 # Extract file lists or main output keys naturally
                 files_found = []
@@ -291,9 +297,7 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
                         elif "extracted_text" in outs:
                             files_found.append(outs["extracted_text"][:200])
 
-                if not success:
-                    summary_msg = "\n⚠️ İşlem sırasında bazı adımlar başarısız oldu. Lütfen yukarıdaki hata çıktılarını inceleyin."
-                elif files_found:
+                if files_found:
                     sample_files = ", ".join(files_found[:6])
                     summary_msg = f"\nİsteğinizi tamamladım! Klasörde/dosyada bulunan öğeler: {sample_files}. Toplam {len(files_found)} öge tarandı ve işlendi."
                 else:
@@ -301,9 +305,30 @@ You are Myca OS. Write a conversational, friendly, and helpful final response ex
 
                 yield {"type": "token", "token": summary_msg}
         else:
-            # Natural Conversational Chatbot Mode
+            # Natural Conversational Chatbot Mode with Active MCP Capabilities Context
             try:
-                chat_response = await self.node.inference_engine.generate(need.prompt)
+                available_skills = SkillRegistry.get_manifests()
+                mcp_skills = []
+                for s in available_skills:
+                    s_cat = s.get("category", "") if isinstance(s, dict) else getattr(s, "category", "")
+                    s_id = s.get("id", "") if isinstance(s, dict) else getattr(s, "id", "")
+                    if s_cat == "mcp" or (isinstance(s_id, str) and s_id.startswith("mcp.")):
+                        mcp_skills.append(s)
+                
+                mcp_context = ""
+                if mcp_skills:
+                    mcp_items = []
+                    for s in mcp_skills[:15]:
+                        s_id = s.get("id", "") if isinstance(s, dict) else getattr(s, "id", "")
+                        s_desc = s.get("description", "") if isinstance(s, dict) else getattr(s, "description", "")
+                        name = s_id.split(".")[-1] if isinstance(s_id, str) else "mcp"
+                        desc = s_desc[:40] if isinstance(s_desc, str) else ""
+                        mcp_items.append(f"{name} ({desc})")
+                    mcp_summary = ", ".join(mcp_items)
+                    mcp_context = f"\n[Sistem Notu: Myca OS cihazında şu an aktif bağlı MCP sunucuları ve araçları bulunmaktadır: {mcp_summary}. Toplam {len(mcp_skills)} MCP yeteneği mevcut.]\n"
+                
+                chat_prompt = f"{mcp_context}Kullanıcı Sorusu: {need.prompt}" if mcp_context else need.prompt
+                chat_response = await self.node.inference_engine.generate(chat_prompt)
                 yield {"type": "token", "token": chat_response}
             except Exception as e:
                 logger.error(f"[RUNTIME CHAT ERROR] {e}", exc_info=True)

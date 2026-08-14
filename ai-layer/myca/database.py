@@ -58,6 +58,24 @@ def init_db():
             last_seen     REAL
         );
 
+        CREATE TABLE IF NOT EXISTS pairing_sessions (
+            session_id    TEXT PRIMARY KEY,
+            host_node_id  TEXT NOT NULL,
+            security_code TEXT NOT NULL,
+            challenge     TEXT NOT NULL,
+            created_at    REAL NOT NULL,
+            expires_at    REAL NOT NULL,
+            status        TEXT NOT NULL,
+            requesting_node_id TEXT,
+            requesting_pubkey  TEXT,
+            requesting_device_name TEXT,
+            requesting_device_type TEXT,
+            requesting_capabilities TEXT
+        );
+
+        CREATE INDEX IF NOT EXISTS idx_pairing_host
+            ON pairing_sessions(host_node_id, expires_at DESC);
+
         CREATE INDEX IF NOT EXISTS idx_messages_conv
             ON messages(conversation_id);
         CREATE INDEX IF NOT EXISTS idx_conv_updated
@@ -405,5 +423,91 @@ def update_node_last_seen(node_id: str) -> None:
     conn.execute("UPDATE trusted_nodes SET last_seen = ? WHERE node_id = ?", (time.time(), node_id))
     conn.commit()
     conn.close()
+
+
+def save_pairing_session(session_dict: dict) -> None:
+    """Insert or update a pairing session in SQLite."""
+    conn = sqlite3.connect(DB_PATH)
+    import json
+    caps = session_dict.get("requesting_capabilities", [])
+    caps_str = json.dumps(caps) if isinstance(caps, list) else str(caps or "")
+    conn.execute(
+        """INSERT OR REPLACE INTO pairing_sessions
+           (session_id, host_node_id, security_code, challenge, created_at, expires_at, status,
+            requesting_node_id, requesting_pubkey, requesting_device_name, requesting_device_type, requesting_capabilities)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (
+            session_dict["session_id"],
+            session_dict["host_node_id"],
+            session_dict["security_code"],
+            session_dict["challenge"],
+            session_dict["created_at"],
+            session_dict["expires_at"],
+            session_dict["status"],
+            session_dict.get("requesting_node_id"),
+            session_dict.get("requesting_pubkey") or session_dict.get("requesting_public_key"),
+            session_dict.get("requesting_device_name"),
+            session_dict.get("requesting_device_type"),
+            caps_str
+        )
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_pairing_session_by_id(session_id: str) -> Optional[dict]:
+    """Retrieve pairing session details by session_id."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    row = conn.execute("SELECT * FROM pairing_sessions WHERE session_id = ?", (session_id,)).fetchone()
+    conn.close()
+    if not row:
+        return None
+    res = dict(row)
+    import json
+    try:
+        res["requesting_capabilities"] = json.loads(res.get("requesting_capabilities") or "[]")
+    except Exception:
+        res["requesting_capabilities"] = []
+    return res
+
+
+def get_active_host_pairing_session(host_node_id: Optional[str] = None) -> Optional[dict]:
+    """Retrieve the latest active non-expired pairing session for a host."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    now = time.time()
+    query = """SELECT * FROM pairing_sessions 
+               WHERE status IN ('WAITING', 'REQUESTED', 'APPROVED') 
+               AND expires_at > ?"""
+    params = [now]
+    if host_node_id:
+        query += " AND host_node_id = ?"
+        params.append(host_node_id)
+    query += " ORDER BY created_at DESC LIMIT 1"
+    
+    row = conn.execute(query, params).fetchone()
+    conn.close()
+    if not row:
+        return None
+    res = dict(row)
+    import json
+    try:
+        res["requesting_capabilities"] = json.loads(res.get("requesting_capabilities") or "[]")
+    except Exception:
+        res["requesting_capabilities"] = []
+    return res
+
+
+def invalidate_host_pairing_sessions(host_node_id: str) -> None:
+    """Invalidate / cancel any active pairing sessions for a host."""
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(
+        "UPDATE pairing_sessions SET status = 'CANCELLED' WHERE host_node_id = ? AND status IN ('WAITING', 'REQUESTED')",
+        (host_node_id,)
+    )
+    conn.commit()
+    conn.close()
+
 
 

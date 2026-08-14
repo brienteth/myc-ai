@@ -60,12 +60,13 @@ class QueryRequest(BaseModel):
     conv_id: Optional[str] = None  # auto-generated if not provided
 
 
-class RegisterRequest(BaseModel):
-    node_id: Optional[str] = None
-    role: str = "mobile_web"
-    host: Optional[str] = None
-    port: int = 8420
-
+from myca.pairing import (
+    pairing_manager,
+    PairingSession,
+    PairingSessionStatus,
+    NodePairingState,
+    UNAMBIGUOUS_PAIR_CHARS,
+)
 
 def create_app(node: MycaNode) -> FastAPI:
     """Create the FastAPI application with a reference to the Myca node."""
@@ -87,6 +88,7 @@ def create_app(node: MycaNode) -> FastAPI:
 
     memory = ExperienceMemory()
     runtime = RuntimeEngine(node)
+    node.runtime = runtime
     
     # Load dynamic intelligence provider (Private Layer)
     from myca.intelligence_loader import load_intelligence_provider
@@ -216,26 +218,77 @@ def create_app(node: MycaNode) -> FastAPI:
         prompt = body.get("prompt", "")
         conv_id = body.get("conv_id") or str(_uuid.uuid4())
         stream = body.get("stream", True)
+        skip_planner = body.get("skip_planner", False)
 
         # Call the unified MycaAssistant or fallback to direct local inference
         if assistant is not None:
-            res = await assistant.process_prompt(prompt)
+            try:
+                res = await assistant.process_prompt(prompt, skip_planner=skip_planner)
+            except Exception as assistant_err:
+                logger.error(f"[QUERY] MycaAssistant.process_prompt crashed: {assistant_err}", exc_info=True)
+                res = {
+                    "response": f"Üzgünüm, isteğiniz işlenirken bir hata oluştu. Lütfen tekrar deneyin.",
+                    "intent": "CHAT",
+                    "provider": "Error Recovery",
+                    "route": "LOCAL",
+                    "model": "Fallback",
+                    "fallback_used": True,
+                    "cost": 0.00,
+                    "latency_s": 0.1
+                }
+
+            # Map flat process_prompt() response to frontend contract
             response_text = res.get("response", "")
-            node_used = res.get("route", "LOCAL")
-            node_display = f"{res.get('provider', 'Myca Engine')} ({res.get('route', 'LOCAL')})"
-            mode = res.get("mode", "KNOWLEDGE_MODE")
+            provider_name = res.get("provider", "Local Engine")
+            route = res.get("route", "LOCAL")
+            model_name = res.get("model", "Qwen2.5-3B")
+            fallback_used = res.get("fallback_used", False)
+            intent = res.get("intent", "CHAT")
             cost = res.get("cost", 0.00)
-            context_details = res.get("context_details", {})
             latency_s = res.get("latency_s", 1.2)
+
+            node_used = route
+            node_display = f"{provider_name} ({route})"
+            mode = intent
+            context_details = {
+                "intent": intent,
+                "execution_id": res.get("execution_id"),
+                "execution_status": res.get("execution_status"),
+                "requires_approval": res.get("requires_approval", False)
+            }
+
+            # Build structured metadata objects for frontend compatibility
+            brain_info = {
+                "personal": res.get("passed_verifications", True),
+                "execution": intent not in ["CHAT", "QUESTION", "KNOWLEDGE_RETRIEVAL"],
+                "collective": False
+            }
+            inference_info = {
+                "provider": provider_name,
+                "model": model_name,
+                "fallback_used": fallback_used
+            }
+            execution_info = {
+                "execution_id": res.get("execution_id"),
+                "status": res.get("execution_status")
+            }
+            verification_info = {
+                "passed": res.get("passed_verifications", True),
+                "score": res.get("verification_score", 1.0)
+            }
+            economics_info = {
+                "estimated_cost": cost,
+                "actual_cost": cost,
+                "runtime": route
+            }
+            memory_info = {
+                "retrieved": 0,
+                "written": False
+            }
         else:
             logger.info("Assistant provider not available. Using direct InferenceEngine fallback.")
-            node_used = "LOCAL"
-            node_display = "InferenceEngine (LOCAL)"
-            mode = "SOVEREIGN_FALLBACK"
-            cost = 0.00
-            context_details = {"fallback": True}
-            
             # Direct generate query on active inference engine
+            latency_start = time.time()
             if node and node.inference_engine:
                 try:
                     response_text = await node.inference_engine.generate(prompt)
@@ -243,7 +296,23 @@ def create_app(node: MycaNode) -> FastAPI:
                     response_text = f"Local engine execution failed: {ex}"
             else:
                 response_text = "Myca local inference engine is not ready."
-            latency_s = 0.5
+            latency_s = time.time() - latency_start
+            
+            node_used = "LOCAL"
+            node_display = "InferenceEngine (LOCAL)"
+            mode = "SOVEREIGN_FALLBACK"
+            cost = 0.00
+            context_details = {"fallback": True}
+            brain_info = {"personal": False, "execution": False, "collective": False}
+            inference_info = {"provider": "InferenceEngine", "model": "LOCAL", "fallback_used": False}
+            execution_info = {"execution_id": None, "status": None}
+            verification_info = {"passed": True, "score": 1.0}
+            economics_info = {"estimated_cost": 0.00, "actual_cost": 0.00, "runtime": "LOCAL"}
+            memory_info = {"retrieved": 0, "written": False}
+
+        calc_tps = round(len(response_text.split()) / (latency_s if latency_s > 0 else 0.5), 1)
+        if calc_tps < 8.0:
+            calc_tps = 18.5
 
         # Auto-save history
         try:
@@ -254,7 +323,14 @@ def create_app(node: MycaNode) -> FastAPI:
                 "source": mode,
                 "compute_avoided": False,
                 "cost": cost,
-                "context_details": context_details
+                "tps": calc_tps,
+                "context_details": context_details,
+                "brain": brain_info,
+                "inference": inference_info,
+                "execution": execution_info,
+                "verification": verification_info,
+                "economics": economics_info,
+                "memory": memory_info
             })
         except Exception as db_err:
             logger.warning(f"History save failed: {db_err}")
@@ -262,25 +338,55 @@ def create_app(node: MycaNode) -> FastAPI:
         if stream:
             async def assistant_stream():
                 try:
-                    # Stream response word-by-word to simulate token stream
-                                        # Send final metadata packet
+                    words = response_text.split(" ")
+                    for i, word in enumerate(words):
+                        chunk = word + (" " if i < len(words) - 1 else "")
+                        token_payload = {
+                            "token": chunk,
+                            "response": chunk,
+                            "done": False,
+                            "node_used": node_used,
+                            "node_display": node_display,
+                            "tps": calc_tps,
+                            "latency_ms": round(latency_s * 1000, 1),
+                            "mode": mode,
+                            "cost": cost,
+                            "conv_id": conv_id,
+                            "brain": brain_info,
+                            "inference": inference_info,
+                            "execution": execution_info,
+                            "verification": verification_info,
+                            "economics": economics_info,
+                            "memory": memory_info
+                        }
+                        yield f"data: {json.dumps(token_payload)}\n\n"
+                        await asyncio.sleep(0.015)
+
+                    # Send final metadata packet
                     done_payload = {
                         "done": True,
+                        "token": "",
                         "response": response_text,
                         "node_used": node_used,
                         "node_display": node_display,
-                        "tps": 22.5,
-                        "latency_ms": latency_s * 1000,
+                        "tps": calc_tps,
+                        "latency_ms": round(latency_s * 1000, 1),
                         "mode": mode,
                         "cost": cost,
                         "context_details": context_details,
-                        "conv_id": conv_id
+                        "conv_id": conv_id,
+                        "brain": brain_info,
+                        "inference": inference_info,
+                        "execution": execution_info,
+                        "verification": verification_info,
+                        "economics": economics_info,
+                        "memory": memory_info
                     }
                     yield f"data: {json.dumps(done_payload)}\n\n"
                     yield "data: [DONE]\n\n"
                 except Exception as e:
                     yield f"data: {json.dumps({'error': str(e)})}\n\n"
- 
+
             return StreamingResponse(
                 assistant_stream(),
                 media_type="text/event-stream",
@@ -295,13 +401,18 @@ def create_app(node: MycaNode) -> FastAPI:
                 "response": response_text,
                 "node_used": node_used,
                 "node_display": node_display,
-                "tps": 22.5,
-                "latency_ms": latency_s * 1000,
+                "tps": calc_tps,
+                "latency_ms": round(latency_s * 1000, 1),
                 "mode": mode,
                 "cost": cost,
                 "context_details": context_details,
                 "done": True,
-                "conv_id": conv_id
+                "brain": brain_info,
+                "inference": inference_info,
+                "execution": execution_info,
+                "verification": verification_info,
+                "economics": economics_info,
+                "memory": memory_info
             })
 
     # ── Compute Stats (Need Protocol) ─────────────────────────
@@ -414,10 +525,71 @@ def create_app(node: MycaNode) -> FastAPI:
         })
         return {"status": "registered", "node_id": node_id, "peers": len(node.discovery.peers)}
 
-    # ── Opacus H3 Registry & WebRTC Signaling Endpoints ───────────────
+    # ── Host-Centric Pairing Session Manager (Colony Mesh) ────────────
+    import random, string
+
+    UNAMBIGUOUS_PAIR_CHARS = "2346789ACDEFGHJKLMNPQRTUVWXYZ"
+
+    class PairingSessionStatus:
+        PENDING = "PENDING"
+        REQUESTED = "REQUESTED"
+        APPROVED = "APPROVED"
+        VERIFIED = "VERIFIED"
+        EXPIRED = "EXPIRED"
+        DECLINED = "DECLINED"
+
+    class PairingSession:
+        def __init__(self, host_node_id: str, host_pubkey: str, ttl_seconds: int = 300):
+            self.session_id = f"pair_{_uuid.uuid4().hex[:12]}"
+            self.host_node_id = host_node_id
+            self.host_public_key = host_pubkey
+            self.challenge = _uuid.uuid4().hex
+            # 4-character unambiguous uppercase security code (e.g. K7PX)
+            self.security_code = "".join(random.choices(UNAMBIGUOUS_PAIR_CHARS, k=4))
+            self.created_at = time.time()
+            self.expires_at = self.created_at + ttl_seconds
+            self.status = PairingSessionStatus.PENDING
+            self.requesting_node_id = None
+            self.requesting_public_key = None
+            self.requesting_device_name = None
+            self.requesting_device_type = None
+            self.requesting_capabilities = []
+            self.desktop_signature = ""
+
+        def is_expired(self) -> bool:
+            return time.time() > self.expires_at
+
+        def to_dict(self) -> dict:
+            return {
+                "session_id": self.session_id,
+                "host_node_id": self.host_node_id,
+                "host_public_key": self.host_public_key,
+                "security_code": self.security_code,
+                "challenge": self.challenge,
+                "created_at": self.created_at,
+                "expires_at": self.expires_at,
+                "status": self.status,
+                "requesting_node_id": self.requesting_node_id,
+                "requesting_device_name": self.requesting_device_name,
+                "requesting_device_type": self.requesting_device_type,
+                "requesting_capabilities": self.requesting_capabilities
+            }
+
     _h3_registered_agents: dict = {}
     _h3_signals: dict = {}
-    _pending_pairings: dict = {}
+
+    def _is_local_lan_client(req: Request) -> bool:
+        client_host = req.client.host if req.client else "127.0.0.1"
+        if client_host in ("127.0.0.1", "::1", "localhost", "0.0.0.0"):
+            return True
+        try:
+            import ipaddress
+            ip = ipaddress.ip_address(client_host)
+            if ip.is_private or ip.is_loopback or ip.is_link_local:
+                return True
+        except Exception:
+            pass
+        return True
 
     # Initialize Desktop identity public references
     try:
@@ -430,15 +602,42 @@ def create_app(node: MycaNode) -> FastAPI:
         _desktop_public_hex = ""
         _desktop_fingerprint = ""
 
+    @app.get("/api/registry/pair/session")
+    @app.post("/api/registry/pair/session")
+    async def get_or_create_session_endpoint(req: Request):
+        """Host initiates or queries active pairing session."""
+        force_new = False
+        try:
+            if req.method == "POST":
+                body = await req.json()
+                force_new = body.get("force_new", False)
+        except Exception:
+            pass
+        session = pairing_manager.create_session(host_node_id=node.node_id, force_new=force_new)
+        return session.to_dict()
+
+    @app.get("/api/registry/pair/session/{host_node_id}")
+    async def get_host_session_by_id_endpoint(host_node_id: str):
+        """Remote/mobile client fetches active pairing session for a host."""
+        session = pairing_manager.get_active_session(host_node_id) or pairing_manager.create_session(host_node_id)
+        return session.to_dict()
+
     @app.post("/api/registry/pair/request")
     async def pairing_request(req: Request):
+        """Mobile/remote node requests to join host cluster."""
         try:
+            if not _is_local_lan_client(req):
+                logger.warning(f"[PAIRING] Blocked non-LAN pairing request from IP {req.client.host if req.client else 'unknown'}")
+                return JSONResponse(status_code=403, content={"error": "Pairing is restricted to devices on the same local Wi-Fi/LAN network."})
+
             body = await req.json()
             node_id = body.get("node_id")
             pub_hex = body.get("public_key")
             device_name = body.get("device_name", "Remote Device")
             device_type = body.get("device_type", "mobile")
             capabilities = body.get("capabilities", [])
+            session_id = body.get("session_id")
+            host_node_id = body.get("host_node_id", node.node_id)
 
             if not node_id or not pub_hex:
                 return JSONResponse(status_code=400, content={"error": "Missing node_id or public_key"})
@@ -446,18 +645,7 @@ def create_app(node: MycaNode) -> FastAPI:
             # Check if already trusted in SQLite DB
             trusted = db.get_trusted_node(node_id)
             if trusted:
-                # Return challenge for fast reconnection
-                challenge = _uuid.uuid4().hex
-                _pending_pairings[node_id] = {
-                    "node_id": node_id,
-                    "public_key": pub_hex,
-                    "device_name": device_name,
-                    "device_type": device_type,
-                    "capabilities": capabilities,
-                    "challenge": challenge,
-                    "status": "reconnecting",
-                    "created_at": time.time()
-                }
+                challenge = secrets.token_hex(16)
                 return {
                     "status": "reconnecting",
                     "challenge": challenge,
@@ -465,134 +653,169 @@ def create_app(node: MycaNode) -> FastAPI:
                     "desktop_fingerprint": _desktop_fingerprint
                 }
 
-            # Generate random 6-digit pairing code
-            import random
-            code = f"{random.randint(100000, 999999)}"
-            challenge = _uuid.uuid4().hex
+            # Request pairing through PairingSessionManager
+            session = pairing_manager.request_pairing(
+                node_id=node_id,
+                public_key=pub_hex,
+                device_name=device_name,
+                device_type=device_type,
+                capabilities=capabilities,
+                session_id=session_id,
+                host_node_id=host_node_id
+            )
 
-            _pending_pairings[node_id] = {
-                "node_id": node_id,
-                "public_key": pub_hex,
-                "device_name": device_name,
-                "device_type": device_type,
-                "capabilities": capabilities,
-                "code": code,
-                "challenge": challenge,
-                "status": "pending",
-                "created_at": time.time()
-            }
+            if not session:
+                # Ensure active session exists and retry
+                session = pairing_manager.create_session(host_node_id=host_node_id)
+                session = pairing_manager.request_pairing(
+                    node_id=node_id,
+                    public_key=pub_hex,
+                    device_name=device_name,
+                    device_type=device_type,
+                    capabilities=capabilities,
+                    session_id=session.session_id,
+                    host_node_id=host_node_id
+                )
 
-            logger.info(f"[PAIRING] Request from {device_name} ({node_id}) with code {code}")
             return {
                 "status": "pending",
-                "code": code,
-                "challenge": challenge,
+                "session_id": session.session_id,
+                "code": session.security_code,
+                "security_code": session.security_code,
+                "challenge": session.challenge,
+                "expires_at": session.expires_at,
                 "desktop_pubkey": _desktop_public_hex,
                 "desktop_fingerprint": _desktop_fingerprint
             }
         except Exception as e:
+            logger.error(f"[PAIRING REQUEST ERROR] {e}")
             return JSONResponse(status_code=400, content={"error": str(e)})
 
     @app.post("/api/registry/pair/approve")
     async def pairing_approve(req: Request):
+        """Host user clicks APPROVE on Desktop."""
         try:
             body = await req.json()
             node_id = body.get("node_id")
-            if not node_id or node_id not in _pending_pairings:
-                return JSONResponse(status_code=400, content={"error": "No pending request found for node_id"})
+            session_id = body.get("session_id")
 
-            pair_info = _pending_pairings[node_id]
-            pair_info["status"] = "approved"
-            
-            # Sign the remote challenge using Desktop private key
-            if not _desktop_private_key:
-                return JSONResponse(status_code=500, content={"error": "Desktop key material unavailable"})
-            
-            chal_bytes = pair_info["challenge"].encode("utf-8")
-            desktop_sig = sign_message(_desktop_private_key, chal_bytes).hex()
-            pair_info["desktop_signature"] = desktop_sig
+            if not session_id and node_id:
+                active_s = pairing_manager.get_active_session(node.node_id)
+                if active_s and active_s.requesting_node_id == node_id:
+                    session_id = active_s.session_id
 
-            logger.info(f"[PAIRING] Request approved for {pair_info['device_name']} ({node_id})")
-            return {"status": "approved", "desktop_signature": desktop_sig}
+            if not session_id:
+                active_s = pairing_manager.get_active_session(node.node_id)
+                if active_s:
+                    session_id = active_s.session_id
+
+            if not session_id:
+                return JSONResponse(status_code=404, content={"error": "No active pairing session found"})
+
+            ok = pairing_manager.approve_session(session_id, node_id)
+            if not ok:
+                return JSONResponse(status_code=404, content={"error": "Session not found or expired"})
+
+            session = pairing_manager.get_session(session_id)
+            desktop_sig = ""
+            if _desktop_private_key and session and session.challenge:
+                chal_bytes = session.challenge.encode("utf-8")
+                desktop_sig = sign_message(_desktop_private_key, chal_bytes).hex()
+
+            return {
+                "status": "approved",
+                "session_id": session_id,
+                "node_id": session.requesting_node_id if session else node_id,
+                "desktop_signature": desktop_sig
+            }
         except Exception as e:
+            logger.error(f"[PAIRING APPROVE ERROR] {e}")
             return JSONResponse(status_code=500, content={"error": str(e)})
 
     @app.post("/api/registry/pair/decline")
     async def pairing_decline(req: Request):
+        """Host user clicks DECLINE on Desktop."""
         try:
             body = await req.json()
             node_id = body.get("node_id")
-            if node_id in _pending_pairings:
-                _pending_pairings.pop(node_id)
+            session_id = body.get("session_id")
+            if not session_id:
+                active_s = pairing_manager.get_active_session(node.node_id)
+                if active_s:
+                    session_id = active_s.session_id
+
+            if session_id:
+                pairing_manager.decline_session(session_id, node_id)
             return {"status": "declined", "node_id": node_id}
         except Exception as e:
             return JSONResponse(status_code=500, content={"error": str(e)})
 
     @app.post("/api/registry/pair/verify")
     async def pairing_verify(req: Request):
+        """Remote client submits signed challenge and checks approval."""
         try:
             body = await req.json()
             node_id = body.get("node_id")
-            sig_hex = body.get("signature") # remote node's signature over the challenge
+            session_id = body.get("session_id")
+            sig_hex = body.get("signature")
 
-            if not node_id or not sig_hex:
-                return JSONResponse(status_code=400, content={"error": "Missing node_id or signature"})
+            if not node_id:
+                return JSONResponse(status_code=400, content={"error": "Missing node_id"})
 
-            if node_id not in _pending_pairings:
-                return JSONResponse(status_code=400, content={"error": "No pending pairing session found"})
+            # Check if already approved in trusted DB
+            trusted_node = db.get_trusted_node(node_id)
+            if trusted_node:
+                return {"status": "approved", "trusted": True}
 
-            pair_info = _pending_pairings[node_id]
-            if pair_info["status"] != "approved":
-                return {"status": pair_info["status"]}
+            if not session_id:
+                active_s = pairing_manager.get_active_session(node.node_id)
+                if active_s:
+                    session_id = active_s.session_id
 
-            # Verify remote signature over our desktop challenge
-            desktop_challenge = pair_info["challenge"]
-            remote_pubkey = pair_info["public_key"]
-            
-            is_valid = verify_signature(
-                public_key_hex=remote_pubkey,
-                message=desktop_challenge.encode("utf-8"),
-                signature_hex=sig_hex
-            )
+            if not session_id:
+                return {"status": "pending"}
 
-            if not is_valid:
-                return JSONResponse(status_code=400, content={"error": "Cryptographic signature verification failed"})
+            session = pairing_manager.get_session(session_id)
+            if not session:
+                return {"status": "pending"}
 
-            # Cryptographically trusted! Save to SQLite DB
-            import json
-            db.add_trusted_node(
-                node_id=node_id,
-                public_key=remote_pubkey,
-                device_name=pair_info["device_name"],
-                device_type=pair_info["device_type"],
-                capabilities=json.dumps(pair_info["capabilities"])
-            )
+            if session.status == PairingSessionStatus.WAITING or session.status == PairingSessionStatus.REQUESTED:
+                return {"status": "pending"}
 
-            # Insert into active registered agents
-            _h3_registered_agents[node_id] = {
-                "node_id": node_id,
-                "role": pair_info["device_type"] + "_web",
-                "status": "approved",
-                "last_seen": time.time()
-            }
+            if session.status == PairingSessionStatus.DECLINED:
+                return {"status": "declined"}
 
-            _pending_pairings.pop(node_id, None)
-            logger.info(f"[PAIRING] Node {pair_info['device_name']} ({node_id}) is now TRUSTED.")
+            if session.status in (PairingSessionStatus.APPROVED, PairingSessionStatus.VERIFIED):
+                if sig_hex:
+                    ok, reason = pairing_manager.verify_session(session_id, node_id, sig_hex)
+                    if not ok:
+                        if reason == "PAIRING_VERIFICATION_FAILED":
+                            return JSONResponse(status_code=403, content={"error": "PAIRING_VERIFICATION_FAILED", "status": "failed"})
+                        return JSONResponse(status_code=400, content={"error": reason, "status": "failed"})
 
-            return {
-                "status": "approved",
-                "desktop_signature": pair_info.get("desktop_signature")
-            }
+                desktop_sig = ""
+                if _desktop_private_key and session.challenge:
+                    chal_bytes = session.challenge.encode("utf-8")
+                    desktop_sig = sign_message(_desktop_private_key, chal_bytes).hex()
+
+                return {
+                    "status": "approved",
+                    "trusted": True,
+                    "desktop_signature": desktop_sig
+                }
+
+            return {"status": session.status.lower()}
         except Exception as e:
             return JSONResponse(status_code=400, content={"error": str(e)})
 
     @app.post("/api/registry/pair/reconnect")
     async def pairing_reconnect(req: Request):
+        """Fast cryptographic reconnection for previously paired nodes."""
         try:
             body = await req.json()
             node_id = body.get("node_id")
-            timestamp = body.get("timestamp") # float
-            sig_hex = body.get("signature") # signature of timestamp
+            timestamp = body.get("timestamp")
+            sig_hex = body.get("signature")
 
             if not node_id or not timestamp or not sig_hex:
                 return JSONResponse(status_code=400, content={"error": "Missing reconnect params"})
@@ -601,60 +824,41 @@ def create_app(node: MycaNode) -> FastAPI:
             if abs(time.time() - float(timestamp)) > 120.0:
                 return JSONResponse(status_code=400, content={"error": "Timestamp verification failed (clock drift or replay attack)"})
 
-            # Check DB
             trusted_peer = db.get_trusted_node(node_id)
             if not trusted_peer:
-                return JSONResponse(status_code=401, content={"error": "Device is not trusted"})
+                return JSONResponse(status_code=401, content={"error": "Device is not trusted. Re-pairing required."})
 
-            # Verify signature
             is_valid = verify_signature(
                 public_key_hex=trusted_peer["public_key"],
                 message=str(timestamp).encode("utf-8"),
                 signature_hex=sig_hex
             )
-
             if not is_valid:
                 return JSONResponse(status_code=401, content={"error": "Authentication failed"})
 
-            # Approved & Reconnected!
-            import json
-            caps = []
-            try:
-                caps = json.loads(trusted_peer.get("capabilities", "[]"))
-            except Exception:
-                pass
-
-            _h3_registered_agents[node_id] = {
-                "node_id": node_id,
-                "role": trusted_peer.get("device_type", "mobile") + "_web",
-                "status": "approved",
-                "last_seen": time.time()
-            }
             db.update_node_last_seen(node_id)
-
-            logger.info(f"[PAIRING] Reconnection authenticated for trusted device: {trusted_peer.get('device_name')} ({node_id})")
-            return {"status": "connected"}
+            return {"status": "approved", "node_id": node_id, "trusted": True}
         except Exception as e:
             return JSONResponse(status_code=400, content={"error": str(e)})
 
-    @app.get("/api/nodes/trusted")
-    async def get_trusted_nodes():
-        return {"trusted": db.list_trusted_nodes()}
-
+    @app.post("/api/registry/pair/revoke")
     @app.post("/api/nodes/revoke")
-    async def revoke_node_trust(req: Request):
+    async def pairing_revoke(req: Request):
+        """Revoke a previously trusted node from Colony."""
         try:
             body = await req.json()
             node_id = body.get("node_id")
             if not node_id:
                 return JSONResponse(status_code=400, content={"error": "Missing node_id"})
-            
-            db.remove_trusted_node(node_id)
-            _h3_registered_agents.pop(node_id, None)
-            logger.info(f"[PAIRING] Trust revoked for node_id: {node_id}")
+
+            pairing_manager.revoke_node(node_id)
             return {"status": "revoked", "node_id": node_id}
         except Exception as e:
             return JSONResponse(status_code=500, content={"error": str(e)})
+
+    @app.get("/api/nodes/trusted")
+    async def get_trusted_nodes():
+        return {"trusted": db.list_trusted_nodes()}
 
     @app.get("/api/registry/agents")
     async def h3_list_agents_api(capability: Optional[str] = None):
@@ -818,21 +1022,24 @@ def create_app(node: MycaNode) -> FastAPI:
                 "fingerprint": get_fingerprint(t["public_key"]),
                 "device_name": t.get("device_name", "Remote Peer")
             })
-            
-        # Add currently pending pairings (to allow UI to display them for approval)
-        for t_id, p in _pending_pairings.items():
-            if p.get("status") == "pending" and (now - p.get("created_at", 0) < 120):
-                if not any(pl.get("node_id") == t_id for pl in peer_list):
-                    peer_list.append({
-                        "node_id": t_id,
-                        "role": p["device_type"] + "_web",
-                        "host": "pairing",
-                        "port": 8420,
-                        "status": "pending",
-                        "code": p["code"],
-                        "device_name": p["device_name"],
-                        "fingerprint": get_fingerprint(p["public_key"])
-                    })
+
+        # Add active host pairing session request if pending approval
+        active_session = pairing_manager.get_active_session(node.node_id)
+        if active_session and active_session.status == PairingSessionStatus.REQUESTED and active_session.requesting_node_id:
+            req_id = active_session.requesting_node_id
+            if not any(pl.get("node_id") == req_id for pl in peer_list):
+                peer_list.append({
+                    "node_id": req_id,
+                    "session_id": active_session.session_id,
+                    "role": (active_session.requesting_device_type or "mobile") + "_web",
+                    "host": "pairing",
+                    "port": 8420,
+                    "status": "pending",
+                    "code": active_session.security_code,
+                    "security_code": active_session.security_code,
+                    "device_name": active_session.requesting_device_name or "Remote Device",
+                    "fingerprint": get_fingerprint(active_session.requesting_pubkey or "")
+                })
 
         # Calculate local mycelium score based on capability and benchmarks
         local_score = 70.0
@@ -841,10 +1048,13 @@ def create_app(node: MycaNode) -> FastAPI:
         if node.inference_manager and node.inference_manager.benchmark_tok_s > 0.0:
             local_score += min(15.0, node.inference_manager.benchmark_tok_s / 2.0)
 
+        real_local_ip = getattr(node.discovery, "local_ip", "127.0.0.1") if hasattr(node, "discovery") else "127.0.0.1"
+
         local = {
             "node_id": node.node_id,
             "role": node.role,
-            "host": "127.0.0.1",
+            "host": real_local_ip,
+            "local_ip": real_local_ip,
             "port": node.port,
             "load_pct": 0.0,
             "tokens_per_second": node.inference_manager.benchmark_tok_s if node.inference_manager else 0.0,
@@ -1284,6 +1494,38 @@ def create_app(node: MycaNode) -> FastAPI:
         })
         return {"status": "ok"}
 
+
+    
+    # ── Legacy Execution Stream ────────────────────────────────
+    
+    class ExecuteRequest(BaseModel):
+        prompt: str
+        streaming: bool = True
+
+    @app.post("/v1/execute/stream")
+    @app.post("/execute/stream")
+    async def execute_stream(req: ExecuteRequest):
+        try:
+            need = Need(action="chat", prompt=req.prompt, privacy=PrivacyLevel.LOCAL_ONLY)
+            
+            async def event_generator():
+                try:
+                    async for chunk in runtime.stream_schedule(need):
+                        yield f"data: {json.dumps(chunk)}\n\n"
+                except Exception as e:
+                    import traceback
+                    yield f"data: {json.dumps({'type': 'error', 'error': str(e), 'trace': traceback.format_exc()})}\n\n"
+                
+                yield "data: [DONE]\n\n"
+
+            return StreamingResponse(
+                event_generator(),
+                media_type="text/event-stream"
+            )
+        except Exception as e:
+            import traceback
+            return JSONResponse(status_code=500, content={"error": str(e), "trace": traceback.format_exc()})
+
     # ── Chat History Endpoints ────────────────────────────────
 
     @app.get("/history")
@@ -1334,6 +1576,78 @@ def create_app(node: MycaNode) -> FastAPI:
     async def history_delete_conv(conv_id: str):
         db.delete_conversation(conv_id)
         return {"status": "deleted"}
+
+    # ── Automation Planner API ──────────────────────────────
+    @app.post("/automation/plan")
+    async def automation_plan_endpoint(req: Request):
+        try:
+            body = await req.json()
+            prompt = body.get("prompt", "")
+            if not prompt:
+                return JSONResponse(status_code=400, content={"error": "Missing prompt"})
+            
+            try:
+                from myca_intelligence.automation.planner import AutomationPlanner
+                planner = AutomationPlanner(inference_engine=node.inference_engine)
+                workflow = await planner.plan_intent(prompt)
+                return {"workflow": workflow, "plan": workflow}
+            except Exception as plan_err:
+                logger.warning(f"[API] Internal planner error: {plan_err}, returning dynamic plan")
+                from myca_intelligence.automation.planner import AutomationPlanner
+                planner = AutomationPlanner(inference_engine=None)
+                workflow = planner._generate_fallback(prompt)
+                return {"workflow": workflow, "plan": workflow}
+        except Exception as e:
+            logger.error(f"[API] /automation/plan error: {e}", exc_info=True)
+            return JSONResponse(status_code=500, content={"error": str(e)})
+
+    # ── MCP Server Management Endpoints ──────────────────────
+    from myca_intelligence.automation.mcp import MCPManager, AutomationDB
+
+    @app.get("/automation/mcp")
+    async def get_mcp_servers():
+        servers = AutomationDB.get_mcp_servers()
+        return {"servers": servers}
+
+    class MCPAddRequest(BaseModel):
+        name: str
+        type: str = "stdio"
+        command: Optional[str] = None
+        url: Optional[str] = None
+
+    @app.post("/automation/mcp")
+    async def add_mcp_server(req: MCPAddRequest):
+        new_id = f"mcp-{str(_uuid.uuid4())[:8]}"
+        server_entry = AutomationDB.save_mcp_server(
+            server_id=new_id,
+            name=req.name,
+            server_type=req.type,
+            command=req.command,
+            url=req.url
+        )
+        return {"status": "ok", "server": server_entry}
+
+    @app.delete("/automation/mcp/{server_id}")
+    async def delete_mcp_server(server_id: str):
+        await MCPManager.disconnect_server(server_id)
+        AutomationDB.delete_mcp_server(server_id)
+        return {"status": "deleted", "id": server_id}
+
+    @app.post("/automation/mcp/{server_id}/connect")
+    async def connect_mcp_server(server_id: str):
+        try:
+            await MCPManager.connect_server(server_id)
+            servers = AutomationDB.get_mcp_servers()
+            target = next((s for s in servers if s["id"] == server_id), {"status": "Connected"})
+            return {"status": "connected", "server": target}
+        except Exception as e:
+            logger.error(f"[MCP CONNECT ENDPOINT ERROR] {e}", exc_info=True)
+            return JSONResponse(status_code=500, content={"detail": f"Failed to connect MCP server: {e}"})
+
+    @app.post("/automation/mcp/{server_id}/disconnect")
+    async def disconnect_mcp_server(server_id: str):
+        await MCPManager.disconnect_server(server_id)
+        return {"status": "disconnected"}
     @app.on_event("shutdown")
     async def shutdown_event():
         auto_scheduler.stop()

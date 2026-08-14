@@ -46,6 +46,7 @@ class PeerInfo:
     model_loaded: bool = False
     source: str = "mdns_local"  # mdns_local or h3_global
     capabilities: list[str] = field(default_factory=list)
+    code: str = ""
 
     def get_mycelium_score(self) -> float:
         """
@@ -96,8 +97,24 @@ class PeerInfo:
             "model_loaded": self.model_loaded,
             "source": self.source,
             "capabilities": self.capabilities,
+            "code": self.code,
             "mycelium_score": round(self.get_mycelium_score(), 1),
         }
+
+def compute_node_pairing_code(node_id: str) -> str:
+    if not node_id:
+        return "A4B9"
+    chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
+    h = 2166136261
+    for char in node_id:
+        h = (h ^ ord(char)) & 0xFFFFFFFF
+        h = (h * 16777619) & 0xFFFFFFFF
+    res = ""
+    u_hash = h
+    for _ in range(4):
+        res += chars[u_hash % len(chars)]
+        u_hash //= len(chars)
+    return res
 
 class H3GlobalDiscovery:
     """
@@ -124,7 +141,8 @@ class H3GlobalDiscovery:
             "capabilities": ["inference", "myca-v1"],
             "endpoint": f"http://{self.local_ip}:{self.port}",
             "model_loaded": True,
-            "version": "0.1.0"
+            "version": "0.1.0",
+            "code": compute_node_pairing_code(self.node_id)
         }
         try:
             async with httpx.AsyncClient() as client:
@@ -157,15 +175,19 @@ class H3GlobalDiscovery:
                             if len(parts) > 1:
                                 port = int(parts[1].split("/")[0])
                         
+                        a_node_id = agent.get("node_id", "")
+                        a_code = agent.get("code") or compute_node_pairing_code(a_node_id)
+                        
                         peers.append(PeerInfo(
-                            node_id=agent.get("node_id"),
+                            node_id=a_node_id,
                             role=agent.get("role", "inference"),
                             host=host,
                             port=port,
                             model_loaded=agent.get("model_loaded", False),
                             source="h3_global",
                             latency_ms=100.0,
-                            status=agent.get("status", "active")
+                            status=agent.get("status", "active"),
+                            code=a_code
                         ))
                     return peers
         except Exception as e:

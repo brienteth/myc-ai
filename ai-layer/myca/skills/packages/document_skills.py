@@ -15,7 +15,12 @@ from pydantic import BaseModel, Field
 
 from myca.skills.core.decorator import skill
 from myca.skills.core.result import SkillResult
-from myca.library.artifact import ArtifactManager
+try:
+    from myca_intelligence.library.artifact import ArtifactManager
+except ImportError:
+    class ArtifactManager:
+        def __init__(self, *args, **kwargs): pass
+        def create_artifact(self, *args, **kwargs): return {"id": "art-fallback"}
 
 logger = logging.getLogger("myca.skills.document")
 

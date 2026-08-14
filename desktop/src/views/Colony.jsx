@@ -13,6 +13,8 @@ const Devices = () => {
     pairingStatus, 
     mobileId, 
     pairingCode,
+    hostSession,
+    startNewPairingSession,
     approveNode, 
     declineNode,
     revokeNode
@@ -51,13 +53,13 @@ const Devices = () => {
     }
   }, [backendOnline]);
 
-  const pendingNodes = nodes.filter(n => n.status === 'pending');
+  const pendingNodes = nodes.filter(n => n.status === 'pending' && n.code && n.code.length === 4);
   const activeNodes = nodes.filter(n => n.status !== 'pending');
   const allDeviceCount = activeNodes.length + lanDevices.length;
 
   // Render Mobile/Remote client pairing screen
   if (pairingStatus === 'pending' || pairingStatus === 'declined') {
-    const code = pairingCode ? String(pairingCode).replace(/(\d{3})(\d{3})/, '$1 $2') : '------';
+    const code = pairingCode ? String(pairingCode).toUpperCase() : '----';
     return (
       <div className="pairing-overlay">
         <div className="pairing-card">
@@ -152,6 +154,11 @@ const Devices = () => {
               : status === 'loading'
                 ? 'Scanning local network…'
                 : `${allDeviceCount} device${allDeviceCount !== 1 ? 's' : ''} on this network`}
+          {backendOnline && nodes.find(n => n.isLocal)?.host && (
+            <span style={{ marginLeft: '12px', fontSize: '11px', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.3)', padding: '2px 8px', borderRadius: '12px', color: '#a5b4fc', fontWeight: 'bold' }}>
+              Cluster IP: {nodes.find(n => n.isLocal)?.host}:8420
+            </span>
+          )}
         </p>
       </div>
 
@@ -169,7 +176,7 @@ const Devices = () => {
           </div>
           <div className="approval-list">
             {pendingNodes.map(pn => {
-              const code = pn.code ? String(pn.code).replace(/(\d{3})(\d{3})/, '$1 $2') : '------';
+              const code = (pn.code || '----').toUpperCase();
               return (
                 <div key={pn.id} className="approval-card">
                   <div className="approval-card-info">
@@ -231,33 +238,6 @@ const Devices = () => {
           </div>
         </>
       )}
-
-      {/* ── Tensor Parallelism Visualizer ── */}
-      <div style={{ background: 'var(--f-parchment)', border: '1px solid var(--f-bark)', borderRadius: '16px', padding: '24px', margin: '24px 0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div>
-            <h3 style={{ fontSize: '16px', color: 'var(--f-deep)', fontFamily: 'var(--f-serif)' }}>Tensor Parallelism & Model Sharding</h3>
-            <p style={{ fontSize: '12px', color: 'var(--f-soil)', margin: 0 }}>Model layers automatically split across available network nodes for zero-vram-bottleneck inference.</p>
-          </div>
-          <span style={{ fontFamily: 'var(--f-mono)', fontSize: '11px', background: 'rgba(46, 107, 69, 0.12)', color: 'var(--f-moss)', padding: '4px 10px', borderRadius: '6px', fontWeight: 600 }}>
-            QUIC HTTP/3 Active
-          </span>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
-          <div style={{ background: 'var(--f-cream)', border: '1px solid var(--f-bark)', padding: '14px', borderRadius: '10px' }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '11px', color: 'var(--f-moss)', fontWeight: 600 }}>Local Node (This Device)</div>
-            <div style={{ fontSize: '13px', color: 'var(--f-humus)', margin: '4px 0 8px 0', fontWeight: 500 }}>Layers 0 – 16 (Attention Head 0-16)</div>
-            <div style={{ height: '4px', background: 'var(--f-moss)', borderRadius: '2px' }} />
-          </div>
-          <div style={{ background: 'var(--f-cream)', border: '1px solid var(--f-bark)', padding: '14px', borderRadius: '10px' }}>
-            <div style={{ fontFamily: 'var(--f-mono)', fontSize: '11px', color: 'var(--f-moss)', fontWeight: 600 }}>
-              {nodes.length > 1 ? nodes[1].name : 'Colony Mesh Peer'}
-            </div>
-            <div style={{ fontSize: '13px', color: 'var(--f-humus)', margin: '4px 0 8px 0', fontWeight: 500 }}>Layers 17 – 32 (FeedForward 17-32)</div>
-            <div style={{ height: '4px', background: '#3F8C59', borderRadius: '2px' }} />
-          </div>
-        </div>
-      </div>
 
       {/* ── Trusted Devices ── */}
       {nodes.some(n => n.source === 'trusted_db') && (

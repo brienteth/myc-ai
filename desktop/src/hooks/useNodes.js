@@ -25,6 +25,7 @@ export const useNodes = () => {
   const [pairingStatus, setPairingStatus] = useState('not_applicable');
   const [mobileId, setMobileId] = useState(null);
   const [pairingCode, setPairingCode] = useState(null);
+  const [hostSession, setHostSession] = useState(null);
   const wsRef = useRef(null);
   const retryCountRef = useRef(0);
   const backendOnlineRef = useRef(false);
@@ -49,7 +50,8 @@ export const useNodes = () => {
     if (isLocalHost || isElectron || isFileProtocol || !window.location.hostname) {
       return 'http://127.0.0.1:8420';
     }
-    return window.location.origin;
+    // Remote/mobile browser accessing web app -> automatically route API calls to desktop backend on port 8420
+    return `http://${window.location.hostname}:8420`;
   }, []);
 
   // ── Cryptographic helper functions (tweetnacl Ed25519) ──
@@ -102,7 +104,7 @@ export const useNodes = () => {
     }
   }, [hexToBuf, bufToHex]);
 
-  // ── Remote client pairing ──
+  // ── Remote client pairing: Host is the Single Source of Truth ──
   useEffect(() => {
     const isElectron = /Electron/i.test(navigator.userAgent);
     const isFileProtocol = window.location.protocol === 'file:';
@@ -121,12 +123,29 @@ export const useNodes = () => {
         setMobileId(identity.nodeId);
 
         const backendUrl = getBackendUrl();
+
+        // 1. Fetch active session from host (Single Source of Truth)
+        let activeSession = null;
+        try {
+          const sessRes = await fetch(`${backendUrl}/api/registry/pair/session`);
+          if (sessRes.ok) {
+            activeSession = await sessRes.json();
+            if (activeSession && activeSession.security_code) {
+              setHostSession(activeSession);
+              setPairingCode(activeSession.security_code);
+            }
+          }
+        } catch (e) {
+          console.warn('[PAIRING] Host session discovery in progress:', e);
+        }
+
         const payload = {
           node_id: identity.nodeId,
           public_key: identity.pubHex,
           device_name: navigator.userAgent.includes('Mobile') ? 'Mobile Phone' : 'Web Client',
           device_type: navigator.userAgent.includes('Mobile') ? 'mobile' : 'laptop',
-          capabilities: ['inference', 'webgpu', 'sensors']
+          capabilities: ['inference', 'webgpu', 'sensors'],
+          session_id: activeSession?.session_id
         };
 
         try {
@@ -138,9 +157,11 @@ export const useNodes = () => {
           if (!res.ok) throw new Error('Request rejected');
           const data = await res.json();
           if (isCancelled) return;
-          if (data.code) setPairingCode(data.code);
 
-          // Reconnecting auth
+          const hostCode = data.security_code || data.code || activeSession?.security_code;
+          if (hostCode) setPairingCode(hostCode);
+
+          // Fast Reconnecting auth if previously trusted
           if (data.status === 'reconnecting') {
             const timestamp = (Date.now() / 1000).toString();
             const signatureRec = await signChallengeBytes(identity.privHex, timestamp);
@@ -159,22 +180,27 @@ export const useNodes = () => {
             }
           }
 
-          // Generate or get desktop challenge
-          const desktopChallenge = data.challenge;
+          // Get challenge from host session
+          const desktopChallenge = data.challenge || activeSession?.challenge;
+          const currentSessionId = data.session_id || activeSession?.session_id;
 
-          // Start polling verify status
+          // Start polling verify status with Ed25519 signature
           interval = setInterval(async () => {
             if (isCancelled) {
               clearInterval(interval);
               return;
             }
             try {
-              const clientSignature = await signChallengeBytes(identity.privHex, desktopChallenge);
+              const clientSignature = desktopChallenge
+                ? await signChallengeBytes(identity.privHex, desktopChallenge)
+                : '';
+
               const verifyRes = await fetch(`${backendUrl}/api/registry/pair/verify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   node_id: identity.nodeId,
+                  session_id: currentSessionId,
                   signature: clientSignature
                 })
               });
@@ -189,11 +215,11 @@ export const useNodes = () => {
                 }
               }
             } catch (e) {
-              console.error('Verify poll failed:', e);
+              console.error('[PAIRING] Verify poll failed:', e);
             }
-          }, 3000);
+          }, 1500);
         } catch (err) {
-          console.error('Pair request failed:', err);
+          console.error('[PAIRING] Pair request failed:', err);
           setPairingStatus('declined');
         }
       };
@@ -230,6 +256,7 @@ export const useNodes = () => {
         tokens_per_second: data.local.tokens_per_second ?? 0,
         model_loaded: data.local.model_loaded ?? true,
         isLocal: true,
+        host: data.local.host || data.local.local_ip || '127.0.0.1',
         category: 'myca',
         mycelium_score: data.local.mycelium_score ?? 95.0,
       };
@@ -253,7 +280,7 @@ export const useNodes = () => {
           source: p.source,
           category: 'myca',
           mycelium_score: p.mycelium_score ?? 60.0,
-          code: p.code,
+          code: p.code || p.security_code || '',
           fingerprint: p.fingerprint
         };
       });
@@ -403,6 +430,7 @@ export const useNodes = () => {
 
   const approveNode = useCallback(async (nodeId) => {
     const backendUrl = getBackendUrl();
+    setNodes(prev => prev.map(n => n.id === nodeId ? { ...n, status: 'approved' } : n));
     try {
       await fetch(`${backendUrl}/api/registry/pair/approve`, {
         method: 'POST',
@@ -417,6 +445,7 @@ export const useNodes = () => {
 
   const declineNode = useCallback(async (nodeId) => {
     const backendUrl = getBackendUrl();
+    setNodes(prev => prev.filter(n => n.id !== nodeId));
     try {
       await fetch(`${backendUrl}/api/registry/pair/decline`, {
         method: 'POST',
@@ -443,6 +472,26 @@ export const useNodes = () => {
     }
   }, [getBackendUrl, fetchNodes]);
 
+  const startNewPairingSession = useCallback(async () => {
+    const backendUrl = getBackendUrl();
+    try {
+      const res = await fetch(`${backendUrl}/api/registry/pair/session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force_new: true })
+      });
+      if (res.ok) {
+        const session = await res.json();
+        setHostSession(session);
+        setPairingCode(session.security_code);
+        fetchNodes();
+        return session;
+      }
+    } catch (e) {
+      console.error('Failed to start new pairing session:', e);
+    }
+  }, [getBackendUrl, fetchNodes]);
+
   // ── Polling loop ──
   useEffect(() => {
     fetchNodes();
@@ -459,8 +508,10 @@ export const useNodes = () => {
     pairingStatus, 
     mobileId, 
     pairingCode,
+    hostSession,
+    startNewPairingSession,
     approveNode, 
-    declineNode,
+    declineNode, 
     revokeNode
   };
 };

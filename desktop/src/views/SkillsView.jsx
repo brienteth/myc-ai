@@ -90,6 +90,21 @@ const SkillsView = () => {
     { name: 'Firebase Data Connect MCP', type: 'stdio', command: 'npx -y @firebase/data-connect-mcp', status: 'Connected', skills: 18 }
   ];
 
+  const [mcpServersList, setMcpServersList] = useState([]);
+  const [mcpName, setMcpName] = useState('');
+  const [mcpCommand, setMcpCommand] = useState('');
+
+  const fetchMcpServers = () => {
+    fetch('http://127.0.0.1:8420/automation/mcp')
+      .then(res => res.json())
+      .then(data => setMcpServersList(data.servers || []))
+      .catch(err => console.error("Failed to load MCP servers:", err));
+  };
+
+  useEffect(() => {
+    fetchMcpServers();
+  }, []);
+
   // Filter skills by category & search query
   const filteredSkills = SKILLS_DATA.filter(skill => {
     const matchesCat = selectedCategory === 'All' || skill.category === selectedCategory;
@@ -274,37 +289,96 @@ const SkillsView = () => {
             </div>
             <p className="mcp-desc">Integrate external databases, API tools, or custom CLI scripts via stdio or SSE pipes.</p>
             
-            <div className="mcp-form-grid">
-              <div>
-                <label>Server Name</label>
-                <input type="text" className="mcp-input" placeholder="e.g. Slack MCP or SQLite Explorer" />
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!mcpName.trim()) return;
+              try {
+                const res = await fetch('http://127.0.0.1:8420/automation/mcp', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name: mcpName, type: 'stdio', command: mcpCommand })
+                });
+                if (res.ok) {
+                  const data = await res.json();
+                  const newServerId = data.server.id;
+                  setMcpName('');
+                  setMcpCommand('');
+                  // Auto-connect newly added server
+                  await fetch(`http://127.0.0.1:8420/automation/mcp/${newServerId}/connect`, { method: 'POST' });
+                  fetchMcpServers();
+                }
+              } catch (err) {
+                alert(`Error adding MCP server: ${err.message}`);
+              }
+            }}>
+              <div className="mcp-form-grid">
+                <div>
+                  <label>Server Name</label>
+                  <input 
+                    type="text" 
+                    className="mcp-input" 
+                    placeholder="e.g. opacus or slack" 
+                    value={mcpName}
+                    onChange={e => setMcpName(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label>Command (stdio)</label>
+                  <input 
+                    type="text" 
+                    className="mcp-input" 
+                    placeholder="e.g. npx -y @modelcontextprotocol/server-slack" 
+                    value={mcpCommand}
+                    onChange={e => setMcpCommand(e.target.value)}
+                  />
+                </div>
               </div>
-              <div>
-                <label>Command (stdio)</label>
-                <input type="text" className="mcp-input" placeholder="e.g. npx -y @modelcontextprotocol/server-slack" />
-              </div>
-            </div>
 
-            <button className="btn-primary" style={{ marginTop: '16px' }}>
-              <Plus size={16} /> Add MCP Server
-            </button>
+              <button type="submit" className="btn-primary" style={{ marginTop: '16px' }}>
+                <Plus size={16} /> Add MCP Server
+              </button>
+            </form>
           </div>
 
-          <h3 className="section-subtitle">Connected & Verified MCP Servers ({mcpServers.length})</h3>
+          <h3 className="section-subtitle">Connected & Verified MCP Servers ({mcpServersList.length})</h3>
           <div className="mcp-list">
-            {mcpServers.map((server, i) => (
-              <div key={i} className="mcp-item-card">
+            {mcpServersList.map((server, i) => (
+              <div key={server.id || i} className="mcp-item-card">
                 <div className="mcp-item-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <Server size={18} color="var(--f-moss)" />
                     <span className="mcp-name">{server.name}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span className="mcp-skills-count">{server.skills} Skills Registered</span>
-                    <span className="mcp-status-pill">{server.status}</span>
+                    <span className="mcp-skills-count">
+                      {server.tools_count !== undefined ? server.tools_count : (server.skills || 0)} Skills Registered
+                    </span>
+                    <span className="mcp-status-pill" style={{
+                      background: server.status === 'Connected' ? 'rgba(46, 107, 69, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                      color: server.status === 'Connected' ? 'var(--f-moss)' : '#ef4444'
+                    }}>
+                      {server.status}
+                    </span>
+                    <button 
+                      onClick={async () => {
+                        if (confirm(`Remove MCP server '${server.name}'?`)) {
+                          await fetch(`http://127.0.0.1:8420/automation/mcp/${server.id}`, { method: 'DELETE' });
+                          fetchMcpServers();
+                        }
+                      }}
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--f-stone)', padding: '4px' }}
+                      title="Delete MCP Server"
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   </div>
                 </div>
                 <div className="mcp-cmd-code"><Terminal size={13} /> {server.command}</div>
+                {server.error_log && (
+                  <div style={{ fontSize: '11px', color: '#ef4444', marginTop: '6px', fontFamily: 'var(--f-mono)' }}>
+                    Error: {server.error_log}
+                  </div>
+                )}
               </div>
             ))}
           </div>

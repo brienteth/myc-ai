@@ -53,8 +53,8 @@ Myca, **"buluta bağlı bir yapay zeka" değil, kendi cihazlarınızın oluştur
 |---|---|---|
 | **macOS (DMG)** | [İndir: Myca-macOS.dmg (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
 | **macOS (ZIP)** | [İndir: Myca-macOS.zip (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip) | `.zip` |
-| **Windows** | [İndir: Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Windows.zip) | `.zip` / `.exe` |
-| **Linux** | [İndir: Myca-Linux.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.0/Myca-Linux.zip) | `.zip` / `.AppImage` |
+| **Windows (Kurulum)** | [İndir: Myca-Setup-0.1.0.exe](https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe) | `.exe` |
+| **Windows (Taşınabilir)** | [İndir: Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.1/Myca-Windows.zip) | `.zip` |
 | **Tüm Sürümler** | [Tüm Sürümleri İncele (GitHub Releases)](https://github.com/brienteth/myc-ai/releases) | |
 
 ---

@@ -793,172 +793,158 @@ const WorkflowStudioCanvas = () => {
     }
   };
 
+  const [understandingData, setUnderstandingData] = useState(null);
+
   const handleAIGenerate = async (prompt) => {
-    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'planner', msg: `Planner processing intent: "${prompt}"` }]);
+    setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'info', msg: `Decomposing intent into Execution Contract: "${prompt}"...` }]);
     setExecutionResult(null);
-
-    setNodes([]);
-    setEdges([]);
-
-    const needNode = { id: 'sys_need', type: 'system', position: { x: 350, y: 50 }, data: { type: 'need', label: 'Need', description: `"${prompt}"`, status: 'done' } };
-    const plannerNode = { id: 'sys_planner', type: 'system', position: { x: 350, y: 150 }, data: { type: 'planner', label: 'Planner', description: 'Decomposing intent into primitives...', status: 'running' } };
-    
-    setNodes([needNode, plannerNode]);
-    setEdges([{ id: 'e_need_planner', source: 'sys_need', target: 'sys_planner', animated: true }]);
+    setIsExecuting(false);
 
     try {
       let workflow;
-      try {
-        const res = await fetch('http://127.0.0.1:8420/automation/plan', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt })
-        });
-        const data = await res.json();
-        workflow = data.workflow || data.plan;
-      } catch (planErr) {
-        // Offline fallback: generate a basic pipeline from keyword analysis
-        setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'warn', msg: 'Planner offline. Generating pipeline from intent analysis...' }]);
-        const lowerPrompt = prompt.toLowerCase();
-        const autoNodes = [];
-        
-        // Auto-detect skills from prompt keywords
-        if (lowerPrompt.includes('haber') || lowerPrompt.includes('news') || lowerPrompt.includes('ara') || lowerPrompt.includes('search')) {
-          autoNodes.push({ id: 'auto_search', skill: 'browser.search', inputs: { query: prompt } });
-        }
-        if (lowerPrompt.includes('scrape') || lowerPrompt.includes('kazı') || lowerPrompt.includes('siteden')) {
-          autoNodes.push({ id: 'auto_scrape', skill: 'web.scrape', inputs: {} });
-        }
-        if (lowerPrompt.includes('rss') || lowerPrompt.includes('feed')) {
-          autoNodes.push({ id: 'auto_rss', skill: 'rss.read', inputs: {} });
-        }
-        if (lowerPrompt.includes('özetle') || lowerPrompt.includes('summar')) {
-          autoNodes.push({ id: 'auto_summary', skill: 'ai.summary', inputs: {} });
-        }
-        if (lowerPrompt.includes('analiz') || lowerPrompt.includes('analy') || lowerPrompt.includes('chat') || lowerPrompt.includes('yaz')) {
-          autoNodes.push({ id: 'auto_chat', skill: 'core.chat', inputs: { prompt: prompt } });
-        }
-        if (lowerPrompt.includes('telegram') || lowerPrompt.includes('bildirim') || lowerPrompt.includes('notify')) {
-          autoNodes.push({ id: 'auto_telegram', skill: 'telegram.send', inputs: {} });
-        }
-        if (lowerPrompt.includes('email') || lowerPrompt.includes('e-posta') || lowerPrompt.includes('mail')) {
-          autoNodes.push({ id: 'auto_email', skill: 'email.send', inputs: {} });
-        }
-        if (lowerPrompt.includes('tweet') || lowerPrompt.includes('x.') || lowerPrompt.includes('twitter')) {
-          autoNodes.push({ id: 'auto_tweet', skill: 'x.post', inputs: {} });
-        }
-        if (lowerPrompt.includes('dosya') || lowerPrompt.includes('file') || lowerPrompt.includes('pdf') || lowerPrompt.includes('csv')) {
-          autoNodes.push({ id: 'auto_write', skill: 'table.write', inputs: {} });
-        }
-        if (lowerPrompt.includes('görsel') || lowerPrompt.includes('image') || lowerPrompt.includes('resim')) {
-          autoNodes.push({ id: 'auto_vision', skill: 'vision.analyze', inputs: {} });
-        }
-        if (lowerPrompt.includes('ocr') || lowerPrompt.includes('tarama') || lowerPrompt.includes('scan')) {
-          autoNodes.push({ id: 'auto_ocr', skill: 'image.ocr', inputs: {} });
-        }
-        if (lowerPrompt.includes('instagram') || lowerPrompt.includes('reels')) {
-          autoNodes.push({ id: 'auto_ig', skill: 'instagram.post', inputs: {} });
-        }
-        if (lowerPrompt.includes('youtube') || lowerPrompt.includes('video')) {
-          autoNodes.push({ id: 'auto_yt', skill: 'youtube.transcribe', inputs: {} });
-        }
-        if (lowerPrompt.includes('github') || lowerPrompt.includes('repo')) {
-          autoNodes.push({ id: 'auto_github', skill: 'github.repo_read', inputs: {} });
-        }
-        if (lowerPrompt.includes('fatura') || lowerPrompt.includes('invoice')) {
-          autoNodes.push({ id: 'auto_invoice', skill: 'finance.invoice_parse', inputs: {} });
-        }
-        if (lowerPrompt.includes('müşteri') || lowerPrompt.includes('lead') || lowerPrompt.includes('crm')) {
-          autoNodes.push({ id: 'auto_crm', skill: 'crm.lead_extract', inputs: {} });
-        }
-        if (lowerPrompt.includes('sosyal') || lowerPrompt.includes('social') || lowerPrompt.includes('post')) {
-          autoNodes.push({ id: 'auto_social', skill: 'marketing.social_post', inputs: {} });
-        }
-        if (lowerPrompt.includes('içerik') || lowerPrompt.includes('content') || lowerPrompt.includes('plan')) {
-          autoNodes.push({ id: 'auto_content', skill: 'influencer.content_plan', inputs: {} });
-        }
+      const res = await fetch('http://127.0.0.1:8420/automation/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+      const data = await res.json();
+      workflow = data.workflow || data.plan;
 
-        // Always have at least core.chat
-        if (autoNodes.length === 0) {
-          autoNodes.push({ id: 'auto_chat', skill: 'core.chat', inputs: { prompt: prompt } });
-        }
-
-        workflow = {
-          intent: prompt,
-          nodes: autoNodes,
-          edges: autoNodes.length > 1 ? autoNodes.slice(0, -1).map((n, i) => ({
-            source: n.id,
-            target: autoNodes[i + 1].id
-          })) : []
-        };
+      if (!workflow || !workflow.nodes || workflow.nodes.length === 0) {
+        throw new Error('Planner produced an empty execution contract.');
       }
 
       setDraftWorkflow(workflow);
+      if (workflow.understanding) {
+        setUnderstandingData(workflow.understanding);
+      }
 
-      setNodes(nds => nds.map(n => n.id === 'sys_planner' ? { ...n, data: { ...n.data, status: 'done', description: `Planned ${workflow.nodes.length} skills` } } : n));
-
-      const graphNode = { id: 'sys_graph', type: 'system', position: { x: 350, y: 250 }, data: { type: 'graph', label: 'Execution Graph', description: `${workflow.nodes.length} Primitive Nodes`, status: 'done' } };
-      
-      const startY = 370;
-      const skillNodes = workflow.nodes.map((node, index) => {
-        const manifest = SKILL_MANIFESTS[node.skill] || {};
-        const manifestInputs = (manifest.required_inputs || []).map(inp => ({
-          name: typeof inp === 'string' ? inp : inp.name,
-          type: typeof inp === 'object' ? inp.type : 'text',
-          description: typeof inp === 'object' ? inp.description : ''
-        }));
-
-        return {
-          id: node.id,
-          type: 'skill',
-          position: { x: 350 + (index % 2 === 0 ? 0 : 220), y: startY + index * 110 },
-          data: {
-            title: node.skill,
-            category: 'Primitive',
-            status: 'idle',
-            inputs: manifestInputs.length > 0 ? manifestInputs : Object.keys(node.inputs || {}).map(k => ({ name: k })),
-            outputs: [{ name: 'output' }],
-            inputsValue: node.inputs || {},
-            manifest: {
-              ...manifest,
-              required_inputs: manifestInputs,
-              optional_inputs: manifest.optional_inputs || [],
-              required_credentials: manifest.required_credentials || [],
-              runtime: manifest.runtime || 'local'
-            }
-          }
-        };
+      // Compute topological DAG levels for true parallel visual layout
+      const nodeDepMap = {};
+      const nodeMap = {};
+      workflow.nodes.forEach(n => {
+        nodeMap[n.id] = n;
+        nodeDepMap[n.id] = (n.dependencies || n.depends_on || []).filter(d => workflow.nodes.some(wn => wn.id === d));
       });
 
-      const lastY = startY + skillNodes.length * 110;
-      const artifactsNode = { id: 'sys_artifacts', type: 'system', position: { x: 350, y: lastY }, data: { type: 'artifacts', label: 'Artifacts', description: 'Outputs & Artifacts', status: 'idle' } };
-      const doneNode = { id: 'sys_done', type: 'system', position: { x: 350, y: lastY + 100 }, data: { type: 'done', label: 'Done', description: 'Pipeline Completed', status: 'idle' } };
-
-      const allNodes = [needNode, plannerNode, graphNode, ...skillNodes, artifactsNode, doneNode];
-      
-      const newEdges = [
-        { id: 'e_need_planner', source: 'sys_need', target: 'sys_planner', animated: true },
-        { id: 'e_planner_graph', source: 'sys_planner', target: 'sys_graph', animated: true }
-      ];
-
-      if (skillNodes.length > 0) {
-        newEdges.push({ id: 'e_graph_s0', source: 'sys_graph', target: skillNodes[0].id, animated: true });
-        for (let i = 0; i < skillNodes.length - 1; i++) {
-          newEdges.push({ id: `e_s${i}_s${i+1}`, source: skillNodes[i].id, target: skillNodes[i+1].id, animated: true });
+      const levels = {};
+      const computeLevel = (nid, visited = new Set()) => {
+        if (levels[nid] !== undefined) return levels[nid];
+        if (visited.has(nid)) return 0;
+        visited.add(nid);
+        const deps = nodeDepMap[nid] || [];
+        if (deps.length === 0) {
+          levels[nid] = 0;
+          return 0;
         }
-        newEdges.push({ id: `e_sLast_art`, source: skillNodes[skillNodes.length - 1].id, target: 'sys_artifacts', animated: true });
-      } else {
-        newEdges.push({ id: 'e_graph_art', source: 'sys_graph', target: 'sys_artifacts', animated: true });
-      }
-      
-      newEdges.push({ id: 'e_art_done', source: 'sys_artifacts', target: 'sys_done', animated: true });
+        const maxDepLevel = Math.max(...deps.map(d => computeLevel(d, new Set(visited))));
+        levels[nid] = maxDepLevel + 1;
+        return levels[nid];
+      };
 
-      setNodes(allNodes);
-      setEdges(newEdges);
-      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'info', msg: 'Pipeline visualization completed.' }]);
-      
+      workflow.nodes.forEach(n => computeLevel(n.id));
+
+      // Group nodes by level
+      const levelGroups = {};
+      workflow.nodes.forEach(n => {
+        const lvl = levels[n.id] || 0;
+        if (!levelGroups[lvl]) levelGroups[lvl] = [];
+        levelGroups[lvl].push(n);
+      });
+
+      // Position nodes with parallel spacing
+      const flowNodes = [];
+      const startY = 160;
+      const levelHeight = 160;
+      const nodeWidth = 260;
+
+      Object.keys(levelGroups).sort((a, b) => Number(a) - Number(b)).forEach(lvlStr => {
+        const lvl = Number(lvlStr);
+        const group = levelGroups[lvl];
+        const totalInLevel = group.length;
+        const startX = 420 - ((totalInLevel - 1) * (nodeWidth + 40)) / 2;
+
+        group.forEach((node, idx) => {
+          const posX = startX + idx * (nodeWidth + 40);
+          const posY = startY + lvl * levelHeight;
+
+          const manifest = SKILL_MANIFESTS[node.skill] || {};
+          const manifestInputs = (manifest.required_inputs || []).map(inp => ({
+            name: typeof inp === 'string' ? inp : inp.name,
+            type: typeof inp === 'object' ? inp.type : 'text',
+            description: typeof inp === 'object' ? inp.description : ''
+          }));
+
+          flowNodes.push({
+            id: node.id,
+            type: 'skill',
+            position: { x: posX, y: posY },
+            data: {
+              title: node.name || node.skill,
+              category: node.capability || 'Capability',
+              status: 'idle',
+              runtime: node.runtime || 'LOCAL',
+              inputs: manifestInputs.length > 0 ? manifestInputs : Object.keys(node.inputs || {}).map(k => ({ name: k })),
+              outputs: [{ name: 'output' }],
+              inputsValue: node.inputs || {},
+              manifest: {
+                ...manifest,
+                description: node.description || manifest.description,
+                runtime: node.runtime || 'LOCAL'
+              }
+            }
+          });
+        });
+      });
+
+      // Construct edges strictly from DAG dependencies or workflow.edges
+      const flowEdges = [];
+      const edgeSet = new Set();
+
+      if (workflow.edges && workflow.edges.length > 0) {
+        workflow.edges.forEach(e => {
+          const src = e.from || e.source;
+          const tgt = e.to || e.target;
+          if (src && tgt && flowNodes.some(fn => fn.id === src) && flowNodes.some(fn => fn.id === tgt)) {
+            const edgeKey = `${src}->${tgt}`;
+            if (!edgeSet.has(edgeKey)) {
+              edgeSet.add(edgeKey);
+              flowEdges.push({
+                id: `e_${src}_${tgt}`,
+                source: src,
+                target: tgt,
+                animated: true,
+                style: { stroke: '#00e87a', strokeWidth: 2 }
+              });
+            }
+          }
+        });
+      }
+
+      // Add missing edges from dependencies
+      workflow.nodes.forEach(n => {
+        const deps = nodeDepMap[n.id] || [];
+        deps.forEach(depId => {
+          const edgeKey = `${depId}->${n.id}`;
+          if (!edgeSet.has(edgeKey)) {
+            edgeSet.add(edgeKey);
+            flowEdges.push({
+              id: `e_${depId}_${n.id}`,
+              source: depId,
+              target: n.id,
+              animated: true,
+              style: { stroke: '#00e87a', strokeWidth: 2 }
+            });
+          }
+        });
+      });
+
+      setNodes(flowNodes);
+      setEdges(flowEdges);
+      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'info', msg: `Execution Contract compiled: ${flowNodes.length} nodes, ${flowEdges.length} data edges.` }]);
+
     } catch (err) {
-      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'error', msg: `Planning failed: ${err.message}` }]);
+      setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'error', msg: `Planning error: ${err.message}` }]);
     }
   };
 
@@ -1064,6 +1050,106 @@ const WorkflowStudioCanvas = () => {
       <div className="studio-content-wrapper full-screen-canvas" style={{ position: 'relative', width: '100%', height: 'calc(100vh - 200px)' }}>
         <div className="studio-canvas" ref={reactFlowWrapper} style={{ width: '100%', height: '100%' }}>
           <WorkflowAIAssist onGenerate={handleAIGenerate} />
+
+          {/* ── Myca Understood Dynamic Panel ── */}
+          {understandingData && (
+            <div className="myca-understood-panel" style={{
+              position: 'absolute',
+              top: 70,
+              left: 20,
+              zIndex: 100,
+              width: 380,
+              background: 'linear-gradient(145deg, rgba(14, 17, 27, 0.95) 0%, rgba(8, 10, 18, 0.98) 100%)',
+              border: '1px solid rgba(0, 232, 122, 0.35)',
+              borderRadius: 14,
+              padding: '16px 20px',
+              boxShadow: '0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 232, 122, 0.1)',
+              backdropFilter: 'blur(12px)',
+              color: '#f0f2f5'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Bot size={18} color="#00e87a" />
+                  <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.8px', color: '#00e87a', textTransform: 'uppercase' }}>
+                    Myca Understood
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setUnderstandingData(null)}
+                  style={{ background: 'transparent', border: 'none', color: '#6e7687', cursor: 'pointer', fontSize: 16, lineHeight: 1 }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div style={{ marginBottom: 10 }}>
+                <span style={{ fontSize: 10, color: '#8b949e', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>Goal</span>
+                <p style={{ margin: '2px 0 0 0', fontSize: 13, color: '#ffffff', fontWeight: 500 }}>
+                  {understandingData.goal}
+                </p>
+              </div>
+
+              <div style={{ marginBottom: 10 }}>
+                <span style={{ fontSize: 10, color: '#8b949e', textTransform: 'uppercase', display: 'block', fontWeight: 600 }}>Strategy</span>
+                <p style={{ margin: '2px 0 0 0', fontSize: 12, color: '#c9d1d9', lineHeight: 1.4 }}>
+                  {understandingData.strategy}
+                </p>
+              </div>
+
+              {understandingData.parallel_tasks && understandingData.parallel_tasks.length > 0 && (
+                <div style={{ marginBottom: 10 }}>
+                  <span style={{ fontSize: 10, color: '#8b949e', textTransform: 'uppercase', display: 'block', fontWeight: 600, marginBottom: 4 }}>Parallel Tasks</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {understandingData.parallel_tasks.map((task, idx) => (
+                      <span key={idx} style={{ fontSize: 11, background: 'rgba(0, 232, 122, 0.12)', border: '1px solid rgba(0, 232, 122, 0.25)', color: '#00e87a', padding: '2px 8px', borderRadius: 6 }}>
+                        ● {task}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div>
+                  <span style={{ fontSize: 10, color: '#8b949e', textTransform: 'uppercase', display: 'block' }}>Route & Compute</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: understandingData.runtime === '0G' ? '#f59e0b' : '#38bdf8' }}>
+                    {understandingData.runtime || 'LOCAL'}
+                  </span>
+                </div>
+                <div>
+                  <span style={{ fontSize: 10, color: '#8b949e', textTransform: 'uppercase', display: 'block' }}>Estimated Cost</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#00e87a' }}>
+                    {understandingData.estimated_cost || '$0.00 Local'}
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 14, display: 'flex', gap: 8 }}>
+                <button 
+                  onClick={handleRun}
+                  disabled={isExecuting}
+                  style={{
+                    flex: 1,
+                    padding: '8px 14px',
+                    background: 'linear-gradient(135deg, #00e87a 0%, #00b862 100%)',
+                    border: 'none',
+                    borderRadius: 8,
+                    color: '#070a10',
+                    fontWeight: 700,
+                    fontSize: 12,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6
+                  }}
+                >
+                  <Play size={13} fill="#070a10" /> Run Pipeline
+                </button>
+              </div>
+            </div>
+          )}
+
           <ReactFlow
             nodes={nodes}
             edges={edges}

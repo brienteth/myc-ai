@@ -3,7 +3,7 @@ Skill Registry (Telemetry-Aware)
 Tracks registered skills and their telemetry (health, latency, success rate).
 """
 import logging
-from typing import Dict
+from typing import Dict, Any, Optional
 from .decorator import SkillDefinition
 from .result import SkillResult
 from .lifecycle import SkillLifecycle
@@ -89,16 +89,18 @@ class SkillRegistry:
             annotation = getattr(f_info, "annotation", None)
             origin = getattr(annotation, "__origin__", None)
 
-            # Expects String but received List/Dict/Other
-            if annotation == str or (origin is None and annotation is str):
-                if isinstance(val, (list, tuple)):
+            # Expects String but received List/Dict/Other/None
+            if annotation == str or (origin is None and annotation is str) or (annotation is Any):
+                if val is None:
+                    coerced[f_name] = ""
+                elif isinstance(val, (list, tuple)):
                     if "paths" in fields and ("paths" not in coerced or not coerced["paths"]):
                         coerced["paths"] = val
                     coerced[f_name] = str(val[0]) if val else ""
                 elif isinstance(val, dict):
                     import json
                     coerced[f_name] = json.dumps(val, ensure_ascii=False)
-                elif val is not None and not isinstance(val, str):
+                elif not isinstance(val, str):
                     coerced[f_name] = str(val)
 
             # Expects List but received String or single element

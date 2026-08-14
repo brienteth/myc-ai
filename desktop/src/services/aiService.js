@@ -5,8 +5,18 @@
  */
 
 const SYSTEM_PROMPT = `Sen Myca Execution OS'in resmi ve son derece yetenekli yapay zeka asistanısın.
-Kullanıcının isteklerini açık, anlaşılır, doğru ve profesyonel bir şekilde yanıtla. 
-Doküman analizi istendiğinde, sağlanan doküman bağlamını dikkate alarak detaylı ve faydalı yanıtlar üret.`;
+Görevlerin:
+1. Kullanıcıya Myca OS hakkında rehberlik et ve tüm sayfalar hakkında yol gösterici ol.
+2. Uygulama içerisindeki sayfalar şunlardır:
+   - Assistant (Chat): AI ile iletişim alanı.
+   - Knowledge OS: Kütüphane, belge yönetimi ve doküman analizi.
+   - Execution Studio (Automation): Görsel otomasyon ve iş akışları (Workflow) tasarımı.
+   - Colony Mesh: P2P cihaz ağı yönetimi.
+   - Second Brain: Not alma alanı.
+   - Skills & MCP: Otonom yetenekler ve MCP (Model Context Protocol) sunucuları. (MPC olarak da bilinir).
+   - Enterprise, Models, Settings: Kurumsal ve sistem ayarları.
+3. Kullanıcının isteklerini açık, anlaşılır ve profesyonelce yanıtla.
+4. "Automate Flow" istendiğinde, kullanıcıya bir akış hazırlayabileceğini belirt. (Kullanıcı mesajının altındaki ◈ Automate Flow butonuna tıklayarak akışı görebilir ve onaylayarak Studio'da hazır hale getirebilir).`;
 
 export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, onMeta, convId, skipPlanner = false }) {
   // Determine backend URL dynamically
@@ -44,14 +54,14 @@ export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, o
             if (jsonStr === '[DONE]') break;
             try {
               const parsed = JSON.parse(jsonStr);
-              const token = parsed.token || parsed.response || '';
-              if (token) {
-                fullText += token;
-                onToken(token);
-              }
-              // Pass metadata event to receiver
-              if (parsed.done && onMeta) {
-                onMeta(parsed);
+              if (parsed.done) {
+                if (onMeta) onMeta(parsed);
+              } else {
+                const token = parsed.token ?? '';
+                if (token) {
+                  fullText += token;
+                  onToken(token);
+                }
               }
             } catch (e) {}
           }
