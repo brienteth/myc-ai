@@ -39,4 +39,7 @@ ai-layer/.env
 .env*
 docs/.env
 myca-intelligence/
+desktop/resonance_core/
+scratch/
+*.wasm
 

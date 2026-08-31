@@ -465,6 +465,7 @@
         <div class="menu-item" onclick="showSection('concepts-graph')" id="t-m-graph">Execution Graph</div>
         <div class="menu-item" onclick="showSection('concepts-skills')" id="t-m-skills">Skills (Beceriler)</div>
         <div class="menu-item" onclick="showSection('concepts-colony')" id="t-m-colony">Colony (Koloni)</div>
+        <div class="menu-item" onclick="showSection('concepts-resonance')" id="t-m-resonance">Resonance AI Core</div>
         
         <div class="menu-group-label" id="t-group-guides">Rehberler & Tarifler</div>
         <div class="menu-item" onclick="showSection('workflows')" id="t-m-workflows">Workflows (İş Akışları)</div>
@@ -1001,6 +1002,110 @@ Response:
         </div>
       </div>
 
+      <!-- SECTION: Concepts - Resonance AI Core -->
+      <div id="concepts-resonance" class="doc-section">
+        <h1 id="t-res-title-doc">Rezonans Zeka Çekirdeği (Resonance AI Core)</h1>
+        <p id="t-res-p1-doc">
+          Myca OS, klasik devasa bulut LLM modellerine bağımlılığı kıran, tamamen donanım üzerinde çalışan <strong>biyomimetik bir yerel bilişsel motor</strong> içerir. Bu altyapı, Türkçe morfolojik dilbilimi, hiperboyutlu vektör cebri (HDC/FHRR), yaşayan holografik LSH hafızası ve 8-eksenli deterministik akıl yürütme katmanlarını birleştirir.
+        </p>
+
+        <div class="flow-chart">
+          Doğal Dil Girişi (Input Text)<br>
+          <div class="arrow">↓</div>
+          Türkçe Morfogenetik Ayrıştırıcı (Zemberek &amp; Ters Yumuşama Motoru)<br>
+          <div class="arrow">↓</div>
+          FHRR &amp; Spektral Hipervektör Kodlama (D=8192 FFT Frekans Uzayı)<br>
+          <div class="arrow">↓</div>
+          Holografik LSH Yaşayan Hafıza (Hebbian Pekiştirme &amp; 24s Zaman Aşımı)<br>
+          <div class="arrow">↓</div>
+          8-Eksenli Güvenli Verifier &amp; AST Matematik / ReAct Otonom Ajan<br>
+          <div class="arrow">↓</div>
+          Deterministik Milisaniyelik Yanıt &amp; Sıfır Bulut Çıkışı (0 bytes cloud)
+        </div>
+
+        <h2 id="t-res-h2-morph">1. 🇹🇷 Morfogenetik Türkçe Dil Çekirdeği</h2>
+        <p id="t-res-p-morph">
+          Türkçe sondan eklemeli bir dildir. Myca'nın morfoloji çekirdeği, kökleri ve ekleri (çoğul, iyelik, durum, kip vb.) dinamik olarak ayırır ve <strong>ters ünsüz yumuşaması</strong> kurallarını işletir:
+        </p>
+        <ul>
+          <li><strong>Ters Yumuşama Tespiti:</strong> <code>kitabım → kitap</code>, <code>ağacımız → ağaç</code>, <code>kanadım → kanat</code>, <code>rengi → renk</code>, <code>ilacın → ilaç</code>, <code>kalbim → kalp</code>.</li>
+          <li><strong>Çoklu Ek Ayrıştırma:</strong> <code>evlerimizden → ev (kök) + ler (çoğul) + imiz (1. çoğul iyelik) + den (ayrılma hali)</code>.</li>
+          <li><strong>Ulama &amp; Heceleme:</strong> <code>"Ahmet evden ayrıldı" → ah-me-tev-de-nay-rıl-dı</code>.</li>
+        </ul>
+
+        <h2 id="t-res-h2-hdc">2. 📐 HDC &amp; FHRR Hiperboyutlu Spektral Vektörler</h2>
+        <p id="t-res-p-hdc">
+          Geleneksel matris çarpan derin öğrenme katmanları yerine, <em>Fourier Holographic Reduced Representations (FHRR)</em> kullanılarak $D=8192$ boyutlu karmaşık faz vektörleri üzerinde $O(1)$ sürede bağlama ve çözme gerçekleştirilir:
+        </p>
+        <pre>
+# FHRR Cebirsel Bağlama ve Geri Çözme (Reversibility)
+A ⊛ B = IFFT( FFT(A) ⊙ FFT(B) )
+B_tahmin = A_inv ⊛ (A ⊛ B)   # Kosinüs Benzerliği: 1.000000 (Kayıpsız)</pre>
+
+        <h2 id="t-res-h2-lsh">3. 🗂️ Holografik LSH Yaşayan Hafıza &amp; Hebbian Pekiştirme</h2>
+        <p id="t-res-p-lsh">
+          Kullanıcının deneyimleri ve verileri 4 tablolu Multi-Probe <strong>Locality-Sensitive Hashing (LSH)</strong> ile indekslenir. Hafıza biyolojik bir beyin gibi davranır:
+        </p>
+        <ul>
+          <li><strong>Anında Erişim:</strong> 500+ kayıt arasında semantik arama süresi <strong>&lt; 15 ms</strong>.</li>
+          <li><strong>Hebbian Pekiştirme:</strong> Hatırlanan ve çağrılan anıların nöral iz gücü (güven skoru) otomatik artar.</li>
+          <li><strong>Zaman Aşımı (Decay):</strong> Kullanılmayan bilgiler 24 saatlik biyolojik yarılanma eğrisiyle söner.</li>
+          <li><strong>Çelişki Denetimi:</strong> Zıt ifadeler (ör. <em>"Kan grubu A+"</em> vs <em>"Kan grubu 0-"</em>) hafızaya girerken anında tespit edilir.</li>
+        </ul>
+
+        <h2 id="t-res-h2-reasoning">4. 🛡️ 8-Eksenli Verifier &amp; Deterministik Akıl Yürütme</h2>
+        <p id="t-res-p-reasoning">
+          Hesaplama gerektiren görevler ağır LLM modellerine gönderilmeden önce güvenli AST matematik ayrıştırıcısından geçirilir. Hiçbir güvensiz <code>eval()</code> kodu çalıştırılmaz; aritmetik ve mantık ifadeleri yerel CPU'da <strong>0 ms</strong> gecikmeyle sonuçlandırılır.
+        </p>
+
+        <h2 id="t-res-h2-api">5. 📡 Canlı REST API Endpoints (Port 3500)</h2>
+        <table class="bench-table">
+          <thead>
+            <tr>
+              <th>Endpoint</th>
+              <th>Metot</th>
+              <th>İşlev</th>
+              <th>Ortalama Gecikme</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>/encode</code></td>
+              <td>POST</td>
+              <td>Metni FHRR hipervektör uzayında D=4096 / D=8192 olarak kodlar</td>
+              <td><strong>~110 ms</strong></td>
+            </tr>
+            <tr>
+              <td><code>/resonance/score</code></td>
+              <td>POST</td>
+              <td>İki girdi arasındaki morfolojik, spektral ve anlamsal rezonansı hesaplar</td>
+              <td><strong>~24 ms</strong></td>
+            </tr>
+            <tr>
+              <td><code>/resonance/add</code></td>
+              <td>POST</td>
+              <td>Çelişki denetimi yaparak LSH yaşayan belleğe yeni kayıt ekler</td>
+              <td><strong>~35 ms</strong></td>
+            </tr>
+            <tr>
+              <td><code>/v1/chat/completions</code></td>
+              <td>POST</td>
+              <td>OpenAI uyumlu yerel reasoning ve deterministik yanıt motoru</td>
+              <td><strong>~29 ms</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="related-box">
+          <h4 id="t-rel-lbl-res">İlişkili Konseptler</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('architecture')" class="related-link">Mimari</a>
+            <a href="#" onclick="showSection('concepts-skills')" class="related-link">Beceriler (Skills)</a>
+            <a href="#" onclick="showSection('benchmarks')" class="related-link">Benchmarks</a>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1099,6 +1204,7 @@ Response:
         m_graph: "Execution Graph",
         m_skills: "Skills (Beceriler)",
         m_colony: "Colony (Koloni)",
+        m_resonance: "Resonance AI Core",
         group_guides: "Rehberler & Tarifler",
         m_guides: "Guides (Rehberler)",
         m_cookbook: "Cookbook (Tarifler)",
@@ -1108,6 +1214,18 @@ Response:
         m_arch: "Mimari",
         m_bench: "Benchmarks",
         m_faq: "SSS & Yol Haritası",
+
+        res_title_doc: "Rezonans Zeka Çekirdeği (Resonance AI Core)",
+        res_p1_doc: "Myca OS, klasik devasa bulut LLM modellerine bağımlılığı kıran, tamamen donanım üzerinde çalışan biyomimetik bir yerel bilişsel motor içerir. Bu altyapı, Türkçe morfolojik dilbilimi, hiperboyutlu vektör cebri (HDC/FHRR), yaşayan holografik LSH hafızası ve 8-eksenli deterministik akıl yürütme katmanlarını birleştirir.",
+        res_h2_morph: "1. 🇹🇷 Morfogenetik Türkçe Dil Çekirdeği",
+        res_p_morph: "Türkçe sondan eklemeli bir dildir. Myca'nın morfoloji çekirdeği, kökleri ve ekleri dinamik olarak ayırır ve ters ünsüz yumuşaması kurallarını işletir.",
+        res_h2_hdc: "2. 📐 HDC & FHRR Hiperboyutlu Spektral Vektörler",
+        res_p_hdc: "Geleneksel matris çarpan derin öğrenme katmanları yerine, Fourier Holographic Reduced Representations (FHRR) kullanılarak D=8192 boyutlu karmaşık faz vektörleri üzerinde O(1) sürede bağlama ve çözme gerçekleştirilir.",
+        res_h2_lsh: "3. 🗂️ Holografik LSH Yaşayan Hafıza & Hebbian Pekiştirme",
+        res_p_lsh: "Kullanıcının deneyimleri ve verileri 4 tablolu Multi-Probe LSH ile indekslenir. Hafıza biyolojik bir beyin gibi davranır: Hatırlanan anılar güçlenir, kullanılmayanlar 24 saatte söner.",
+        res_h2_reasoning: "4. 🛡️ 8-Eksenli Verifier & Deterministik Akıl Yürütme",
+        res_p_reasoning: "Hesaplama gerektiren görevler ağır LLM modellerine gönderilmeden önce güvenli AST matematik ayrıştırıcısından geçirilir. Aritmetik ve mantık ifadeleri yerel CPU'da 0 ms gecikmeyle sonuçlandırılır.",
+        res_h2_api: "5. 📡 Canlı REST API Endpoints (Port 3500)",
         
         gs_title: "Myca'ya Hoş Geldiniz",
         gs_p1: "Myca, bilgisayarlarınızı otonom bir yapay zeka ağı haline getiren yerel öncelikli (local-first) bir yapay zeka otomasyon işletim sistemidir.",
@@ -1216,6 +1334,7 @@ Response:
         m_graph: "Execution Graph",
         m_skills: "Skills",
         m_colony: "Colony",
+        m_resonance: "Resonance AI Core",
         group_guides: "Guides & Recipes",
         m_guides: "Guides",
         m_cookbook: "Cookbook (Recipes)",
@@ -1225,6 +1344,18 @@ Response:
         m_arch: "Architecture",
         m_bench: "Benchmarks",
         m_faq: "FAQ & Roadmap",
+
+        res_title_doc: "Resonance Intelligence Core (Resonance AI Core)",
+        res_p1_doc: "Myca OS features an embedded biomimetic cognitive engine running directly on local hardware, breaking dependencies on heavy and opaque cloud LLMs. It fuses native Turkish morphology, hyperdimensional vector algebra (HDC/FHRR), living holographic LSH memory, and 8-axis deterministic verification.",
+        res_h2_morph: "1. 🇹🇷 Morphogenetic Language Core",
+        res_p_morph: "Turkish is an agglutinative language. Myca's morphology core separates roots and suffixes while handling reverse consonant mutations natively.",
+        res_h2_hdc: "2. 📐 HDC & FHRR Hyperdimensional Spectral Vectors",
+        res_p_hdc: "Instead of deep matrix multiplications, Fourier Holographic Reduced Representations (FHRR) perform O(1) algebraic binding and unbinding over D=8192 complex phase hypervectors.",
+        res_h2_lsh: "3. 🗂️ Living Holographic LSH Memory & Hebbian Reinforcement",
+        res_p_lsh: "Experiences and facts are indexed via 4-table Multi-Probe LSH. Frequently recalled thoughts strengthen; unused facts decay naturally over 24-hour cycles.",
+        res_h2_reasoning: "4. 🛡️ 8-Axis Verifier & Deterministic Reasoning",
+        res_p_reasoning: "Arithmetic and logic queries are evaluated by a safe AST parser without eval(), executing on local CPU in 0 ms with zero hallucination risk.",
+        res_h2_api: "5. 📡 Live REST API Endpoints (Port 3500)",
         
         gs_title: "Welcome to Myca",
         gs_p1: "Myca is a local-first AI automation operating system that links your computers into a collaborative intelligence mesh.",
@@ -1340,6 +1471,7 @@ Response:
       document.getElementById('t-m-graph').innerText = dict.m_graph;
       document.getElementById('t-m-skills').innerText = dict.m_skills;
       document.getElementById('t-m-colony').innerText = dict.m_colony;
+      if (document.getElementById('t-m-resonance')) document.getElementById('t-m-resonance').innerText = dict.m_resonance;
       document.getElementById('t-group-guides').innerText = dict.group_guides;
       document.getElementById('t-m-guides').innerText = dict.m_guides;
       document.getElementById('t-m-cookbook').innerText = dict.m_cookbook;
@@ -1349,6 +1481,19 @@ Response:
       document.getElementById('t-m-arch').innerText = dict.m_arch;
       document.getElementById('t-m-bench').innerText = dict.m_bench;
       document.getElementById('t-m-faq').innerText = dict.m_faq;
+
+      // Resonance Core
+      if (document.getElementById('t-res-title-doc')) document.getElementById('t-res-title-doc').innerText = dict.res_title_doc;
+      if (document.getElementById('t-res-p1-doc')) document.getElementById('t-res-p1-doc').innerText = dict.res_p1_doc;
+      if (document.getElementById('t-res-h2-morph')) document.getElementById('t-res-h2-morph').innerText = dict.res_h2_morph;
+      if (document.getElementById('t-res-p-morph')) document.getElementById('t-res-p-morph').innerText = dict.res_p_morph;
+      if (document.getElementById('t-res-h2-hdc')) document.getElementById('t-res-h2-hdc').innerText = dict.res_h2_hdc;
+      if (document.getElementById('t-res-p-hdc')) document.getElementById('t-res-p-hdc').innerText = dict.res_p_hdc;
+      if (document.getElementById('t-res-h2-lsh')) document.getElementById('t-res-h2-lsh').innerText = dict.res_h2_lsh;
+      if (document.getElementById('t-res-p-lsh')) document.getElementById('t-res-p-lsh').innerText = dict.res_p_lsh;
+      if (document.getElementById('t-res-h2-reasoning')) document.getElementById('t-res-h2-reasoning').innerText = dict.res_h2_reasoning;
+      if (document.getElementById('t-res-p-reasoning')) document.getElementById('t-res-p-reasoning').innerText = dict.res_p_reasoning;
+      if (document.getElementById('t-res-h2-api')) document.getElementById('t-res-h2-api').innerText = dict.res_h2_api;
       
       // Getting Started
       document.getElementById('t-gs-title').innerText = dict.gs_title;

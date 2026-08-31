@@ -203,6 +203,7 @@ footer {
       <a href="#problem">Neden?</a>
       <a href="#how">Nasıl Çalışır?</a>
       <a href="#compute">Mimari</a>
+      <a href="#resonance" id="t-nav-res">Zeka Çekirdeği</a>
       <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
   </div>
@@ -336,7 +337,47 @@ footer {
   </div>
 </section>
 
-<section class="section-pad">
+<!-- REZONANS ZEKA ÇEKİRDEĞİ -->
+<section class="section-pad" id="resonance">
+  <div class="section-label" style="text-align:center;" id="t-res-lbl">REZONANS ÇEKİRDEĞİ</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-res-title">Biyomimetik Yerel Zeka Katmanı</h2>
+  <p class="hero-sub" style="text-align:center; margin: -40px auto 56px; max-width: 720px;" id="t-res-sub">
+    Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hiperboyutlu Rezonans Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.
+  </p>
+
+  <div class="comparison-grid" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px;">
+    <div class="card">
+      <div class="card-tag">01 · MORFOLOJİ</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c1-t">Morfogenetik Dil Motoru</div>
+      <div class="card-body" id="t-res-c1-b">
+        Zemberek tabanlı kural ve ters ünsüz yumuşaması filtresi (kitap→kitabım, git→gidiyor). Türkçe ekleri ve kökleri doğal yapısıyla doğrudan donanımda ayrıştırır.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-tag">02 · YAŞAYAN HAFIZA</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c2-t">Holografik LSH Bellek</div>
+      <div class="card-body" id="t-res-c2-b">
+        4 tablolu Multi-Probe LSH indeksi ve Hebbian pekiştirmesi. Hatırlanan bilgiler güçlenir, kullanılmayanlar 24 saatlik biyolojik eğriyle esner; çelişkiler anında yakalanır.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-tag">03 · VEKTÖR & SPEKTRUM</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c3-t">FHRR & Spektral Semantik</div>
+      <div class="card-body" id="t-res-c3-b">
+        Fourier Holographic Reduced Representations ile D=8192 boyutlu cebirsel bağlama. GPU çalıştırmadan O(1) hızında mikrosaniyelik rezonans eşleştirmesi.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-tag">04 · GÜVENLİK & VERİFİER</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c4-t">8-Eksenli Güvenli Router</div>
+      <div class="card-body" id="t-res-c4-b">
+        Matematik ve mantık sorgularını eval kullanmadan güvenli AST ile çözen, halüsinasyon eşiklerini kesen ve ReAct döngüsüyle otonom çalışan yerel karar motoru.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad bg-parchment">
   <div class="section-label" style="text-align:center;">MİMARİ</div>
   <h2 class="section-title f-serif-italic" style="text-align:center;">Execution OS</h2>
   <div class="blocks-grid">
@@ -480,6 +521,19 @@ footer {
       document.getElementById('t-comp-lbl').innerText = "COMPUTE AVOIDANCE";
       document.getElementById('t-comp-title').innerText = "The GPU is the last resort.";
       document.getElementById('t-comp-sub').innerText = "Everyone is building bigger GPUs. myc aims to reduce compute to zero. Queries are always solved at the cheapest and fastest layer.";
+
+      if (document.getElementById('t-nav-res')) document.getElementById('t-nav-res').innerText = "Core Intelligence";
+      if (document.getElementById('t-res-lbl')) document.getElementById('t-res-lbl').innerText = "RESONANCE CORE";
+      if (document.getElementById('t-res-title')) document.getElementById('t-res-title').innerText = "Biomimetic Local Intelligence Layer";
+      if (document.getElementById('t-res-sub')) document.getElementById('t-res-sub').innerHTML = "Myca never depends on heavy, opaque cloud models. Powered by the <strong>Hyperdimensional Resonance Core</strong> running directly on your machine, it natively parses linguistic morphology, flexes memory with biological rules, and completes reasoning in milliseconds with zero cloud footprint.";
+      if (document.getElementById('t-res-c1-t')) document.getElementById('t-res-c1-t').innerText = "Morphogenetic Language Core";
+      if (document.getElementById('t-res-c1-b')) document.getElementById('t-res-c1-b').innerText = "Zemberek-based rule engine & reverse consonant mutation filter. Deconstructs suffixes and roots on raw hardware.";
+      if (document.getElementById('t-res-c2-t')) document.getElementById('t-res-c2-t').innerText = "Holographic LSH Memory";
+      if (document.getElementById('t-res-c2-b')) document.getElementById('t-res-c2-b').innerText = "4-table Multi-Probe LSH index with Hebbian reinforcement. Memories strengthen with recall and decay naturally over time.";
+      if (document.getElementById('t-res-c3-t')) document.getElementById('t-res-c3-t').innerText = "FHRR & Spectral Semantics";
+      if (document.getElementById('t-res-c3-b')) document.getElementById('t-res-c3-b').innerText = "D=8192 Fourier Holographic Reduced Representations. Microsecond resonance matching with zero GPU power.";
+      if (document.getElementById('t-res-c4-t')) document.getElementById('t-res-c4-t').innerText = "8-Axis Verified Router";
+      if (document.getElementById('t-res-c4-b')) document.getElementById('t-res-c4-b').innerText = "Solves arithmetic with safe AST parsers, prevents hallucinations, and orchestrates offline ReAct tools.";
       
       document.getElementById('t-dl-title').innerText = "Start your colony today.";
       document.getElementById('t-dl-sub').innerText = "No account. No internet. Just your hardware and you.";

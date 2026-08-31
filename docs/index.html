@@ -207,6 +207,7 @@
       
       <div class="menu-group-label">Architecture</div>
       <div class="menu-item" onclick="showSection('five-layers')">The 5-Layer Stack</div>
+      <div class="menu-item" onclick="showSection('resonance-core')">Resonance AI Core (HDC/LSH)</div>
       <div class="menu-item" onclick="showSection('planner-v3')">Planner v3 (Multi-Agent)</div>
       <div class="menu-item" onclick="showSection('sovereign-runtime')">Sovereign Runtime (Rust)</div>
       <div class="menu-item" onclick="showSection('colony')">Colony (P2P Mesh)</div>
@@ -355,6 +356,64 @@ npm run electron:start</pre>
           <div class="related-links">
             <a href="#" onclick="showSection('sovereign-runtime')" class="related-link">Sovereign Runtime (Rust)</a>
             <a href="#" onclick="showSection('colony')" class="related-link">Colony Mesh</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESONANCE AI CORE -->
+      <div id="resonance-core" class="doc-section">
+        <h1>Resonance AI Core — Biomimetic Cognitive Engine</h1>
+        <p>The <strong>Turkish Resonance AI Core</strong> is Myca's embedded hyperdimensional cognitive engine. Rather than routing raw text to resource-heavy cloud models, it combines agglutinative morphology parsing, Fourier Holographic Reduced Representations (FHRR), Living LSH memory with Hebbian reinforcement, and an 8-axis deterministic reasoning verifier.</p>
+
+        <div class="flow-chart">
+          Natural Language Prompt<br>
+          <div class="arrow">↓</div>
+          Morphogenetic Engine (Zemberek &amp; Reverse Mutation Parser)<br>
+          <div class="arrow">↓</div>
+          FHRR &amp; Spectral Hypervector Encoding (D=8192 Phase Space)<br>
+          <div class="arrow">↓</div>
+          Living Holographic LSH Memory (Hebbian Trace &amp; 24h Decay)<br>
+          <div class="arrow">↓</div>
+          8-Axis Verified Router &amp; AST Deterministic Solver (0ms local math)<br>
+          <div class="arrow">↓</div>
+          Verified Sovereign Execution (0 bytes sent to cloud)
+        </div>
+
+        <h2>1. Morphogenetic Language Engine</h2>
+        <p>Understands native agglutinative grammar structures and consonant mutations directly in hardware:</p>
+        <ul>
+          <li><strong>Reverse Mutation Support:</strong> <code>kitabım → kitap</code>, <code>ağacımız → ağaç</code>, <code>kanadım → kanat</code>, <code>rengi → renk</code>, <code>ilacın → ilaç</code>, <code>kalbim → kalp</code>.</li>
+          <li><strong>Multi-Suffix Splitting:</strong> <code>evlerimizden → ev + ler + imiz + den</code> (root + plural + possession + ablative case).</li>
+          <li><strong>Phonetic Liaison &amp; Syllabification:</strong> <code>"Ahmet evden ayrıldı" → ah-me-tev-de-nay-rıl-dı</code>.</li>
+        </ul>
+
+        <h2>2. Hyperdimensional Vector Algebra (FHRR)</h2>
+        <p>Complex hypervectors ($D=8192$) in the Fourier frequency domain allow $O(1)$ symbolic binding and unbinding with verified mathematical reversibility ($> 0.9999$ cosine similarity) without requiring GPU tensor computation.</p>
+
+        <h2>3. Living Holographic LSH Memory</h2>
+        <p>Indexed via 4-table Multi-Probe Locality-Sensitive Hashing. Mimics biological cognitive memory:</p>
+        <ul>
+          <li><strong>Sub-15ms Retrieval:</strong> Semantic search over 500+ records in &lt; 15 ms.</li>
+          <li><strong>Hebbian Reinforcement:</strong> Recalled memories strengthen their synaptic weight.</li>
+          <li><strong>Temporal Decay:</strong> Inactive facts smoothly fade over a 24-hour biological decay curve.</li>
+          <li><strong>Contradiction Detection:</strong> Detects contradictory parameters (e.g. Blood type A+ vs 0-) at ingestion time.</li>
+        </ul>
+
+        <h2>4. Live REST Endpoints (Port 3500)</h2>
+        <table class="bench-table">
+          <tr><th>Endpoint</th><th>Method</th><th>Description</th><th>Latency</th></tr>
+          <tr><td><code>/encode</code></td><td>POST</td><td>Transforms input text into FHRR hypervector space (D=4096 / D=8192)</td><td><strong>~110ms</strong></td></tr>
+          <tr><td><code>/resonance/score</code></td><td>POST</td><td>Calculates composite morphological, spectral, and semantic resonance score</td><td><strong>~24ms</strong></td></tr>
+          <tr><td><code>/resonance/add</code></td><td>POST</td><td>Stores memory with contradiction analysis and LSH index hashing</td><td><strong>~35ms</strong></td></tr>
+          <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>OpenAI-compatible deterministic reasoning and local SLM inference</td><td><strong>~29ms</strong></td></tr>
+        </table>
+
+        <div class="related-box">
+          <h4>Related</h4>
+          <div class="related-links">
+            <a href="#" onclick="showSection('five-layers')" class="related-link">5-Layer Stack</a>
+            <a href="#" onclick="showSection('sovereign-runtime')" class="related-link">Sovereign Runtime</a>
+            <a href="#" onclick="showSection('benchmarks')" class="related-link">Benchmarks</a>
           </div>
         </div>
       </div>

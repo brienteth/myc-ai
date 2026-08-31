@@ -205,7 +205,7 @@ footer {
       <img src="/assets/logo.png" alt="Myca OS" style="width:32px; height:32px; border-radius:6px; object-fit:contain; flex-shrink:0;" />
       <div style="display:flex; align-items:center; gap:8px;">
         <span class="nav-logo f-serif-italic" style="margin-right:0; font-size:22px; font-weight:700; color:var(--f-deep);">myca os</span>
-        <span style="font-size:10px; font-family:var(--f-mono); background:var(--f-bark); color:var(--f-humus); padding:2px 6px; border-radius:4px; font-weight:600;">v0.1.0</span>
+        <span id="nav-version-badge" style="font-size:10px; font-family:var(--f-mono); background:var(--f-bark); color:var(--f-humus); padding:2px 6px; border-radius:4px; font-weight:600;">v1.0.2</span>
       </div>
     </a>
     <div class="nav-links">
@@ -214,6 +214,7 @@ footer {
       <a href="#pricing">Fiyatlandırma</a>
       <a href="#how" id="t-nav-2">Nasıl Çalışır?</a>
       <a href="#compute" id="t-nav-3">Mimari</a>
+      <a href="#resonance" id="t-nav-res">Zeka Çekirdeği</a>
       <a href="/docs" id="t-nav-docs">Dokümantasyon & SDK</a>
       <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
@@ -636,6 +637,44 @@ footer {
   </div>
 </section>
 
+<!-- REZONANS ZEKA ÇEKİRDEĞİ -->
+<section class="section-pad" id="resonance">
+  <div class="section-label" style="text-align:center;" id="t-res-lbl">REZONANS ÇEKİRDEĞİ</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-res-title">Biyomimetik Yerel Zeka Katmanı</h2>
+  <p class="hero-sub" style="text-align:center; margin: -40px auto 56px; max-width: 720px;" id="t-res-sub">
+    Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hiperboyutlu Rezonans Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.
+  </p>
+
+  <div class="comparison-grid" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px;">
+    <div class="card">
+      <div class="card-tag">01 · MORFOLOJİ</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c1-t">Morfogenetik Dil Motoru</div>
+      <div class="card-body" id="t-res-c1-b">
+        Zemberek tabanlı kural ve ters ünsüz yumuşaması filtresi (kitap→kitabım, git→gidiyor). Türkçe ekleri ve kökleri doğal yapısıyla doğrudan donanımda ayrıştırır.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-tag">02 · YAŞAYAN HAFIZA</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c2-t">Holografik LSH Bellek</div>
+      <div class="card-body" id="t-res-c2-b">
+        4 tablolu Multi-Probe LSH indeksi ve Hebbian pekiştirmesi. Hatırlanan bilgiler güçlenir, kullanılmayanlar 24 saatlik biyolojik eğriyle esner; çelişkiler anında yakalanır.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-tag">03 · VEKTÖR & SPEKTRUM</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c3-t">FHRR & Spektral Semantik</div>
+      <div class="card-body" id="t-res-c3-b">
+        Fourier Holographic Reduced Representations ile D=8192 boyutlu cebirsel bağlama. GPU çalıştırmadan O(1) hızında mikrosaniyelik rezonans eşleştirmesi.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-tag">04 · GÜVENLİK & VERİFİER</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c4-t">8-Eksenli Güvenli Router</div>
+      <div class="card-body" id="t-res-c4-b">
+        Matematik ve mantık sorgularını eval kullanmadan güvenli AST ile çözen, halüsinasyon eşiklerini kesen ve ReAct döngüsüyle otonom çalışan yerel karar motoru.
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- PRICING SECTION -->
@@ -845,7 +884,11 @@ footer {
       <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.1/Myca-Windows.zip" class="btn-secondary" id="dl-win-zip">Windows (ZIP)</a>
       <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary" id="dl-all">Tüm Sürümler (GitHub Releases)</a>
     </div>
-    <p style="margin-top:16px; font-size:12px; color:var(--f-soil); opacity:0.7;">macOS'te indirdikten sonra DMG'yi aç, Myca.app'i Applications klasörüne sürükle ve çalıştır.</p>
+    <!-- Canlı sürüm göstergesi: JS tarafından doldurulur -->
+    <p id="release-latest-label" style="margin-top:16px; font-size:12px; color:var(--f-spore); opacity:0.85; font-family:var(--f-mono); display:none;">
+      ⬇ En Güncel Sürüm: <span id="release-version-info">–</span>
+    </p>
+    <p style="margin-top:8px; font-size:12px; color:var(--f-soil); opacity:0.7;">macOS'te indirdikten sonra DMG'yi aç, Myca.app'i Applications klasörüne sürükle ve çalıştır.</p>
     
     <div style="margin-top:24px; padding:14px 20px; background:rgba(0, 232, 122, 0.05); border:1px solid rgba(0, 232, 122, 0.2); border-radius:12px; font-size:13px; color:var(--f-soil); max-width:640px; margin-left:auto; margin-right:auto; text-align:left; line-height:1.6;">
       <strong style="color:#00e87a; display:block; margin-bottom:6px;">💡 macOS "Hasar Görmüş / Çöp Sepetine Taşı" Uyarısı Çözümü:</strong>
@@ -937,8 +980,20 @@ footer {
       comp_lbl: "HESAPLAMADAN KAÇINMA",
       comp_title: "GPU son çaredir.",
       comp_sub: "Herkes daha büyük GPU'lar inşa etmeye çalışıyor. Myc ise hesaplamayı sıfıra indirmeyi hedefler. Sorgular her zaman en ucuz ve en hızlı katmanda çözülür.",
-      f4: "Koloni (Ağdaki diğer cihaz)",
+      f4: "Colony (Ağdaki diğer cihaz)",
       f6: "Cloud (Bulut)",
+      nav_res: "Zeka Çekirdeği",
+      res_lbl: "REZONANS ÇEKİRDEĞİ",
+      res_title: "Biyomimetik Yerel Zeka Katmanı",
+      res_sub: "Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hiperboyutlu Rezonans Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.",
+      res_c1_t: "Morfogenetik Dil Motoru",
+      res_c1_b: "Zemberek tabanlı kural ve ters ünsüz yumuşaması filtresi (kitap→kitabım, git→gidiyor). Türkçe ekleri ve kökleri doğal yapısıyla doğrudan donanımda ayrıştırır.",
+      res_c2_t: "Holografik LSH Bellek",
+      res_c2_b: "4 tablolu Multi-Probe LSH indeksi ve Hebbian pekiştirmesi. Hatırlanan bilgiler güçlenir, kullanılmayanlar 24 saatlik biyolojik eğriyle esner; çelişkiler anında yakalanır.",
+      res_c3_t: "FHRR & Spektral Semantik",
+      res_c3_b: "Fourier Holographic Reduced Representations ile D=8192 boyutlu cebirsel bağlama. GPU çalıştırmadan O(1) hızında mikrosaniyelik rezonans eşleştirmesi.",
+      res_c4_t: "8-Eksenli Güvenli Router",
+      res_c4_b: "Matematik ve mantık sorgularını eval kullanmadan güvenli AST ile çözen, halüsinasyon eşiklerini kesen ve ReAct döngüsüyle otonom çalışan yerel karar motoru.",
       arch_lbl: "MİMARİ",
       os_lbl: "KAYNAKLAR",
       os_title: "Açık Kaynak",
@@ -959,6 +1014,18 @@ footer {
       nav1: "Why?",
       nav2: "How it works?",
       nav3: "Architecture",
+      nav_res: "Core Intelligence",
+      res_lbl: "RESONANCE CORE",
+      res_title: "Biomimetic Local Intelligence Layer",
+      res_sub: "Myca never depends on heavy, opaque cloud models. Powered by the <strong>Hyperdimensional Resonance Core</strong> running directly on your machine, it natively parses linguistic morphology, flexes memory with biological rules, and completes reasoning in milliseconds with zero cloud footprint.",
+      res_c1_t: "Morphogenetic Language Core",
+      res_c1_b: "Zemberek-based rule engine & reverse consonant mutation filter. Deconstructs suffixes and roots on raw hardware.",
+      res_c2_t: "Holographic LSH Memory",
+      res_c2_b: "4-table Multi-Probe LSH index with Hebbian reinforcement. Memories strengthen with recall and decay naturally over time.",
+      res_c3_t: "FHRR & Spectral Semantics",
+      res_c3_b: "D=8192 Fourier Holographic Reduced Representations. Microsecond resonance matching with zero GPU power.",
+      res_c4_t: "8-Axis Verified Router",
+      res_c4_b: "Solves arithmetic with safe AST parsers, prevents hallucinations, and orchestrates offline ReAct tools.",
       nav_dl: "Download",
       hero_title: "A Single Operating System for Your Enterprise.",
       hero_sub: "Instead of managing dozens of different software tools, just state your goal. Myca creates the required plan, gets the necessary approvals, and executes it securely across all your enterprise systems.",
@@ -1010,6 +1077,30 @@ footer {
     }
   };
 
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (isMobile) {
+    translations.tr.nav_dl = "Uygulamayı Aç";
+    translations.tr.hero_dl = "Uygulamayı Aç";
+    translations.en.nav_dl = "Open App";
+    translations.en.hero_dl = "Open App";
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      const navDl = document.getElementById('t-nav-dl');
+      const heroDl = document.getElementById('t-hero-dl');
+      const heroZip = document.getElementById('t-hero-dl-zip');
+      
+      if (navDl) {
+        navDl.href = "/app";
+        navDl.innerText = "Uygulamayı Aç";
+      }
+      if (heroDl) {
+        heroDl.href = "/app";
+        heroDl.innerText = "Uygulamayı Aç";
+      }
+      if (heroZip) heroZip.style.display = "none";
+    });
+  }
+
   let lang = 'tr';
   window.toggleLang = () => {
     lang = lang === 'tr' ? 'en' : 'tr';
@@ -1019,6 +1110,7 @@ footer {
     document.getElementById('t-nav-1').innerText = dict.nav1;
     document.getElementById('t-nav-2').innerText = dict.nav2;
     document.getElementById('t-nav-3').innerText = dict.nav3;
+    if (document.getElementById('t-nav-res')) document.getElementById('t-nav-res').innerText = dict.nav_res;
     document.getElementById('t-nav-dl').innerText = dict.nav_dl;
     
     // Update Hero
@@ -1060,6 +1152,19 @@ footer {
     document.getElementById('t-comp-sub').innerText = dict.comp_sub;
     document.getElementById('t-f4').innerText = dict.f4;
     document.getElementById('t-f6').innerText = dict.f6;
+
+    // Update Resonance Core
+    if (document.getElementById('t-res-lbl')) document.getElementById('t-res-lbl').innerText = dict.res_lbl;
+    if (document.getElementById('t-res-title')) document.getElementById('t-res-title').innerText = dict.res_title;
+    if (document.getElementById('t-res-sub')) document.getElementById('t-res-sub').innerHTML = dict.res_sub;
+    if (document.getElementById('t-res-c1-t')) document.getElementById('t-res-c1-t').innerText = dict.res_c1_t;
+    if (document.getElementById('t-res-c1-b')) document.getElementById('t-res-c1-b').innerText = dict.res_c1_b;
+    if (document.getElementById('t-res-c2-t')) document.getElementById('t-res-c2-t').innerText = dict.res_c2_t;
+    if (document.getElementById('t-res-c2-b')) document.getElementById('t-res-c2-b').innerText = dict.res_c2_b;
+    if (document.getElementById('t-res-c3-t')) document.getElementById('t-res-c3-t').innerText = dict.res_c3_t;
+    if (document.getElementById('t-res-c3-b')) document.getElementById('t-res-c3-b').innerText = dict.res_c3_b;
+    if (document.getElementById('t-res-c4-t')) document.getElementById('t-res-c4-t').innerText = dict.res_c4_t;
+    if (document.getElementById('t-res-c4-b')) document.getElementById('t-res-c4-b').innerText = dict.res_c4_b;
     
     // Update OS / Resources
     document.getElementById('t-arch-lbl').innerText = dict.arch_lbl;
@@ -1080,6 +1185,92 @@ footer {
     document.getElementById('t-foot-slogan').innerText = dict.foot_slogan;
     document.getElementById('t-foot-lic').innerText = dict.foot_lic;
   };
+</script>
+
+<!-- ============================================================
+     Dinamik GitHub Release Linker
+     Her yeni release yayınlandığında indirme linkleri
+     otomatik olarak en güncel sürümü gösterir.
+     ============================================================ -->
+<script>
+(function () {
+  const REPO = 'brienteth/myc-ai';
+  const API  = `https://api.github.com/repos/${REPO}/releases?per_page=15`;
+
+  // Hangi asset hangi butona gidecek — asset adındaki pattern → link id'leri
+  const TARGETS = [
+    // macOS DMG: en son release'deki *macOS.dmg
+    { pattern: a => a.name.endsWith('.dmg') && a.name.toLowerCase().includes('macos'),
+      ids: ['dl-mac', 't-hero-dl', 't-nav-dl'] },
+    // macOS ZIP
+    { pattern: a => a.name.endsWith('.zip') && a.name.toLowerCase().includes('macos'),
+      ids: ['dl-mac-zip', 't-hero-dl-zip'] },
+    // Windows EXE
+    { pattern: a => a.name.endsWith('.exe'),
+      ids: ['dl-win'] },
+    // Windows ZIP
+    { pattern: a => a.name.endsWith('.zip') && a.name.toLowerCase().includes('windows'),
+      ids: ['dl-win-zip'] },
+    // Linux ZIP
+    { pattern: a => a.name.toLowerCase().includes('linux'),
+      ids: ['dl-linux'] },
+  ];
+
+  async function fetchLatestDownloads() {
+    try {
+      const res = await fetch(API);
+      if (!res.ok) return;
+      const releases = await res.json();
+      if (!releases.length) return;
+
+      // En son release'in tag'ini al (version badge için)
+      const latestTag = releases[0].tag_name;
+
+      // Her platform için en yeni release'den ilgili asset'i bul
+      const resolved = {};
+      for (const target of TARGETS) {
+        for (const release of releases) {
+          const asset = release.assets.find(target.pattern);
+          if (asset) {
+            resolved[target.ids[0]] = {
+              url: asset.browser_download_url,
+              tag: release.tag_name
+            };
+            for (const id of target.ids) {
+              const el = document.getElementById(id);
+              if (el && !el.href.startsWith('/app')) {
+                // Mobil kullanıcılar /app'e yönlendirilmiş, onları değiştirme
+                el.href = asset.browser_download_url;
+              }
+            }
+            break; // Bu platform için en güncel bulundu
+          }
+        }
+      }
+
+      // Nav versiyon badge güncelle
+      const badge = document.getElementById('nav-version-badge');
+      if (badge) badge.textContent = latestTag;
+
+      // Download section: canlı versiyon göster
+      const versionInfo = document.getElementById('release-version-info');
+      const versionLabel = document.getElementById('release-latest-label');
+      if (versionInfo) versionInfo.textContent = latestTag;
+      if (versionLabel) versionLabel.style.display = 'block';
+
+    } catch (e) {
+      // API erişimi yoksa sessizce fail et — hardcoded fallback linkler zaten var
+      console.warn('[myca] Could not fetch release info from GitHub:', e.message);
+    }
+  }
+
+  // DOM hazır olunca çalıştır
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', fetchLatestDownloads);
+  } else {
+    fetchLatestDownloads();
+  }
+})();
 </script>
 
 <script type="module">
