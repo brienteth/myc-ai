@@ -48,13 +48,12 @@ Traffic across the P2P mesh is encrypted using post-quantum secure **Kyber-768 K
 ### Layer 5: Native Inference Engine (`engine.py`)
 A local zero-Ollama in-process inference engine powered by `llama-cpp-python` with Metal GPU acceleration on macOS. The engine abstracts GGUF model files into logical capability sets (`chat`, `embedding`, etc.), executing blocking generation tasks inside worker threads to keep the main event loop responsive.
 
-### Layer 6: Biomimetic Resonance Intelligence Core (`resonance_core/`)
-An embedded hyperdimensional cognitive engine ($D=8192$) that avoids unnecessary GPU load. It combines:
-- **Turkish Morphology & Phonetics Engine:** Agglutinative root/suffix parsing, vowel harmony, reverse consonant mutations (`kitap → kitabım`), and liaison syllabification.
-- **FHRR & Spectral Math:** Fourier Holographic Reduced Representations with verified reversibility ($>0.9999$) and $O(1)$ symbolic binding.
-- **Living Holographic LSH Memory:** 4-table Multi-Probe Locality-Sensitive Hashing with Hebbian trace reinforcement, 24-hour temporal decay, and real-time medical/attribute contradiction detection.
-- **8-Axis Verified Reasoning Router:** Evaluates arithmetic through safe deterministic AST parsers ($0\text{ ms}$) and manages sovereign ReAct planning offline.
-- **IPC REST Endpoints (Port 3500):** Exposes `/encode`, `/resonance/score`, `/resonance/add`, and `/v1/chat/completions`.
+### Layer 6: Biomimetic Local Intelligence Layer
+An embedded cognitive engine that provides native local intelligence while avoiding unnecessary cloud dependence:
+- **Language & Morphology Processing:** Natively parses linguistic structures, roots, and suffixes directly on local hardware.
+- **Living Memory Engine:** Biologically-inspired memory architecture with reinforcement of frequently recalled context and automatic contradiction filtering.
+- **Hyperdimensional Semantic Space:** High-speed semantic similarity matching without continuous GPU tensor load.
+- **Deterministic Verification:** Eliminates hallucinations for arithmetic and structured logic operations.
 
 ---
 
