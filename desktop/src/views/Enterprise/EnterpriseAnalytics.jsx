@@ -16,18 +16,18 @@ const EnterpriseAnalytics = () => {
 
   useEffect(() => {
     const mock = getAnalyticsMock();
-    fetch('http://127.0.0.1:8420/enterprise/analytics/overview').then(r=>r.json()).then(d=>setOverview(d.overview || mock.overview)).catch(()=>setOverview(mock.overview));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/score').then(r=>r.json()).then(d=>setScore(d.score || mock.score)).catch(()=>setScore(mock.score));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/roi').then(r=>r.json()).then(d=>setRoi(d.roi || mock.roi)).catch(()=>setRoi(mock.roi));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/workflows').then(r=>r.json()).then(d=>setWorkflows(d.workflows || mock.workflows)).catch(()=>setWorkflows(mock.workflows));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/departments').then(r=>r.json()).then(d=>setDepartments(d.departments || mock.departments)).catch(()=>setDepartments(mock.departments));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/intelligence').then(r=>r.json()).then(d=>setIntelligence(d.intelligence || mock.intelligence)).catch(()=>setIntelligence(mock.intelligence));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/energy-cost').then(r=>r.json()).then(d=>setEnergy(d.energy_cost || mock.energy_cost)).catch(()=>setEnergy(mock.energy_cost));
-    fetch('http://127.0.0.1:8420/enterprise/analytics/live').then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/overview`).then(r=>r.json()).then(d=>setOverview(d.overview || mock.overview)).catch(()=>setOverview(mock.overview));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/score`).then(r=>r.json()).then(d=>setScore(d.score || mock.score)).catch(()=>setScore(mock.score));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/roi`).then(r=>r.json()).then(d=>setRoi(d.roi || mock.roi)).catch(()=>setRoi(mock.roi));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/workflows`).then(r=>r.json()).then(d=>setWorkflows(d.workflows || mock.workflows)).catch(()=>setWorkflows(mock.workflows));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/departments`).then(r=>r.json()).then(d=>setDepartments(d.departments || mock.departments)).catch(()=>setDepartments(mock.departments));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/intelligence`).then(r=>r.json()).then(d=>setIntelligence(d.intelligence || mock.intelligence)).catch(()=>setIntelligence(mock.intelligence));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/energy-cost`).then(r=>r.json()).then(d=>setEnergy(d.energy_cost || mock.energy_cost)).catch(()=>setEnergy(mock.energy_cost));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/live`).then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
     
     // Simulate live data updates
     const intv = setInterval(() => {
-      fetch('http://127.0.0.1:8420/enterprise/analytics/live').then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/analytics/live`).then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
     }, 2000);
     return () => clearInterval(intv);
   }, []);

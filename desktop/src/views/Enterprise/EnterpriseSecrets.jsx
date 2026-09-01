@@ -24,18 +24,18 @@ const EnterpriseSecrets = () => {
 
   useEffect(() => {
     const mock = getSecretsMock();
-    fetch('http://127.0.0.1:8420/enterprise/secrets/overview').then(r=>r.json()).then(d=>setOverview(d.overview || mock.overview)).catch(()=>setOverview(mock.overview));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/vault').then(r=>r.json()).then(d=>setVault(d.vault || mock.vault)).catch(()=>setVault(mock.vault));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/connections').then(r=>r.json()).then(d=>setConnections(d.connections || mock.connections)).catch(()=>setConnections(mock.connections));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/certificates').then(r=>r.json()).then(d=>setCertificates(d.certificates || mock.certificates)).catch(()=>setCertificates(mock.certificates));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/ssh').then(r=>r.json()).then(d=>setSshKeys(d.ssh || mock.ssh)).catch(()=>setSshKeys(mock.ssh));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/wallets').then(r=>r.json()).then(d=>setWallets(d.wallets || mock.wallets)).catch(()=>setWallets(mock.wallets));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/rotation').then(r=>r.json()).then(d=>setRotation(d.rotation || mock.rotation)).catch(()=>setRotation(mock.rotation));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/audit').then(r=>r.json()).then(d=>setAudit(d.audit || mock.audit)).catch(()=>setAudit(mock.audit));
-    fetch('http://127.0.0.1:8420/enterprise/secrets/live').then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/overview`).then(r=>r.json()).then(d=>setOverview(d.overview || mock.overview)).catch(()=>setOverview(mock.overview));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/vault`).then(r=>r.json()).then(d=>setVault(d.vault || mock.vault)).catch(()=>setVault(mock.vault));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/connections`).then(r=>r.json()).then(d=>setConnections(d.connections || mock.connections)).catch(()=>setConnections(mock.connections));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/certificates`).then(r=>r.json()).then(d=>setCertificates(d.certificates || mock.certificates)).catch(()=>setCertificates(mock.certificates));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/ssh`).then(r=>r.json()).then(d=>setSshKeys(d.ssh || mock.ssh)).catch(()=>setSshKeys(mock.ssh));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/wallets`).then(r=>r.json()).then(d=>setWallets(d.wallets || mock.wallets)).catch(()=>setWallets(mock.wallets));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/rotation`).then(r=>r.json()).then(d=>setRotation(d.rotation || mock.rotation)).catch(()=>setRotation(mock.rotation));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/audit`).then(r=>r.json()).then(d=>setAudit(d.audit || mock.audit)).catch(()=>setAudit(mock.audit));
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/live`).then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
     
     const intv = setInterval(() => {
-      fetch('http://127.0.0.1:8420/enterprise/secrets/live').then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/secrets/live`).then(r=>r.json()).then(d=>setLive(d.live || mock.live)).catch(()=>setLive(mock.live));
     }, 2000);
     return () => clearInterval(intv);
   }, []);

@@ -13,7 +13,7 @@ const ModelsManager = () => {
   const fetchModels = () => {
     setIsLoading(true);
     // Fetch from /models endpoint (local GGUF files)
-    fetch('http://127.0.0.1:8420/models')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/models`)
       .then(res => res.json())
       .then(data => {
         if (data.models) {

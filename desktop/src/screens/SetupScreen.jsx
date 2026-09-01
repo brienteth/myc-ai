@@ -60,11 +60,26 @@ const SetupScreen = ({ onComplete }) => {
       if (doneRef.current) return;
       
       try {
-        ws = new WebSocket('ws://127.0.0.1:8420/ws');
+        const isElectron = /Electron/i.test(navigator.userAgent);
+        const isFileProtocol = window.location.protocol === 'file:';
+        const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let host = '127.0.0.1';
+        try {
+          const storedIp = localStorage.getItem('myca_desktop_ip');
+          if (storedIp) host = storedIp;
+          else if (!isLocalHost && !isElectron && !isFileProtocol && window.location.hostname) {
+            host = window.location.hostname;
+          }
+        } catch (e) {}
+
+        const wsProto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const httpProto = window.location.protocol === 'https:' ? 'https:' : 'http:';
+
+        ws = new WebSocket(`${wsProto}//${host}:8420/ws`);
         wsRef.current = ws;
 
         ws.onopen = () => {
-          setStatusText('Connected to local backend...');
+          setStatusText('Connected to backend...');
         };
 
         ws.onmessage = (e) => {
@@ -96,7 +111,7 @@ const SetupScreen = ({ onComplete }) => {
         ws.onerror = () => {
           if (!doneRef.current && retries < 15) {
             retries++;
-            setStatusText(`Initializing local AI engine...`);
+            setStatusText(`Connecting to AI engine...`);
             setTimeout(connect, 1000);
           }
         };
@@ -108,7 +123,6 @@ const SetupScreen = ({ onComplete }) => {
           }
         };
       } catch (_) {
-        // WebSocket constructor failed
         if (!doneRef.current && retries < 15) {
           retries++;
           setTimeout(connect, 1000);
@@ -122,7 +136,19 @@ const SetupScreen = ({ onComplete }) => {
     const healthPoll = setInterval(async () => {
       if (doneRef.current) { clearInterval(healthPoll); return; }
       try {
-        const res = await fetch('http://127.0.0.1:8420/health', { signal: AbortSignal.timeout(2000) });
+        const isElectron = /Electron/i.test(navigator.userAgent);
+        const isFileProtocol = window.location.protocol === 'file:';
+        const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        let host = '127.0.0.1';
+        try {
+          const storedIp = localStorage.getItem('myca_desktop_ip');
+          if (storedIp) host = storedIp;
+          else if (!isLocalHost && !isElectron && !isFileProtocol && window.location.hostname) {
+            host = window.location.hostname;
+          }
+        } catch (e) {}
+        const httpProto = window.location.protocol === 'https:' ? 'https:' : 'http:';
+        const res = await fetch(`${httpProto}//${host}:8420/health`, { signal: AbortSignal.timeout(2000) });
         if (res.ok) finish('ready');
       } catch (_) { /* still loading */ }
     }, 1500);

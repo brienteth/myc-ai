@@ -5,7 +5,7 @@ const Policies = () => {
   const [policies, setPolicies] = useState([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8420/automation/policies')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/policies`)
       .then(res => res.json())
       .then(data => setPolicies(data.policies || []))
       .catch(err => console.error("Failed to load policies:", err));

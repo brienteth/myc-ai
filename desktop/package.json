@@ -7,7 +7,7 @@
   "main": "electron.cjs",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/audit-urls.js && vite build",
     "postbuild": "node postbuild.js",
     "lint": "eslint .",
     "preview": "vite preview",

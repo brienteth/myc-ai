@@ -5,7 +5,7 @@ const ToolsRegistry = () => {
   const [tools, setTools] = useState([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8420/automation/tools')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/tools`)
       .then(res => res.json())
       .then(data => setTools(data.tools || []))
       .catch(err => console.error("Failed to load tools:", err));

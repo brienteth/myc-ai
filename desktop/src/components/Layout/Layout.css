@@ -80,3 +80,46 @@
   position: relative;
   overflow-y: auto;
 }
+
+@media (max-width: 767px) {
+  .app-container {
+    flex-direction: column;
+    /* dvh = dynamic viewport height — iOS toolbar dahil doğru */
+    height: 100dvh;
+    height: 100vh; /* fallback eski Safari için */
+    width: 100vw;
+    overflow: hidden;
+    /* Çizimde dışa taşmayı engelle */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .sidebar {
+    display: none !important;
+  }
+
+  .main-content {
+    /* Üst header yok, sadece alt nav için yer bırak */
+    flex: 1;
+    height: 0; /* flex stretch için */
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Safe area: ekran çentiği ve home bar için */
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    /* iOS scroll sıçramasını önle */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* iOS klavye açıkken viewport küçülmesini engelle */
+@supports (height: 100dvh) {
+  @media (max-width: 767px) {
+    .app-container {
+      height: 100dvh;
+    }
+  }
+}

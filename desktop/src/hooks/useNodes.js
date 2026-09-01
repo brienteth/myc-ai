@@ -34,24 +34,7 @@ export const useNodes = () => {
   useEffect(() => { backendOnlineRef.current = backendOnline; }, [backendOnline]);
 
   const getBackendUrl = useCallback(() => {
-    const params = new URLSearchParams(window.location.search);
-    const hostParam = params.get('host');
-    if (hostParam) return `http://${hostParam}:8420`;
-    
-    try {
-      const storedIp = localStorage.getItem('myca_desktop_ip');
-      if (storedIp) return `http://${storedIp}:8420`;
-    } catch (e) {}
-    
-    const isElectron = /Electron/i.test(navigator.userAgent);
-    const isFileProtocol = window.location.protocol === 'file:';
-    const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    if (isLocalHost || isElectron || isFileProtocol || !window.location.hostname) {
-      return 'http://127.0.0.1:8420';
-    }
-    // Remote/mobile browser accessing web app -> automatically route API calls to desktop backend on port 8420
-    return `http://${window.location.hostname}:8420`;
+    return typeof window !== 'undefined' && window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
   }, []);
 
   // ── Cryptographic helper functions (tweetnacl Ed25519) ──

@@ -22,7 +22,7 @@ const LibraryTopBar = ({ onUploadComplete, onSearch, viewMode, setViewMode }) =>
     }
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://127.0.0.1:8420/library/add', true);
+    xhr.open('POST', `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/add`, true);
 
     xhr.upload.onprogress = (evt) => {
       if (evt.lengthComputable) {
@@ -75,7 +75,7 @@ const LibraryTopBar = ({ onUploadComplete, onSearch, viewMode, setViewMode }) =>
       const text = await navigator.clipboard.readText();
       if (!text) { alert("Clipboard is empty."); return; }
       
-      const res = await fetch('http://127.0.0.1:8420/library/url', {
+      const res = await fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/url`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: text })

@@ -5,7 +5,7 @@ const Marketplace = () => {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8420/automation/marketplace')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/marketplace`)
       .then(res => res.json())
       .then(data => setItems(data.items || []))
       .catch(err => console.error("Failed to load marketplace items:", err));

@@ -63,7 +63,8 @@ const Models = () => {
     setActiveModel(modelId);
     localStorage.setItem('myca_active_model', modelId);
     try {
-      await fetch('http://127.0.0.1:8420/settings/model', {
+      const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
+      await fetch(`${backendUrl}/settings/model`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: modelId })

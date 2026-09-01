@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8420/execution/intelligence';
+const getBackendUrl = () => {
+  return typeof window !== 'undefined' && window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
+};
+const API_BASE_URL = `${getBackendUrl()}/execution/intelligence`;
 
 class ExecutionIntelligenceService {
   /**

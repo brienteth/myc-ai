@@ -25,6 +25,7 @@ const formatDate = (ts) => {
 };
 
 const Automation = () => {
+  const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
   const [activeTab, setActiveTab] = useState('workflows-studio');
   const [workflows, setWorkflows] = useState([]);
   const [history, setHistory] = useState([]);
@@ -37,22 +38,22 @@ const Automation = () => {
   const { t } = useTranslation();
 
   const refreshData = () => {
-    fetch('http://127.0.0.1:8420/automation/workflows')
+    fetch(`${backendUrl}/automation/workflows`)
       .then(res => res.json())
       .then(data => setWorkflows(data.workflows || []))
       .catch(err => console.error("Failed to load workflows:", err));
 
-    fetch('http://127.0.0.1:8420/automation/history')
+    fetch(`${backendUrl}/automation/history`)
       .then(res => res.json())
       .then(data => setHistory(data.history || []))
       .catch(err => console.error("Failed to load history:", err));
       
-    fetch('http://127.0.0.1:8420/automation/templates')
+    fetch(`${backendUrl}/automation/templates`)
       .then(res => res.json())
       .then(data => setTemplates(data.templates || []))
       .catch(err => console.error("Failed to load templates:", err));
 
-    fetch('http://127.0.0.1:8420/automation/secrets')
+    fetch(`${backendUrl}/automation/secrets`)
       .then(res => res.json())
       .then(data => {
         if(data.keys) {
@@ -67,7 +68,7 @@ const Automation = () => {
 
     // Poll history and workflows every 3 seconds to keep UI in sync
     const interval = setInterval(() => {
-      fetch('http://127.0.0.1:8420/automation/history')
+      fetch(`${backendUrl}/automation/history`)
         .then(res => res.json())
         .then(data => setHistory(data.history || []))
         .catch(err => console.error("Failed to poll history:", err));
@@ -79,7 +80,7 @@ const Automation = () => {
   const handleRunWorkflow = async (workflowId) => {
     setRunningWorkflows(prev => new Set([...prev, workflowId]));
     try {
-      await fetch(`http://127.0.0.1:8420/automation/run/${workflowId}`, {
+      await fetch(`${backendUrl}/automation/run/${workflowId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({})
@@ -98,7 +99,7 @@ const Automation = () => {
   const handleCancelRun = async (runId) => {
     if (!confirm('Are you sure you want to stop this running workflow?')) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8420/automation/runs/${runId}/cancel`, {
+      const res = await fetch(`${backendUrl}/automation/runs/${runId}/cancel`, {
         method: 'POST'
       });
       if (res.ok) {
@@ -115,7 +116,7 @@ const Automation = () => {
   const handleDeleteWorkflow = async (workflowId) => {
     if (!confirm('Delete this workflow?')) return;
     try {
-      await fetch(`http://127.0.0.1:8420/automation/workflows/${workflowId}`, { method: 'DELETE' });
+      await fetch(`${backendUrl}/automation/workflows/${workflowId}`, { method: 'DELETE' });
       setWorkflows(workflows.filter(w => w.id !== workflowId));
     } catch (e) {
       console.error("Failed to delete workflow:", e);
@@ -134,7 +135,7 @@ const Automation = () => {
         permissions: template.permissions || [],
         enabled: true
       };
-      const res = await fetch('http://127.0.0.1:8420/automation/workflows', {
+      const res = await fetch(`${backendUrl}/automation/workflows`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -152,7 +153,7 @@ const Automation = () => {
   const handleAddSecret = async () => {
     if (newSecretKey.trim() && newSecretVal.trim()) {
       try {
-        await fetch('http://127.0.0.1:8420/automation/secrets', {
+        await fetch(`${backendUrl}/automation/secrets`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ key: newSecretKey.toUpperCase(), value: newSecretVal })
@@ -170,7 +171,7 @@ const Automation = () => {
   const handleDeleteSecret = async (id) => {
     if (!confirm(`Delete secret "${id}"?`)) return;
     try {
-      await fetch(`http://127.0.0.1:8420/automation/secrets/${id}`, { method: 'DELETE' });
+      await fetch(`${backendUrl}/automation/secrets/${id}`, { method: 'DELETE' });
       setSecrets(secrets.filter(s => s.id !== id));
     } catch(e) {
       console.error("Failed to delete secret:", e);

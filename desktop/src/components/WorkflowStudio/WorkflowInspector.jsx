@@ -36,10 +36,15 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
 
   // Validation: check which required fields are missing
   const missingRequired = requiredInputs.filter(inp => {
-    const paramName = typeof inp === 'string' ? inp : inp.name;
-    return !localInputs[paramName] || localInputs[paramName].trim() === '';
+    const paramName = typeof inp === 'string' ? inp : inp?.name;
+    if (!paramName) return false;
+    const val = localInputs[paramName];
+    return val === undefined || val === null || (typeof val === 'string' && val.trim() === '');
   });
-  const missingCredentials = requiredCredentials.filter(cred => !localInputs[cred] || localInputs[cred].trim() === '');
+  const missingCredentials = requiredCredentials.filter(cred => {
+    const val = localInputs[cred];
+    return val === undefined || val === null || (typeof val === 'string' && val.trim() === '');
+  });
   const isValid = missingRequired.length === 0 && missingCredentials.length === 0;
 
   return (
@@ -145,7 +150,8 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
                   <Key size={13} /> Required Secret Credentials:
                 </div>
                 {requiredCredentials.map((cred, i) => {
-                  const isFilled = localInputs[cred] && localInputs[cred].trim() !== '';
+                  const val = localInputs[cred];
+                  const isFilled = val !== undefined && val !== null && (typeof val === 'string' ? val.trim() !== '' : true);
                   return (
                     <div key={i} style={{ marginBottom: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -187,10 +193,12 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
                 </div>
 
                 {requiredInputs.map((inp, i) => {
-                  const paramName = typeof inp === 'string' ? inp : inp.name;
+                  const paramName = typeof inp === 'string' ? inp : inp?.name;
+                  if (!paramName) return null;
                   const paramType = typeof inp === 'object' ? inp.type : 'string';
                   const paramDesc = typeof inp === 'object' ? inp.description : '';
-                  const isFilled = localInputs[paramName] && localInputs[paramName].trim() !== '';
+                  const val = localInputs[paramName];
+                  const isFilled = val !== undefined && val !== null && (typeof val === 'string' ? val.trim() !== '' : true);
 
                   return (
                     <div key={i} style={{ marginBottom: 14 }}>

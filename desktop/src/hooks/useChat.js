@@ -7,11 +7,7 @@ export const useChat = (initialConvId = null) => {
   const [convId, setConvId] = useState(initialConvId || crypto.randomUUID());
 
   useEffect(() => {
-    const isElectron = /Electron/i.test(navigator.userAgent);
-    const isFileProtocol = window.location.protocol === 'file:';
-    const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const backendUrl = (isLocalHost || isElectron || isFileProtocol || !window.location.hostname)
-      ? 'http://127.0.0.1:8420' : window.location.origin;
+    const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
     if (initialConvId) {
       fetch(`${backendUrl}/history/${initialConvId}`)
         .then(res => res.json())
@@ -31,12 +27,12 @@ export const useChat = (initialConvId = null) => {
   const sendMessage = async (prompt, options = {}) => {
     if (!prompt.trim() || isGenerating) return;
 
-    const skipPlanner = options.skipPlanner !== undefined ? options.skipPlanner : true; // Default Assistant to Chatbot mode
-
+    const skipPlanner = options.skipPlanner !== undefined ? options.skipPlanner : false;
     const newMessages = [...messages, { role: 'user', content: prompt }];
+
     setIsGenerating(true);
     setMessages([...newMessages, { role: 'myca', content: '', nodes: ['Myca Engine'] }]);
-    
+
     let startTime = Date.now();
     let metaData = {};
 

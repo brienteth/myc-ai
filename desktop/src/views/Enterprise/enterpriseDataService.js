@@ -52,10 +52,10 @@ export function getDashboardMock() {
       { time: '11:20 AM', title: 'Salesforce CRM Bulk Sync Completed', desc: '1,240 contact records updated across digital twin graph.', type: 'info' }
     ],
     activity_feed: [
-      { id: 1, text: 'Invoice Created INV-9041', from: 'SAP', to: 'Myca OS', time: '1 sec ago', color: '#3fb950' },
-      { id: 2, text: 'Customer Deal Synced', from: 'Salesforce', to: 'Oracle ERP', time: '4 sec ago', color: '#58a6ff' },
-      { id: 3, text: 'PO-88102 Approved', from: 'Myca OS', to: 'SAP', time: '8 sec ago', color: '#3fb950' },
-      { id: 4, text: 'GDPR PII Scrubbed', from: 'HubSpot', to: 'Audit Engine', time: '12 sec ago', color: '#d29922' }
+      { id: 'act_1', actor: 'SAP ERP Driver', action: 'created invoice', detail: 'INV-9041 for payment processing', timestamp: '1 sec ago' },
+      { id: 'act_2', actor: 'Salesforce CRM', action: 'synced customer deal', detail: 'Acme Manufacturing Deal v2', timestamp: '4 sec ago' },
+      { id: 'act_3', actor: 'Myca OS', action: 'approved purchase order', detail: 'PO-88102 signed by CFO passkey', timestamp: '8 sec ago' },
+      { id: 'act_4', actor: 'Audit Engine', action: 'scrubbed GDPR PII', detail: 'Removed database contact emails', timestamp: '12 sec ago' }
     ]
   };
 }

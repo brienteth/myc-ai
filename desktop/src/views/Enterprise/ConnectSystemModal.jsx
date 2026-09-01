@@ -42,7 +42,7 @@ const ConnectSystemModal = ({ isOpen, onClose, onConnected }) => {
     }
 
     try {
-      await fetch('http://127.0.0.1:8420/enterprise/systems/connect', {
+      await fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/systems/connect`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ system_type: selectedSystem.name })

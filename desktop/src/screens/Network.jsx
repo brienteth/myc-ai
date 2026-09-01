@@ -18,7 +18,7 @@ const Network = ({ nodes, isVisible, onClose }) => {
         <div style={styles.title}>Network Devices</div>
         
         <div style={styles.nodesList}>
-          {nodes.map((node, idx) => {
+          {(nodes || []).map((node, idx) => {
             let badgeStyle = { ...styles.badge };
             if (node.role === 'this device') {
               badgeStyle.background = 'var(--accent)';

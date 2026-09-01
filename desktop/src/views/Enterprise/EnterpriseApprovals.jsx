@@ -54,7 +54,7 @@ const EnterpriseApprovals = () => {
   }, []);
 
   const fetchApprovals = () => {
-    fetch('http://127.0.0.1:8420/enterprise/approvals')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/approvals`)
       .then(res => res.json())
       .then(data => {
         if (data.pending_approvals && data.pending_approvals.length > 0) {

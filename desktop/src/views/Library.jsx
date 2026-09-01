@@ -34,6 +34,7 @@ const cleanFilename = (filename) => {
 };
 
 const Library = () => {
+  const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
   const [activeCat, setActiveCat] = useState('home');
   const [viewMode, setViewMode] = useState('grid');
   const [files, setFiles] = useState([]);
@@ -55,7 +56,7 @@ const Library = () => {
   const fetchFiles = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8420/library/files?type=all');
+      const res = await fetch(`${backendUrl}/library/files?type=all`);
       if (res.ok) {
         const data = await res.json();
         setFiles(data.files || []);
@@ -69,7 +70,7 @@ const Library = () => {
 
   const fetchStorageStats = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8420/library/stats');
+      const res = await fetch(`${backendUrl}/library/stats`);
       if (res.ok) {
         const data = await res.json();
         setStorageStats(data);
@@ -88,7 +89,7 @@ const Library = () => {
     setIsLoading(true);
     try {
       const typeFilter = activeCat === 'home' || activeCat === 'recent' || activeCat === 'research' || activeCat === 'storage' || activeCat === 'pinned' || activeCat === 'trash' ? 'all' : activeCat;
-      const res = await fetch(`http://127.0.0.1:8420/library/files?type=${typeFilter}&q=${encodeURIComponent(query)}`);
+      const res = await fetch(`${backendUrl}/library/files?type=${typeFilter}&q=${encodeURIComponent(query)}`);
       if (res.ok) {
         const data = await res.json();
         setFiles(data.files || []);
@@ -103,7 +104,7 @@ const Library = () => {
     e.stopPropagation();
     if (!confirm('Delete this file?')) return;
     try {
-      await fetch(`http://127.0.0.1:8420/library/files/${fileId}`, { method: 'DELETE' });
+      await fetch(`${backendUrl}/library/files/${fileId}`, { method: 'DELETE' });
       setFiles(files.filter(f => f.id !== fileId));
     } catch (e) {
       console.error("Delete failed:", e);
@@ -113,7 +114,7 @@ const Library = () => {
   const handleFavorite = async (fileId, e) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`http://127.0.0.1:8420/library/files/${fileId}/favorite`, { method: 'POST' });
+      const res = await fetch(`${backendUrl}/library/files/${fileId}/favorite`, { method: 'POST' });
       if (res.ok) {
         const data = await res.json();
         setFiles(files.map(f => f.id === fileId ? { ...f, favorite: data.favorite ? 1 : 0 } : f));
@@ -184,7 +185,7 @@ const Library = () => {
                 <button 
                   onClick={async () => {
                     if (confirm('Clean ALL local library files? This action cannot be undone.')) {
-                      await fetch('http://127.0.0.1:8420/library/all', { method: 'DELETE' });
+                      await fetch(`${backendUrl}/library/all`, { method: 'DELETE' });
                       fetchFiles();
                       fetchStorageStats();
                     }
@@ -241,7 +242,7 @@ const Library = () => {
       formData.append('file', file);
 
       try {
-        const res = await fetch('http://127.0.0.1:8420/library/add', {
+        const res = await fetch(`${backendUrl}/library/add`, {
           method: 'POST',
           body: formData,
         });

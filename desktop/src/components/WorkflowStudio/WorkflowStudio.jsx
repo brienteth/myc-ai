@@ -14,7 +14,8 @@ import '@xyflow/react/dist/style.css';
 
 import { 
   Play, Save, Check, UploadCloud, Square, X, Download, FileText, 
-  CheckCircle2, Cpu, Search, Globe, Folder, Image, Settings, Terminal, Sparkles, FileSpreadsheet, RotateCcw
+  CheckCircle2, Cpu, Search, Globe, Folder, Image, Settings, Terminal, Sparkles, FileSpreadsheet, RotateCcw,
+  Bot
 } from 'lucide-react';
 import WorkflowInspector from './WorkflowInspector';
 import WorkflowDebugger from './WorkflowDebugger';
@@ -425,6 +426,7 @@ const getId = () => `node_${id++}`;
 
 const WorkflowStudioCanvas = () => {
   const reactFlowWrapper = useRef(null);
+  const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
   
   // Persist nodes state in localStorage so switching tabs never clears work
   const [nodes, setNodes, onNodesChange] = useNodesState(() => {
@@ -636,7 +638,7 @@ const WorkflowStudioCanvas = () => {
       // Try sending to backend, but don't crash if offline
       let runData = {};
       try {
-        await fetch('http://127.0.0.1:8420/automation/workflows', {
+        await fetch(`${backendUrl}/automation/workflows`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -644,7 +646,7 @@ const WorkflowStudioCanvas = () => {
 
         setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'info', msg: 'Triggering execution on Execution OS runtime...' }]);
 
-        const runRes = await fetch('http://127.0.0.1:8420/automation/run/draft-run', {
+        const runRes = await fetch(`${backendUrl}/automation/run/draft-run`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         });
@@ -743,7 +745,7 @@ const WorkflowStudioCanvas = () => {
     setNodes(nds => nds.map(n => ({...n, data: {...n.data, status: 'failed'}})));
     setLogs(prev => [...prev, { time: new Date().toLocaleTimeString(), type: 'error', msg: 'Execution aborted by user.' }]);
     
-    fetch('http://127.0.0.1:8420/automation/runs/draft-run/cancel', {
+    fetch(`${backendUrl}/automation/runs/draft-run/cancel`, {
       method: 'POST'
     }).catch(err => console.error("Failed to cancel backend run:", err));
   };
@@ -764,7 +766,7 @@ const WorkflowStudioCanvas = () => {
     };
 
     try {
-      const res = await fetch('http://127.0.0.1:8420/automation/workflows', {
+      const res = await fetch(`${backendUrl}/automation/workflows`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -802,7 +804,7 @@ const WorkflowStudioCanvas = () => {
 
     try {
       let workflow;
-      const res = await fetch('http://127.0.0.1:8420/automation/plan', {
+      const res = await fetch(`${backendUrl}/automation/plan`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt })
@@ -953,7 +955,7 @@ const WorkflowStudioCanvas = () => {
     setIsRefining(true);
     try {
       const fullPrompt = `Here is the current workflow execution output result:\n\n${executionResult.content}\n\nUser Revision/Format Request: ${aiRefinePrompt}\n\nPlease revise, format, edit, or translate the output content accordingly and output ONLY the modified result content.`;
-      const res = await fetch('http://127.0.0.1:8420/query', {
+      const res = await fetch(`${backendUrl}/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: fullPrompt, stream: false })

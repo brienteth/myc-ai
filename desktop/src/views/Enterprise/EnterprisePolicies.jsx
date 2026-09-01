@@ -48,7 +48,7 @@ const EnterprisePolicies = () => {
   const [newPolicy, setNewPolicy] = useState({ name: '', category: 'COMPLIANCE & PRIVACY', rule: '', compliance_framework: '' });
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8420/enterprise/policies')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/policies`)
       .then(res => res.json())
       .then(data => {
         if (data.policies && data.policies.length > 0) {

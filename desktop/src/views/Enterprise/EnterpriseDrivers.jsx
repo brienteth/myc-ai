@@ -8,7 +8,7 @@ import {
 import { getDriversMock, getSystemObjectsMock, getSystemCapabilitiesMock, getSystemPermissionsMock, getSystemLogsMock } from './enterpriseDataService';
 import './Enterprise.css';
 
-const API = 'http://127.0.0.1:8420/enterprise';
+const API = `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise`;
 
 const MP_CATEGORIES = ['All', 'ERP', 'CRM', 'Finance', 'Communication', 'Development', 'Cloud', 'Analytics'];
 
@@ -419,7 +419,7 @@ const EnterpriseDrivers = () => {
                             <Database size={14} color="var(--ed-blue)" /> {obj.name}
                           </div>
                           <div>
-                            {obj.fields.map(f => (
+                            {(obj.fields || []).map(f => (
                               <span key={f} className="sys-schema-tag">{f}</span>
                             ))}
                           </div>

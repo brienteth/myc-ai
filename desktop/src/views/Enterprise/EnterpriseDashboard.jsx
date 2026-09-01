@@ -9,7 +9,7 @@ import GlobalSearchModal from './GlobalSearchModal';
 import { getDashboardMock } from './enterpriseDataService';
 import './Enterprise.css';
 
-const API = 'http://127.0.0.1:8420/enterprise';
+const API = `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise`;
 
 const EnterpriseDashboard = ({ data: initialData, onNavigateTab }) => {
   const [dashboard, setDashboard] = useState(null);
@@ -397,12 +397,12 @@ const EnterpriseDashboard = ({ data: initialData, onNavigateTab }) => {
         {feed.map(item => (
           <div key={item.id} className="feed-row">
             <div className="feed-avatar">
-              {item.actor.charAt(0)}
+              {(item.actor || 'System').charAt(0)}
             </div>
             <div className="feed-text">
-              <strong>{item.actor}</strong> {item.action} — {item.detail}
+              <strong>{item.actor || 'System'}</strong> {item.action || ''} — {item.detail || ''}
             </div>
-            <div className="feed-time">{item.timestamp}</div>
+            <div className="feed-time">{item.timestamp || ''}</div>
           </div>
         ))}
       </div>

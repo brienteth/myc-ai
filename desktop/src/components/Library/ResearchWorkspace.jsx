@@ -27,7 +27,7 @@ const ResearchWorkspace = ({ document, onSelectDoc }) => {
   useEffect(() => {
     if (!document) {
       setLoadingFiles(true);
-      fetch('http://127.0.0.1:8420/library/files?type=all')
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/files?type=all`)
         .then(res => res.json())
         .then(data => {
           setAllFiles(data.files || []);
@@ -48,7 +48,7 @@ const ResearchWorkspace = ({ document, onSelectDoc }) => {
       setAnalysis(null);
 
       // Fetch document content
-      fetch(`http://127.0.0.1:8420/library/files/${document.id}`)
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/files/${document.id}`)
         .then(res => res.json())
         .then(data => {
           setDocContent(data);
@@ -57,7 +57,7 @@ const ResearchWorkspace = ({ document, onSelectDoc }) => {
 
       // Fetch AI summary / analysis
       const prompt = `Please provide a summary abstract and 2 key highlights for this document: ${document.name || document.filename}`;
-      fetch('http://127.0.0.1:8420/query', {
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, stream: false })

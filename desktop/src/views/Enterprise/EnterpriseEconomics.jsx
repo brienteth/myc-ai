@@ -9,7 +9,8 @@ const EnterpriseEconomics = () => {
   useEffect(() => {
     const fetchEconomics = async () => {
       try {
-        const response = await fetch('http://localhost:8420/execution/intelligence/economics');
+        const backendUrl = typeof window !== 'undefined' && window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
+        const response = await fetch(`${backendUrl}/execution/intelligence/economics`);
         const data = await response.json();
         setMetrics(data);
       } catch (err) {
@@ -37,7 +38,7 @@ const EnterpriseEconomics = () => {
               className={`eco-tab ${activeTab === tab ? 'active' : ''}`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab ? tab.charAt(0).toUpperCase() + tab.slice(1) : ''}
             </button>
           ))}
         </div>
@@ -121,7 +122,7 @@ const EnterpriseEconomics = () => {
                 </tr>
               </thead>
               <tbody>
-                {metrics.savings?.claims.map((claim, idx) => (
+                {(metrics.savings?.claims || []).map((claim, idx) => (
                   <tr key={idx}>
                     <td>{claim.source}</td>
                     <td>{claim.baseline}</td>

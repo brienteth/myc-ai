@@ -19,12 +19,7 @@ Görevlerin:
 4. "Automate Flow" istendiğinde, kullanıcıya bir akış hazırlayabileceğini belirt. (Kullanıcı mesajının altındaki ◈ Automate Flow butonuna tıklayarak akışı görebilir ve onaylayarak Studio'da hazır hale getirebilir).`;
 
 export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, onMeta, convId, skipPlanner = false }) {
-  // Determine backend URL dynamically
-  const isElectron = /Electron/i.test(navigator.userAgent);
-  const isFileProtocol = window.location.protocol === 'file:';
-  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const backendUrl = (isLocalHost || isElectron || isFileProtocol || !window.location.hostname)
-    ? 'http://127.0.0.1:8420' : window.location.origin;
+  const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
 
   // 1. Core attempt: Local Myca Engine Backend
   try {

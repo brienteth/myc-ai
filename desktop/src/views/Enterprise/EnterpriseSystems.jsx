@@ -9,7 +9,7 @@ import ConnectSystemModal from './ConnectSystemModal';
 import { getSystemsMock, getSystemObjectsMock, getSystemCapabilitiesMock, getSystemPermissionsMock, getSystemLogsMock } from './enterpriseDataService';
 import './Enterprise.css';
 
-const API = 'http://127.0.0.1:8420/enterprise';
+const API = `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise`;
 
 const CATEGORY_FILTERS = ['All', 'Healthy', 'Warning', 'Offline', 'ERP', 'CRM', 'Finance', 'Cloud'];
 

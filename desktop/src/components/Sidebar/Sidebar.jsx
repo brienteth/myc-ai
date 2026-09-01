@@ -9,7 +9,7 @@ import logoImg from '../../assets/logo.png';
 const Sidebar = () => {
   const { t } = useTranslation();
   const { nodes } = useNodes();
-  const pendingCount = nodes.filter(n => n.status === 'pending').length;
+  const pendingCount = (nodes || []).filter(n => n && n.status === 'pending').length;
 
   return (
     <div className="sidebar">

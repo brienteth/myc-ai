@@ -18,7 +18,8 @@ const Home = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8420/history')
+    const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
+    fetch(`${backendUrl}/history`)
       .then(res => res.json())
       .then(data => {
         if (data.conversations) {

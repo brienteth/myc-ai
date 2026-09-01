@@ -11,8 +11,30 @@ const CATEGORY_ICONS = {
 };
 
 const SkillNode = ({ data, isConnectable }) => {
-  const { title, description, category, status, time, warnings, cost, inputs, outputs } = data;
-  const Icon = CATEGORY_ICONS[category] || Zap;
+  if (!data) return null;
+  const { title, description, category, status, time, warnings, cost } = data;
+  
+  const rawInputs = Array.isArray(data.inputs) 
+    ? data.inputs 
+    : (data.inputs && typeof data.inputs === 'object' ? Object.keys(data.inputs).map(k => ({ name: k })) : []);
+  
+  const inputs = rawInputs.map((inp, idx) => {
+    if (typeof inp === 'string') return { name: inp };
+    if (inp && typeof inp === 'object') return { name: inp.name || inp.id || `param_${idx}` };
+    return { name: `input_${idx}` };
+  });
+
+  const rawOutputs = Array.isArray(data.outputs) 
+    ? data.outputs 
+    : (data.outputs && typeof data.outputs === 'object' ? Object.keys(data.outputs).map(k => ({ name: k })) : [{ name: 'output' }]);
+
+  const outputs = rawOutputs.map((out, idx) => {
+    if (typeof out === 'string') return { name: out };
+    if (out && typeof out === 'object') return { name: out.name || out.id || `out_${idx}` };
+    return { name: `output_${idx}` };
+  });
+
+  const Icon = (category && CATEGORY_ICONS[category]) || Zap;
 
   return (
     <div className={`skill-node status-${status || 'idle'}`}>
@@ -31,8 +53,8 @@ const SkillNode = ({ data, isConnectable }) => {
       <div className="skill-node-handles">
         {/* Render input handles on the left */}
         <div className="handles-left">
-          {inputs && inputs.map((input, idx) => (
-            <div key={input.name} className="handle-row">
+          {inputs.map((input, idx) => (
+            <div key={`in_${input.name}_${idx}`} className="handle-row">
               <Handle
                 type="target"
                 position={Position.Left}
@@ -48,8 +70,8 @@ const SkillNode = ({ data, isConnectable }) => {
 
         {/* Render output handles on the right */}
         <div className="handles-right">
-          {outputs && outputs.map((output, idx) => (
-            <div key={output.name} className="handle-row right">
+          {outputs.map((output, idx) => (
+            <div key={`out_${output.name}_${idx}`} className="handle-row right">
               <span className="handle-label out">{output.name}</span>
               <Handle
                 type="source"

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Cpu, Package, Server, CheckCircle2, Shield, Play, Search, Plus, Terminal, Filter, LayoutGrid, ListFilter, X, Code, Zap, ExternalLink, SlidersHorizontal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Cpu, Package, Server, CheckCircle2, Shield, Play, Search, Plus, Terminal, Filter, LayoutGrid, ListFilter, X, Code, Zap, ExternalLink, SlidersHorizontal, Trash2 } from 'lucide-react';
 import './SkillsView.css';
 
 const SKILLS_DATA = [
@@ -76,6 +76,7 @@ const CATEGORIES = [
 ];
 
 const SkillsView = () => {
+  const backendUrl = window.getBackendUrl ? window.getBackendUrl() : `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}`;
   const [activeTab, setActiveTab] = useState('primitives');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,22 +84,32 @@ const SkillsView = () => {
   const [selectedSkill, setSelectedSkill] = useState(null);
 
   const mcpServers = [
-    { name: 'Chrome DevTools MCP', type: 'stdio', command: 'npx -y @chrome-devtools/mcp-server', status: 'Connected', skills: 14 },
-    { name: 'GitHub MCP Server', type: 'stdio', command: 'npx -y @modelcontextprotocol/server-github', status: 'Connected', skills: 28 },
-    { name: 'PostgreSQL DB Explorer', type: 'stdio', command: 'npx -y @modelcontextprotocol/server-postgres', status: 'Connected', skills: 12 },
-    { name: 'Brave Web Search MCP', type: 'stdio', command: 'npx -y @modelcontextprotocol/server-brave-search', status: 'Connected', skills: 6 },
-    { name: 'Firebase Data Connect MCP', type: 'stdio', command: 'npx -y @firebase/data-connect-mcp', status: 'Connected', skills: 18 }
+    { id: 'chrome-devtools', name: 'Chrome DevTools MCP', type: 'stdio', command: 'npx -y @chrome-devtools/mcp-server', status: 'Connected', skills: 14 },
+    { id: 'github', name: 'GitHub MCP Server', type: 'stdio', command: 'npx -y @modelcontextprotocol/server-github', status: 'Connected', skills: 28 },
+    { id: 'postgres', name: 'PostgreSQL DB Explorer', type: 'stdio', command: 'npx -y @modelcontextprotocol/server-postgres', status: 'Connected', skills: 12 },
+    { id: 'brave', name: 'Brave Web Search MCP', type: 'stdio', command: 'npx -y @modelcontextprotocol/server-brave-search', status: 'Connected', skills: 6 },
+    { id: 'firebase', name: 'Firebase Data Connect MCP', type: 'stdio', command: 'npx -y @firebase/data-connect-mcp', status: 'Connected', skills: 18 }
   ];
 
-  const [mcpServersList, setMcpServersList] = useState([]);
+  const [mcpServersList, setMcpServersList] = useState(mcpServers);
   const [mcpName, setMcpName] = useState('');
   const [mcpCommand, setMcpCommand] = useState('');
 
   const fetchMcpServers = () => {
-    fetch('http://127.0.0.1:8420/automation/mcp')
-      .then(res => res.json())
-      .then(data => setMcpServersList(data.servers || []))
-      .catch(err => console.error("Failed to load MCP servers:", err));
+    try {
+      fetch(`${backendUrl}/automation/mcp`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && Array.isArray(data.servers)) {
+            setMcpServersList(data.servers);
+          }
+        })
+        .catch(err => {
+          console.warn("Using default MCP server registry:", err.message);
+        });
+    } catch (e) {
+      console.warn("fetchMcpServers caught error:", e);
+    }
   };
 
   useEffect(() => {
@@ -106,20 +117,22 @@ const SkillsView = () => {
   }, []);
 
   // Filter skills by category & search query
-  const filteredSkills = SKILLS_DATA.filter(skill => {
+  const filteredSkills = (SKILLS_DATA || []).filter(skill => {
+    if (!skill) return false;
     const matchesCat = selectedCategory === 'All' || skill.category === selectedCategory;
-    const matchesSearch = 
-      skill.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      skill.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      skill.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      skill.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()));
+    const q = (searchQuery || '').toLowerCase();
+    const matchesSearch = !q || 
+      (skill.id && skill.id.toLowerCase().includes(q)) || 
+      (skill.desc && skill.desc.toLowerCase().includes(q)) ||
+      (skill.category && skill.category.toLowerCase().includes(q)) ||
+      ((skill.tags || []).some(t => String(t).toLowerCase().includes(q)));
     return matchesCat && matchesSearch;
   });
 
   // Group skills by category for Category View
   const groupedSkills = CATEGORIES.filter(c => c !== 'All').map(cat => ({
     name: cat,
-    skills: filteredSkills.filter(s => s.category === cat)
+    skills: filteredSkills.filter(s => s && s.category === cat)
   })).filter(g => g.skills.length > 0);
 
   return (
@@ -243,7 +256,7 @@ const SkillsView = () => {
                         </div>
                         <p className="skill-desc">{skill.desc}</p>
                         <div className="skill-tags">
-                          {skill.tags.map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
+                          {(skill.tags || []).map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
                         </div>
                         <div className="skill-card-bottom">
                           <span className="skill-speed">⚡ {skill.speed}</span>
@@ -266,7 +279,7 @@ const SkillsView = () => {
                   </div>
                   <p className="skill-desc">{skill.desc}</p>
                   <div className="skill-tags">
-                    {skill.tags.map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
+                    {(skill.tags || []).map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
                   </div>
                   <div className="skill-card-bottom">
                     <span className="skill-speed">⚡ {skill.speed}</span>
@@ -293,7 +306,7 @@ const SkillsView = () => {
               e.preventDefault();
               if (!mcpName.trim()) return;
               try {
-                const res = await fetch('http://127.0.0.1:8420/automation/mcp', {
+                const res = await fetch(`${backendUrl}/automation/mcp`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ name: mcpName, type: 'stdio', command: mcpCommand })
@@ -304,7 +317,7 @@ const SkillsView = () => {
                   setMcpName('');
                   setMcpCommand('');
                   // Auto-connect newly added server
-                  await fetch(`http://127.0.0.1:8420/automation/mcp/${newServerId}/connect`, { method: 'POST' });
+                  await fetch(`${backendUrl}/automation/mcp/${newServerId}/connect`, { method: 'POST' });
                   fetchMcpServers();
                 }
               } catch (err) {
@@ -362,7 +375,7 @@ const SkillsView = () => {
                     <button 
                       onClick={async () => {
                         if (confirm(`Remove MCP server '${server.name}'?`)) {
-                          await fetch(`http://127.0.0.1:8420/automation/mcp/${server.id}`, { method: 'DELETE' });
+                          await fetch(`${backendUrl}/automation/mcp/${server.id}`, { method: 'DELETE' });
                           fetchMcpServers();
                         }
                       }}
@@ -414,7 +427,7 @@ const SkillsView = () => {
               <div className="modal-section">
                 <h4>Capability Tags</h4>
                 <div className="skill-tags">
-                  {selectedSkill.tags.map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
+                  {(selectedSkill.tags || []).map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
                 </div>
               </div>
 

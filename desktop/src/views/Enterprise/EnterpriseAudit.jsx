@@ -19,7 +19,7 @@ const EnterpriseAudit = () => {
 
   useEffect(() => {
     const mockAudit = getAuditMock();
-    fetch('http://127.0.0.1:8420/enterprise/audit/dashboard')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/dashboard`)
       .then(res => {
         if (!res.ok) throw new Error();
         return res.json();
@@ -32,7 +32,7 @@ const EnterpriseAudit = () => {
 
   const fetchExecutions = () => {
     const mockAudit = getAuditMock();
-    fetch(`http://127.0.0.1:8420/enterprise/audit/search?q=${encodeURIComponent(searchQuery)}`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/search?q=${encodeURIComponent(searchQuery)}`)
       .then(res => res.json())
       .then(data => {
         if (data && data.executions && data.executions.length > 0) {
@@ -56,7 +56,7 @@ const EnterpriseAudit = () => {
     setActiveTab('timeline');
     
     // Fetch details with rich fallback
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${exec.id}/timeline`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${exec.id}/timeline`)
       .then(r => r.json()).then(d => setTimeline(d.timeline || []))
       .catch(() => setTimeline([
         { step: 1, event: 'Execution Started', timestamp: exec.timestamp || '11:42:00', detail: 'Triggered by user/agent' },
@@ -64,25 +64,25 @@ const EnterpriseAudit = () => {
         { step: 3, event: 'Policy Verification Passed', timestamp: '11:42:02', detail: 'SOX rule POL-101 check passed' }
       ]));
 
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${exec.id}/driver-calls`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${exec.id}/driver-calls`)
       .then(r => r.json()).then(d => setDriverCalls(d.calls || []))
       .catch(() => setDriverCalls([
         { driver: 'SAP Driver', method: 'BAPI_ACC_DOCUMENT_POST', latency: '14ms', status: '200 OK' }
       ]));
 
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${exec.id}/policy-decisions`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${exec.id}/policy-decisions`)
       .then(r => r.json()).then(d => setPolicyDecisions(d.decisions || []))
       .catch(() => setPolicyDecisions([
         { policy_id: 'POL-101', rule: 'Payout Cap Check ($50k)', result: 'PASSED', enforced_at: '11:42:02' }
       ]));
 
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${exec.id}/approvals`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${exec.id}/approvals`)
       .then(r => r.json()).then(d => setApprovals(d.approvals || []))
       .catch(() => setApprovals([
         { approval_id: 'APPR-9402', role: 'CFO Passkey', status: 'APPROVED', passkey_verified: true }
       ]));
 
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${exec.id}/artifacts`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${exec.id}/artifacts`)
       .then(r => r.json()).then(d => setArtifacts(d.artifacts || []))
       .catch(() => setArtifacts([
         { name: 'forensics_audit_report.pdf', size: '1.2 MB', sha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' }
@@ -91,7 +91,7 @@ const EnterpriseAudit = () => {
 
   const handleReplay = () => {
     if (!selectedExecution) return;
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${selectedExecution.id}/replay?mode=standard`, { method: 'POST' })
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${selectedExecution.id}/replay?mode=standard`, { method: 'POST' })
       .then(r => r.json())
       .then(d => alert(d.message))
       .catch(err => console.error(err));
@@ -99,7 +99,7 @@ const EnterpriseAudit = () => {
 
   const handleReport = () => {
     if (!selectedExecution) return;
-    fetch(`http://127.0.0.1:8420/enterprise/audit/executions/${selectedExecution.id}/report`, { method: 'POST' })
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/audit/executions/${selectedExecution.id}/report`, { method: 'POST' })
       .then(r => r.json())
       .then(d => alert("Report generated: " + d.url))
       .catch(err => console.error(err));

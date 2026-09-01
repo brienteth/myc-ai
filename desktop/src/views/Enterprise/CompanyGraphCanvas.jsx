@@ -59,7 +59,6 @@ const CompanyGraphCanvas = ({ onNodeClick, graphData }) => {
       ctx.stroke();
 
       // Animated pulse particle along edge
-      const progress = ((t * 0.0004 + EDGES.indexOf(arguments[0]) * 0.15) % 1);
       const particleIdx = EDGES.findIndex(e => e[0] === from && e[1] === to);
       const p = ((t * 0.0003 + particleIdx * 0.12) % 1);
       const px = a.px + (b.px - a.px) * p;

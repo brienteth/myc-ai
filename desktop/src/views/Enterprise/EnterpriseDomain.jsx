@@ -35,7 +35,7 @@ const EnterpriseDomain = () => {
   const [dashboardData, setDashboardData] = useState(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8420/enterprise/dashboard')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/dashboard`)
       .then(res => res.json())
       .then(data => setDashboardData(data))
       .catch(err => console.error("Failed to load enterprise dashboard:", err));

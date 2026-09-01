@@ -8,6 +8,7 @@ const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow;
 let backendProcess = null;
+let resonanceProcess = null;
 
 let backendReady = false;
 
@@ -198,8 +199,32 @@ function registerShortcuts() {
   });
 }
 
+function startResonanceCore() {
+  const resonancePath = path.join(__dirname, 'resonance_core', 'server.js');
+  if (!fs.existsSync(resonancePath)) {
+    console.warn('[Main] Resonance Core server.js not found at:', resonancePath);
+    return;
+  }
+  
+  console.log('[Main] Starting Resonance Core: node', resonancePath);
+  resonanceProcess = spawn('node', [resonancePath], {
+    cwd: path.join(__dirname, 'resonance_core'),
+    detached: false,
+    env: {
+      ...process.env,
+      PORT: '3500'
+    },
+    stdio: 'ignore'
+  });
+  
+  resonanceProcess.on('error', (err) => {
+    console.error('[Main] Resonance Core failed to start:', err);
+  });
+}
+
 app.whenReady().then(() => {
   startBackend();
+  startResonanceCore();
   createWindow();
   registerShortcuts();
 
@@ -221,6 +246,9 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
   if (backendProcess) {
     backendProcess.kill();
+  }
+  if (resonanceProcess) {
+    resonanceProcess.kill();
   }
   app.isQuitting = true;
 });

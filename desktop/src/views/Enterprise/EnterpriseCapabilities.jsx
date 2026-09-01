@@ -7,7 +7,7 @@ import {
 import { getCapabilitiesMock } from './enterpriseDataService';
 import './Enterprise.css';
 
-const API = 'http://127.0.0.1:8420/enterprise';
+const API = `${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise`;
 
 const CAP_CATEGORIES = ['All', 'Finance', 'Supply Chain', 'CRM', 'HR', 'Production', 'Warehouse', 'Procurement'];
 

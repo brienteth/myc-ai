@@ -11,7 +11,7 @@ const MCPServers = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchServers = () => {
-    fetch('http://127.0.0.1:8420/automation/mcp')
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/mcp`)
       .then(res => res.json())
       .then(data => setServers(data.servers || []))
       .catch(err => console.error("Failed to load MCP servers:", err));
@@ -27,7 +27,7 @@ const MCPServers = () => {
 
     setIsLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8420/automation/mcp', {
+      const res = await fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/mcp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -54,7 +54,7 @@ const MCPServers = () => {
   const handleDeleteServer = async (id) => {
     if (!confirm("Are you sure you want to delete this MCP server configuration?")) return;
     try {
-      await fetch(`http://127.0.0.1:8420/automation/mcp/${id}`, {
+      await fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/mcp/${id}`, {
         method: 'DELETE'
       });
       fetchServers();
@@ -66,7 +66,7 @@ const MCPServers = () => {
   const handleConnect = async (id) => {
     setServers(prev => prev.map(s => s.id === id ? { ...s, status: 'Connecting...' } : s));
     try {
-      const res = await fetch(`http://127.0.0.1:8420/automation/mcp/${id}/connect`, {
+      const res = await fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/mcp/${id}/connect`, {
         method: 'POST'
       });
       if (!res.ok) {
@@ -82,7 +82,7 @@ const MCPServers = () => {
 
   const handleDisconnect = async (id) => {
     try {
-      await fetch(`http://127.0.0.1:8420/automation/mcp/${id}/disconnect`, {
+      await fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/automation/mcp/${id}/disconnect`, {
         method: 'POST'
       });
       fetchServers();

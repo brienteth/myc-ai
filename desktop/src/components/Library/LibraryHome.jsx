@@ -25,12 +25,12 @@ const LibraryHome = ({ onSelectDoc, onNavigateCat }) => {
     setIsLoading(true);
 
     Promise.all([
-      fetch('http://127.0.0.1:8420/library/files?type=all')
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/files?type=all`)
         .then(res => res.json())
         .then(data => setRecentFiles((data.files || []).slice(0, 6)))
         .catch(err => console.error("Failed to fetch recent files", err)),
 
-      fetch('http://127.0.0.1:8420/library/stats')
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/stats`)
         .then(res => res.json())
         .then(data => setStats(data || { total_files: 0, total_size_bytes: 0, by_type: {} }))
         .catch(err => console.error("Failed to fetch library stats", err))

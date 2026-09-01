@@ -51,7 +51,7 @@ const GlobalSearchModal = ({ isOpen, onClose, onNavigateTab }) => {
       inputRef.current.focus();
       setQuery('');
       // Load default results
-      fetch('http://127.0.0.1:8420/enterprise/dashboard/search?q=')
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/dashboard/search?q=`)
         .then(r => r.json())
         .then(d => {
           if (d && d.results && d.results.length > 0) setResults(d.results);
@@ -63,7 +63,7 @@ const GlobalSearchModal = ({ isOpen, onClose, onNavigateTab }) => {
 
   const handleSearch = useCallback((val) => {
     setQuery(val);
-    fetch(`http://127.0.0.1:8420/enterprise/dashboard/search?q=${encodeURIComponent(val)}`)
+    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/enterprise/dashboard/search?q=${encodeURIComponent(val)}`)
       .then(r => r.json())
       .then(d => {
         if (d && d.results && d.results.length > 0) setResults(d.results);
