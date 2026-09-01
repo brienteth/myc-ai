@@ -149,9 +149,12 @@ const EnterpriseCapabilities = () => {
     }
   };
 
-  const filteredCatalog = catalog.filter(cap => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch = cap.name.toLowerCase().includes(q) || cap.title.toLowerCase().includes(q) || cap.namespace.toLowerCase().includes(q);
+  const filteredCatalog = (catalog || []).filter(cap => {
+    if (!cap) return false;
+    const q = String(searchQuery || '').toLowerCase();
+    const matchesSearch = String(cap.name || '').toLowerCase().includes(q) || 
+                         String(cap.title || '').toLowerCase().includes(q) || 
+                         String(cap.namespace || '').toLowerCase().includes(q);
     if (!matchesSearch) return false;
     if (activeCategory === 'All') return true;
     return cap.category === activeCategory;
@@ -213,9 +216,9 @@ const EnterpriseCapabilities = () => {
       <div className="sys-layout">
         {/* Left Column: Capability List */}
         <div className="sys-left">
-          {filteredCatalog.map(cap => {
+          {(filteredCatalog || []).map(cap => {
             const isSel = cap.id === selectedId;
-            const usageClass = (cap.planner_usage || 'High').toLowerCase().replace(' ', '-');
+            const usageClass = String(cap.planner_usage || 'High').toLowerCase().replace(' ', '-');
             return (
               <div
                 key={cap.id}

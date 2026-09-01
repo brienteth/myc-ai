@@ -80,9 +80,12 @@ const EnterpriseSystems = () => {
   }, [selectedId]);
 
   // Filtered systems list
-  const filteredSystems = systems.filter(sys => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch = sys.name.toLowerCase().includes(q) || sys.vendor.toLowerCase().includes(q) || sys.type.toLowerCase().includes(q);
+  const filteredSystems = (systems || []).filter(sys => {
+    if (!sys) return false;
+    const q = String(searchQuery || '').toLowerCase();
+    const matchesSearch = String(sys.name || '').toLowerCase().includes(q) || 
+                         String(sys.vendor || '').toLowerCase().includes(q) || 
+                         String(sys.type || '').toLowerCase().includes(q);
     if (!matchesSearch) return false;
     if (activeFilter === 'All') return true;
     if (['Healthy', 'Warning', 'Offline'].includes(activeFilter)) return sys.status === activeFilter;
@@ -437,10 +440,10 @@ const EnterpriseSystems = () => {
                     <button className="sys-filter-chip">WARN</button>
                     <button className="sys-filter-chip">ERROR</button>
                   </div>
-                  {detailLogs.map((log, i) => (
+                  {(detailLogs || []).map((log, i) => (
                     <div key={i} className="sys-log-row">
                       <div className="sys-log-time">{log.time}</div>
-                      <span className={`sys-log-level ${log.level.toLowerCase()}`}>{log.level}</span>
+                      <span className={`sys-log-level ${String(log?.level || 'info').toLowerCase()}`}>{log.level}</span>
                       <div className="sys-log-event">{log.event}</div>
                     </div>
                   ))}

@@ -90,9 +90,10 @@ const EnterpriseApprovals = () => {
     alert(`Execution ${approvalId} Rejected! Event 'ApprovalRejected' broadcasted.`);
   };
 
-  const filteredApprovals = approvals.filter(a => {
+  const filteredApprovals = (approvals || []).filter(a => {
+    if (!a) return false;
     if (filter === 'ALL') return true;
-    return a.risk_level === filter.toLowerCase();
+    return String(a.risk_level || '').toLowerCase() === String(filter || '').toLowerCase();
   });
 
   return (

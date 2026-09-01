@@ -89,11 +89,15 @@ const EnterprisePolicies = () => {
     setModalOpen(false);
   };
 
-  const filteredPolicies = policies.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase()) || 
-    p.category.toLowerCase().includes(search.toLowerCase()) ||
-    p.rule.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredPolicies = (policies || []).filter(p => {
+    if (!p) return false;
+    const q = String(search || '').toLowerCase();
+    return (
+      String(p.name || '').toLowerCase().includes(q) || 
+      String(p.category || '').toLowerCase().includes(q) ||
+      String(p.rule || '').toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div style={{ color: 'var(--ed-text)' }}>

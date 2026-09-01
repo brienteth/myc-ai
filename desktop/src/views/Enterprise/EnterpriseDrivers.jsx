@@ -171,9 +171,12 @@ const EnterpriseDrivers = () => {
   };
 
   // Filtered Marketplace Drivers
-  const filteredMarketplace = marketplace.filter(d => {
-    const q = searchQuery.toLowerCase();
-    const matchesQuery = d.name.toLowerCase().includes(q) || d.vendor.toLowerCase().includes(q) || d.description.toLowerCase().includes(q);
+  const filteredMarketplace = (marketplace || []).filter(d => {
+    if (!d) return false;
+    const q = String(searchQuery || '').toLowerCase();
+    const matchesQuery = String(d.name || '').toLowerCase().includes(q) || 
+                         String(d.vendor || '').toLowerCase().includes(q) || 
+                         String(d.description || '').toLowerCase().includes(q);
     if (!matchesQuery) return false;
     if (mpCategory === 'All') return true;
     return d.category === mpCategory;
@@ -541,7 +544,7 @@ const EnterpriseDrivers = () => {
                       {detailLogs.map((log, i) => (
                         <div key={i} className="sys-log-row">
                           <div className="sys-log-time">{log.time}</div>
-                          <span className={`sys-log-level ${log.level.toLowerCase()}`}>{log.level}</span>
+                          <span className={`sys-log-level ${String(log?.level || 'info').toLowerCase()}`}>{log.level}</span>
                           <div className="sys-log-event">{log.message}</div>
                         </div>
                       ))}

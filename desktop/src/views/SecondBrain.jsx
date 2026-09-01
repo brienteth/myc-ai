@@ -497,7 +497,7 @@ const SecondBrain = () => {
                   {/* Draw nodes */}
                   {KNOWLEDGE_GRAPH_NODES.map(node => (
                     <g key={node.id} transform={`translate(${node.x}, ${node.y})`} style={{ cursor: 'pointer' }} onClick={() => {
-                      const match = memories.find(m => m.title.toLowerCase().includes(node.id.toLowerCase()) || m.related.includes(node.id));
+                      const match = (memories || []).find(m => String(m?.title || '').toLowerCase().includes(String(node?.id || '').toLowerCase()) || (m?.related || []).includes(node?.id));
                       if (match) setSelectedMemory(match);
                     }}>
                       <circle 
@@ -660,7 +660,7 @@ const SecondBrain = () => {
                   return (
                     <div key={m.id} className="memory-card" onClick={() => setSelectedMemory(m)}>
                       <div className="memory-card-header-row">
-                        <span className={`memory-type-pill ${m.type.toLowerCase()}`}>{m.type}</span>
+                        <span className={`memory-type-pill ${String(m?.type || 'memory').toLowerCase()}`}>{m?.type}</span>
                         <div className={`confidence-display ${conf.class}`} title={conf.label}>
                           <span className="dots">{conf.dots}</span>
                           <span className="lbl">{conf.label}</span>
@@ -760,7 +760,7 @@ const SecondBrain = () => {
           <div className="drawer-container" onClick={e => e.stopPropagation()}>
             <div className="drawer-header">
               <div className="drawer-title-block">
-                <span className={`drawer-type-badge ${selectedMemory.type.toLowerCase()}`}>{selectedMemory.type}</span>
+                <span className={`drawer-type-badge ${String(selectedMemory?.type || 'memory').toLowerCase()}`}>{selectedMemory?.type}</span>
                 <h3>{selectedMemory.title}</h3>
               </div>
               <button className="close-btn" onClick={() => setSelectedMemory(null)}><X size={18} /></button>

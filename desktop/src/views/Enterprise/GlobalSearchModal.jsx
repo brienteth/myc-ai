@@ -40,9 +40,9 @@ const GlobalSearchModal = ({ isOpen, onClose, onNavigateTab }) => {
     if (!q || !q.trim()) return ALL_MOCK_SEARCH_ITEMS;
     const lower = q.toLowerCase();
     return ALL_MOCK_SEARCH_ITEMS.filter(i => 
-      i.title.toLowerCase().includes(lower) || 
-      i.subtitle.toLowerCase().includes(lower) || 
-      i.type.toLowerCase().includes(lower)
+      String(i?.title || '').toLowerCase().includes(lower) || 
+      String(i?.subtitle || '').toLowerCase().includes(lower) || 
+      String(i?.type || '').toLowerCase().includes(lower)
     );
   };
 

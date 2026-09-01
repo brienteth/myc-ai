@@ -233,7 +233,7 @@ const EnterpriseExecution = () => {
     loadQueue();
   };
 
-  const filteredLogs = logFilter ? logs.filter(l => l.source.toLowerCase() === logFilter.toLowerCase()) : logs;
+  const filteredLogs = logFilter ? (logs || []).filter(l => String(l?.source || '').toLowerCase() === String(logFilter || '').toLowerCase()) : (logs || []);
 
   const statusColor = (s) => ({ running: 'var(--ed-green)', waiting: '#58a6ff', paused: 'var(--ed-yellow)', completed: '#58a6ff', failed: 'var(--ed-red)', cancelled: 'var(--ed-text-muted)' }[s] || 'var(--ed-text)');
 

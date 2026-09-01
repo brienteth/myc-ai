@@ -306,7 +306,7 @@ const EnterpriseAudit = () => {
                       <div key={idx} className="audit-policy-card">
                         <div className="audit-policy-header">
                           <div className="audit-policy-title"><ShieldCheck size={14} style={{display:'inline', verticalAlign:'middle', marginRight: 6, color: 'var(--ed-accent)'}}/>{pol.policy}</div>
-                          <div className={`audit-policy-result ${pol.result.toLowerCase()}`}>{pol.result}</div>
+                          <div className={`audit-policy-result ${String(pol?.result || 'pass').toLowerCase()}`}>{pol.result}</div>
                         </div>
                         <div className="audit-policy-grid">
                           <div><span className="lbl">Limit: </span><span className="val">{pol.limit}</span></div>

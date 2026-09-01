@@ -166,13 +166,14 @@ const EnterpriseOntology = () => {
     }
   };
 
-  const filteredObjects = objects.filter(obj => {
-    const q = searchQuery.toLowerCase();
+  const filteredObjects = (objects || []).filter(obj => {
+    if (!obj) return false;
+    const q = String(searchQuery || '').toLowerCase();
     return (
-      obj.name.toLowerCase().includes(q) ||
-      obj.canonical_name.toLowerCase().includes(q) ||
-      obj.category.toLowerCase().includes(q) ||
-      (obj.aliases || []).some(a => a.toLowerCase().includes(q))
+      String(obj.name || '').toLowerCase().includes(q) ||
+      String(obj.canonical_name || '').toLowerCase().includes(q) ||
+      String(obj.category || '').toLowerCase().includes(q) ||
+      (obj.aliases || []).some(a => String(a || '').toLowerCase().includes(q))
     );
   });
 
