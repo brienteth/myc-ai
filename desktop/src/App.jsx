@@ -15,6 +15,7 @@ import SetupScreen from './screens/SetupScreen';
 import EnterpriseDomain from './views/Enterprise/EnterpriseDomain';
 import SecondBrain from './views/SecondBrain';
 import SkillsView from './views/SkillsView';
+import SimuleView from './views/SimuleView';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
@@ -51,6 +52,8 @@ function App() {
             <Route path="automation" element={<ErrorBoundary title="Execution Studio"><Automation /></ErrorBoundary>} />
             <Route path="brain" element={<ErrorBoundary title="Second Brain"><SecondBrain /></ErrorBoundary>} />
             <Route path="skills" element={<ErrorBoundary title="Skills & MCP Registry"><SkillsView /></ErrorBoundary>} />
+            <Route path="lab" element={<ErrorBoundary title="Research Lab"><SimuleView /></ErrorBoundary>} />
+            <Route path="simule" element={<ErrorBoundary title="Research Lab"><SimuleView /></ErrorBoundary>} />
             <Route path="enterprise/*" element={<ErrorBoundary title="Enterprise"><EnterpriseDomain /></ErrorBoundary>} />
             <Route path="colony" element={<ErrorBoundary title="Colony Mesh"><Colony /></ErrorBoundary>} />
             <Route path="workflows" element={<ErrorBoundary title="Workflows"><Workflows /></ErrorBoundary>} />

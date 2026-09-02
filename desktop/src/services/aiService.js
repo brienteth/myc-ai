@@ -70,7 +70,41 @@ export async function queryAI({ prompt, systemPrompt = SYSTEM_PROMPT, onToken, o
       throw new Error(`HTTP ${localRes.status}`);
     }
   } catch (err) {
-    console.warn("Local Myca engine offline. Serving intelligent local UI fallback...", err);
+    // 2. Secondary local attempt: Resonance Core (port 3500)
+    try {
+      const resCore = await fetch('http://127.0.0.1:3500/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+      if (resCore.ok) {
+        const resData = await resCore.json();
+        const content = resData.choices?.[0]?.message?.content;
+        if (content && !content.includes("Bu konuda bilgim yok")) {
+          if (onMeta) {
+            onMeta({
+              node_display: 'Resonance Core (3500)',
+              node_used: 'SPECTRAL_LOCAL',
+              mode: 'RESONANCE_MODE',
+              latency_ms: 8
+            });
+          }
+          if (onToken) {
+            for (const chunk of content.split(' ')) {
+              onToken(chunk + ' ');
+              await new Promise(r => setTimeout(r, 12));
+            }
+          }
+          return content;
+        }
+      }
+    } catch (coreErr) {
+      // Pass through to intelligent fallback
+    }
+
+    console.warn("Serving intelligent local UI fallback...", err);
     const fallbackAnswer = generateIntelligentFallback(prompt);
     if (onToken) {
       // Simulate streaming tokens for smooth UX

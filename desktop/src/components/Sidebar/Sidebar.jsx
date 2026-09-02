@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2, Brain } from 'lucide-react';
+import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2, Brain, FlaskConical } from 'lucide-react';
 import '../Layout/Layout.css';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useNodes } from '../../hooks/useNodes';
@@ -61,6 +61,10 @@ const Sidebar = () => {
         <NavLink to="/skills" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Cpu size={16} />
           <span>Skills & MCP</span>
+        </NavLink>
+        <NavLink to="/lab" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
+          <FlaskConical size={16} />
+          <span>Research Lab</span>
         </NavLink>
         <NavLink to="/enterprise" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Building2 size={16} />
