@@ -91,9 +91,15 @@ const SkillsView = () => {
     { id: 'firebase', name: 'Firebase Data Connect MCP', type: 'stdio', command: 'npx -y @firebase/data-connect-mcp', status: 'Connected', skills: 18 }
   ];
 
+  const [allSkills, setAllSkills] = useState(SKILLS_DATA);
   const [mcpServersList, setMcpServersList] = useState(mcpServers);
   const [mcpName, setMcpName] = useState('');
   const [mcpCommand, setMcpCommand] = useState('');
+
+  // Live Primitive Execution state
+  const [execInputs, setExecInputs] = useState({});
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [execResult, setExecResult] = useState(null);
 
   const fetchMcpServers = () => {
     try {
@@ -112,12 +118,120 @@ const SkillsView = () => {
     }
   };
 
+  const handleConnectMcp = async (id) => {
+    try {
+      const res = await fetch(`${backendUrl}/automation/mcp/${id}/connect`, { method: 'POST' });
+      if (res.ok) fetchMcpServers();
+    } catch (err) {
+      console.error("MCP connect error:", err);
+    }
+  };
+
+  const handleDisconnectMcp = async (id) => {
+    try {
+      const res = await fetch(`${backendUrl}/automation/mcp/${id}/disconnect`, { method: 'POST' });
+      if (res.ok) fetchMcpServers();
+    } catch (err) {
+      console.error("MCP disconnect error:", err);
+    }
+  };
+
   useEffect(() => {
     fetchMcpServers();
+    // Fetch live registered skills from backend
+    fetch(`${backendUrl}/skills`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.skills) && data.skills.length > 0) {
+          const backendSkills = data.skills.map(s => ({
+            id: s.id,
+            category: s.category === 'General' || s.category === 'network' ? 'Communication' : s.category,
+            desc: s.description || s.name,
+            speed: s.speed || '14ms',
+            status: s.status || 'Active',
+            tags: s.tags && s.tags.length > 0 ? s.tags : [s.id.split('.')[0]],
+            inputs_schema: s.inputs_schema || {}
+          }));
+
+          setAllSkills(prev => {
+            const map = new Map();
+            prev.forEach(item => map.set(item.id, item));
+            backendSkills.forEach(item => {
+              const existing = map.get(item.id);
+              map.set(item.id, { ...existing, ...item, desc: existing?.desc || item.desc });
+            });
+            return Array.from(map.values());
+          });
+        }
+      })
+      .catch(err => console.warn("Live skills sync fallback:", err.message));
   }, []);
 
+  // Initialize input fields when a skill is opened
+  useEffect(() => {
+    if (!selectedSkill) {
+      setExecResult(null);
+      return;
+    }
+    const sid = selectedSkill.id;
+    if (sid === 'telegram.send') {
+      setExecInputs({ chat_id: '@mycatest', message: 'Merhaba! Myca OS canlı Telegram bildirimi.', bot_token: '' });
+    } else if (sid === 'whatsapp.send' || sid === 'whatsapp.webhook') {
+      setExecInputs({ phone_number: '+905551234567', message: 'Merhaba! Myca OS canlı WhatsApp bildirimi.' });
+    } else if (sid === 'email.send' || sid === 'gmail.send') {
+      setExecInputs({ to_email: 'recipient@company.com', subject: 'Myca OS Canlı Bildirim', body: 'Bu mesaj Myca OS canlı e-posta motoru tarafından iletilmiştir.' });
+    } else if (sid === 'slack.send') {
+      setExecInputs({ message: '🚀 Myca OS Canlı Slack Bildirimi', webhook_url: '', channel: '#general' });
+    } else if (sid === 'discord.send' || sid === 'discord.bot.send') {
+      setExecInputs({ message: '🎮 Myca OS Canlı Discord Bildirimi', webhook_url: '', channel_id: '' });
+    } else if (sid === 'opacus.mpc') {
+      setExecInputs({ action: 'tools', endpoint: 'https://opacus.xyz/api/kinetic/mcp' });
+    } else if (sid.includes('search') || sid.includes('query')) {
+      setExecInputs({ query: 'Myca OS autonomous execution runtime' });
+    } else if (sid.includes('scrape') || sid.includes('read_url') || sid === 'web.read') {
+      setExecInputs({ url: 'https://news.ycombinator.com' });
+    } else if (selectedSkill.inputs_schema && Object.keys(selectedSkill.inputs_schema).length > 0) {
+      const initObj = {};
+      Object.entries(selectedSkill.inputs_schema).forEach(([k, v]) => {
+        initObj[k] = v.default !== null && v.default !== undefined ? String(v.default) : '';
+      });
+      setExecInputs(initObj);
+    } else {
+      setExecInputs({ prompt: 'Canlı yürütme parametresi' });
+    }
+    setExecResult(null);
+  }, [selectedSkill]);
+
+  const handleExecuteLiveSkill = async () => {
+    if (!selectedSkill) return;
+    setIsExecuting(true);
+    setExecResult(null);
+    try {
+      const res = await fetch(`${backendUrl}/skills/execute`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          skill_id: selectedSkill.id,
+          inputs: execInputs
+        })
+      });
+      const data = await res.json();
+      setExecResult(data);
+    } catch (err) {
+      setExecResult({
+        success: false,
+        skill_id: selectedSkill.id,
+        latency_ms: 0,
+        outputs: {},
+        logs: [`Bağlantı hatası: ${err.message}`]
+      });
+    } finally {
+      setIsExecuting(false);
+    }
+  };
+
   // Filter skills by category & search query
-  const filteredSkills = (SKILLS_DATA || []).filter(skill => {
+  const filteredSkills = (allSkills || []).filter(skill => {
     if (!skill) return false;
     const matchesCat = selectedCategory === 'All' || skill.category === selectedCategory;
     const q = (searchQuery || '').toLowerCase();
@@ -372,6 +486,23 @@ const SkillsView = () => {
                     }}>
                       {server.status}
                     </span>
+                    {server.status === 'Connected' ? (
+                      <button 
+                        className="mcp-action-btn disconnect"
+                        onClick={() => handleDisconnectMcp(server.id)}
+                        title="Disconnect MCP Server"
+                      >
+                        Disconnect
+                      </button>
+                    ) : (
+                      <button 
+                        className="mcp-action-btn connect"
+                        onClick={() => handleConnectMcp(server.id)}
+                        title="Connect MCP Server"
+                      >
+                        Connect
+                      </button>
+                    )}
                     <button 
                       onClick={async () => {
                         if (confirm(`Remove MCP server '${server.name}'?`)) {
@@ -398,7 +529,7 @@ const SkillsView = () => {
         </div>
       )}
 
-      {/* Skill Detail Modal */}
+      {/* Skill Detail Modal with Live Execution Console */}
       {selectedSkill && (
         <div className="skill-modal-overlay" onClick={() => setSelectedSkill(null)}>
           <div className="skill-modal-container" onClick={e => e.stopPropagation()}>
@@ -424,31 +555,104 @@ const SkillsView = () => {
                 <p>{selectedSkill.desc}</p>
               </div>
 
-              <div className="modal-section">
-                <h4>Capability Tags</h4>
-                <div className="skill-tags">
-                  {(selectedSkill.tags || []).map(t => <span key={t} className="skill-tag-chip">#{t}</span>)}
+              {/* Live Primitive Execution Console */}
+              <div className="live-exec-panel">
+                <div className="live-exec-header">
+                  <div className="live-exec-title">
+                    <Zap size={16} color="var(--f-moss)" />
+                    <span>Canlı Beceri Çalıştırma Konsolu (Live Execution Console)</span>
+                  </div>
+                  <span style={{ fontSize: '11px', color: 'var(--f-soil)' }}>
+                    {isExecuting ? '⏳ Çalıştırılıyor...' : '🟢 Hazır'}
+                  </span>
                 </div>
+
+                <div className="live-exec-form">
+                  {Object.entries(execInputs).map(([key, val]) => (
+                    <div key={key} className="live-input-group">
+                      <div className="live-input-label">
+                        <span>{key.replace('_', ' ').toUpperCase()}</span>
+                        {key.includes('token') || key.includes('password') ? (
+                          <span style={{ color: 'var(--f-moss)' }}>🔒 Güvenli Parametre</span>
+                        ) : null}
+                      </div>
+                      {key === 'message' || key === 'body' || key === 'prompt' ? (
+                        <textarea
+                          className="live-textarea-field"
+                          value={val || ''}
+                          onChange={e => setExecInputs(prev => ({ ...prev, [key]: e.target.value }))}
+                          placeholder={`${key} değerini girin...`}
+                        />
+                      ) : (
+                        <input
+                          type={key.includes('token') || key.includes('password') ? 'password' : 'text'}
+                          className="live-input-field"
+                          value={val || ''}
+                          onChange={e => setExecInputs(prev => ({ ...prev, [key]: e.target.value }))}
+                          placeholder={`${key} değerini girin...`}
+                        />
+                      )}
+                    </div>
+                  ))}
+
+                  <button
+                    className="live-run-btn"
+                    onClick={handleExecuteLiveSkill}
+                    disabled={isExecuting}
+                  >
+                    <Play size={14} />
+                    {isExecuting ? 'Primitive Çalıştırılıyor...' : 'Run Live Primitive (Canlı Çalıştır)'}
+                  </button>
+                </div>
+
+                {/* Live Execution Result & Logs */}
+                {execResult && (
+                  <div className="live-result-box">
+                    <div className="live-result-status">
+                      <span className={`result-badge ${execResult.success ? 'success' : 'failed'}`}>
+                        {execResult.success ? '✓ İşlem Başarılı' : '✕ İşlem Başarısız / Uyarı'}
+                      </span>
+                      <span style={{ fontSize: '11px', fontFamily: 'var(--f-mono)' }}>
+                        ⚡ {execResult.latency_ms} ms
+                      </span>
+                    </div>
+
+                    {execResult.outputs && Object.keys(execResult.outputs).length > 0 && (
+                      <div className="live-output-card">
+                        <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--f-deep)' }}>Çıktılar (Outputs):</div>
+                        <pre>{JSON.stringify(execResult.outputs, null, 2)}</pre>
+                      </div>
+                    )}
+
+                    {execResult.logs && execResult.logs.length > 0 && (
+                      <div className="live-logs-terminal">
+                        <div style={{ color: '#00e87a', fontWeight: 600, marginBottom: 4 }}>Adım Günlükleri (Execution Logs):</div>
+                        {execResult.logs.map((log, lIdx) => (
+                          <div key={lIdx} className="live-log-row">
+                            {typeof log === 'string' ? log : JSON.stringify(log)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              <div className="modal-section">
+              <div className="modal-section" style={{ marginTop: 16 }}>
                 <h4>Python & REST Invocation Pattern</h4>
                 <pre className="code-snippet">
 {`from myca.skills import execute_primitive
 
 result = await execute_primitive(
     primitive_id="${selectedSkill.id}",
-    params={"intent": "auto"}
+    params=${JSON.stringify(execInputs, null, 4)}
 )`}
                 </pre>
               </div>
             </div>
 
             <div className="skill-modal-footer">
-              <button className="btn-secondary" onClick={() => setSelectedSkill(null)}>Close</button>
-              <button className="btn-primary" onClick={() => setSelectedSkill(null)}>
-                <Play size={14} /> Test Primitive Execution
-              </button>
+              <button className="btn-secondary" onClick={() => setSelectedSkill(null)}>Kapat</button>
             </div>
           </div>
         </div>

@@ -31,14 +31,7 @@ import aiosqlite
 
 from myca.node import MycaNode
 from myca.core.need import Need, PrivacyLevel
-try:
-    from myca_intelligence.memory_intelligence.memory import ExperienceMemory
-except ImportError:
-    class ExperienceMemory:
-        def __init__(self, *args, **kwargs):
-            pass
-        def clear(self):
-            pass
+from myca.memory import MemoryController as ExperienceMemory
 from myca.runtime import RuntimeEngine
 from myca.speculative import SpeculativeDecoder
 from myca.skills.core.registry import SkillRegistry
@@ -205,6 +198,96 @@ def create_app(node: MycaNode) -> FastAPI:
             "peers": node.get_peers(),
             "total": len(node.get_peers()),
         }
+
+    # ── Real Skills Execution Engine API ───────────────────────
+
+    @app.get("/skills")
+    async def list_skills():
+        """Returns all registered skills with schemas, categories, and telemetry."""
+        from myca.skills.core.registry import SkillRegistry
+        SkillRegistry._ensure_loaded()
+        manifests = SkillRegistry.get_manifests()
+        
+        result = []
+        for m in manifests:
+            sid = m.get("id")
+            if not sid:
+                continue
+            skill_def = SkillRegistry._skills.get(sid)
+            inputs_schema = {}
+            if skill_def and hasattr(skill_def, "inputs_schema") and hasattr(skill_def.inputs_schema, "model_fields"):
+                for fname, finfo in skill_def.inputs_schema.model_fields.items():
+                    inputs_schema[fname] = {
+                        "type": str(finfo.annotation),
+                        "description": finfo.description or "",
+                        "default": finfo.default if finfo.default is not ... else None,
+                        "required": finfo.is_required()
+                    }
+            telemetry = SkillRegistry._telemetry.get(sid, {})
+            result.append({
+                "id": sid,
+                "name": m.get("name") or sid.replace(".", " ").title(),
+                "category": m.get("category", "General"),
+                "description": m.get("description", ""),
+                "version": m.get("version", "1.0"),
+                "permissions": m.get("permissions", []),
+                "tags": m.get("tags", []),
+                "speed": f"{telemetry.get('avg_latency_ms', 15):.0f}ms",
+                "status": "Active",
+                "usage_count": telemetry.get("usage_count", 0),
+                "inputs_schema": inputs_schema
+            })
+        return {"count": len(result), "skills": result}
+
+    @app.post("/skills/execute")
+    async def execute_skill_endpoint(request: Request):
+        """
+        Executes any OS Primitive/Skill with live parameters.
+        Returns live outputs, step logs, and execution duration.
+        """
+        import time
+        from myca.skills.core.registry import SkillRegistry
+        from myca.skills.core.context import SkillContext
+
+        body = await request.json()
+        skill_id = body.get("skill_id")
+        inputs = body.get("inputs", {})
+
+        if not skill_id:
+            raise HTTPException(status_code=400, detail="Missing 'skill_id' in request body.")
+
+        SkillRegistry._ensure_loaded()
+        start_t = time.time()
+        need_id = f"exec_{int(start_t * 1000)}"
+
+        ctx = SkillContext(
+            need_id=need_id,
+            runtime=runtime,
+            memory=getattr(runtime, "memory", None),
+            capabilities=None,
+            permissions=None
+        )
+
+        try:
+            skill_res = await SkillRegistry.execute(ctx, skill_id, **inputs)
+            latency_ms = int((time.time() - start_t) * 1000)
+            return {
+                "success": skill_res.success,
+                "skill_id": skill_id,
+                "latency_ms": latency_ms,
+                "outputs": skill_res.outputs,
+                "logs": skill_res.logs or ctx._logs
+            }
+        except Exception as exec_err:
+            logger.error(f"[SKILL_EXEC] Execution failed for {skill_id}: {exec_err}", exc_info=True)
+            latency_ms = int((time.time() - start_t) * 1000)
+            return {
+                "success": False,
+                "skill_id": skill_id,
+                "latency_ms": latency_ms,
+                "outputs": {},
+                "logs": [f"Execution Exception: {str(exec_err)}"]
+            }
 
     # ── Query (Need Protocol) ───────────────────────────────────
 
@@ -489,6 +572,13 @@ def create_app(node: MycaNode) -> FastAPI:
                 ws_clients.remove(websocket)
 
     # ── Manual Node Registration ──────────────────────────────
+    
+    class RegisterRequest(BaseModel):
+        node_id: Optional[str] = None
+        role: Optional[str] = None
+        host: Optional[str] = None
+        port: Optional[int] = None
+
 
     @app.post("/node/register")
     async def register_node(req: Optional[RegisterRequest] = None, request: Request = None):
@@ -526,54 +616,11 @@ def create_app(node: MycaNode) -> FastAPI:
         return {"status": "registered", "node_id": node_id, "peers": len(node.discovery.peers)}
 
     # ── Host-Centric Pairing Session Manager (Colony Mesh) ────────────
+    # PairingSession, PairingSessionStatus, and pairing_manager are imported
+    # from myca.pairing at the top of this file — Single Source of Truth.
     import random, string
 
-    UNAMBIGUOUS_PAIR_CHARS = "2346789ACDEFGHJKLMNPQRTUVWXYZ"
 
-    class PairingSessionStatus:
-        PENDING = "PENDING"
-        REQUESTED = "REQUESTED"
-        APPROVED = "APPROVED"
-        VERIFIED = "VERIFIED"
-        EXPIRED = "EXPIRED"
-        DECLINED = "DECLINED"
-
-    class PairingSession:
-        def __init__(self, host_node_id: str, host_pubkey: str, ttl_seconds: int = 300):
-            self.session_id = f"pair_{_uuid.uuid4().hex[:12]}"
-            self.host_node_id = host_node_id
-            self.host_public_key = host_pubkey
-            self.challenge = _uuid.uuid4().hex
-            # 4-character unambiguous uppercase security code (e.g. K7PX)
-            self.security_code = "".join(random.choices(UNAMBIGUOUS_PAIR_CHARS, k=4))
-            self.created_at = time.time()
-            self.expires_at = self.created_at + ttl_seconds
-            self.status = PairingSessionStatus.PENDING
-            self.requesting_node_id = None
-            self.requesting_public_key = None
-            self.requesting_device_name = None
-            self.requesting_device_type = None
-            self.requesting_capabilities = []
-            self.desktop_signature = ""
-
-        def is_expired(self) -> bool:
-            return time.time() > self.expires_at
-
-        def to_dict(self) -> dict:
-            return {
-                "session_id": self.session_id,
-                "host_node_id": self.host_node_id,
-                "host_public_key": self.host_public_key,
-                "security_code": self.security_code,
-                "challenge": self.challenge,
-                "created_at": self.created_at,
-                "expires_at": self.expires_at,
-                "status": self.status,
-                "requesting_node_id": self.requesting_node_id,
-                "requesting_device_name": self.requesting_device_name,
-                "requesting_device_type": self.requesting_device_type,
-                "requesting_capabilities": self.requesting_capabilities
-            }
 
     _h3_registered_agents: dict = {}
     _h3_signals: dict = {}
@@ -614,6 +661,18 @@ def create_app(node: MycaNode) -> FastAPI:
         except Exception:
             pass
         session = pairing_manager.create_session(host_node_id=node.node_id, force_new=force_new)
+        
+        # Async broadcast active session to H3 cloud registry (mycai.pro)
+        h3_url = os.getenv("OPACUS_H3_URL", "https://www.mycai.pro")
+        if h3_url:
+            async def _sync():
+                try:
+                    async with httpx.AsyncClient(timeout=3.0) as client:
+                        await client.post(f"{h3_url}/api/registry/pair/session", json=session.to_dict())
+                except Exception:
+                    pass
+            asyncio.create_task(_sync())
+
         return session.to_dict()
 
     @app.get("/api/registry/pair/session/{host_node_id}")
@@ -699,6 +758,67 @@ def create_app(node: MycaNode) -> FastAPI:
             node_id = body.get("node_id")
             session_id = body.get("session_id")
 
+            # Check if this is an H3 Global peer and we can discover its public key
+            peer = None
+            if node_id and node.discovery:
+                peers = node.discovery.get_active_peers()
+                peer = next((p for p in peers if p.node_id == node_id), None)
+
+            if not peer and node_id:
+                # Direct fallback query to Vercel cloud registry to fetch the peer registration details immediately
+                h3_url = os.getenv("OPACUS_H3_URL", "https://www.mycai.pro")
+                if h3_url:
+                    try:
+                        import httpx
+                        async with httpx.AsyncClient(timeout=3.0) as client:
+                            resp = await client.get(f"{h3_url}/api/registry/agents")
+                            if resp.status_code == 200:
+                                agents = resp.json().get("agents", [])
+                                matched = next((a for a in agents if a.get("node_id") == node_id), None)
+                                if matched:
+                                    from myca.discovery import PeerInfo
+                                    peer = PeerInfo(
+                                        node_id=node_id,
+                                        role=matched.get("role", "mobile_web"),
+                                        host="unknown",
+                                        port=8420,
+                                        source="h3_global",
+                                        public_key=matched.get("public_key", ""),
+                                        capabilities=matched.get("capabilities", []),
+                                        device_name=matched.get("device_name", "")
+                                    )
+                    except Exception as e:
+                        logger.error(f"[PAIRING DIRECT FETCH ERROR] {e}")
+
+            if peer and peer.source == "h3_global":
+                # Save to local trusted nodes database directly
+                import json
+                db.add_trusted_node(
+                    node_id=node_id,
+                    public_key=peer.public_key,
+                    device_name=peer.device_name or "Remote Device",
+                    device_type=peer.role.replace("_web", "") if peer.role else "mobile",
+                    capabilities=json.dumps(peer.capabilities),
+                    trust_status="trusted"
+                )
+                
+                # Sync approve to H3 cloud registry
+                h3_url = os.getenv("OPACUS_H3_URL", "https://www.mycai.pro")
+                if h3_url:
+                    async def _sync_approve():
+                        try:
+                            async with httpx.AsyncClient(timeout=3.0) as client:
+                                await client.post(f"{h3_url}/api/registry/approve", json={"node_id": node_id})
+                        except Exception:
+                            pass
+                    asyncio.create_task(_sync_approve())
+
+                return {
+                    "status": "approved",
+                    "node_id": node_id
+                }
+
+            # Fallback to local session pairing
             if not session_id and node_id:
                 active_s = pairing_manager.get_active_session(node.node_id)
                 if active_s and active_s.requesting_node_id == node_id:
@@ -715,6 +835,17 @@ def create_app(node: MycaNode) -> FastAPI:
             ok = pairing_manager.approve_session(session_id, node_id)
             if not ok:
                 return JSONResponse(status_code=404, content={"error": "Session not found or expired"})
+
+            # Sync approve to H3 cloud registry
+            h3_url = os.getenv("OPACUS_H3_URL", "https://www.mycai.pro")
+            if h3_url:
+                async def _sync_approve():
+                    try:
+                        async with httpx.AsyncClient(timeout=3.0) as client:
+                            await client.post(f"{h3_url}/api/registry/approve", json={"node_id": node_id})
+                    except Exception:
+                        pass
+                asyncio.create_task(_sync_approve())
 
             session = pairing_manager.get_session(session_id)
             desktop_sig = ""
@@ -793,6 +924,21 @@ def create_app(node: MycaNode) -> FastAPI:
                             return JSONResponse(status_code=403, content={"error": "PAIRING_VERIFICATION_FAILED", "status": "failed"})
                         return JSONResponse(status_code=400, content={"error": reason, "status": "failed"})
 
+                    # P0.1: Register remote device capabilities in the registry
+                    try:
+                        from myca.contracts.device import DeviceIdentity, TrustState
+                        remote_identity = DeviceIdentity.from_dict({
+                            "device_id": session.requesting_node_id or node_id,
+                            "public_key": session.requesting_pubkey or "",
+                            "device_type": session.requesting_device_type or "mobile",
+                            "device_name": session.requesting_device_name or "Remote Device",
+                            "capabilities": session.requesting_capabilities or [],
+                            "trust_state": TrustState.TRUSTED,
+                        })
+                        node.device_registry.register_remote_device(remote_identity)
+                    except Exception as reg_err:
+                        logger.warning(f"[P0.1] Failed to register remote device capabilities: {reg_err}")
+
                 desktop_sig = ""
                 if _desktop_private_key and session.challenge:
                     chal_bytes = session.challenge.encode("utf-8")
@@ -841,6 +987,85 @@ def create_app(node: MycaNode) -> FastAPI:
         except Exception as e:
             return JSONResponse(status_code=400, content={"error": str(e)})
 
+    @app.post("/api/execute")
+    async def remote_execute(req: Request):
+        """Receive, verify, and run tasks requested by remote Colony nodes."""
+        try:
+            body = await req.json()
+            sender_id = body.get("sender")
+            if not sender_id:
+                return JSONResponse(status_code=400, content={"error": "Missing sender in envelope"})
+            
+            # Find sender public key from trusted nodes
+            trusted_node = db.get_trusted_node(sender_id)
+            if not trusted_node:
+                return JSONResponse(status_code=401, content={"error": "UNAUTHORIZED_NODE"})
+            
+            # Unwrap and validate envelope
+            from myca.transport import receive_envelope
+            payload, reason = receive_envelope(
+                data=body,
+                sender_public_key_hex=trusted_node["public_key"],
+                expected_recipient=node.node_id,
+                crypto=node.crypto
+            )
+            
+            if payload is None:
+                return JSONResponse(status_code=400, content={"error": f"Envelope validation failed: {reason}"})
+            
+            if payload.get("type") != "execute_task":
+                return JSONResponse(status_code=400, content={"error": "Invalid task payload type"})
+            
+            skill = payload.get("skill")
+            inputs = payload.get("inputs", {})
+            
+            # Execute skill locally using SkillRegistry
+            from myca.skills.core.registry import SkillRegistry
+            from myca.skills.core.context import SkillContext
+            from myca.skills.core.permissions import PermissionManager
+            
+            perms = PermissionManager()
+            # Allow basic skills, request perms from manifest if available
+            perms.request(["fs.read", "fs.write", "camera.capture", "microphone.capture", "ai.inference"])
+            
+            # We mock the context for the remote runner
+            ctx = SkillContext(
+                need_id=f"remote-{sender_id[:6]}",
+                runtime=None,
+                memory=None,
+                capabilities=None,
+                permissions=perms
+            )
+            
+            logger.info(f"[API] Running remote execution for {sender_id}: {skill}")
+            result = await SkillRegistry.execute(ctx, skill, **inputs)
+            
+            # Prepare result payload
+            result_payload = {
+                "type": "execute_task_result",
+                "success": result.success,
+                "outputs": result.outputs if result.success else {"error": result.outputs.get("error", "Unknown error") if isinstance(result.outputs, dict) else str(result.outputs)},
+            }
+            
+            # Wrap in envelope to return
+            from myca.transport import create_envelope
+            from myca.identity import get_or_create_identity_key
+            private_key = get_or_create_identity_key()
+            
+            response_envelope = create_envelope(
+                sender=node.node_id,
+                recipient=sender_id,
+                payload=result_payload,
+                private_key=private_key,
+                crypto=node.crypto
+            )
+            
+            return response_envelope.to_dict()
+            
+        except Exception as e:
+            logger.error(f"[API] Remote execute error: {e}")
+            return JSONResponse(status_code=500, content={"error": str(e)})
+
     @app.post("/api/registry/pair/revoke")
     @app.post("/api/nodes/revoke")
     async def pairing_revoke(req: Request):
@@ -859,6 +1084,41 @@ def create_app(node: MycaNode) -> FastAPI:
     @app.get("/api/nodes/trusted")
     async def get_trusted_nodes():
         return {"trusted": db.list_trusted_nodes()}
+
+    # ── P0.1: Device Capability Registry API ────────────────────────────
+
+    @app.get("/api/devices")
+    async def get_devices(capability: Optional[str] = None, trusted_only: bool = True):
+        """
+        Return all known devices with their full capability advertisements.
+        
+        Query params:
+          - capability: Filter by a specific capability_id (e.g. "camera.capture")
+          - trusted_only: Only return TRUSTED devices (default: true)
+        """
+        registry = node.device_registry
+        if capability:
+            devices = registry.find_devices_with_capability(
+                capability, trusted_only=trusted_only, allowed_only=False
+            )
+        elif trusted_only:
+            devices = registry.get_trusted_devices()
+        else:
+            devices = registry.get_all_devices()
+
+        return {
+            "devices": [d.to_dict() for d in devices],
+            "total": len(devices),
+            "local_device_id": node.node_id,
+        }
+
+    @app.get("/api/devices/{device_id}")
+    async def get_device_detail(device_id: str):
+        """Return full capability details for a specific device."""
+        device = node.device_registry.get_device(device_id)
+        if not device:
+            return JSONResponse(status_code=404, content={"error": "Device not found"})
+        return device.to_dict()
 
     @app.get("/api/registry/agents")
     async def h3_list_agents_api(capability: Optional[str] = None):
@@ -987,41 +1247,60 @@ def create_app(node: MycaNode) -> FastAPI:
     async def nodes_status():
         """Live status of all nodes: load, tps, model_loaded, LAN devices."""
         peers = node.discovery.get_active_peers()
-        peer_list = [p.to_dict() for p in peers]
-
+        
         # Merge trusted SQLite nodes and pending pairings
         now = time.time()
         trusted_list = db.list_trusted_nodes()
-        import json
+        trusted_dict = {t["node_id"]: t for t in trusted_list}
+        
+        peer_list = []
+        for p in peers:
+            p_dict = p.to_dict()
+            t_id = p.node_id
+            
+            # If this peer is already trusted, override status to connected
+            if t_id in trusted_dict:
+                p_dict["status"] = "connected"
+                p_dict["source"] = "trusted_db"
+                p_dict["device_name"] = trusted_dict[t_id].get("device_name") or p_dict.get("device_name", "Remote Peer")
+                p_dict["fingerprint"] = get_fingerprint(trusted_dict[t_id]["public_key"])
+                
+                # Auto approve on H3 global registry in the background if Vercel still shows it as pending
+                if p.source == "h3_global" and p.status == "pending":
+                    h3_url = os.getenv("OPACUS_H3_URL", "https://www.mycai.pro")
+                    if h3_url:
+                        async def _auto_approve_node(nid=t_id):
+                            try:
+                                async with httpx.AsyncClient(timeout=3.0) as client:
+                                    await client.post(f"{h3_url}/api/registry/approve", json={"node_id": nid})
+                            except Exception:
+                                pass
+                        asyncio.create_task(_auto_approve_node())
+            
+            peer_list.append(p_dict)
+
+        # Append trusted nodes that are not active in discovery as offline
         for t in trusted_list:
             t_id = t["node_id"]
             if t_id == node.node_id:
                 continue
-            
-            # Is it active in memory?
-            mem_info = _h3_registered_agents.get(t_id)
-            is_active = mem_info and (now - mem_info.get("last_seen", 0) < 120)
-            
-            # Skip if already in peer_list (LAN MDNS peer)
-            if any(p.get("node_id") == t_id for p in peer_list):
-                continue
-                
-            peer_list.append({
-                "node_id": t_id,
-                "role": t.get("device_type", "mobile") + "_web",
-                "host": mem_info.get("host", "remote") if is_active else "offline",
-                "port": mem_info.get("port", 8420) if is_active else 0,
-                "load_pct": 5.0 if is_active else 0.0,
-                "tokens_per_second": 15.0 if is_active else 0.0,
-                "model_loaded": True,
-                "status": "connected" if is_active else "offline",
-                "latency_ms": 45.0 if is_active else 0.0,
-                "source": "trusted_db",
-                "is_local": False,
-                "mycelium_score": 95.0 if is_active else 0.0,
-                "fingerprint": get_fingerprint(t["public_key"]),
-                "device_name": t.get("device_name", "Remote Peer")
-            })
+            if not any(pl.get("node_id") == t_id for pl in peer_list):
+                peer_list.append({
+                    "node_id": t_id,
+                    "role": t.get("device_type", "mobile") + "_web",
+                    "host": "offline",
+                    "port": 0,
+                    "load_pct": 0.0,
+                    "tokens_per_second": 0.0,
+                    "model_loaded": True,
+                    "status": "offline",
+                    "latency_ms": 0.0,
+                    "source": "trusted_db",
+                    "is_local": False,
+                    "mycelium_score": 0.0,
+                    "fingerprint": get_fingerprint(t["public_key"]),
+                    "device_name": t.get("device_name", "Remote Peer")
+                })
 
         # Add active host pairing session request if pending approval
         active_session = pairing_manager.get_active_session(node.node_id)
@@ -1636,7 +1915,12 @@ def create_app(node: MycaNode) -> FastAPI:
     @app.post("/automation/mcp/{server_id}/connect")
     async def connect_mcp_server(server_id: str):
         try:
-            await MCPManager.connect_server(server_id)
+            servers = AutomationDB.get_mcp_servers()
+            target = next((s for s in servers if s["id"] == server_id), None)
+            if not target or not target.get("command"):
+                return JSONResponse(status_code=404, content={"detail": f"MCP server {server_id} command not found"})
+            await MCPManager.connect_server(server_id, target["command"])
+            # Refresh list to get updated status/tools_count
             servers = AutomationDB.get_mcp_servers()
             target = next((s for s in servers if s["id"] == server_id), {"status": "Connected"})
             return {"status": "connected", "server": target}

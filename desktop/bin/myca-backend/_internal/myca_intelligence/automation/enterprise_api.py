@@ -2,7 +2,7 @@
 Enterprise Domain Router API (Phase 3.0 — Dashboard Command Center)
 FastAPI endpoints for Enterprise Dashboard, Digital Twin, Drivers Marketplace, Approvals & Policy Engine.
 """
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Header, Depends, Request
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 
@@ -17,7 +17,27 @@ from myca_intelligence.enterprise.dashboard_service import dashboard_service
 from myca_intelligence.enterprise.opportunity_engine import opportunity_engine
 from myca_intelligence.enterprise.global_search import global_search_service
 
-router = APIRouter(prefix="/enterprise")
+async def verify_enterprise_token(request: Request, authorization: Optional[str] = Header(None)):
+    """
+    Enforce enterprise authorization check:
+    Allows local loopback (localhost/127.0.0.1 from local desktop app)
+    and validates Bearer token for remote or web app requests.
+    """
+    client_host = getattr(getattr(request, "client", None), "host", "")
+    origin = request.headers.get("origin", "")
+    if client_host in ("127.0.0.1", "::1", "localhost") or "localhost" in origin or "127.0.0.1" in origin:
+        return True
+
+    if not authorization:
+        raise HTTPException(status_code=401, detail="MISSING_AUTH_TOKEN")
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="INVALID_AUTH_FORMAT")
+    token = authorization.split(" ")[1]
+    if token != "myca_secret_prod_token_2026":
+        raise HTTPException(status_code=403, detail="UNAUTHORIZED_ENTERPRISE_ACCESS")
+    return True
+
+router = APIRouter(prefix="/enterprise", dependencies=[Depends(verify_enterprise_token)])
 
 class InstallDriverPayload(BaseModel):
     driver_id: str

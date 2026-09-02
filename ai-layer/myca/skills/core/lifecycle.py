@@ -25,9 +25,10 @@ class SkillLifecycle:
         
         # 2. Permission Check
         self.ctx.emit("lifecycle.permission_check")
-        for perm in self.skill.manifest.permissions:
-            if not self.ctx._permissions.check(perm):
-                return SkillResult(success=False, logs=["Permission Denied"])
+        if self.ctx._permissions is not None:
+            for perm in self.skill.manifest.permissions:
+                if not self.ctx._permissions.check(perm):
+                    return SkillResult(success=False, logs=["Permission Denied"])
                 
         # 3. Prepare
         self.ctx.emit("lifecycle.prepare")
