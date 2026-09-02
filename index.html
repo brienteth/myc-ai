@@ -688,9 +688,9 @@ footer {
   <style>
     .pricing-cards-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 1100px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
       margin: 0 auto;
     }
     .landing-price-card {
@@ -724,41 +724,55 @@ footer {
     <div class="landing-price-card">
       <div class="lpc-tag">Community</div>
       <div class="lpc-val">$0</div>
-      <div class="lpc-desc">Açık kaynak. Kendi donanımınızda %100 ücretsiz çalıştırın.</div>
+      <div class="lpc-desc">Açık kaynak & prototipleme. Kendi donanımınızda %100 ücretsiz.</div>
       <ul class="lpc-list">
         <li class="lpc-item">Yerel Execution OS</li>
-        <li class="lpc-item">Colony P2P Mesh</li>
-        <li class="lpc-item">Tüm Temel Beceriler (Skills)</li>
+        <li class="lpc-item">Temel Türkçe NLP & HDC Vektör</li>
+        <li class="lpc-item">1.000 Hafıza Düğümü</li>
         <li class="lpc-item">MIT Özgür Lisansı</li>
       </ul>
-      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary" style="text-align:center;">İndir</a>
-    </div>
-
-    <div class="landing-price-card featured">
-      <div class="lpc-tag">Enterprise</div>
-      <div class="lpc-val">Kullanım</div>
-      <div class="lpc-desc">Koltuk sayısı yok. Yalnızca gerçekleştirilen iş yükü için ödeyin.</div>
-      <ul class="lpc-list">
-        <li class="lpc-item">Community Özelliklerinin Tamamı</li>
-        <li class="lpc-item">SAP, Oracle & CRM Sürücüleri</li>
-        <li class="lpc-item">Donanım Passkey Onay Kuyruğu</li>
-        <li class="lpc-item">GDPR / SOX Politika Motoru</li>
-        <li class="lpc-item">Verified Savings Raporlaması</li>
-      </ul>
-      <a href="/docs#economics" class="btn-primary" style="text-align:center; background:var(--f-spore);">Detayları İncele</a>
+      <a href="https://github.com/mycai-pro/mycai" class="btn-secondary" style="text-align:center;">GitHub İncele</a>
     </div>
 
     <div class="landing-price-card">
-      <div class="lpc-tag">Sovereign</div>
-      <div class="lpc-val">Özel</div>
-      <div class="lpc-desc">Kendi veri merkezinizde tam egemen Rust Core kurulumu.</div>
+      <div class="lpc-tag">Business & SaaS</div>
+      <div class="lpc-val">$499 <span style="font-size:15px; font-weight:normal;">/ay</span></div>
+      <div class="lpc-desc">KOBİ ve SaaS girişimleri için uçta çalışan akıllı bellek.</div>
       <ul class="lpc-list">
-        <li class="lpc-item">Enterprise Özelliklerinin Tamamı</li>
-        <li class="lpc-item">On-Premise Rust Cluster</li>
-        <li class="lpc-item">Özel Sürücü Geliştirme</li>
-        <li class="lpc-item">7/24 Kurumsal Destek</li>
+        <li class="lpc-item">50.000 Canlı Hafıza Düğümü</li>
+        <li class="lpc-item">53.000+ Kök Türkçe Morfoloji</li>
+        <li class="lpc-item">PDF & Excel Kılavuz RAG Asistanı</li>
+        <li class="lpc-item">Öncelikli E-posta & SLA Desteği</li>
       </ul>
-      <a href="mailto:enterprise@myc.ai" class="btn-secondary" style="text-align:center;">İletişime Geçin</a>
+      <a href="mailto:sales@mycai.pro" class="btn-secondary" style="text-align:center;">Başlayın</a>
+    </div>
+
+    <div class="landing-price-card featured">
+      <div class="lpc-tag">Industrial OEM (PLC / HMI)</div>
+      <div class="lpc-val">$1.50 - $3.50 <span style="font-size:15px; font-weight:normal;">/cihaz</span></div>
+      <div class="lpc-desc">PLC, HMI, medikal ve otomasyon üreticilerine özel gömülü telif modeli.</div>
+      <ul class="lpc-list">
+        <li class="lpc-item">0 TL Kalıp Masrafı (<20MB RAM)</li>
+        <li class="lpc-item">ESP32, STM32, RP2040 (<7$ CPU)</li>
+        <li class="lpc-item">Modbus RTU / TCP Doğal Dil Çevirici</li>
+        <li class="lpc-item">Meta-Selector ile Titreşim & Arıza Kestirimi</li>
+        <li class="lpc-item">Tam White-Label (Kendi Markanızla)</li>
+        <li class="lpc-item">Opsiyon: $12.000/Yıl Sınırsız Fabrika Lisansı</li>
+      </ul>
+      <a href="/simule" class="btn-primary" style="text-align:center; background:var(--f-spore);">Simülasyonda Test Et</a>
+    </div>
+
+    <div class="landing-price-card">
+      <div class="lpc-tag">Sovereign Enterprise</div>
+      <div class="lpc-val">Özel</div>
+      <div class="lpc-desc">Savunma sanayii, bankalar ve kritik taktik altyapılar.</div>
+      <ul class="lpc-list">
+        <li class="lpc-item">Sınırsız Düğüm & Tüm Kabiliyetler</li>
+        <li class="lpc-item">On-Premise Air-Gapped Cluster</li>
+        <li class="lpc-item">Taktik Askeri Donanım Entegrasyonu</li>
+        <li class="lpc-item">Tam Kaynak Kod Denetimi & 7/24 SLA</li>
+      </ul>
+      <a href="https://t.me/blambuer10" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="text-align:center;">İletişime Geçin (@blambuer10)</a>
     </div>
   </div>
 </section>

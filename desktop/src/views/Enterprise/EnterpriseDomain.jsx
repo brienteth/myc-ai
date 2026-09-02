@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Server, Cpu, Network, Zap, CheckSquare, ShieldCheck, PlayCircle, History, BarChart3, Key, Sparkles, Building2, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Server, Cpu, Network, Zap, CheckSquare, ShieldCheck, PlayCircle, History, BarChart3, Key, Sparkles, Building2, DollarSign, Send } from 'lucide-react';
 import './Enterprise.css';
 
 import EnterpriseDashboard from './EnterpriseDashboard';
@@ -71,9 +71,35 @@ const EnterpriseDomain = () => {
               <p>Company Nervous System · Abstracting ERP, CRM & Billing into Background Drivers</p>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, background: 'var(--e-card-bg)', border: '1px solid var(--e-border)', padding: '6px 12px', borderRadius: 8 }}>
-            <Sparkles size={14} color="var(--e-alive)" />
-            <span>Digital Twin Graph: Active</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, background: 'var(--e-card-bg)', border: '1px solid var(--e-border)', padding: '6px 12px', borderRadius: 8 }}>
+              <Sparkles size={14} color="var(--e-alive)" />
+              <span>Digital Twin Graph: Active</span>
+            </div>
+            <a
+              href="https://t.me/blambuer10"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 12,
+                fontWeight: 600,
+                background: '#229ED9',
+                color: '#ffffff',
+                padding: '6px 14px',
+                borderRadius: 8,
+                textDecoration: 'none',
+                boxShadow: '0 2px 6px rgba(34, 158, 217, 0.25)',
+                transition: 'all 0.2s ease',
+                cursor: 'pointer'
+              }}
+              title="Kurumsal Enterprise İletişim (Telegram: @blambuer10)"
+            >
+              <Send size={13} />
+              <span>Enterprise İletişim (@blambuer10)</span>
+            </a>
           </div>
         </div>
 

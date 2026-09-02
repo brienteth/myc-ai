@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   RefreshCw, Plus, MessageSquare, Bell, Search, ArrowUpRight,
   Check, X, Sparkles, Activity, Server, Cpu, Zap, DollarSign,
-  Clock, CheckSquare, ShieldAlert, AlertTriangle, ChevronRight
+  Clock, CheckSquare, ShieldAlert, AlertTriangle, ChevronRight, Send
 } from 'lucide-react';
 import CompanyGraphCanvas from './CompanyGraphCanvas';
 import GlobalSearchModal from './GlobalSearchModal';
@@ -101,6 +101,23 @@ const EnterpriseDashboard = ({ data: initialData, onNavigateTab }) => {
           <button className="dash-btn" title="Ask AI">
             <MessageSquare size={13} /> Ask AI
           </button>
+          <a
+            href="https://t.me/blambuer10"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dash-btn"
+            style={{
+              textDecoration: 'none',
+              color: '#229ED9',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6
+            }}
+            title="Enterprise İletişim (@blambuer10)"
+          >
+            <Send size={13} color="#229ED9" /> İletişim (@blambuer10)
+          </a>
           <div style={{ position: 'relative' }}>
             <button className="dash-btn" onClick={() => setNotifOpen(!notifOpen)} style={{ position: 'relative' }}>
               <Bell size={13} />
