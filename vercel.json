@@ -2,9 +2,37 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/docs-web", "destination": "/docs" },
-    { "source": "/docs-web/(.*)", "destination": "/docs" },
-    { "source": "/api/(.*)", "destination": "/api/registry/[...path]" }
+    {
+      "source": "/skills",
+      "destination": "/docs/skills.html"
+    },
+    {
+      "source": "/depin",
+      "destination": "/depin.html"
+    },
+    {
+      "source": "/agent",
+      "destination": "/agent.html"
+    },
+    {
+      "source": "/simule",
+      "destination": "https://grok-workspace-eta-henna.vercel.app"
+    },
+    {
+      "source": "/simule/(.*)",
+      "destination": "https://grok-workspace-eta-henna.vercel.app/$1"
+    },
+    {
+      "source": "/docs-web",
+      "destination": "/docs"
+    },
+    {
+      "source": "/docs-web/(.*)",
+      "destination": "/docs"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/registry/[...path]"
+    }
   ]
 }
-

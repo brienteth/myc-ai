@@ -543,6 +543,35 @@ export class SovereignAgent {
   async synthesizeGeneralReasoning(prompt) {
     const p = prompt.trim();
     
+    // 0. High-Speed Perplexity Lily Metal MoE Backend (Qwen3.6-35B-A3B on Apple Silicon - Port 8080 / 8421)
+    if (typeof fetch !== 'undefined') {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
+        const res = await fetch("http://127.0.0.1:8080/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            model: "qwen3.6-35b-a3b",
+            messages: [{ role: "user", content: p }],
+            temperature: 0.2
+          })
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = await res.json();
+          const content = data.choices?.[0]?.message?.content || data.response;
+          if (content && content.trim().length > 0) {
+            this.remember("lily_moe_output", content);
+            return `⚡ **Myca Sovereign Lily Metal MoE Çıkarımı (Qwen 35B / 3B Aktif - Çevrimdışı):**\n\n${content}\n\n*(Perplexity Lily Bare-Metal Engine / Apple Silicon Metal GPU / 0 Cloud / $0.00)*`;
+          }
+        }
+      } catch (e) {
+        // Fall through to primary sovereign engine
+      }
+    }
+
     // 1. Primary Sovereign In-Process Neural Engine (Port 8420 - llama.cpp / Metal GPU Qwen2.5-3B)
     if (typeof fetch !== 'undefined') {
       try {

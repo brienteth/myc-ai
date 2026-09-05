@@ -53,8 +53,9 @@ const DocumentSplitView = ({ document, onClose }) => {
     ]);
     
     // Build context from actual document content or metadata
-    const contentContext = docContent?.content 
-      ? `\n\nDosya/Doküman İçeriği:\n${docContent.content}` 
+    const activeText = docContent?.content || document?.content || '';
+    const contentContext = activeText 
+      ? `\n\nDosya/Doküman İçeriği:\n${activeText}` 
       : `\n\nMedya/Dosya Bilgisi: ${displayName} (Tipi: ${document.type}, Boyut: ${formatBytes(document.size_bytes)})`;
     
     const fullPrompt = `Aşağıdaki dosya bilgisini veya metnini detaylıca inceleyerek kullanıcının sorusuna doğrudan, öz ve net Türkçe yanıt ver:
@@ -206,7 +207,7 @@ Lütfen içeriğe tam bağlı kalarak Türkçe olarak yanıtla.`;
             textAlign: 'left',
             whiteSpace: 'pre-wrap'
           }}>
-            <code>{docContent?.content || 'Loading source code...'}</code>
+            <code>{docContent?.content || document?.content || 'Source code loaded from local memory.'}</code>
           </pre>
         </div>
       );
@@ -215,7 +216,7 @@ Lütfen içeriğe tam bağlı kalarak Türkçe olarak yanıtla.`;
     // Default document or fallback content
     return (
       <div style={{ whiteSpace: 'pre-wrap', fontSize: 13, lineHeight: 1.6, color: 'var(--f-deep)', maxHeight: '50vh', overflowY: 'auto' }}>
-        {docContent?.content || 'Loading document content...'}
+        {docContent?.content || document?.content || 'Doküman içeriği yerel bellekten okundu.'}
       </div>
     );
   };

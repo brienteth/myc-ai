@@ -220,9 +220,14 @@ class SkillRegistry:
         except Exception as val_err:
             logger.warning(f"[AUTO-HEAL] First-pass validation failed for skill '{skill_id}': {val_err}. Retrying with relaxed defaults...")
             try:
-                # Attempt to instantiate with default fields merged
-                default_instance = skill_def.inputs_schema.construct(**coerced_kwargs)
-                validated_kwargs = default_instance.model_dump()
+                # Safe merge defaults and re-validate
+                fields = getattr(skill_def.inputs_schema, "model_fields", {})
+                merged_kwargs = dict(coerced_kwargs)
+                for f_name, f_info in fields.items():
+                    if f_name not in merged_kwargs and hasattr(f_info, "default") and f_info.default is not ...:
+                        merged_kwargs[f_name] = f_info.default
+                validated_inputs = skill_def.inputs_schema(**merged_kwargs)
+                validated_kwargs = validated_inputs.model_dump()
             except Exception:
                 return SkillResult(
                     success=False, 

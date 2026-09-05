@@ -39,7 +39,8 @@ const NetworkPill = ({ nodes, status, onClick }) => {
 const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { messages, isGenerating, sendMessage } = useChat(location.state?.convId);
+  const { messages, isGenerating, sendMessage, startNewChat } = useChat(location.state?.convId);
+  const activeModel = localStorage.getItem('myca_active_model') || 'gpt-5.6-sol';
   const { nodes, status } = useNodes();
   const [input, setInput] = useState('');
   const [showNetwork, setShowNetwork] = useState(false);
@@ -106,15 +107,30 @@ const Chat = () => {
       {/* Top Bar */}
       <header style={styles.topBar}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={styles.logo} onClick={() => window.location.href = '/'}>myca</div>
+          <div style={styles.logo} onClick={() => startNewChat()}>myca</div>
           <button 
             style={styles.newChatBtn}
-            onClick={() => window.location.href = '/chat'}
+            onClick={() => startNewChat()}
           >
             + New Chat
           </button>
         </div>
-        <NetworkPill nodes={nodes} status={status} onClick={() => setShowNetwork(true)} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div 
+            onClick={() => navigate('/models')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              background: 'rgba(0, 232, 122, 0.08)', border: '1px solid rgba(0, 232, 122, 0.25)',
+              borderRadius: '16px', padding: '4px 10px', fontSize: '11px', color: '#00e87a',
+              cursor: 'pointer', fontFamily: 'monospace'
+            }}
+            title="Aktif AI Modelini Değiştir (Models Ekranına Git)"
+          >
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#00e87a' }}></span>
+            <span>{activeModel.replace('ollama-', 'ollama: ')}</span>
+          </div>
+          <NetworkPill nodes={nodes} status={status} onClick={() => setShowNetwork(true)} />
+        </div>
         <button style={styles.iconBtn} onClick={() => setShowNetwork(true)}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="1"></circle>
@@ -129,7 +145,35 @@ const Chat = () => {
         {messages.length === 0 ? (
           <div style={styles.emptyState}>
             <div style={styles.emptyIcon}>◈</div>
-            <div style={styles.emptyText}>Ask anything</div>
+            <div style={styles.emptyText}>Myca Execution Assistant</div>
+            <p style={{ color: 'var(--muted, #8e8ea0)', fontSize: 13, maxWidth: 460, margin: '8px 0 20px', lineHeight: 1.5 }}>
+              Mac, Windows ve Linux üzerinde yerel modelleriniz (Ollama, Spectral SLM) ve 0G Compute ile otonom görevler yürütebilirsiniz.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 10, maxWidth: 540, width: '100%' }}>
+              {[
+                { title: '🤖 Telegram Bildirim Akışı', prompt: 'Telegram botu üzerinden web takibi ve günlük haber özetleme iş akışı tasarla.' },
+                { title: '📚 Yerel Belge Analizi', prompt: 'Knowledge OS içerisindeki dosyalarımı tara ve teknik özet çıkar.' },
+                { title: '⚡ Yerel Model Çıkarım Testi', prompt: 'Bu bilgisayarda sıfır maliyetli yerel çıkarım ve bellek yeteneklerini listele.' },
+                { title: '🏢 Kurumsal ERP Ledger', prompt: 'Enterprise ERP ve CRM verileri için arka plan mutabakat sürücüsü kur.' }
+              ].map((item, qIdx) => (
+                <button
+                  key={qIdx}
+                  onClick={() => sendMessage(item.prompt)}
+                  style={{
+                    background: 'var(--card, rgba(255,255,255,0.04))',
+                    border: '1px solid var(--border, rgba(255,255,255,0.1))',
+                    borderRadius: 12, padding: '12px 14px', textAlign: 'left',
+                    color: 'var(--foreground, #f0f0f5)', cursor: 'pointer',
+                    fontSize: 12, transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = '#00e87a'}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border, rgba(255,255,255,0.1))'}
+                >
+                  <div style={{ fontWeight: 600, color: '#00e87a', marginBottom: 3 }}>{item.title}</div>
+                  <div style={{ color: 'var(--muted, #8e8ea0)', fontSize: 11, lineHeight: 1.4 }}>{item.prompt}</div>
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           messages.map((msg, idx) => {

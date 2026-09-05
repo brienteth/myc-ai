@@ -1,92 +1,62 @@
-import asyncio
+import pytest
 import httpx
-import json
+from myca.testing.harness import RuntimeTestHarness
+from myca.api import create_app
 
-BASE_URL = "http://localhost:8420/execution/intelligence"
-
-async def test_missing_credential():
-    print("Running Test 1: Telegram Missing Credential")
-    intent = "Send me a telegram notification when a new customer arrives."
+@pytest.mark.asyncio
+async def test_e2e_execution_pipeline():
+    """
+    E2E Integration Validation Tests for Execution Intelligence Endpoints.
+    Runs completely in-memory against a mock node runtime without requiring 
+    a physical background HTTP server.
+    """
+    harness = RuntimeTestHarness(node_id="mac_local")
+    await harness.start()
     
-    async with httpx.AsyncClient() as client:
-        # 1. Plan
-        plan_resp = await client.post(f"{BASE_URL}/plan", json={"intent": intent})
-        print(f"Plan response status: {plan_resp.status_code}")
+    app = create_app(harness.node)
+    
+    transport = httpx.ASGITransport(app=app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        # Test 1: Telegram Missing Credential
+        intent1 = "Send me a telegram notification when a new customer arrives."
+        plan_resp = await client.post("/execution/intelligence/plan", json={"intent": intent1})
+        assert plan_resp.status_code == 200
         
-        # 2. Simulate
-        sim_resp = await client.post(f"{BASE_URL}/simulate", json={"intent": intent})
+        sim_resp = await client.post("/execution/intelligence/simulate", json={"intent": intent1})
+        assert sim_resp.status_code == 200
         sim_data = sim_resp.json()
-        print(f"Simulate response: {sim_data}")
+        assert sim_data.get('status') == 'BLOCKED'
+        assert 'telegram_bot_token' in str(sim_data)
         
-        # Check if credential is flagged as missing
-        # The backend simulation should report blocked if credentials are missing
-        if sim_data.get('status') == 'BLOCKED' and 'telegram_bot_token' in str(sim_data):
-            print("✅ TEST 1 PASSED: Execution blocked due to missing Telegram token.")
-        else:
-            print("❌ TEST 1 FAILED: Execution was not properly blocked.")
-
-async def test_parallel_research():
-    print("\\nRunning Test 2: Parallel Research Execution")
-    intent = "Research Tesla, BYD, and Rivian"
-    
-    async with httpx.AsyncClient() as client:
-        plan_resp = await client.post(f"{BASE_URL}/plan", json={"intent": intent})
+        # Test 2: Parallel Research Execution
+        intent2 = "Research Tesla, BYD, and Rivian"
+        plan_resp = await client.post("/execution/intelligence/plan", json={"intent": intent2})
+        assert plan_resp.status_code == 200
         contract = plan_resp.json().get("contract", {})
+        assert contract.get("parallelLevels", 0) > 1
+        assert contract.get("agentCount", 0) >= 3
         
-        # We expect parallelLevels to be > 1 for this research task
-        if contract.get("parallelLevels", 0) > 1 and contract.get("agentCount", 0) >= 3:
-            print(f"✅ TEST 2 PASSED: Graph parallelized with {contract.get('agentCount')} agents across {contract.get('parallelLevels')} levels.")
-        else:
-            print(f"❌ TEST 2 FAILED: Graph parallelization failed. Levels: {contract.get('parallelLevels')}")
-
-async def test_loop_and_repair():
-    print("\\nRunning Test 3: Loop/Repair Mechanisms")
-    # This involves ensuring maxIterations > 1 and verificationRequired = True
-    intent = "Research competitors and create a verified report"
-    
-    async with httpx.AsyncClient() as client:
-        plan_resp = await client.post(f"{BASE_URL}/plan", json={"intent": intent})
+        # Test 3: Loop/Repair Mechanisms
+        intent3 = "Research competitors and create a verified report"
+        plan_resp = await client.post("/execution/intelligence/plan", json={"intent": intent3})
+        assert plan_resp.status_code == 200
         contract = plan_resp.json().get("contract", {})
+        assert contract.get("maxIterations", 0) > 1
+        assert contract.get("verificationRequired") is True
         
-        if contract.get("maxIterations", 0) > 1 and contract.get("verificationRequired"):
-            print("✅ TEST 3 PASSED: Loop mechanism and Verification enforced by Contract.")
-        else:
-            print("❌ TEST 3 FAILED: Verification/Loop missing.")
-
-async def test_runtime_policy():
-    print("\\nRunning Test 4: Runtime Policy Fallback")
-    intent = "telegram notification"
-    
-    async with httpx.AsyncClient() as client:
-        plan_resp = await client.post(f"{BASE_URL}/plan", json={"intent": intent})
+        # Test 4: Runtime Policy Fallback
+        intent4 = "telegram notification"
+        plan_resp = await client.post("/execution/intelligence/plan", json={"intent": intent4})
+        assert plan_resp.status_code == 200
         contract = plan_resp.json().get("contract", {})
+        assert contract.get("runtimePolicy") == "LOCAL"
         
-        if contract.get("runtimePolicy") == "LOCAL":
-            print("✅ TEST 4 PASSED: Privacy-focused intent correctly selected LOCAL runtime.")
-        else:
-            print(f"❌ TEST 4 FAILED: Selected runtime: {contract.get('runtimePolicy')}")
-
-async def test_budget_hard_stop():
-    print("\\nRunning Test 5: Budget Hard Stop")
-    intent = "telegram notification"
-    
-    async with httpx.AsyncClient() as client:
-        plan_resp = await client.post(f"{BASE_URL}/plan", json={"intent": intent})
+        # Test 5: Budget Hard Stop
+        intent5 = "telegram notification"
+        plan_resp = await client.post("/execution/intelligence/plan", json={"intent": intent5})
+        assert plan_resp.status_code == 200
         contract = plan_resp.json().get("contract", {})
         budget = float(contract.get("budget", "1.00"))
+        assert budget <= 0.10
         
-        if budget <= 0.10:
-            print(f"✅ TEST 5 PASSED: Budget strictly bounded at ${budget} for simple task.")
-        else:
-            print(f"❌ TEST 5 FAILED: Budget bound is too high: ${budget}")
-
-async def main():
-    print("Starting E2E Validation Tests...")
-    await test_missing_credential()
-    await test_parallel_research()
-    await test_loop_and_repair()
-    await test_runtime_policy()
-    await test_budget_hard_stop()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    await harness.stop()

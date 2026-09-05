@@ -57,8 +57,10 @@ def skill(
                 field_definitions = {}
                 for name_p, param in sig.parameters.items():
                     if name_p == "ctx": continue
-                    p_type = str
-                    default = param.default if param.default is not inspect.Parameter.empty else ""
+                    p_type = param.annotation if param.annotation is not inspect.Parameter.empty else str
+                    if p_type is Any:
+                        p_type = str
+                    default = param.default if param.default is not inspect.Parameter.empty else ...
                     field_definitions[name_p] = (p_type, default)
                 resolved_inputs_schema = create_model(f"{id}_Inputs", __module__="myca.skills.core.decorator", **field_definitions)
 

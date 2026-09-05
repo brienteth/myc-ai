@@ -40,7 +40,7 @@ async def test_phase2_skill_composition():
     harness = RuntimeTestHarness(node_id="test-phase2")
     await harness.start()
 
-    executor = WorkflowExecutor(runtime=harness.node)
+    executor = WorkflowExecutor(runtime=harness.node.runtime)
 
     # Compose: browser.search -> browser.goto -> browser.extract -> ai.summarize
     dag = {

@@ -9,7 +9,7 @@ import sqlite3
 import time
 import uuid
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Any
 
 DB_PATH = Path("~/.myca/myca.db").expanduser()
 
@@ -144,9 +144,119 @@ def init_db():
             created_at      REAL
         );
 
+        -- P0.5 Memory Controller Tables
+        CREATE TABLE IF NOT EXISTS memories (
+            id          TEXT PRIMARY KEY,
+            content     TEXT NOT NULL,
+            category    TEXT NOT NULL,
+            timestamp   REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS decisions (
+            id          TEXT PRIMARY KEY,
+            context     TEXT NOT NULL,
+            choice      TEXT NOT NULL,
+            rationale   TEXT NOT NULL,
+            timestamp   REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS experiences (
+            id          TEXT PRIMARY KEY,
+            prompt      TEXT NOT NULL,
+            plan_json   TEXT NOT NULL,
+            latency_ms  REAL,
+            energy_cost REAL,
+            success     BOOLEAN NOT NULL,
+            timestamp   REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS projects (
+            id          TEXT PRIMARY KEY,
+            title       TEXT NOT NULL,
+            description TEXT,
+            repo_path   TEXT,
+            created_at  REAL NOT NULL,
+            status      TEXT DEFAULT 'active'
+        );
+
+        CREATE TABLE IF NOT EXISTS entities (
+            id          TEXT PRIMARY KEY,
+            name        TEXT NOT NULL,
+            type        TEXT NOT NULL,
+            properties  TEXT,  -- JSON dict
+            created_at  REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS relations (
+            id          TEXT PRIMARY KEY,
+            source_id   TEXT NOT NULL,
+            target_id   TEXT NOT NULL,
+            type        TEXT NOT NULL,
+            properties  TEXT,  -- JSON dict
+            created_at  REAL NOT NULL,
+            FOREIGN KEY (source_id) REFERENCES entities(id),
+            FOREIGN KEY (target_id) REFERENCES entities(id)
+        );
+
+        CREATE TABLE IF NOT EXISTS embeddings (
+            id          TEXT PRIMARY KEY,
+            text        TEXT NOT NULL,
+            vector_blob BLOB NOT NULL,
+            created_at  REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS events (
+            id          TEXT PRIMARY KEY,
+            event_type  TEXT NOT NULL,
+            payload_json TEXT NOT NULL,
+            timestamp   REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS audit_ledger (
+            id           TEXT PRIMARY KEY,
+            workflow_id  TEXT NOT NULL,
+            node_id      TEXT NOT NULL,
+            skill_id     TEXT NOT NULL,
+            device_id    TEXT,
+            model_name   TEXT,
+            inputs_json  TEXT,
+            outputs_json TEXT,
+            success      BOOLEAN NOT NULL,
+            cost         REAL DEFAULT 0.0,
+            latency_ms   REAL,
+            estimated_cost REAL DEFAULT 0.0,
+            actual_cost  REAL DEFAULT 0.0,
+            route        TEXT DEFAULT 'LOCAL',
+            tokens       INTEGER DEFAULT 0,
+            execution_time REAL DEFAULT 0.0,
+            timestamp    REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS execution_observability (
+            workflow_id  TEXT NOT NULL,
+            step_name    TEXT NOT NULL,
+            duration_ms  REAL NOT NULL,
+            timestamp    REAL NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS graph_checkpoints (
+            workflow_id  TEXT NOT NULL,
+            node_id      TEXT NOT NULL,
+            status       TEXT NOT NULL,
+            outputs_json TEXT,
+            timestamp    REAL NOT NULL,
+            PRIMARY KEY (workflow_id, node_id)
+        );
+
         CREATE INDEX IF NOT EXISTS idx_specs_status ON factory_specs(status);
         CREATE INDEX IF NOT EXISTS idx_vault_source ON knowledge_vault(source_type);
         CREATE INDEX IF NOT EXISTS idx_handover_time ON handover_sessions(created_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_memories_cat ON memories(category);
+        CREATE INDEX IF NOT EXISTS idx_experiences_time ON experiences(timestamp DESC);
+        CREATE INDEX IF NOT EXISTS idx_events_time ON events(timestamp DESC);
+        CREATE INDEX IF NOT EXISTS idx_audit_wf ON audit_ledger(workflow_id);
+        CREATE INDEX IF NOT EXISTS idx_checkpoints_wf ON graph_checkpoints(workflow_id);
+        CREATE INDEX IF NOT EXISTS idx_obs_wf ON execution_observability(workflow_id);
     """)
     conn.commit()
     conn.close()
@@ -508,6 +618,115 @@ def invalidate_host_pairing_sessions(host_node_id: str) -> None:
     )
     conn.commit()
     conn.close()
+
+
+def add_audit_entry(
+    workflow_id: str,
+    node_id: str,
+    skill_id: str,
+    device_id: Optional[str],
+    model_name: Optional[str],
+    inputs: dict,
+    outputs: dict,
+    success: bool,
+    cost: float = 0.0,
+    latency_ms: Optional[float] = None,
+    estimated_cost: float = 0.0,
+    actual_cost: float = 0.0,
+    route: str = "LOCAL",
+    tokens: int = 0,
+    execution_time: float = 0.0
+) -> str:
+    """Insert a record to audit_ledger table."""
+    import uuid
+    import json
+    
+    conn = sqlite3.connect(DB_PATH)
+    audit_id = str(uuid.uuid4())
+    try:
+        conn.execute(
+            "INSERT INTO audit_ledger (id, workflow_id, node_id, skill_id, device_id, model_name, inputs_json, outputs_json, success, cost, latency_ms, estimated_cost, actual_cost, route, tokens, execution_time, timestamp) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                audit_id,
+                workflow_id,
+                node_id,
+                skill_id,
+                device_id,
+                model_name,
+                json.dumps(inputs),
+                json.dumps(outputs),
+                success,
+                cost,
+                latency_ms,
+                estimated_cost,
+                actual_cost,
+                route,
+                tokens,
+                execution_time or latency_ms or 0.0,
+                time.time()
+            )
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    return audit_id
+
+
+def add_observability_entry(workflow_id: str, step_name: str, duration_ms: float):
+    """Insert a record into the execution_observability table."""
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute(
+            "INSERT INTO execution_observability (workflow_id, step_name, duration_ms, timestamp) "
+            "VALUES (?, ?, ?, ?)",
+            (workflow_id, step_name, duration_ms, time.time())
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def save_checkpoint(workflow_id: str, node_id: str, status: str, outputs: dict) -> None:
+    """Saves node state checkpoint to the database."""
+    import json
+    
+    conn = sqlite3.connect(DB_PATH)
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO graph_checkpoints (workflow_id, node_id, status, outputs_json, timestamp) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (workflow_id, node_id, status, json.dumps(outputs), time.time())
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+def get_checkpoints(workflow_id: str) -> Dict[str, Dict[str, Any]]:
+    """Loads all completed checkpoints for a given workflow."""
+    import json
+    
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    rows = cursor.execute(
+        "SELECT node_id, status, outputs_json FROM graph_checkpoints WHERE workflow_id = ?",
+        (workflow_id,)
+    ).fetchall()
+    conn.close()
+    
+    checkpoints = {}
+    for r in rows:
+        try:
+            outs = json.loads(r["outputs_json"] or "{}")
+        except Exception:
+            outs = {}
+        checkpoints[r["node_id"]] = {
+            "status": r["status"],
+            "outputs": outs
+        }
+    return checkpoints
 
 
 

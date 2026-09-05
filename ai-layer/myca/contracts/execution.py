@@ -7,6 +7,7 @@ import asyncio
 import logging
 from enum import Enum
 from typing import Dict, Any, Optional, List
+from dataclasses import dataclass, field
 
 logger = logging.getLogger("myca.contracts.execution")
 
@@ -183,3 +184,146 @@ class ExecutionEngine:
     async def execute(self, workflow_id: str, inputs: Dict[str, Any] = None) -> Dict[str, Any]:
         """Execute a target agent workflow graph."""
         pass
+
+
+@dataclass
+class ExecutionContract:
+    intent: str
+    capabilities: List[str] = field(default_factory=list)
+    nodes: List[Dict[str, Any]] = field(default_factory=list)
+    device_assignments: Dict[str, str] = field(default_factory=dict)
+
+
+class ExecutionContractCompiler:
+    def __init__(self, device_registry=None):
+        from myca.registry import DeviceCapabilityRegistry
+        self.registry = device_registry or DeviceCapabilityRegistry(node_id="mac_local")
+
+    def compile(self, prompt: str) -> ExecutionContract:
+        """
+        Compiles a natural language prompt into a typed ExecutionContract.
+        """
+        p_lower = prompt.lower().strip()
+        
+        # 1. Determine Intent
+        is_code_gen = any(w in p_lower for w in ["yaz", "kod", "script", "program", "python", "javascript", "html", "css", "c++", "rust", "write code", "develop", "coding", "kodla"])
+        is_code_exec = is_code_gen and any(w in p_lower for w in ["çalıştır", "execute", "run", "doğrula", "düzelt", "verify", "repair"])
+        is_scraping = any(w in p_lower for w in ["veri çek", "kazı", "scrape", "scraping", "web scraping", "crawl", "download page", "url oku", "siteden al", "html çek"])
+
+        if any(w in p_lower for w in ["fotoğraf", "kamera", "phone", "camera", "çek", "capture"]) and any(w in p_lower for w in ["mac", "bilgisayar", "analiz", "rapor", "hafıza", "vault", "second brain"]):
+            intent = "CROSS_DEVICE_COLONY"
+        elif is_scraping:
+            intent = "WEB_SCRAPING"
+        elif is_code_exec:
+            intent = "CODE_EXECUTION"
+        elif is_code_gen:
+            intent = "CODE_GENERATION"
+        elif any(w in p_lower for w in ["özet", "pdf", "belge", "oku"]) and not any(w in p_lower for w in ["son 20", "bul", "listele"]):
+            intent = "FILE_OPERATION"
+        elif any(w in p_lower for w in ["telegram", "slack", "mesaj", "yaz", "gönder"]):
+            intent = "COMMUNICATION_AUTOMATION"
+        elif any(w in p_lower for w in ["araştır", "research", "raporla"]):
+            intent = "RESEARCH_SYNTHESIS"
+        elif any(w in p_lower for w in ["bilgisayarımdaki", "bul", "klasör", "ara"]):
+            intent = "DATA_ANALYSIS"
+        else:
+            intent = "CHAT"
+
+        # 2. Build nodes and capabilities
+        nodes = []
+        capabilities = []
+        
+        if intent == "CROSS_DEVICE_COLONY":
+            capabilities = ["camera.capture", "local_llm.inference", "filesystem.write", "vault.write"]
+            nodes = [
+                {"id": "step_photo", "skill": "camera.capture", "inputs": {}, "deps": []},
+                {"id": "step_analysis", "skill": "local_llm.inference", "inputs": {"prompt": "Analyze photo: $step_photo.photo_url"}, "deps": ["step_photo"]},
+                {"id": "step_pdf", "skill": "filesystem.write", "inputs": {"content": "$step_analysis.text", "path": "report.pdf"}, "deps": ["step_analysis"]},
+                {"id": "step_vault", "skill": "vault.write", "inputs": {"content": "$step_pdf.output_path"}, "deps": ["step_pdf"]}
+            ]
+        elif intent == "WEB_SCRAPING":
+            capabilities = ["browser.navigate", "local_llm.inference", "filesystem.write"]
+            nodes = [
+                {"id": "step_scrape", "skill": "browser.navigate", "inputs": {"url": "https://api.example"}, "deps": []},
+                {"id": "step_extract", "skill": "local_llm.inference", "inputs": {"prompt": "Extract pricing from: $step_scrape.content"}, "deps": ["step_scrape"]},
+                {"id": "step_save", "skill": "filesystem.write", "inputs": {"content": "$step_extract.text", "path": "prices.csv"}, "deps": ["step_extract"]}
+            ]
+        elif intent == "CODE_EXECUTION":
+            capabilities = ["local_llm.inference", "filesystem.write", "verifier.check"]
+            nodes = [
+                {"id": "step_draft", "skill": "local_llm.inference", "inputs": {"prompt": "Draft Python script for: " + prompt}, "deps": []},
+                {"id": "step_save", "skill": "filesystem.write", "inputs": {"content": "$step_draft.text", "path": "script.py"}, "deps": ["step_draft"]},
+                {"id": "step_execute", "skill": "local_llm.inference", "inputs": {"prompt": "Execute script.py and capture stdout"}, "deps": ["step_save"]},
+                {"id": "step_verify", "skill": "verifier.check", "inputs": {"code": "$step_execute.text"}, "deps": ["step_execute"]}
+            ]
+        elif intent == "CODE_GENERATION":
+            capabilities = ["local_llm.inference", "filesystem.write"]
+            nodes = [
+                {"id": "step_draft", "skill": "local_llm.inference", "inputs": {"prompt": "Draft Python script for: " + prompt}, "deps": []},
+                {"id": "step_save", "skill": "filesystem.write", "inputs": {"content": "$step_draft.text", "path": "script.py"}, "deps": ["step_draft"]}
+            ]
+        elif intent == "FILE_OPERATION":
+            capabilities = ["filesystem.read", "local_llm.inference"]
+            nodes = [
+                {"id": "step_read", "skill": "filesystem.read", "inputs": {"path": "document.pdf"}, "deps": []},
+                {"id": "step_summary", "skill": "local_llm.inference", "inputs": {"prompt": "Summarize: $step_read.content"}, "deps": ["step_read"]}
+            ]
+        elif intent == "COMMUNICATION_AUTOMATION":
+            capabilities = ["local_llm.inference", "telegram.send"]
+            nodes = [
+                {"id": "step_draft", "skill": "local_llm.inference", "inputs": {"prompt": "Draft message for prompt: " + prompt}, "deps": []},
+                {"id": "step_send", "skill": "telegram.send", "inputs": {"message": "$step_draft.text"}, "deps": ["step_draft"]}
+            ]
+        elif intent == "RESEARCH_SYNTHESIS":
+            capabilities = ["local_llm.inference", "filesystem.write"]
+            nodes = [
+                {"id": "step_research", "skill": "local_llm.inference", "inputs": {"prompt": "Research about " + prompt}, "deps": []},
+                {"id": "step_write", "skill": "filesystem.write", "inputs": {"content": "$step_research.text", "path": "research.md"}, "deps": ["step_research"]}
+            ]
+        elif intent == "DATA_ANALYSIS":
+            capabilities = ["filesystem.read", "local_llm.inference"]
+            nodes = [
+                {"id": "step_list", "skill": "filesystem.read", "inputs": {"path": "./downloads"}, "deps": []},
+                {"id": "step_filter", "skill": "local_llm.inference", "inputs": {"prompt": "Filter financial items: $step_list.content"}, "deps": ["step_list"]}
+            ]
+        else:  # CHAT
+            capabilities = ["local_llm.inference"]
+            nodes = [
+                {"id": "step_chat", "skill": "local_llm.inference", "inputs": {"prompt": prompt}, "deps": []}
+            ]
+
+        # 3. Resolve Device Assignments using Registry
+        device_assignments = {}
+        skill_cap_map = {
+            "camera.capture": "camera.capture",
+            "filesystem.read": "filesystem.read",
+            "filesystem.write": "filesystem.write",
+            "local_llm.inference": "local_llm.inference",
+            "vault.write": "vault.write",
+            "telegram.send": "telegram.send"
+        }
+
+        for n in nodes:
+            skill = n["skill"]
+            cap_id = skill_cap_map.get(skill, "gpu.compute")
+            candidates = self.registry.find_devices_with_capability(cap_id)
+            
+            if not candidates:
+                assigned_id = "mac_local"
+            else:
+                local_candidate = next((c for c in candidates if c.is_self), None)
+                if local_candidate:
+                    assigned_id = local_candidate.device_id
+                else:
+                    from myca.contracts.device import TrustState
+                    trusted = [c for c in candidates if c.trust_state == TrustState.TRUSTED]
+                    assigned_id = trusted[0].device_id if trusted else candidates[0].device_id
+            
+            device_assignments[n["id"]] = assigned_id
+
+        return ExecutionContract(
+            intent=intent,
+            capabilities=capabilities,
+            nodes=nodes,
+            device_assignments=device_assignments
+        )

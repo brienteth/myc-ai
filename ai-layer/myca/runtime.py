@@ -5,12 +5,7 @@ from typing import AsyncGenerator
 import json
 
 from .core.need import Need, Experience, Capability, PrivacyLevel
-try:
-    from myca_intelligence.memory_intelligence.memory import ExperienceMemory
-except ImportError:
-    class ExperienceMemory:
-        def __init__(self, *args, **kwargs): pass
-        def clear(self): pass
+from myca.memory import MemoryController as ExperienceMemory
 
 try:
     from myca_intelligence.planner.planner import Planner

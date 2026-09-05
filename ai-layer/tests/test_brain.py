@@ -28,6 +28,7 @@ TEST_VAULT = Path(tempfile.mkdtemp())
 @pytest.fixture(autouse=True)
 def patch_paths(monkeypatch):
     """Redirect DB and vault paths to temp locations for isolation."""
+    TEST_VAULT.mkdir(parents=True, exist_ok=True)
     monkeypatch.setattr("myca.automation.brain.DB_PATH", TEST_DB)
     monkeypatch.setattr("myca.automation.brain.VAULT_PATH", TEST_VAULT)
     monkeypatch.setattr("myca.automation.brain.HANDOVER_PATH", TEST_VAULT / "handovers")

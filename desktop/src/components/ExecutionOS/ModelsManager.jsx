@@ -1,84 +1,139 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Play, Database, Cpu, HardDrive, Square, RefreshCw } from 'lucide-react';
+import { Settings, Play, Database, Cpu, HardDrive, Square, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { getAvailableOllamaModels } from '../../services/aiService';
 
 const ModelsManager = () => {
   const [models, setModels] = useState([]);
-  const [activeModel, setActiveModel] = useState(null);
+  const [activeModel, setActiveModel] = useState(() => {
+    return localStorage.getItem('myca_active_model') || 'myca-local';
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchModels();
   }, []);
 
-  const fetchModels = () => {
+  const fetchModels = async () => {
     setIsLoading(true);
-    // Fetch from /models endpoint (local GGUF files)
-    fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/models`)
-      .then(res => res.json())
-      .then(data => {
+    const discovered = [];
+
+    // 1. Built-in Sovereign Local Engine (Always present, 0 cost, 0 latency)
+    discovered.push({
+      id: 'myca-local',
+      name: 'Myca Sovereign Engine (Spectral)',
+      status: activeModel === 'myca-local' ? 'Active' : 'Ready',
+      size: '12 KB (Zero-Heap)',
+      type: 'On-Device FHRR SLM',
+      source: 'Built-in (Offline)'
+    });
+
+    // 2. Discover local Ollama models (localhost:11434)
+    try {
+      const ollamaModels = await getAvailableOllamaModels();
+      for (const om of ollamaModels) {
+        discovered.push({
+          id: om.id,
+          name: om.name,
+          status: activeModel === om.id ? 'Active' : 'Ready',
+          size: om.size,
+          type: `Ollama (${om.quant})`,
+          source: 'Local Ollama Bridge (:11434)'
+        });
+      }
+    } catch (_) {}
+
+    // 3. Check local backend /models if running
+    try {
+      const backendUrl = window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420';
+      const res = await fetch(`${backendUrl}/models`, { signal: AbortSignal.timeout(1500) });
+      if (res.ok) {
+        const data = await res.json();
         if (data.models) {
-          const fetchedModels = data.models.map((m, i) => ({
-            id: m,
-            name: m.replace('.gguf', ''),
-            status: i === 0 ? 'Loaded' : 'Idle',
-            size: 'GGUF',
-            type: m.includes('embed') ? 'Embedding' : 'LLM'
-          }));
-          setModels(fetchedModels);
-          if (fetchedModels.length > 0) setActiveModel(fetchedModels[0].id);
+          for (const m of data.models) {
+            discovered.push({
+              id: m,
+              name: m.replace('.gguf', ''),
+              status: activeModel === m ? 'Active' : 'Ready',
+              size: 'GGUF',
+              type: m.includes('embed') ? 'Embedding' : 'LLM',
+              source: '~/.myca/models/'
+            });
+          }
         }
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to load models:", err);
-        setIsLoading(false);
-      });
+      }
+    } catch (_) {}
+
+    // 4. Decentralized 0G Compute
+    discovered.push({
+      id: 'gpt-5.6-sol',
+      name: 'Myca LLM (gpt-5.6-sol)',
+      status: activeModel === 'gpt-5.6-sol' ? 'Active' : 'Ready',
+      size: 'Cloud Decoupled',
+      type: '0G Compute AI',
+      source: '0G Network'
+    });
+
+    setModels(discovered);
+    setIsLoading(false);
+  };
+
+  const handleSetActive = (modelId) => {
+    setActiveModel(modelId);
+    localStorage.setItem('myca_active_model', modelId);
+    setModels(prev => prev.map(m => ({
+      ...m,
+      status: m.id === modelId ? 'Active' : 'Ready'
+    })));
   };
 
   return (
     <>
       <div className="auto-header">
-        <h1 className="f-serif-italic">Local Models</h1>
-        <p>Manage on-device inference engines and resource allocation</p>
+        <h1 className="f-serif-italic">Local & Sovereign Models</h1>
+        <p>Manage on-device inference engines across macOS, Windows, and Linux</p>
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
         <button className="secondary-btn" style={{display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', fontSize: 13}} onClick={fetchModels}>
-          <RefreshCw size={14} /> Refresh
+          <RefreshCw size={14} /> Refresh Engines
         </button>
       </div>
 
       <h3 style={{ marginBottom: 16 }}>
-        {isLoading ? 'Loading models...' : `${models.length} Model${models.length !== 1 ? 's' : ''} Found`}
+        {isLoading ? 'Scanning model engines...' : `${models.length} Model Engine${models.length !== 1 ? 's' : ''} Available`}
       </h3>
-      <div className="auto-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
+
+      <div className="auto-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))' }}>
         {models.map(m => (
-          <div key={m.id} className="auto-card">
+          <div key={m.id} className="auto-card" style={{
+            border: m.status === 'Active' ? '2px solid var(--f-moss, #2e6b45)' : '1px solid var(--f-bark, #DDD7CB)',
+            background: m.status === 'Active' ? 'rgba(46, 107, 69, 0.04)' : undefined
+          }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <h4 style={{ margin: 0 }}>{m.name}</h4>
-              <span className={`status-indicator ${m.status === 'Loaded' ? 'enabled' : ''}`}>{m.status}</span>
+              <h4 style={{ margin: 0, fontSize: 14 }}>{m.name}</h4>
+              <span className={`status-indicator ${m.status === 'Active' ? 'enabled' : ''}`}>
+                {m.status === 'Active' ? '● Active' : '○ Standby'}
+              </span>
             </div>
-            <div style={{ fontSize: 13, color: 'var(--f-soil)', marginBottom: 16 }}>
-              Type: {m.type} • Format: {m.size}
+            <div style={{ fontSize: 12, color: 'var(--f-soil)', marginBottom: 8 }}>
+              <strong>Tür:</strong> {m.type} • <strong>Boyut:</strong> {m.size}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--f-stone)', marginBottom: 16, fontFamily: 'var(--f-mono)' }}>
+              Kaynak: {m.source}
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
-              {m.status === 'Idle' ? (
-                <button className="primary-btn" style={{ padding: '6px 12px', fontSize: 13 }}>
-                  <Play size={14} style={{display: 'inline', marginRight: 4}} /> Load
+              {m.status !== 'Active' ? (
+                <button className="primary-btn" style={{ padding: '6px 12px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }} onClick={() => handleSetActive(m.id)}>
+                  <Play size={12} /> Aktif Et
                 </button>
               ) : (
-                <button className="secondary-btn" style={{ padding: '6px 12px', fontSize: 13 }}>
-                  <Square size={14} style={{display: 'inline', marginRight: 4}} /> Unload
+                <button className="secondary-btn" style={{ padding: '6px 12px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4, color: 'var(--f-moss)' }}>
+                  <CheckCircle2 size={12} /> Seçili Motor
                 </button>
               )}
             </div>
           </div>
         ))}
-        {!isLoading && models.length === 0 && (
-          <div style={{color: 'var(--f-stone)', gridColumn: '1 / -1'}}>
-            No models found in ~/.myca/models/. Place GGUF files there to get started.
-          </div>
-        )}
       </div>
     </>
   );

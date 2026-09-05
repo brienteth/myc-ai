@@ -209,7 +209,23 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
                         {paramDesc && <span style={{ fontSize: 10, color: '#a0a0b2', maxWidth: '60%', textAlign: 'right' }}>{paramDesc}</span>}
                       </div>
 
-                      {paramType === 'textarea' ? (
+                      {paramName === 'model' ? (
+                        <select
+                          value={localInputs[paramName] || 'gpt-5.6-sol'}
+                          onChange={e => handleInputChange(paramName, e.target.value)}
+                          style={{
+                            width: '100%', padding: '8px 12px', borderRadius: 8,
+                            background: '#090b14', border: '1px solid rgba(0, 232, 122, 0.35)',
+                            color: '#00e87a', fontSize: 12, outline: 'none', boxSizing: 'border-box'
+                          }}
+                        >
+                          <option value="gpt-5.6-sol">Myca LLM (gpt-5.6-sol) - 0G AI</option>
+                          <option value="myca-local">Myca Local Engine (0-Cost, Çevrimdışı)</option>
+                          <option value="ollama-llama3">Ollama Local Bridge (Llama 3 / Hermes)</option>
+                          <option value="claude-3.5-sonnet">Claude 3.5 Sonnet / Fable 5</option>
+                          <option value="deepseek-v3">DeepSeek V3 / Pro</option>
+                        </select>
+                      ) : paramType === 'textarea' ? (
                         <textarea
                           rows={3}
                           placeholder={paramDesc || `Değer girin: ${paramName}`}
@@ -269,17 +285,35 @@ const WorkflowInspector = ({ selectedNode, onUpdateNode, onClose }) => {
                         </label>
                         {paramDesc && <span style={{ fontSize: 10, color: '#666', maxWidth: '60%', textAlign: 'right' }}>{paramDesc}</span>}
                       </div>
-                      <input 
-                        type="text"
-                        placeholder={paramDesc || `Opsiyonel: ${paramName}`}
-                        value={localInputs[paramName] || ''}
-                        onChange={e => handleInputChange(paramName, e.target.value)}
-                        style={{
-                          width: '100%', padding: '8px 12px', borderRadius: 8,
-                          background: '#090b14', border: '1px solid rgba(255,255,255,0.08)',
-                          color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
-                        }}
-                      />
+                      {paramName === 'model' ? (
+                        <select
+                          value={localInputs[paramName] || 'gpt-5.6-sol'}
+                          onChange={e => handleInputChange(paramName, e.target.value)}
+                          style={{
+                            width: '100%', padding: '8px 12px', borderRadius: 8,
+                            background: '#090b14', border: '1px solid rgba(0, 232, 122, 0.35)',
+                            color: '#00e87a', fontSize: 12, outline: 'none', boxSizing: 'border-box'
+                          }}
+                        >
+                          <option value="gpt-5.6-sol">Myca LLM (gpt-5.6-sol) - 0G AI</option>
+                          <option value="myca-local">Myca Local Engine (0-Cost, Çevrimdışı)</option>
+                          <option value="ollama-llama3">Ollama Local Bridge (Llama 3 / Hermes)</option>
+                          <option value="claude-3.5-sonnet">Claude 3.5 Sonnet / Fable 5</option>
+                          <option value="deepseek-v3">DeepSeek V3 / Pro</option>
+                        </select>
+                      ) : (
+                        <input 
+                          type="text"
+                          placeholder={paramDesc || `Opsiyonel: ${paramName}`}
+                          value={localInputs[paramName] || ''}
+                          onChange={e => handleInputChange(paramName, e.target.value)}
+                          style={{
+                            width: '100%', padding: '8px 12px', borderRadius: 8,
+                            background: '#090b14', border: '1px solid rgba(255,255,255,0.08)',
+                            color: '#ffffff', fontSize: 12, outline: 'none', boxSizing: 'border-box'
+                          }}
+                        />
+                      )}
                     </div>
                   );
                 })}

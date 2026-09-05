@@ -37,7 +37,7 @@ from myca.planner.execution_graph import ExecutionGraph, NodeReference
 from myca.planner.optimizer import GraphOptimizer
 from myca.planner.validator import GraphValidator
 from myca.library.artifact import ArtifactManager
-from myca.experience.memory import ExperienceMemory
+from myca.memory import MemoryController as ExperienceMemory
 from myca.skills.core.registry import SkillRegistry
 
 # Import generic skills to trigger @skill registration

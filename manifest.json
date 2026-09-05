@@ -1,7 +1,7 @@
 {
   "name": "Myca",
   "short_name": "Myca",
-  "start_url": "/",
+  "start_url": "/app",
   "display": "standalone",
   "background_color": "#0a0a0b",
   "theme_color": "#0a0a0b",

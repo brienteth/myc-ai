@@ -47,6 +47,8 @@ class PeerInfo:
     source: str = "mdns_local"  # mdns_local or h3_global
     capabilities: list[str] = field(default_factory=list)
     code: str = ""
+    public_key: str = ""
+    device_name: str = ""
 
     def get_mycelium_score(self) -> float:
         """
@@ -98,6 +100,8 @@ class PeerInfo:
             "source": self.source,
             "capabilities": self.capabilities,
             "code": self.code,
+            "public_key": self.public_key,
+            "device_name": self.device_name,
             "mycelium_score": round(self.get_mycelium_score(), 1),
         }
 
@@ -187,7 +191,10 @@ class H3GlobalDiscovery:
                             source="h3_global",
                             latency_ms=100.0,
                             status=agent.get("status", "active"),
-                            code=a_code
+                            code=a_code,
+                            public_key=agent.get("public_key", ""),
+                            capabilities=agent.get("capabilities", []),
+                            device_name=agent.get("device_name", "")
                         ))
                     return peers
         except Exception as e:

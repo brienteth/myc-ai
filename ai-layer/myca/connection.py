@@ -83,11 +83,15 @@ class ConnectionManager:
         self,
         node_id: str,
         event_callback: Optional[Callable[[str, dict], Awaitable[None]]] = None,
+        crypto = None,
+        private_key = None,
     ):
         self.node_id = node_id
         self.event_callback = event_callback
         self.connections: dict[str, PeerConnection] = {}
         self._running = False
+        self.crypto = crypto
+        self.private_key = private_key
 
     async def _emit(self, event_type: str, data: dict):
         event = {"type": event_type, "timestamp": time.time(), "layer": "connection", **data}
@@ -234,14 +238,27 @@ class ConnectionManager:
         return conn
 
     async def send_message(self, peer_id: str, message: dict) -> dict:
-        """Send a message to a connected peer."""
+        """Send a message to a connected peer, wrapped in a TransportEnvelope."""
         conn = self.connections.get(peer_id)
         if not conn or not conn.active:
             raise ConnectionError(f"No active connection to {peer_id}")
 
+        # P0.2: Wrap in signed and encrypted TransportEnvelope
+        from myca.transport import create_envelope
+        from myca.identity import get_or_create_identity_key
+        private_key = self.private_key or get_or_create_identity_key()
+
+        envelope = create_envelope(
+            sender=self.node_id,
+            recipient=peer_id,
+            payload=message,
+            private_key=private_key,
+            crypto=self.crypto,
+        )
+
         conn.messages_sent += 1
-        # In real mode, would send via HTTP/2 or WebRTC
-        return {"status": "sent", "peer_id": peer_id}
+        # In a real network implementation, we would transmit envelope.to_dict()
+        return {"status": "sent", "peer_id": peer_id, "envelope": envelope.to_dict()}
 
     def get_latency_map(self) -> dict[str, float]:
         """Get latency to each connected peer."""
@@ -252,12 +269,15 @@ class SimulatedConnectionManager:
     """
     Simulated connections using asyncio.Queue for single-machine testing.
     Each virtual node has configurable fake latency (8-25ms random).
+    P0.2: Performs signed/encrypted TransportEnvelope exchanges.
     """
 
     def __init__(
         self,
         node_id: str,
         event_callback: Optional[Callable[[str, dict], Awaitable[None]]] = None,
+        crypto = None,
+        private_key = None,
     ):
         self.node_id = node_id
         self.event_callback = event_callback
@@ -265,6 +285,10 @@ class SimulatedConnectionManager:
         self._queues: dict[str, asyncio.Queue] = {}
         self._running = False
         self._force_http2_fail = False  # For error simulation
+        self.crypto = crypto
+        self.private_key = private_key
+        from myca.transport import EnvelopeValidator
+        self._envelope_validator = EnvelopeValidator()
 
     async def _emit(self, event_type: str, data: dict):
         event = {"type": event_type, "timestamp": time.time(), "layer": "connection", **data}
@@ -328,7 +352,7 @@ class SimulatedConnectionManager:
         return conn
 
     async def send_message(self, peer_id: str, message: dict) -> dict:
-        """Send a message via simulated queue with fake latency."""
+        """Send a message via simulated queue, wrapped in a TransportEnvelope."""
         conn = self.connections.get(peer_id)
         if not conn or not conn.active:
             raise ConnectionError(f"No active connection to {peer_id}")
@@ -336,20 +360,73 @@ class SimulatedConnectionManager:
         # Simulate latency
         await asyncio.sleep(conn.latency_ms / 1000)
 
+        # P0.2 Wrap in envelope
+        from myca.transport import create_envelope
+        from myca.identity import get_or_create_identity_key
+        private_key = self.private_key or get_or_create_identity_key()
+
+        envelope = create_envelope(
+            sender=self.node_id,
+            recipient=peer_id,
+            payload=message,
+            private_key=private_key,
+            crypto=self.crypto,
+        )
+
         queue = self._queues.get(peer_id)
         if queue:
-            await queue.put(message)
+            await queue.put(envelope.to_dict())
 
         conn.messages_sent += 1
-        return {"status": "sent", "peer_id": peer_id, "latency_ms": conn.latency_ms}
+        return {"status": "sent", "peer_id": peer_id, "latency_ms": conn.latency_ms, "envelope": envelope.to_dict()}
 
     async def receive_message(self, peer_id: str, timeout: float = 5.0) -> Optional[dict]:
-        """Receive a message from simulated queue."""
+        """Receive and validate a TransportEnvelope from simulated queue."""
         queue = self._queues.get(peer_id)
         if not queue:
             return None
         try:
-            return await asyncio.wait_for(queue.get(), timeout=timeout)
+            envelope_dict = await asyncio.wait_for(queue.get(), timeout=timeout)
+            if not envelope_dict or not isinstance(envelope_dict, dict):
+                return None
+
+            # P0.2 Unwrap and validate
+            from myca.transport import receive_envelope
+            import myca.database as db
+            from myca.identity import get_or_create_identity_key, get_public_key_hex
+
+            # Find sender's public key
+            peer_pubkey = ""
+            if peer_id == self.node_id:
+                peer_pubkey = get_public_key_hex(get_or_create_identity_key())
+            else:
+                peer_node = db.get_trusted_node(peer_id)
+                if peer_node:
+                    peer_pubkey = peer_node["public_key"]
+                else:
+                    # Look up active pairing session
+                    active_s = db.get_active_host_pairing_session()
+                    if active_s and active_s.get("requesting_node_id") == peer_id:
+                        peer_pubkey = active_s.get("requesting_pubkey") or ""
+
+            # Verification fallback: if pubkey still not found, check signature key field in payload 
+            # (or use self signature for loopback test)
+            if not peer_pubkey:
+                peer_pubkey = envelope_dict.get("signature", "") # Just to prevent empty crashes
+
+            payload, reason = receive_envelope(
+                data=envelope_dict,
+                sender_public_key_hex=peer_pubkey,
+                expected_recipient=self.node_id,
+                validator=self._envelope_validator,
+                crypto=self.crypto
+            )
+
+            if payload is None:
+                logger.warning(f"[TRANSPORT] Incoming envelope validation failed: {reason}")
+                return None
+
+            return payload
         except asyncio.TimeoutError:
             return None
 

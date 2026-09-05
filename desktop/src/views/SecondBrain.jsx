@@ -1,3 +1,4 @@
+import { queryAI } from '../services/aiService';
 import React, { useState, useEffect } from 'react';
 import { 
   Brain, Search, Plus, Trash2, CheckCircle2, AlertTriangle, ShieldCheck, 
@@ -155,9 +156,35 @@ const KNOWLEDGE_GRAPH_EDGES = [
 
 const SecondBrain = () => {
   const [activeTab, setActiveTab] = useState('overview'); // overview, memories, decisions, experiences, projects, entities, graph, inbox, conflicts
-  const [memories, setMemories] = useState(INITIAL_MEMORIES);
+  const [memories, setMemories] = useState(() => {
+    try {
+      const saved = localStorage.getItem('myca_second_brain_memories');
+      return saved ? JSON.parse(saved) : INITIAL_MEMORIES;
+    } catch (_) { return INITIAL_MEMORIES; }
+  });
   const [inbox, setInbox] = useState(INITIAL_INBOX);
   const [conflicts, setConflicts] = useState(INITIAL_CONFLICTS);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [aiBriefing, setAiBriefing] = useState(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('myca_second_brain_memories', JSON.stringify(memories));
+    } catch (_) {}
+  }, [memories]);
+
+  const handleGenerateAiBriefing = async () => {
+    setIsSynthesizing(true);
+    try {
+      const memorySummary = memories.map(m => `- [${m.type}] ${m.title}: ${m.content}`).join('\n');
+      const prompt = `Aşağıdaki sistem kararları ve hafıza kayıtlarına dayanarak kurumsal bir "Second Brain Yönetici Özeti" ve stratejik eylem planı oluştur:\n\n${memorySummary}`;
+      const res = await queryAI({ prompt });
+      setAiBriefing(res);
+    } catch (e) {
+      setAiBriefing("Hafıza sentezi oluşturulurken bir hata oluştu: " + e.message);
+    }
+    setIsSynthesizing(false);
+  };
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMemory, setSelectedMemory] = useState(null);
   

@@ -8,6 +8,7 @@ and inference capabilities.
 
 import asyncio
 import logging
+logger = logging.getLogger("myca.node")
 import time
 import uuid
 from typing import Optional, Callable, Awaitable, AsyncGenerator
@@ -20,17 +21,19 @@ from myca.inference.engine import InferenceEngine
 from myca.inference.registry import BackendRegistry
 from myca.inference.manager import InferenceManager
 import myca.inference.backends  # triggers registration
+from myca.registry import DeviceCapabilityRegistry
 try:
     from myca_intelligence.library import LibraryService
     from myca_intelligence.library.embedding import EmbeddingEngine
     from myca_intelligence.library.indexer import FileIndexer
-except ImportError:
+except ImportError as e:
+    import traceback
+    logger.error(f"[NODE] Failed to import LibraryService from myca_intelligence.library: {e}")
+    traceback.print_exc()
     LibraryService = None
     EmbeddingEngine = None
     FileIndexer = None
 from myca.network_scanner import NetworkScanner
-
-logger = logging.getLogger("myca.node")
 
 
 class MycaNode:
@@ -100,6 +103,9 @@ class MycaNode:
         self.inference_manager: Optional[InferenceManager] = None
         self.network_scanner = NetworkScanner()
 
+        # P0.1: Device Capability Registry
+        self.device_registry = DeviceCapabilityRegistry(node_id=self.node_id)
+
         # Error simulation tasks
         self._error_tasks: list[asyncio.Task] = []
 
@@ -146,15 +152,22 @@ class MycaNode:
         await self.discovery.start()
 
         # Layer 2: Connection
+        from myca.identity import get_or_create_identity_key
+        private_key = get_or_create_identity_key()
+
         if self.simulate:
             self.connection = SimulatedConnectionManager(
                 node_id=self.node_id,
                 event_callback=self.event_callback,
+                crypto=self.crypto,
+                private_key=private_key,
             )
         else:
             self.connection = ConnectionManager(
                 node_id=self.node_id,
                 event_callback=self.event_callback,
+                crypto=self.crypto,
+                private_key=private_key,
             )
         await self.connection.start()
 
@@ -176,7 +189,13 @@ class MycaNode:
         )
 
         # Layer 5: Inference
-        self.inference_engine = BackendRegistry.create_backend("auto")
+        local_engine = BackendRegistry.create_backend("auto")
+        from myca.inference.router import LocalFirstInferenceRouter
+        self.inference_engine = LocalFirstInferenceRouter(
+            local_engine=local_engine,
+            registry=self.device_registry,
+            node_instance=self
+        )
         self.inference_manager = InferenceManager(self.inference_engine)
         if self.library is not None:
             self.library.inference_engine = self.inference_engine
@@ -193,6 +212,10 @@ class MycaNode:
             await self.inference_manager.boot_capability("chat")
         except Exception as e:
             logger.warning(f"Capability boot failed (expected if mock/stub): {e}")
+
+        # P0.1: Initialize Device Capability Registry and detect local hardware
+        self.device_registry.init_db()
+        self.device_registry.detect_local_capabilities(inference_engine=self.inference_engine)
 
         # Start LAN device scanner
         self.network_scanner.start()

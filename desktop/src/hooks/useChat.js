@@ -76,5 +76,10 @@ export const useChat = (initialConvId = null) => {
     setIsGenerating(false);
   };
 
-  return { messages, isGenerating, sendMessage, convId, setMessages };
+    const startNewChat = () => {
+    setMessages([]);
+    setConvId(crypto.randomUUID());
+  };
+
+  return { messages, isGenerating, sendMessage, convId, setMessages, startNewChat };
 };

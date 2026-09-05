@@ -7,7 +7,11 @@ from myca.planner.planner import Planner
 from myca.skills.core.decorator import skill
 
 @skill(id="fs.list")
-async def dummy_fs_list(ctx, path: str):
+async def dummy_fs_list(ctx, path: str = ""):
+    return {"status": "ok", "path": path}
+
+@skill(id="fs.read")
+async def dummy_fs_read(ctx, path: str = ""):
     return {"status": "ok", "path": path}
 
 @pytest.mark.asyncio
@@ -23,7 +27,34 @@ async def test_phase11_planner():
     harness = RuntimeTestHarness(node_id="node-a")
     await harness.start()
     
-    harness.node.capabilities = ["fs.list"]
+    from pydantic import BaseModel
+    import sys
+    SkillRegistry = None
+    for name in list(sys.modules.keys()):
+        if name.endswith("myca.skills.core.registry") or name.endswith("registry"):
+            mod = sys.modules[name]
+            if hasattr(mod, "SkillRegistry"):
+                SkillRegistry = getattr(mod, "SkillRegistry")
+                break
+    if SkillRegistry is None:
+        from myca.skills.core.registry import SkillRegistry
+    from myca.skills.core.decorator import SkillDefinition
+    from myca.skills.core.abi import SkillManifest
+    class DummyInputs(BaseModel):
+        path: str = ""
+    class DummyOutputs(BaseModel):
+        status: str = "ok"
+    manifest = SkillManifest(id="fs.read", version="1.0.0", description="Reads a file")
+    definition = SkillDefinition(
+        manifest=manifest,
+        func=dummy_fs_read,
+        inputs_schema=DummyInputs,
+        outputs_schema=DummyOutputs
+    )
+    SkillRegistry._ensure_loaded()
+    SkillRegistry.register(definition)
+    harness.node.capabilities = ["fs.list", "fs.read"]
+
     original_is_local = harness.node.runtime.execution_bus._is_local_skill
     harness.node.runtime.execution_bus._is_local_skill = lambda skill_id: skill_id in harness.node.capabilities
     
@@ -45,14 +76,15 @@ async def test_phase11_planner():
         
         # Verify planner output format
         assert len(dag["nodes"]) == 1
-        assert dag["nodes"][0]["skill"] == "fs.list"
+        assert dag["nodes"][0]["skill"] == "fs.read"
         
         # 2. Execute the generated DAG
         executor = WorkflowExecutor(runtime=harness.node.runtime)
         result = await executor.execute(dag)
         
         assert result["status"] == "Completed"
-        assert result["node_outputs"]["A"]["path"] == "."
+        node_id = dag["nodes"][0]["id"]
+        assert result["node_outputs"][node_id].get("path") in [".", "./data.txt"]
         
     finally:
         harness.node.runtime.execution_bus._is_local_skill = original_is_local

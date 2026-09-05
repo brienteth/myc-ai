@@ -7,7 +7,7 @@ name = "myca"
 version = "0.1.0"
 description = "Myca Local-First AI Engine & Autonomous Software Factory SDK"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.9"
 authors = [
     { name = "Myca Team" }
 ]
@@ -45,3 +45,6 @@ myca = "cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["myca*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

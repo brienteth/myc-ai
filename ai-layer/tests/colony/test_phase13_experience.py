@@ -1,5 +1,5 @@
 import pytest
-from myca.experience.memory import ExperienceMemory
+from myca.memory import MemoryController as ExperienceMemory
 from myca.recovery.dom_recovery import DOMRecoveryEngine
 import uuid
 
@@ -10,16 +10,22 @@ async def test_phase13_experience():
     Verify that DOMRecoveryEngine queries ExperienceMemory to recover from a failure,
     and if it learns a new solution, it uses it next time.
     """
-    # Create an isolated memory instance threshold
-    memory = ExperienceMemory(threshold=0.90)
-    # Patch db_path for tests to memory or unique file
+    # Patch DB_PATH to isolated temp database
     import tempfile
     import os
+    import myca.database
+    import myca.memory
     db_fd, db_path = tempfile.mkstemp(suffix=".db")
     os.close(db_fd)
     
-    memory.db_path = __import__("pathlib").Path(db_path)
-    memory._init_db()
+    myca.database.DB_PATH = __import__("pathlib").Path(db_path)
+    myca.memory.DB_PATH = __import__("pathlib").Path(db_path)
+    
+    # Initialize the temp database
+    myca.database.init_db()
+    
+    # Create isolated memory instance
+    memory = ExperienceMemory(threshold=0.90)
     
     recovery_engine = DOMRecoveryEngine(memory)
     

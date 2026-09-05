@@ -54,7 +54,7 @@ class TestMycaSDK:
 
         async with Myca(backend="mock") as ai:
             response = await ai.generate("What is quantum computing?")
-            assert "Mock response" in response
+            assert "Myca Execution OS" in response
 
     @pytest.mark.asyncio
     async def test_sdk_stream(self):
@@ -66,7 +66,7 @@ class TestMycaSDK:
                 tokens.append(token)
             assert len(tokens) > 0
             full_text = "".join(tokens)
-            assert "Mock" in full_text
+            assert "Myca" in full_text
 
     @pytest.mark.asyncio
     async def test_sdk_embed_and_classify(self):

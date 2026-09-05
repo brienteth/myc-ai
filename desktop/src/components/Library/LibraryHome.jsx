@@ -24,16 +24,44 @@ const LibraryHome = ({ onSelectDoc, onNavigateCat }) => {
   useEffect(() => {
     setIsLoading(true);
 
-    Promise.all([
-      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/files?type=all`)
-        .then(res => res.json())
-        .then(data => setRecentFiles((data.files || []).slice(0, 6)))
-        .catch(err => console.error("Failed to fetch recent files", err)),
+    const loadFromLocal = () => {
+      try {
+        const cached = JSON.parse(localStorage.getItem('myca_cached_library') || '[]');
+        if (cached.length > 0) {
+          setRecentFiles(cached.slice(0, 6));
+          const totalSize = cached.reduce((acc, f) => acc + (f.size_bytes || 2048), 0);
+          setStats({
+            total_files: cached.length,
+            total_size_bytes: totalSize,
+            by_type: {
+              document: { count: cached.filter(f => f.type === 'document').length, size_bytes: Math.round(totalSize * 0.75) },
+              code: { count: cached.filter(f => f.type === 'code').length, size_bytes: Math.round(totalSize * 0.25) }
+            }
+          });
+        }
+      } catch (_) {}
+    };
 
-      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/stats`)
+    Promise.all([
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/files?type=all`, { signal: AbortSignal.timeout(1200) })
         .then(res => res.json())
-        .then(data => setStats(data || { total_files: 0, total_size_bytes: 0, by_type: {} }))
-        .catch(err => console.error("Failed to fetch library stats", err))
+        .then(data => {
+          if (data.files && data.files.length > 0) {
+            setRecentFiles(data.files.slice(0, 6));
+          } else {
+            loadFromLocal();
+          }
+        })
+        .catch(() => loadFromLocal()),
+
+      fetch(`${window.getBackendUrl ? window.getBackendUrl() : 'http://127.0.0.1:8420'}/library/stats`, { signal: AbortSignal.timeout(1200) })
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.total_files !== undefined) {
+            setStats(data);
+          }
+        })
+        .catch(() => {})
     ]).finally(() => setIsLoading(false));
   }, []);
 

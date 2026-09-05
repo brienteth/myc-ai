@@ -11,8 +11,8 @@ async def dummy_fetch(ctx, url: str):
     return {"status": "ok", "data": f"Data from {url}"}
 
 @skill(id="process_data")
-async def dummy_process(ctx, raw_data: str):
-    return {"status": "ok", "result": raw_data.upper()}
+async def dummy_process(ctx, data: str):
+    return {"status": "ok", "result": data.upper(), "processed": data.upper()}
 
 @pytest.mark.asyncio
 async def test_phase20_e2e():
@@ -33,6 +33,13 @@ async def test_phase20_e2e():
     harness = RuntimeTestHarness(node_id="node-a")
     await harness.start()
     
+    import os
+    from myca_intelligence.automation.history import DB_PATH
+    if os.path.exists(str(DB_PATH)):
+        try:
+            os.remove(str(DB_PATH))
+        except Exception:
+            pass
     AutomationDB.init_db()
     
     # Setup network topology
@@ -54,7 +61,7 @@ async def test_phase20_e2e():
             "name": "Phase 20 E2E Flow",
             "nodes": [
                 {"id": "A", "skill": "fetch_data", "inputs": {"url": "https://api.example"}},
-                {"id": "B", "skill": "process_data", "inputs": {"raw_data": "{{nodes.A.data}}"}, "depends_on": ["A"]}
+                {"id": "B", "skill": "process_data", "inputs": {"data": "{{nodes.A.data}}"}, "depends_on": ["A"]}
             ]
         }
         

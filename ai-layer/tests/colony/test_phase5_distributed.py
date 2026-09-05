@@ -10,7 +10,7 @@ from myca.skills.core.registry import SkillRegistry
 # For the test, we mock the local capabilities
 @skill(id="process_data")
 async def dummy_process(ctx, data: str):
-    return {"status": "ok", "processed": data.upper()}
+    return {"status": "ok", "result": data.upper(), "processed": data.upper()}
 
 # In a real environment, node A doesn't have summarize_data registered locally, but for simulation, 
 # the MockTransport executes it locally while emitting the correct MockTransport logs.
