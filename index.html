@@ -31,6 +31,44 @@ nav {
 .nav-download:hover { background: var(--f-thread); }
 .lang-switch { font-family: var(--f-mono); font-size: 12px; color: var(--f-soil); cursor: pointer; border: 1px solid var(--f-bark); padding: 4px 8px; border-radius: 6px; background: transparent; }
 
+/* NAV DROPDOWN & BADGES */
+.nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+.nav-dropdown-btn {
+  background: transparent; border: none; font-family: var(--f-sans);
+  font-size: 14px; font-weight: 500; color: var(--f-soil); cursor: pointer;
+  display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 8px; transition: all .2s;
+}
+.nav-dropdown-btn:hover, .nav-dropdown.is-open .nav-dropdown-btn { color: var(--f-humus); background: var(--f-parchment); }
+.nav-dropdown-menu {
+  position: absolute; top: 100%; left: 0; margin-top: 4px; width: 320px;
+  background: rgba(250, 248, 243, 0.98); backdrop-filter: blur(16px);
+  border: 1px solid var(--f-bark); border-radius: 14px; padding: 10px;
+  box-shadow: 0 16px 36px rgba(29, 29, 27, 0.12); display: none;
+  flex-direction: column; gap: 4px; z-index: 200;
+}
+/* Invisible hover bridge: prevents menu from closing when mouse moves from button to menu */
+.nav-dropdown-menu::before {
+  content: ''; position: absolute; top: -16px; left: 0; right: 0; height: 16px; background: transparent;
+}
+.nav-dropdown:hover .nav-dropdown-menu, .nav-dropdown.is-open .nav-dropdown-menu, .nav-dropdown:focus-within .nav-dropdown-menu {
+  display: flex;
+}
+.dropdown-item {
+  display: flex; align-items: center; gap: 12px; padding: 8px 10px;
+  border-radius: 8px; text-decoration: none; transition: all .2s;
+}
+.dropdown-item:hover { background: var(--f-parchment); }
+.dropdown-icon {
+  width: 30px; height: 30px; border-radius: 6px; background: var(--f-cream);
+  border: 1px solid var(--f-bark); display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.dropdown-text { display: flex; flex-direction: column; }
+.dropdown-title { font-size: 13px; font-weight: 600; color: var(--f-deep); }
+.dropdown-desc { font-size: 11px; color: var(--f-soil); line-height: 1.25; }
+.nav-badge-new { background: var(--f-spore); color: #fff; font-size: 9px; font-family: var(--f-mono); padding: 2px 5px; border-radius: 4px; margin-left: 6px; font-weight: 600; }
+
+
 /* HERO */
 .hero {
   min-height: 100vh;
@@ -200,27 +238,89 @@ footer {
 <body>
 
 <nav>
-  <div style="display:flex; align-items:center;">
-    <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-      <img src="/assets/logo.png" alt="Myca OS" style="width:32px; height:32px; border-radius:6px; object-fit:contain; flex-shrink:0;" />
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span class="nav-logo f-serif-italic" style="margin-right:0; font-size:22px; font-weight:700; color:var(--f-deep);">myca os</span>
-        <span id="nav-version-badge" style="font-size:10px; font-family:var(--f-mono); background:var(--f-bark); color:var(--f-humus); padding:2px 6px; border-radius:4px; font-weight:600;">v1.0.2</span>
+  <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0;">
+    <img src="/assets/logo.png" alt="Myca OS" style="width:32px; height:32px; border-radius:6px; object-fit:contain; flex-shrink:0;" />
+    <span class="nav-logo f-serif-italic" style="margin-right:0; font-size:22px; font-weight:700; color:var(--f-deep);">myca os</span>
+  </a>
+
+  <div class="nav-links" style="margin: 0 auto; display:flex; align-items:center; gap:32px;">
+    <div class="nav-dropdown" id="navDropdownContainer">
+      <button class="nav-dropdown-btn" id="t-nav-products" onclick="toggleProductsDropdown(event)">
+        <span>Ürünler</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div class="nav-dropdown-menu">
+        <a href="/" class="dropdown-item">
+          <div class="dropdown-icon">🌱</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Myca OS</span>
+            <span class="dropdown-desc">Yerel AI İşletim Sistemi &amp; Desktop</span>
+          </div>
+        </a>
+        <a href="/depin" class="dropdown-item">
+          <div class="dropdown-icon">⚡</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">DePIN &amp; Blockchain <span class="nav-badge-new">CANLI</span></span>
+            <span class="dropdown-desc">40B+ Çip İçin C99 Bare-Metal Middleware</span>
+          </div>
+        </a>
+        <a href="/agent" class="dropdown-item">
+          <div class="dropdown-icon">🛡️</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">AI Agents &amp; Safe-Sign <span class="nav-badge-new">CANLI</span></span>
+            <span class="dropdown-desc">Fiziksel Eylem &amp; Donanım Hava Yastığı</span>
+          </div>
+        </a>
+        <a href="/skills" class="dropdown-item">
+          <div class="dropdown-icon">✦</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Sovereign Skills Matrix <span class="nav-badge-new">CANLI</span></span>
+            <span class="dropdown-desc">63+ Deterministik Skill &amp; Rezonans Kataloğu</span>
+          </div>
+        </a>
+        <a href="/docs#resonance-core" class="dropdown-item">
+          <div class="dropdown-icon">🔬</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">GHR Resonant Lattice</span>
+            <span class="dropdown-desc">Verileri Frekansa Çeviren Çekirdek (%94 Sıkıştırma)</span>
+          </div>
+        </a>
+        <a href="/docs#depin-core" class="dropdown-item">
+          <div class="dropdown-icon">⚙️</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">C99 Bare-Metal Kernel</span>
+            <span class="dropdown-desc">16KB RAM, Sıfır Bağımlılık Mikrodenetleyici Çekirdeği</span>
+          </div>
+        </a>
+        <a href="/docs#opacus-mpc" class="dropdown-item">
+          <div class="dropdown-icon">🔐</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Opacus MPC Privacy</span>
+            <span class="dropdown-desc">Çok Partili Şifreli Hesaplama &amp; Sıfır Bilgi Güvenliği</span>
+          </div>
+        </a>
+        <a href="/#playground" class="dropdown-item">
+          <div class="dropdown-icon">🎛️</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Workflow Studio</span>
+            <span class="dropdown-desc">Görsel Agent &amp; Graph Yürütme Pipeline'ı</span>
+          </div>
+        </a>
+        <a href="/#compute" class="dropdown-item">
+          <div class="dropdown-icon">🕸️</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Colony Mesh</span>
+            <span class="dropdown-desc">P2P Dağıtık Cihaz Ağı &amp; FFI Runtime</span>
+          </div>
+        </a>
       </div>
-    </a>
-    <div class="nav-links">
-      <a href="#problem" id="t-nav-1">Neden?</a>
-      <a href="#playground">Playground</a>
-      <a href="#pricing">Fiyatlandırma</a>
-      <a href="#how" id="t-nav-2">Nasıl Çalışır?</a>
-      <a href="#compute" id="t-nav-3">Mimari</a>
-      <a href="#resonance" id="t-nav-res">Zeka Çekirdeği</a>
-      <a href="/docs" id="t-nav-docs">Dokümantasyon & SDK</a>
-      <a href="https://github.com/brienteth/myc-ai">GitHub</a>
     </div>
+    <a href="/docs" id="t-nav-docs" style="font-weight:500;">Dokümantasyon</a>
+    <a href="https://github.com/brienteth/myc-ai" target="_blank" style="font-weight:500;">GitHub</a>
   </div>
-  <div style="display:flex; align-items:center; gap:24px;">
-    <button class="lang-switch" onclick="toggleLang()">EN / TR</button>
+
+  <div style="display:flex; align-items:center; gap:20px; flex-shrink:0;">
+    <button class="lang-switch" id="langSwitchBtn" onclick="toggleLang()">EN / TR</button>
     <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="nav-download" id="t-nav-dl">Hemen İndir</a>
   </div>
 </nav>
@@ -562,6 +662,101 @@ footer {
       <div class="card-tag">myc</div>
       <div class="card-title f-serif-italic" id="t-prob-title-3">Her şey cihazında kalır.</div>
       <div class="card-body" id="t-prob-3">Her zaman. Yaşayan kolonin sadece senin yerel ağında çalışır. Verin hiçbir zaman internete çıkmaz.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPIN & AI AGENT SOLUTIONS SECTION -->
+<section class="section-pad bg-parchment" id="depin-solutions" style="border-top:1px solid var(--f-bark); border-bottom:1px solid var(--f-bark);">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-label" style="text-align:center;" id="t-depin-lbl">FİZİKSEL DÜNYA & BLOKZİNCİR ÇÖZÜMLERİ</div>
+    <h2 class="section-title f-serif-italic" style="text-align:center; margin-bottom:20px;" id="t-depin-title">
+      DePIN & Otonom AI Agent Altyapısı
+    </h2>
+    <p class="hero-sub" style="margin: 0 auto 56px auto; text-align:center; max-width:760px;" id="t-depin-sub">
+      Yazılım dünyasında kalan LLM'ler fiziksel fabrikaları yönetemez, geleneksel blokzincirler ise zsh.30'lık mikrodenetleyicilerde çalışamaz. Myca, donanım seviyesinde deterministik C99 mikro-çekirdeği ve Safe-Sign kalkanıyla iki dünyayı birleştirir.
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:48px;">
+      
+      <!-- DePIN Card -->
+      <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:18px; padding:36px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--f-shadow-sm);">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <span style="font-family:var(--f-mono); font-size:11px; background:var(--f-parchment); color:var(--f-moss); padding:4px 8px; border-radius:6px; font-weight:700;">
+              ⚡ 40B+ MİKRODENETLEYİCİ
+            </span>
+            <span style="font-family:var(--f-mono); font-size:11px; color:var(--f-soil);">240B RAM • malloc=0</span>
+          </div>
+          <h3 class="f-serif-italic" style="font-size:28px; color:var(--f-deep); margin-bottom:14px;">
+            DePIN & Bare-Metal Silikon Katmanı
+          </h3>
+          <p style="font-size:14px; color:var(--f-soil); line-height:1.6; margin-bottom:20px;">
+            ARM Cortex-M, ESP32 ve RP2350 çipleri doğrudan <strong>0G, peaq, IoTeX ve Ethereum L2</strong> ağlarına bağlanır. Fabrika PLC'leri, SCADA ve enerji şebekeleri için mikrosaniyelik deterministik Modbus RTU yürütmesi sunar.
+          </p>
+          <ul style="font-size:13px; color:var(--f-humus); line-height:1.8; margin-bottom:24px; padding-left:18px;">
+            <li><strong>Sıfır Dinamik Bellek:</strong> 240 Bayt yığın, sıfır heap ile bellek sızıntısı imkansız.</li>
+            <li><strong>Çoklu-Zincir Doğrulama:</strong> 0G Storage/AI, peaq did:peaq ve IoTeX ioID.</li>
+            <li><strong>Endüstriyel Modbus RTU:</strong> Donanım seviyesinde CRC-16 doğrulaması.</li>
+          </ul>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <a href="/depin" class="btn-primary" style="padding:10px 20px; font-size:13px; text-decoration:none;">
+            DePIN Portalını İncele →
+          </a>
+          <span style="font-size:12px; font-family:var(--f-mono); color:var(--f-soil);">743 döngü • 4.95 µs</span>
+        </div>
+      </div>
+
+      <!-- AI Agent Card -->
+      <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:18px; padding:36px; display:flex; flex-direction:column; justify-content:space-between; box-shadow:var(--f-shadow-sm);">
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <span style="font-family:var(--f-mono); font-size:11px; background:var(--f-parchment); color:var(--f-spore); padding:4px 8px; border-radius:6px; font-weight:700;">
+              🛡️ SAFE-SIGN GUARD
+            </span>
+            <span style="font-family:var(--f-mono); font-size:11px; color:var(--f-soil);">0.00V SAFE-LOW MANDALI</span>
+          </div>
+          <h3 class="f-serif-italic" style="font-size:28px; color:var(--f-deep); margin-bottom:14px;">
+            AI Ajanları İçin Donanım Hava Yastığı
+          </h3>
+          <p style="font-size:14px; color:var(--f-soil); line-height:1.6; margin-bottom:20px;">
+            Buluttaki otonom ajanlar (Virtuals, Fetch.ai, ElizaOS, LangChain) fiziksel dünyada saçmalayamaz. 4.95 µs çalışan Safe-Sign kalkanı, halüsinasyon veya prompt injection anında çip voltajını 0.00V'a kilitler.
+          </p>
+          <ul style="font-size:13px; color:var(--f-humus); line-height:1.8; margin-bottom:24px; padding-left:18px;">
+            <li><strong>Donanım Hava Yastığı:</strong> Ajanın halüsinasyonu fabrikayı yakamaz.</li>
+            <li><strong>Otonom M2M Ekonomisi:</strong> Robotlar arası 38 µs insansız mikro-ödeme.</li>
+            <li><strong>Fiziksel Eylem Noteri:</strong> Çipin bacağındaki voltajla kanıtlanan DePIN Oracle'ı.</li>
+          </ul>
+        </div>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <a href="/agent" class="btn-primary" style="padding:10px 20px; font-size:13px; text-decoration:none;">
+            Agent & Safe-Sign İncele →
+          </a>
+          <span style="font-size:12px; font-family:var(--f-mono); color:var(--f-soil);">0-Byte NO-OP Guard</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Live Metrics Grid -->
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;">
+      <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
+        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">4.95 µs</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">Negation Lock (RP2350)</div>
+      </div>
+      <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
+        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">240 Bayt</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">Toplam Stack (malloc=0)</div>
+      </div>
+      <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
+        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">38 µs</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">M2M İnsansız Ödeme</div>
+      </div>
+      <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
+        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">4 Çoklu-Zincir</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">0G • peaq • IoTeX • Arb</div>
+      </div>
     </div>
   </div>
 </section>
@@ -949,21 +1144,36 @@ footer {
 
 <script type="module">
   import { MyceliumCanvas } from './landing/mycelium.js';
-  
-  const canvas = document.getElementById('heroCanvas');
-  MyceliumCanvas(canvas, {
-    nodeCount: 30,
-    speed: 0.1,
-    connectDist: 180,
-    nodeColor: '#2E6B45',
-    threadColor: '#2E6B45'
+  window.addEventListener('DOMContentLoaded', () => {
+    const canvas = document.getElementById('heroCanvas');
+    if (canvas) {
+      MyceliumCanvas(canvas, {
+        nodeCount: 30,
+        speed: 0.1,
+        connectDist: 180,
+        nodeColor: '#2E6B45',
+        threadColor: '#2E6B45'
+      });
+    }
+  });
+</script>
+
+<script>
+  window.toggleProductsDropdown = function(e) {
+    e.stopPropagation();
+    const c = document.getElementById('navDropdownContainer');
+    if (c) c.classList.toggle('is-open');
+  };
+  document.addEventListener('click', (e) => {
+    const c = document.getElementById('navDropdownContainer');
+    if (c && !c.contains(e.target)) c.classList.remove('is-open');
   });
 
-  const translations = {
+  const appTranslations = {
     tr: {
-      nav1: "Neden?",
-      nav2: "Nasıl Çalışır?",
-      nav3: "Mimari",
+      btn: "EN / TR",
+      nav_products: "Ürünler",
+      nav_docs: "Dokümantasyon",
       nav_dl: "Hemen İndir",
       hero_title: "Tüm Cihazlarınız ve İşleriniz İçin Tek Bir Canlı İşletim Sistemi.",
       hero_sub: "Onlarca farklı uygulama ve bulut aboneliğiyle uğraşmak yerine sadece niyetinizi söyleyin. Myca, biyomimetik yerel zekası ve dağıtık cihaz ağıyla gereken planı kurar; verinizi dışarı sızdırmadan cihazlarınızda ve tüm sistemlerinizde güvenle yürütür.",
@@ -997,7 +1207,6 @@ footer {
       comp_sub: "Herkes daha büyük GPU'lar inşa etmeye çalışıyor. Myc ise hesaplamayı sıfıra indirmeyi hedefler. Sorgular her zaman en ucuz ve en hızlı katmanda çözülür.",
       f4: "Colony (Ağdaki diğer cihaz)",
       f6: "Cloud (Bulut)",
-      nav_res: "Zeka Çekirdeği",
       res_lbl: "REZONANS ÇEKİRDEĞİ",
       res_title: "Biyomimetik Yerel Zeka Katmanı",
       res_sub: "Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hiperboyutlu Rezonans Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.",
@@ -1009,6 +1218,9 @@ footer {
       res_c3_b: "GPU yükü oluşturmadan mikrosaniyeler içinde yüksek boyutlu semantik eşleştirme sağlayan frekans mimarisi.",
       res_c4_t: "Doğrulanmış Karar Motoru",
       res_c4_b: "Mantık ve hesaplama sorgularını deterministik olarak sıfır halüsinasyonla çözen otonom karar katmanı.",
+      depin_lbl: "FİZİKSEL DÜNYA & BLOKZİNCİR ÇÖZÜMLERİ",
+      depin_title: "DePIN & Otonom AI Agent Altyapısı",
+      depin_sub: "Yazılım dünyasında kalan LLM'ler fiziksel fabrikaları yönetemez, geleneksel blokzincirler ise $0.30'lık mikrodenetleyicilerde çalışamaz. Myca, donanım seviyesinde deterministik C99 mikro-çekirdeği ve Safe-Sign kalkanıyla iki dünyayı birleştirir.",
       arch_lbl: "MİMARİ",
       os_lbl: "KAYNAKLAR",
       os_title: "Açık Kaynak",
@@ -1026,21 +1238,9 @@ footer {
       foot_lic: "MIT Lisansı · 2026"
     },
     en: {
-      nav1: "Why?",
-      nav2: "How it works?",
-      nav3: "Architecture",
-      nav_res: "Core Intelligence",
-      res_lbl: "RESONANCE CORE",
-      res_title: "Biomimetic Local Intelligence Layer",
-      res_sub: "Myca never depends on heavy, opaque cloud models. Powered by the <strong>Hyperdimensional Resonance Core</strong> running directly on your machine, it natively parses linguistic morphology, flexes memory with biological rules, and completes reasoning in milliseconds with zero cloud footprint.",
-      res_c1_t: "Morphogenetic Language Core",
-      res_c1_b: "High-speed local language engine that natively deconstructs agglutinative morphology and syntax on raw hardware.",
-      res_c2_t: "Living Holographic Memory",
-      res_c2_b: "Biologically inspired memory architecture that solidifies active recollections and filters contradictions.",
-      res_c3_t: "Hyperdimensional Resonance",
-      res_c3_b: "Frequency-domain semantic similarity matching operating in microseconds without taxing GPU hardware.",
-      res_c4_t: "Verified Decision Engine",
-      res_c4_b: "Deterministic reasoning layer that eliminates hallucinations for structured mathematical and logic tasks.",
+      btn: "TR / EN",
+      nav_products: "Products",
+      nav_docs: "Documentation",
       nav_dl: "Download",
       hero_title: "A Single Living Operating System for All Your Devices & Work.",
       hero_sub: "Instead of juggling dozens of apps and cloud subscriptions, simply state your intent. Powered by biomimetic local intelligence and a distributed device mesh, Myca orchestrates the plan and executes securely across your hardware and enterprise systems—keeping your data entirely private.",
@@ -1074,6 +1274,20 @@ footer {
       comp_sub: "Everyone is building bigger GPUs. myc aims to reduce compute to zero. Queries are always solved at the cheapest and fastest layer.",
       f4: "Colony (Other node on network)",
       f6: "Cloud (Offline / Disabled)",
+      res_lbl: "RESONANCE CORE",
+      res_title: "Biomimetic Local Intelligence Layer",
+      res_sub: "Myca never depends on heavy, opaque cloud models. Powered by the <strong>Hyperdimensional Resonance Core</strong> running directly on your machine, it natively parses linguistic morphology, flexes memory with biological rules, and completes reasoning in milliseconds with zero cloud footprint.",
+      res_c1_t: "Morphogenetic Language Core",
+      res_c1_b: "High-speed local language engine that natively deconstructs agglutinative morphology and syntax on raw hardware.",
+      res_c2_t: "Living Holographic Memory",
+      res_c2_b: "Biologically inspired memory architecture that solidifies active recollections and filters contradictions.",
+      res_c3_t: "Hyperdimensional Resonance",
+      res_c3_b: "Frequency-domain semantic similarity matching operating in microseconds without taxing GPU hardware.",
+      res_c4_t: "Verified Decision Engine",
+      res_c4_b: "Deterministic reasoning layer that eliminates hallucinations for structured mathematical and logic tasks.",
+      depin_lbl: "PHYSICAL DEPIN & BLOCKCHAIN SOLUTIONS",
+      depin_title: "DePIN & Autonomous AI Agent Runtime",
+      depin_sub: "Software LLMs cannot manage physical factories, and legacy blockchains cannot run on a $0.30 microcontroller. Myca bridges both worlds with a deterministic C99 micro-kernel and Safe-Sign hardware airbag.",
       arch_lbl: "ARCHITECTURE",
       os_lbl: "RESOURCES",
       os_title: "Open Source",
@@ -1092,143 +1306,135 @@ footer {
     }
   };
 
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  if (isMobile) {
-    translations.tr.nav_dl = "Uygulamayı Aç";
-    translations.tr.hero_dl = "Uygulamayı Aç";
-    translations.en.nav_dl = "Open App";
-    translations.en.hero_dl = "Open App";
-    
-    window.addEventListener('DOMContentLoaded', () => {
-      const navDl = document.getElementById('t-nav-dl');
-      const heroDl = document.getElementById('t-hero-dl');
-      const heroZip = document.getElementById('t-hero-dl-zip');
-      
-      if (navDl) {
-        navDl.href = "/app";
-        navDl.innerText = "Uygulamayı Aç";
-      }
-      if (heroDl) {
-        heroDl.href = "/app";
-        heroDl.innerText = "Uygulamayı Aç";
-      }
-      if (heroZip) heroZip.style.display = "none";
-    });
+  function safeSet(id, text, isHtml = false) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (isHtml) el.innerHTML = text;
+    else el.innerText = text;
   }
 
-  let lang = 'tr';
-  window.toggleLang = () => {
-    lang = lang === 'tr' ? 'en' : 'tr';
-    const dict = translations[lang];
-    
-    // Update nav
-    document.getElementById('t-nav-1').innerText = dict.nav1;
-    document.getElementById('t-nav-2').innerText = dict.nav2;
-    document.getElementById('t-nav-3').innerText = dict.nav3;
-    if (document.getElementById('t-nav-res')) document.getElementById('t-nav-res').innerText = dict.nav_res;
-    document.getElementById('t-nav-dl').innerText = dict.nav_dl;
-    
-    // Update Hero
-    document.getElementById('t-hero-title').innerText = dict.hero_title;
-    document.getElementById('t-hero-sub').innerText = dict.hero_sub;
-    document.getElementById('t-hero-dl').innerText = dict.hero_dl;
-    document.getElementById('t-hero-gh').innerText = dict.hero_gh;
-    document.getElementById('t-stat-1').innerText = dict.stat1;
-    document.getElementById('t-stat-2').innerText = dict.stat2;
-    document.getElementById('t-stat-3').innerText = dict.stat3;
-    
-    // Update Problem
-    document.getElementById('t-prob-lbl').innerText = dict.prob_lbl;
-    document.getElementById('t-prob-title').innerText = dict.prob_title;
-    document.getElementById('t-prob-title-1').innerText = dict.prob_title_1;
-    document.getElementById('t-prob-1').innerText = dict.prob_b1;
-    document.getElementById('t-prob-title-2').innerText = dict.prob_title_2;
-    document.getElementById('t-prob-2').innerText = dict.prob_b2;
-    document.getElementById('t-prob-title-3').innerText = dict.prob_title_3;
-    document.getElementById('t-prob-3').innerText = dict.prob_b3;
-    
-    // Update How
-    document.getElementById('t-how-lbl').innerText = dict.how_lbl;
-    document.getElementById('t-how-title').innerText = dict.how_title;
-    document.getElementById('t-h1-t').innerText = dict.h1_t;
-    document.getElementById('t-h1-b').innerText = dict.h1_b;
-    document.getElementById('t-h2-t').innerText = dict.h2_t;
-    document.getElementById('t-h2-b').innerText = dict.h2_b;
-    document.getElementById('t-h3-t').innerText = dict.h3_t;
-    document.getElementById('t-h3-b').innerText = dict.h3_b;
-    document.getElementById('t-h4-t').innerText = dict.h4_t;
-    document.getElementById('t-h4-b').innerText = dict.h4_b;
-    document.getElementById('t-h5-t').innerText = dict.h5_t;
-    document.getElementById('t-h5-b').innerText = dict.h5_b;
-    
-    // Update Compute
-    document.getElementById('t-comp-lbl').innerText = dict.comp_lbl;
-    document.getElementById('t-comp-title').innerText = dict.comp_title;
-    document.getElementById('t-comp-sub').innerText = dict.comp_sub;
-    document.getElementById('t-f4').innerText = dict.f4;
-    document.getElementById('t-f6').innerText = dict.f6;
+  let currentLang = localStorage.getItem('myca_lang') || 'tr';
 
-    // Update Resonance Core
-    if (document.getElementById('t-res-lbl')) document.getElementById('t-res-lbl').innerText = dict.res_lbl;
-    if (document.getElementById('t-res-title')) document.getElementById('t-res-title').innerText = dict.res_title;
-    if (document.getElementById('t-res-sub')) document.getElementById('t-res-sub').innerHTML = dict.res_sub;
-    if (document.getElementById('t-res-c1-t')) document.getElementById('t-res-c1-t').innerText = dict.res_c1_t;
-    if (document.getElementById('t-res-c1-b')) document.getElementById('t-res-c1-b').innerText = dict.res_c1_b;
-    if (document.getElementById('t-res-c2-t')) document.getElementById('t-res-c2-t').innerText = dict.res_c2_t;
-    if (document.getElementById('t-res-c2-b')) document.getElementById('t-res-c2-b').innerText = dict.res_c2_b;
-    if (document.getElementById('t-res-c3-t')) document.getElementById('t-res-c3-t').innerText = dict.res_c3_t;
-    if (document.getElementById('t-res-c3-b')) document.getElementById('t-res-c3-b').innerText = dict.res_c3_b;
-    if (document.getElementById('t-res-c4-t')) document.getElementById('t-res-c4-t').innerText = dict.res_c4_t;
-    if (document.getElementById('t-res-c4-b')) document.getElementById('t-res-c4-b').innerText = dict.res_c4_b;
-    
-    // Update OS / Resources
-    document.getElementById('t-arch-lbl').innerText = dict.arch_lbl;
-    document.getElementById('t-os-lbl').innerText = dict.os_lbl;
-    document.getElementById('t-os-title').innerText = dict.os_title;
-    document.getElementById('t-os-card-1-t').innerText = dict.os_c1_t;
-    document.getElementById('t-os-card-1-d').innerText = dict.os_c1_d;
-    document.getElementById('t-os-card-2-t').innerText = dict.os_c2_t;
-    document.getElementById('t-os-card-2-d').innerText = dict.os_c2_d;
-    document.getElementById('t-os-card-3-t').innerText = dict.os_c3_t;
-    document.getElementById('t-os-card-3-d').innerText = dict.os_c3_d;
-    document.getElementById('t-os-card-4-t').innerText = dict.os_c4_t;
-    document.getElementById('t-os-card-4-d').innerText = dict.os_c4_d;
-    
-    // Update Download Section & Footer
-    document.getElementById('t-dl-title').innerText = dict.dl_title;
-    document.getElementById('t-dl-sub').innerText = dict.dl_sub;
-    document.getElementById('t-foot-slogan').innerText = dict.foot_slogan;
-    document.getElementById('t-foot-lic').innerText = dict.foot_lic;
+  function applyLanguage(l) {
+    currentLang = l;
+    localStorage.setItem('myca_lang', currentLang);
+    const d = appTranslations[currentLang] || appTranslations.tr;
+
+    const btn = document.getElementById('langSwitchBtn');
+    if (btn) btn.innerText = d.btn;
+
+    // Nav
+    const navProd = document.getElementById('t-nav-products');
+    if (navProd) {
+      const span = navProd.querySelector('span');
+      if (span) span.innerText = d.nav_products;
+    }
+    safeSet('t-nav-docs', d.nav_docs);
+    safeSet('t-nav-dl', d.nav_dl);
+
+    // Hero
+    safeSet('t-hero-title', d.hero_title);
+    safeSet('t-hero-sub', d.hero_sub);
+    safeSet('t-hero-dl', d.hero_dl);
+    safeSet('t-hero-gh', d.hero_gh);
+    safeSet('t-stat-1', d.stat1);
+    safeSet('t-stat-2', d.stat2);
+    safeSet('t-stat-3', d.stat3);
+
+    // Problem
+    safeSet('t-prob-lbl', d.prob_lbl);
+    safeSet('t-prob-title', d.prob_title);
+    safeSet('t-prob-title-1', d.prob_title_1);
+    safeSet('t-prob-1', d.prob_b1);
+    safeSet('t-prob-title-2', d.prob_title_2);
+    safeSet('t-prob-2', d.prob_b2);
+    safeSet('t-prob-title-3', d.prob_title_3);
+    safeSet('t-prob-3', d.prob_b3);
+
+    // How
+    safeSet('t-how-lbl', d.how_lbl);
+    safeSet('t-how-title', d.how_title);
+    safeSet('h1_t', d.h1_t);
+    safeSet('t-h1-t', d.h1_t);
+    safeSet('t-h1-b', d.h1_b);
+    safeSet('t-h2-t', d.h2_t);
+    safeSet('t-h2-b', d.h2_b);
+    safeSet('t-h3-t', d.h3_t);
+    safeSet('t-h3-b', d.h3_b);
+    safeSet('t-h4-t', d.h4_t);
+    safeSet('t-h4-b', d.h4_b);
+    safeSet('t-h5-t', d.h5_t);
+    safeSet('t-h5-b', d.h5_b);
+
+    // Compute
+    safeSet('t-comp-lbl', d.comp_lbl);
+    safeSet('t-comp-title', d.comp_title);
+    safeSet('t-comp-sub', d.comp_sub);
+    safeSet('t-f4', d.f4);
+    safeSet('t-f6', d.f6);
+
+    // Resonance
+    safeSet('t-res-lbl', d.res_lbl);
+    safeSet('t-res-title', d.res_title);
+    safeSet('t-res-sub', d.res_sub, true);
+    safeSet('t-res-c1-t', d.res_c1_t);
+    safeSet('t-res-c1-b', d.res_c1_b);
+    safeSet('t-res-c2-t', d.res_c2_t);
+    safeSet('t-res-c2-b', d.res_c2_b);
+    safeSet('t-res-c3-t', d.res_c3_t);
+    safeSet('t-res-c3-b', d.res_c3_b);
+    safeSet('t-res-c4-t', d.res_c4_t);
+    safeSet('t-res-c4-b', d.res_c4_b);
+
+    // DePIN
+    safeSet('t-depin-lbl', d.depin_lbl);
+    safeSet('t-depin-title', d.depin_title);
+    safeSet('t-depin-sub', d.depin_sub);
+
+    // Resources
+    safeSet('t-arch-lbl', d.arch_lbl);
+    safeSet('t-os-lbl', d.os_lbl);
+    safeSet('t-os-title', d.os_title);
+    safeSet('t-os-card-1-t', d.os_c1_t);
+    safeSet('t-os-card-1-d', d.os_c1_d);
+    safeSet('t-os-card-2-t', d.os_c2_t);
+    safeSet('t-os-card-2-d', d.os_c2_d);
+    safeSet('t-os-card-3-t', d.os_c3_t);
+    safeSet('t-os-card-3-d', d.os_c3_d);
+    safeSet('t-os-card-4-t', d.os_c4_t);
+    safeSet('t-os-card-4-d', d.os_c4_d);
+
+    // Download & Foot
+    safeSet('t-dl-title', d.dl_title);
+    safeSet('t-dl-sub', d.dl_sub);
+    safeSet('t-foot-slogan', d.foot_slogan);
+    safeSet('t-foot-lic', d.foot_lic);
+  }
+
+  window.toggleLang = function() {
+    applyLanguage(currentLang === 'tr' ? 'en' : 'tr');
   };
+
+  // Run on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => applyLanguage(currentLang));
+  } else {
+    applyLanguage(currentLang);
+  }
 </script>
 
-<!-- ============================================================
-     Dinamik GitHub Release Linker
-     Her yeni release yayınlandığında indirme linkleri
-     otomatik olarak en güncel sürümü gösterir.
-     ============================================================ -->
 <script>
 (function () {
   const REPO = 'brienteth/myc-ai';
   const API  = `https://api.github.com/repos/${REPO}/releases?per_page=15`;
-
-  // Hangi asset hangi butona gidecek — asset adındaki pattern → link id'leri
   const TARGETS = [
-    // macOS DMG: en son release'deki *macOS.dmg
     { pattern: a => a.name.endsWith('.dmg') && a.name.toLowerCase().includes('macos'),
       ids: ['dl-mac', 't-hero-dl', 't-nav-dl'] },
-    // macOS ZIP
     { pattern: a => a.name.endsWith('.zip') && a.name.toLowerCase().includes('macos'),
       ids: ['dl-mac-zip', 't-hero-dl-zip'] },
-    // Windows EXE
-    { pattern: a => a.name.endsWith('.exe'),
-      ids: ['dl-win'] },
-    // Windows ZIP
-    { pattern: a => a.name.endsWith('.zip') && a.name.toLowerCase().includes('windows'),
-      ids: ['dl-win-zip'] },
-    // Linux ZIP
-    { pattern: a => a.name.toLowerCase().includes('linux'),
-      ids: ['dl-linux'] },
+    { pattern: a => a.name.endsWith('.exe'), ids: ['dl-win'] },
+    { pattern: a => a.name.endsWith('.zip') && a.name.toLowerCase().includes('windows'), ids: ['dl-win-zip'] },
+    { pattern: a => a.name.toLowerCase().includes('linux'), ids: ['dl-linux'] },
   ];
 
   async function fetchLatestDownloads() {
@@ -1237,71 +1443,31 @@ footer {
       if (!res.ok) return;
       const releases = await res.json();
       if (!releases.length) return;
-
-      // En son release'in tag'ini al (version badge için)
-      const latestTag = releases[0].tag_name;
-
-      // Her platform için en yeni release'den ilgili asset'i bul
-      const resolved = {};
       for (const target of TARGETS) {
         for (const release of releases) {
           const asset = release.assets.find(target.pattern);
           if (asset) {
-            resolved[target.ids[0]] = {
-              url: asset.browser_download_url,
-              tag: release.tag_name
-            };
             for (const id of target.ids) {
               const el = document.getElementById(id);
               if (el && !el.href.startsWith('/app')) {
-                // Mobil kullanıcılar /app'e yönlendirilmiş, onları değiştirme
                 el.href = asset.browser_download_url;
               }
             }
-            break; // Bu platform için en güncel bulundu
+            break;
           }
         }
       }
-
-      // Nav versiyon badge güncelle
-      const badge = document.getElementById('nav-version-badge');
-      if (badge) badge.textContent = latestTag;
-
-      // Download section: canlı versiyon göster
-      const versionInfo = document.getElementById('release-version-info');
-      const versionLabel = document.getElementById('release-latest-label');
-      if (versionInfo) versionInfo.textContent = latestTag;
-      if (versionLabel) versionLabel.style.display = 'block';
-
     } catch (e) {
-      // API erişimi yoksa sessizce fail et — hardcoded fallback linkler zaten var
-      console.warn('[myca] Could not fetch release info from GitHub:', e.message);
+      console.warn('[myca] Could not fetch release info:', e.message);
     }
   }
 
-  // DOM hazır olunca çalıştır
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', fetchLatestDownloads);
   } else {
     fetchLatestDownloads();
   }
 })();
-</script>
-
-<script type="module">
-  import { MyceliumCanvas } from './landing/mycelium.js';
-  window.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('heroCanvas');
-    if (canvas) {
-      MyceliumCanvas(canvas, {
-        nodeCount: 60,
-        connectDist: 140,
-        speed: 0.22,
-        nodeColor: '#00e87a',
-        threadColor: '#00e87a'
-      });
-    }
-  });
 </script>
 </body>
 </html>
