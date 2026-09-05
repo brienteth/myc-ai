@@ -1,0 +1,79 @@
+{
+  "network": "MYC-TESTNET-SPHEROID-1",
+  "chainId": 108,
+  "deployedAt": "2026-09-05T13:58:17.330Z",
+  "contracts": {
+    "MycToken": {
+      "address": "myc1c4647641274ae4664bfff7634002a246",
+      "name": "MycToken"
+    },
+    "MycUSDToken": {
+      "address": "myc1c22c64bc31a0b24d11ebe340a762fd2d",
+      "name": "MycUSDToken"
+    },
+    "MycUSDCToken": {
+      "address": "myc1c0f1ea5cb17ab83ebfce71f7b4aa379d",
+      "name": "MycUSDCToken"
+    },
+    "MycDeviceRegistry": {
+      "address": "myc1c7b09d01b5307635ff7ddfeee8e9d111",
+      "name": "MycDeviceRegistry"
+    },
+    "MycStakingPool": {
+      "address": "myc1c043f39b2c1b72ab0496ac9b45828ea5",
+      "name": "MycStakingPool"
+    },
+    "MycDEX": {
+      "address": "myc1c528c51a1003d63fd98ffb25b8e3b905",
+      "name": "MycDEX"
+    },
+    "MycResonanceDEX": {
+      "address": "myc1c528c51a1003d63fd98ffb25b8e3b905",
+      "name": "MycDEX"
+    },
+    "MycEscrow": {
+      "address": "myc1ca5b5a4dea6aeae705e9432a70a5c327",
+      "name": "MycEscrow"
+    },
+    "MycActuatorGuard": {
+      "address": "myc1cda687c88e70beb188d33412e75471d5",
+      "name": "MycActuatorGuard"
+    },
+    "MycAgentRegistry": {
+      "address": "myc1c1138d5582a737cbe81909527bdf9136",
+      "name": "MycAgentRegistry"
+    },
+    "MycTaskRegistry": {
+      "address": "myc1c3d4a3bfdba0a05774988788a9473be8",
+      "name": "MycTaskRegistry"
+    },
+    "MycExecutionProof": {
+      "address": "myc1ce463bf81b0309a9ecd7b763c98debdf",
+      "name": "MycExecutionProof"
+    },
+    "MycPolicyRegistry": {
+      "address": "myc1c149e169ac7d14f20291c49c20b8dccf",
+      "name": "MycPolicyRegistry"
+    },
+    "MycNodeRegistry": {
+      "address": "myc1c7c3d4478d523803a22efc2865bd8f67",
+      "name": "MycNodeRegistry"
+    },
+    "MycReputation": {
+      "address": "myc1c117c004e0ad698e5bfe85444a7a76db",
+      "name": "MycReputation"
+    },
+    "MycStreamPay": {
+      "address": "myc1c1279a2dfe6134846aea643db123eac0",
+      "name": "MycStreamPay"
+    },
+    "MycOpacusPay": {
+      "address": "myc1c1279a2dfe6134846aea643db123eac0",
+      "name": "MycStreamPay"
+    },
+    "MycBridge": {
+      "address": "myc1c0a31114771f92f1f25541b380a1c60d",
+      "name": "MycBridge"
+    }
+  }
+}

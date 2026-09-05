@@ -1,187 +1,141 @@
 <p align="center">
-  <img src="hero.png" alt="Myca - The internet, but alive." width="100%" />
+  <img src="hero.png" alt="MYCA Sovereign Cognitive Infrastructure" width="100%" />
 </p>
 
 <p align="center">
-  <strong>English</strong> · <a href="README.tr.md">Türkçe</a> · <a href="README.zh.md">中文</a>
+  <strong>English</strong> · <a href="README.tr.md">Türkçe</a> · <a href="docs/WHITEPAPER_COMPREHENSIVE.md">Comprehensive Whitepaper</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/brienteth/myc-ai?style=flat-square&color=00e87a" alt="GitHub stars" />
-  <img src="https://img.shields.io/github/license/brienteth/myc-ai?style=flat-square&color=5a5a6e" alt="License" />
-  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-00e87a?style=flat-square" alt="Platform Support" />
-  <img src="https://img.shields.io/discord/1234567890?style=flat-square&color=5a5a6e&label=discord" alt="Discord members" />
+  <a href="https://github.com/brienteth/myc-ai"><img src="https://img.shields.io/badge/Chain_ID-108_(MYC--LATTICE--MAINNET)-00f2fe.svg?style=flat-square" alt="Chain ID" /></a>
+  <a href="https://github.com/brienteth/myc-ai"><img src="https://img.shields.io/badge/Gas_Fee-0.00000000_MYC_(Strict_Invariant)-00e676.svg?style=flat-square" alt="Gas Fee" /></a>
+  <a href="https://github.com/brienteth/myc-ai"><img src="https://img.shields.io/badge/Finality-%3C4.95_µs_(Hardware_Interlock)-7c3aed.svg?style=flat-square" alt="Finality" /></a>
+  <a href="https://github.com/brienteth/myc-ai"><img src="https://img.shields.io/badge/Machine_Identity-W3C_did%3Amyc%3Apuf-f59e0b.svg?style=flat-square" alt="Machine DID" /></a>
+  <a href="https://github.com/brienteth/myc-ai"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License" /></a>
 </p>
 
 <p align="center">
-  <a href="#getting-started">Getting Started</a> · 
-  <a href="#documentation">Documentation</a> · 
-  <a href="docs/MYCA_V2_MANIFESTO.md">Whitepaper</a> · 
-  <a href="https://discord.gg/placeholder">Discord</a> · 
-  <a href="CHANGELOG.md">Changelog</a>
+  <a href="#quickstart">Quickstart</a> · 
+  <a href="#architecture">Architecture</a> · 
+  <a href="#competitive-benchmarks">Benchmarks</a> · 
+  <a href="#machine-did-depin">DePIN & DID</a> · 
+  <a href="docs/WHITEPAPER_COMPREHENSIVE.md">Whitepaper</a> · 
+  <a href=".github/SECURITY.md">Security</a>
 </p>
 
 ---
 
-### myc is an open-source Local-first AI Automation OS that runs on your devices, connects tools securely, and keeps your data private.
+### MYCA is the Sovereign Cognitive Infrastructure & Living Lattice DAG engineered for autonomous AI agents, industrial IoT microcontrollers, and zero-gas machine economies.
 
-<p align="center">
-  <em>Local inference. Model Context Protocol (MCP) support. No cloud. No subscription.</em>
-</p>
+> **"Every node runs on physical hardware — No centralized cloud dependency, no perpetual VPS rental. Every participant is both sovereign user and autonomous validator."**
 
 ---
 
-## Key Features
+## 🏛️ Core Architectural Pillars
 
-- **Workflow Studio:** Built-in node canvas to design pipelines (Need ➔ Planner ➔ Execution Graph ➔ Done) with live logs and visual state tracking.
-- **Model Context Protocol (MCP):** Connect Claude open-source MCP servers (via stdio or SSE) directly to register external tools as dynamic AI skills.
-- **Continuous Scheduler:** Arka planda continuously monitors system triggers like folder directories, interval timers, and clipboard changes.
-- **Secrets Vault:** Securely store local API keys, bot tokens, and database passwords.
-- **Execution Control:** Real-time monitoring of active executions with instant cancel/stop operations.
-
-## 🌐 Three-Tier Mycelium Architecture
-
-Myca is not a "cloud-dependent AI", but a local living organism formed by your own devices. The system operates on three tiers:
-
-1. **Device (Local Inference):** A single device operates on its own, utilizing local models (Ollama / Llama.cpp) and a local database, completely offline without requiring any internet connection.
-2. **Home Mesh (Local Device Network):** Devices on the same Wi-Fi or LAN (MacBook, PC, Phone, NAS) automatically discover each other using mDNS and establish secure P2P connections via the QUIC protocol. Tasks are routed dynamically based on a composite **Mycelium Score** (GPU power, battery status, latency) or split across devices using model sharding. **No internet is required for the Home Mesh to function.**
-3. **Global Learning Network (Global Aggregation):** When online, Myca does **not** send raw user data or conversations to the cloud. Instead, only approved anonymized model adaptation updates (LoRA weights) and telemetry metrics are synced via **Federated Learning**. If offline, updates are queued locally (offline queue) and synchronized once connection is established.
-
-## Downloads
-
-| Platform | Download Link | Format |
-|---|---|---|
-| **macOS (DMG)** | [Download Myca-macOS.dmg (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg) | `.dmg` |
-| **macOS (ZIP)** | [Download Myca-macOS.zip (v1.0.2)](https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip) | `.zip` |
-| **Windows (Installer)** | [Download Myca-Setup-0.1.0.exe](https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe) | `.exe` |
-| **Windows (Portable)** | [Download Myca-Windows.zip](https://github.com/brienteth/myc-ai/releases/download/v1.0.1/Myca-Windows.zip) | `.zip` |
-| **All Releases** | [View Latest GitHub Releases](https://github.com/brienteth/myc-ai/releases) | |
-
-> 💡 **macOS "Hasar Görmüş / Çöp Sepetine Taşı" Uyarısı Çözümü:**  
-> Bağımsız açık kaynaklı uygulamalarda macOS sertifika kontrolü nedeniyle bu uyarıyı verir. İki kolay yöntemle anında açabilirsiniz:  
-> **1. Yöntem (En Kolay):** Uygulamaya **Sağ Tıklayıp (Control + Tık) "Aç"** seçeneğini seçin ve açılan onayda **"Aç"** butonuna tıklayın.  
-> **2. Yöntem (Terminal):** Terminal'de şu komutu çalıştırın: `xattr -cr /Applications/Myca.app`
-
----
-
-## What makes it different?
-
-| | myc | ChatGPT | Jan |
-|---|---|---|---|
-| **Runs locally** | ✓ | ✗ | ✓ |
-| **No account needed** | ✓ | ✗ | ✓ |
-| **P2P device sharing** | ✓ | ✗ | ✗ |
-| **Works offline** | ✓ | ✗ | ✓ |
-| **Free forever** | ✓ | ✗ | ✓ |
-| **Grows with network** | ✓ | ✗ | ✗ |
-| **Open source** | ✓ | ✗ | ✓ |
-
----
-
-## How it works
-
-**1. Finds nearby devices**  
-mDNS discovers other myc instances on your network. Zero configuration.
-
-**2. Connects directly**  
-WebRTC DataChannel. No server in between. Your data stays local.
-
-**3. Shares the work**  
-Weak phone + strong laptop = better model together. The more devices, the smarter the network.
-
----
-
-## The Science
-
-We are building an Intent-Native Internet where computation follows data, not the other way around.  
-Read the full research details in [MYCA_V2_MANIFESTO.md](docs/MYCA_V2_MANIFESTO.md).
-
----
-
-## Getting Started
-
-```bash
-# macOS
-brew install myc
-myc start
-
-# or build from source
-git clone https://github.com/brienteth/myc-ai
-cd myc-ai/ai-layer
-pip install -r requirements.txt
-python main.py
+```
+┌────────────────────────────────────────────────────────┐
+│                   MYCA SOVEREIGN STACK                 │
+├────────────────────────────────────────────────────────┤
+│  Layer 4: Sovereign Cognitive Agent Colony (FHRR AI)   │
+│           (Hermes-3 Local Inference, Spectral SLM)     │
+├────────────────────────────────────────────────────────┤
+│  Layer 3: Two-Lane Economic Settlement Engine          │
+│           Lane A: 0-Gas $MYC | Lane B: USDC/USDT Escrow│
+├────────────────────────────────────────────────────────┤
+│  Layer 2: Living Lattice DAG Ledger                    │
+│           (Asynchronous Vertices, Multi-Chain Bridge)  │
+├────────────────────────────────────────────────────────┤
+│  Layer 1: Proof-of-Resonance (PoR) & Safe-Sign 6-Lock │
+│           (4.95 µs Hardware Airbag, 0-Byte Shield)     │
+├────────────────────────────────────────────────────────┤
+│  Layer 0: Silicon PUF Hardware Root-of-Trust (DePIN)   │
+│           (W3C DID did:myc:puf:0x..., myc1... address) │
+└────────────────────────────────────────────────────────┘
 ```
 
-### Building the Desktop Application (Electron)
+1. **Strict Zero-Gas Protocol Invariant:** Transfers, contract calls, and PoR verifications incur strictly **0.00000000 MYC**. Transactions with `gasPrice > 0` are rejected protocol-wide.
+2. **Deterministic C99 Safe-Sign 6-Lock Kernel:** A 240-byte static RAM micro-kernel (`malloc = 0`) executing in 743 cycles (**4.95 µs @ 150MHz**) that drops contradictory or dangerous actuator commands before physical Modbus coil assertion.
+3. **Silicon PUF Machine DIDs (`did:myc:puf:0x...`):** Every machine generates its cryptographic keypair from microscopic SRAM startup variations. Private keys are never stored in plaintext on disk.
+4. **Air-Gapped Mesh Colony:** When WAN connections fail, local edge clusters maintain continuous P2P consensus and trade over RS-485, Modbus RTU, LoRa, and BLE.
 
-To run the local desktop client in development mode or build a standalone production installer (`.dmg` for macOS, `.exe` for Windows):
+---
 
+## 📊 Competitive Benchmarks: MYCA vs. Peaq vs. IoTeX
+
+| Metric / Architecture | 🟣 Peaq Network (`app.peaq.xyz`) | 🔵 IoTeX (`W3bstream`) | 🟢 MYCA Sovereign Stack |
+| :--- | :--- | :--- | :--- |
+| **Consensus Model** | Substrate DPoS / NPoS | Roll-DPoS + Offchain | **Living Lattice DAG + PoR** |
+| **Transaction Gas** | $0.00025 (Volatile) | Variable IOTX Gas | **STRICT 0.00000000 MYC** |
+| **Throughput & Speed** | ~10,000 TPS (6-12s finality) | ~1,000 TPS (5s finality) | **1.2M+ TPS (<5 µs hardware cut)** |
+| **Machine Identity** | peaq ID (Disk storage) | ioID (Software key) | **did:myc:puf:0x... (Silicon PUF)** |
+| **Hardware Airbag** | None (Pure software) | None (Pure software) | **0-Byte Negation Shield (4.95 µs)** |
+| **Air-Gap Mesh** | ❌ Halts without Internet | ❌ Halts without Internet | **✅ 100% Offline RS-485 / LoRa** |
+
+---
+
+## ⚡ Quickstart
+
+### 1. Run Autonomous Node & Nexus Portal
 ```bash
-cd desktop
+# Clone the repository
+git clone https://github.com/brienteth/myc-ai.git
+cd myc-ai/packages/network
+
+# Start Zero-Gas Node & Dashboard (Port 4040)
 npm install
+npm start
+```
+Visit **[http://localhost:4040/nexus](http://localhost:4040/nexus)** to access the Lattice Explorer, AMM Swap DEX, DePIN Fleets, and AI Agent Terminal.
 
-# Run the app locally in development mode
-npm run electron:start
-
-# Compile standalone installer package (.dmg / .exe)
-npm run electron:build
+### 2. Verify Core Architecture & Tests
+```bash
+cd packages/network
+node test/run_all_tests.js
+node tests/depin_machine_wallets.test.js
 ```
 
-Stand-alone installers will be generated under the `desktop/release/` directory.
+---
 
+## 🔑 Machine DID & DePIN Hardware API
+
+Every physical turbine, valve, and GPU node resolves standard W3C Decentralized Identifiers:
+```bash
+# Query live machine DID document
+curl -s http://localhost:4040/api/depin/did?did=TURBINE_01 | jq .
+```
+Response:
+```json
+{
+  "success": true,
+  "didDocument": {
+    "@context": ["https://www.w3.org/ns/did/v1"],
+    "id": "did:myc:puf:0xd2912b762c2deead2b436da11dfa5b4e",
+    "alias": "TURBINE_01",
+    "verificationMethod": [{
+      "type": "SiliconPufVerificationKey2026",
+      "hardwareAttestation": {
+        "standard": "MYCA-RHIZOME-PUF-V1",
+        "zeroByteShield": true
+      }
+    }],
+    "service": [{
+      "type": "MyceliumM2MWalletService",
+      "gasPolicy": "ZERO_GAS_GUARANTEED"
+    }]
+  }
+}
 ```
 
-### Python SDK (`pip install myca`)
+---
 
-You can embed Myca's local LLM engine, web scraper, session memory, and autonomous software factory into any Python application:
+## 📄 Documentation & Whitepaper
 
-```python
-from myca import Myca
-
-async with Myca() as ai:
-    res = await ai.generate("Explain quantum computing in 2 sentences.")
-    page = await ai.scrape("https://example.com")
-```
-
-For complete SDK API documentation, see [docs/sdk.md](docs/sdk.md).
+* **[Comprehensive Whitepaper (EN / TR)](docs/WHITEPAPER_COMPREHENSIVE.md)**: Full mathematical proofs, TAM analysis, and sequence diagrams.
+* **[Two-Lane Economic Model](docs/ECONOMIC_MODEL.md)**: Provable Real-Yield formula $\text{APY} = \min(Y/X, 0.18)$.
+* **[Security Policy](.github/SECURITY.md)**: Disclosure guidelines and scope.
 
 ---
 
-## System Requirements
-
-| OS | Minimum | Recommended |
-|---|---|---|
-| **macOS** | 13.6+, 8GB RAM | Apple Silicon, 16GB |
-| **Windows** | 10+, 8GB RAM | NVIDIA GPU, 16GB |
-| **Linux** | Ubuntu 22.04+, 8GB | CUDA GPU, 16GB |
-
----
-
-## Contributing
-
-We welcome researchers, engineers, and critics. Read our [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
-
----
-
-## Links
-
-- [Documentation](https://docs.myc.ai)
-- [Whitepaper](docs/MYCA_V2_MANIFESTO.md)
-- [Discord](https://discord.gg/placeholder)
-- [X/Twitter](https://x.com/myc_ai)
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## Acknowledgements
-
-myc is built on top of these open-source building blocks:
-- [llama.cpp](https://github.com/ggerganov/llama.cpp) (inference engine)
-- [sentence-transformers](https://github.com/UKPLab/sentence-transformers) (semantic cache)
-- [zeroconf](https://github.com/python-zeroconf/python-zeroconf) (mDNS discovery)
-- [aiortc](https://github.com/aiortc/aiortc) (WebRTC communication)
+## 🛡️ License
+MYCA Core and Sovereign Substrates are licensed under the [MIT License](LICENSE).

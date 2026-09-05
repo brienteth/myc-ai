@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYC Network — Embedded DePIN Middleware for Layer-1 & Layer-2 Blockchains</title>
+  <meta name="description" content="Turn your L1/L2 blockchain into an industrial powerhouse. 384-byte C99 bare-metal edge kernel, Silicon PUF hardware wallets, and Safe-Sign Modbus execution layer for Solana, Ethereum L2s, and Cosmos.">
+
+  <!-- Forest Floor Google Fonts (mycai.pro exact typography) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
+</head>
+<body style="padding-top: 80px;">
+
+  <!-- UNIFIED 0G-STYLE HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: Navigation Menus -->
+      <div class="myca-nav-center">
+        <!-- Ecosystem Dropdown -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/hub" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
+                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
+                </div>
+              </a>
+              <a href="/explorer" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧭</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Lattice DAG Explorer</div>
+                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & DAG vertices</div>
+                </div>
+              </a>
+              <a href="/depin" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🤖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
+                  <div class="myca-dd-sub">Silicon PUF identity, turbines & actuator nodes</div>
+                </div>
+              </a>
+              <a href="/agent" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧠</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial AI Colony</div>
+                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📜</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial Contracts Studio</div>
+                  <div class="myca-dd-sub">Verified contracts, bytecode runner & ABIs</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build Dropdown (Developer Focus) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/build" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">0→1 Quickstart Studio <span class="myca-dd-badge">STUDIO</span></div>
+                  <div class="myca-dd-sub">Proje tipi seç, otomatik faucet al, canlı playground'da çalıştır</div>
+                </div>
+              </a>
+              <a href="/dev-docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛠️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Developer Docs <span class="myca-dd-badge">DEV</span></div>
+                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples & quickstart</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📋</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Smart Contract ABIs</div>
+                  <div class="myca-dd-sub">Chain ID 108 tokenomics, bridge & escrow interfaces</div>
+                </div>
+              </a>
+              <a href="/agent#hardware" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔌</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Hardware & Modbus SDK</div>
+                  <div class="myca-dd-sub">WebSerial PUF keyrings & 0-Byte Negation Shield</div>
+                </div>
+              </a>
+              <a href="https://github.com/bl10buer/myc-network" target="_blank" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🐙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">GitHub Repositories ↗</div>
+                  <div class="myca-dd-sub">Open-source core crates, consensus & test suites</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Docs Dropdown (Architecture & Whitepaper) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Network Whitepaper</div>
+                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
+                </div>
+              </a>
+              <a href="/docs.html#tokenomics" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🪙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Tokenomics Specs</div>
+                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
+                </div>
+              </a>
+              <a href="/docs.html#zero-gas" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛡️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Zero-Gas Invariant</div>
+                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
+                </div>
+              </a>
+              <a href="/docs.html#security" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔒</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Security & BFT Quorum</div>
+                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons & Live App Launch -->
+      <div class="myca-nav-right">
+        <a href="/build" class="myca-btn-secondary">Build</a>
+        <a href="/hub" class="myca-btn-primary">
+          <span>Launch NEXUS</span>
+          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-glow"></div>
+    
+    <div class="hero-chip">
+      <span class="dot"></span>
+      <span>ENTERPRISE B2B INFRASTRUCTURE FOR WEB3 CHAINS & DEPIN</span>
+    </div>
+
+    <h1>
+      The Industrial DePIN Layer for <br>
+      <span class="hero-italic">Existing Layer-1 & Layer-2 Blockchains</span>
+    </h1>
+
+    <p class="hero-sub">
+      Your blockchain does DeFi and NFTs. But it cannot run on a $0.30 factory microcontroller. 
+      <strong>MYC Network</strong> is the bare-metal C99 middleware that bridges <strong>Solana, Ethereum L2s, Cosmos, and Polkadot</strong> directly to physical industrial PLCs, SCADA networks, and smart power grids.
+    </p>
+
+    <div class="hero-actions">
+      <a href="/hub" class="btn-primary">
+        <span>Enter NEXUS Portal</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="/explorer" class="btn-outline">
+        <span>Inspect Lattice Explorer</span>
+      </a>
+      <a href="#architecture" class="btn-outline">
+        <span>Inspect C99 Architecture</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Live Metrics Bar -->
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-val">384 Bytes</div>
+      <div class="stat-lbl">Static RAM Footprint (malloc=0)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">38.4 µs</div>
+      <div class="stat-lbl">Deterministic Edge Latency (PoR)</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">48 Bytes</div>
+      <div class="stat-lbl">Compact RS-485 / LoRa Frame</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">0.00 Gas</div>
+      <div class="stat-lbl">Hardware Safe-Sign Guarantee</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">100M $MYC</div>
+      <div class="stat-lbl">Fixed Genesis Supply (Testnet)</div>
+    </div>
+  </div>
+
+  <!-- MYCAI Ecosystem Relationship -->
+  <section id="ecosystem">
+    <div class="section-inner">
+      <div class="ecosystem-banner">
+        <span class="ecosystem-badge">MYCAI ECOSYSTEM RELATIONSHIP</span>
+        <h2 class="ecosystem-title">How MYC Network Fits Into The MYCAI Bio-Synthetic Vision</h2>
+        <p style="color:var(--f-soil); font-size:14.5px; max-width:760px; line-height:1.75; margin: 0 auto 32px;">
+          <strong>MYCAI</strong> is the cognitive intelligence layer (Autonomous Biological AI & Neural Coherence). 
+          <strong>MYC Network</strong> is its hardened, physical nervous system — an industrial-grade embedded bridge licensed to third-party blockchains that want to anchor real machines to web3 ledgers.
+        </p>
+
+        <div class="ecosystem-grid">
+          <div class="eco-card">
+            <h4>🧠 MYCAI Core Platform</h4>
+            <p>High-level autonomous intelligence, biological neural networks, intent formulation, cognitive memory, and multi-agent coordination.</p>
+          </div>
+          <div class="eco-card" style="border-color: var(--f-moss); background: var(--f-parchment);">
+            <h4 style="color:var(--f-moss);">🍄 MYC Network (This Product)</h4>
+            <p>The low-level, zero-heap C99 execution engine that converts high-level AI intents into sub-millisecond Modbus coil voltages and relays them onto your blockchain.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Portal Navigation Showcase -->
+  <section id="portal-directory">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-label">ECOSYSTEM DIRECTORY</div>
+        <h2 class="section-title">Explore All Portals & Middleware Services</h2>
+        <p class="section-desc">
+          Every component of the MYC Network is live on the <code>MYC-TESTNET-SPHEROID-1</code> lattice testnet with zero-gas execution.
+        </p>
+      </div>
+
+      <div class="target-grid">
+        <!-- Hub 1: NEXUS Portal -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">⚡</div>
+            <h3>MYCA NEXUS Portal</h3>
+            <p>The all-in-one command center providing unified access to DEX swap, cross-chain bridge, staking, agent execution, and machine fleet telemetry.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> All 6 core dApps in a unified interface</li>
+            <li><span>✓</span> Daily testnet faucet: 5 $MYC (@myc_ai verified)</li>
+            <li><span>✓</span> Real-time DAG transaction settlement</li>
+          </ul>
+          <a href="/hub" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open NEXUS Portal ↗</a>
+        </div>
+
+        <!-- Hub 2: Resonance Swap DEX -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">🔄</div>
+            <h3>Resonance Swap (DEX)</h3>
+            <p>Constant-product AMM featuring strict slippage tolerance checks, cooldown intervals, and MEV sandwich-attack mitigation.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Slippage limits (0.5% – 5.0%)</li>
+            <li><span>✓</span> Anti-bot wallet rate limiters</li>
+            <li><span>✓</span> Microsecond execution & 0.00 gas</li>
+          </ul>
+          <a href="/hub#swap" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Swap DEX ↗</a>
+        </div>
+
+        <!-- Hub 3: Hyphae Bridge -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">🌉</div>
+            <h3>Hyphae Bridge</h3>
+            <p>Bi-directional cross-chain bridge linking MetaMask / EVM (Lane B) to high-speed zero-gas PUF hardware identities (Lane A).</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Cryptographic lock & mint verification</li>
+            <li><span>✓</span> Modbus hardware escrow contract</li>
+            <li><span>✓</span> Multi-chain asset portability</li>
+          </ul>
+          <a href="/hub#bridge" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Bridge ↗</a>
+        </div>
+
+        <!-- Hub 4: MycStreamPay -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">💳</div>
+            <h3>MycStreamPay & Wallet</h3>
+            <p>High-frequency nano-streaming payment channels allowing autonomous machines to buy and sell sensor telemetry per millisecond.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Sub-cent streaming balance flows</li>
+            <li><span>✓</span> Hardware PUF keypair management</li>
+            <li><span>✓</span> Unilateral withdrawal safety</li>
+          </ul>
+          <a href="/hub#swap" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open StreamPay ↗</a>
+        </div>
+
+        <!-- Hub 5: Staking & Quotas -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">⚡</div>
+            <h3>Staking & Quotas</h3>
+            <p>Proof-of-Resonance validator pools. Lock $MYC to unlock higher Modbus bandwidth, priority coil relays, and staking APY rewards.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Tier quotas (Industrial, Enterprise, Cloud)</li>
+            <li><span>✓</span> Slashing protection on hardware faults</li>
+            <li><span>✓</span> Live yield distribution engine</li>
+          </ul>
+          <a href="/hub#staking" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Staking ↗</a>
+        </div>
+
+        <!-- Hub 6: Rhizome DePIN Fleet -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">🤖</div>
+            <h3>Rhizome DePIN Fleet</h3>
+            <p>Real-time telemetry and control for industrial edge machines: wind turbines, chemical pumps, and power grid transformers.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Silicon PUF seedless hardware identity</li>
+            <li><span>✓</span> Live Modbus coil telemetry & status</li>
+            <li><span>✓</span> Air-gapped safe-sign hardware actuation</li>
+          </ul>
+          <a href="/depin" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Machine Fleet ↗</a>
+        </div>
+
+        <!-- Hub 7: Lattice Explorer -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">🧭</div>
+            <h3>Lattice DAG Explorer</h3>
+            <p>Standalone live blockchain explorer visualizing the Proof-of-Resonance DAG lattice, microsecond vertices, and transaction hashes.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Full transaction search & lookup</li>
+            <li><span>✓</span> Live DAG visualizer graph</li>
+            <li><span>✓</span> Zero-gas block validation metrics</li>
+          </ul>
+          <a href="/explorer" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Lattice Explorer ↗</a>
+        </div>
+
+        <!-- Hub 8: Mycelial AI Colony -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">🧠</div>
+            <h3>Mycelial AI Colony</h3>
+            <p>100% offline edge agent runtime powered by OpenClaw & Hermes, executing deterministic machine intents without cloud telemetry.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Serial port Modbus coil connection</li>
+            <li><span>✓</span> Local safety verifier (6-Lock Matrix)</li>
+            <li><span>✓</span> Natural language intent evaluator</li>
+          </ul>
+          <a href="/agent" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open AI Colony ↗</a>
+        </div>
+
+        <!-- Hub 9: Mycelial Contracts Studio -->
+        <div class="target-card">
+          <div>
+            <div class="target-icon">📜</div>
+            <h3>Mycelial Contracts Studio</h3>
+            <p>Inspect compiled bytecode, contract state storage, and execute read/write calls directly against deployed lattice contracts on Chain 108.</p>
+          </div>
+          <ul class="target-benefits">
+            <li><span>✓</span> Verified contract ABIs & state</li>
+            <li><span>✓</span> Interactive contract method runner</li>
+            <li><span>✓</span> 384-byte C99 execution specifications</li>
+          </ul>
+          <a href="/contracts" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Contracts Studio ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What Problem We Solve For Blockchain Foundations -->
+  <section id="value-prop">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-label">THE BLOCKCHAIN INDUSTRIAL GAP</div>
+        <h2 class="section-title">Why Blockchains Cannot Touch Real Industrial Machines Today</h2>
+        <p class="section-desc">
+          Blockchains were designed for datacenters and high-spec nodes. Industrial factories run on 8-bit to 32-bit microcontrollers with zero internet access.
+        </p>
+      </div>
+
+      <div class="versus-grid">
+        <div class="versus-col theirs">
+          <span class="versus-badge">Typical Blockchain Node Stack</span>
+          <h3 class="versus-title">Why Web3 Fails at the Factory Gate</h3>
+          <ul class="versus-list">
+            <li><strong>Requires GBs of RAM:</strong> Geth, Solana validator, or Cosmos SDK nodes require 16GB–128GB of RAM. An industrial water pump sensor has 32 Kilobytes.</li>
+            <li><strong>JSON-RPC Bloat:</strong> A single Web3 transfer is 800+ bytes of JSON text. RS-485 serial buses and LoRa radios drop packets instantly.</li>
+            <li><strong>Dangerous Blind Signing:</strong> Metamask signs raw hex calldata (<code>0x608060...</code>). If an AI agent sends this to a 500kW turbine, catastrophic failure occurs.</li>
+            <li><strong>Gas Volatility:</strong> You cannot tell an automotive assembly line that a brake caliper cannot be welded because Ethereum gas fees spiked to 80 Gwei.</li>
+          </ul>
+        </div>
+
+        <div class="versus-col ours">
+          <span class="versus-badge">MYC Network Middleware</span>
+          <h3 class="versus-title">The Turnkey Industrial Bridge for Your Chain</h3>
+          <ul class="versus-list">
+            <li><strong>384-Byte C99 Micro-Kernel:</strong> Runs bare-metal with zero dynamic memory allocation (<code>malloc=0</code>). Flashes directly onto $0.30 STM32 / ESP32 chips.</li>
+            <li><strong>48-Byte Compact Binary Framing:</strong> Squeezes complete transactions and cryptographic proofs into ultra-dense packets compatible with RS-485 and LoRa.</li>
+            <li><strong>Safe-Sign 6-Lock Matrix:</strong> Translates natural intents directly into validated Modbus coils (e.g. <code>Start Turbine #2</code> ➔ <code>Coil 0x0082, 3.30V</code>). Negation attacks are destroyed in 3.1 µs.</li>
+            <li><strong>Predictable Hardware Settlement:</strong> Phase-lock deterministic execution at 38.4 µs. Zero runtime gas surprises.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Preview -->
+  <section id="architecture">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-label">CORE ENGINEERING</div>
+        <h2 class="section-title">Zero-Heap C99 Embedded Engine</h2>
+        <p class="section-desc">
+          Production-proven source code. Compilable with standard GCC ARM toolchains for Cortex-M and RISC-V.
+        </p>
+      </div>
+
+      <div class="code-block">
+        <pre><code><span class="cm">/* MYC Network — Bare-Metal C99 Embedded Intent Evaluator (malloc = 0) */</span>
+<span class="kw">#include</span> <span class="str">&lt;stdint.h&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;stdbool.h&gt;</span>
+
+<span class="kw">typedef struct</span> {
+    <span class="type">uint8_t</span>  status;             <span class="cm">/* 0x00 = OK, 0xE5 = Negation Blocked */</span>
+    <span class="type">uint16_t</span> target_register;    <span class="cm">/* Modbus Coil Register (e.g., 0x0082) */</span>
+    <span class="type">uint16_t</span> action_value;       <span class="cm">/* 0xFF00 = 3.30V (HIGH), 0x0000 = 0V */</span>
+    <span class="type">uint8_t</span>  modbus_frame[8];    <span class="cm">/* Fully pre-calculated RTU Frame with CRC-16 */</span>
+    <span class="type">uint32_t</span> latency_ns;         <span class="cm">/* 38,400 ns (38.4 µs) */</span>
+} <span class="type">MycIntentResult</span>;
+
+<span class="cm">/* The 6-Lock Hardware Shield executes deterministically within 384 bytes static RAM */</span>
+<span class="type">MycIntentResult</span> <span class="fn">myc_kernel_evaluate</span>(<span class="kw">const char</span>* natural_command) {
+    <span class="cm">/* Lock 1: Negation Guard suppresses adversarial attacks (0-Byte NO-OP) */</span>
+    <span class="cm">/* Lock 2: Modbus bounds validator enforces 0x0000-0x00FF register limits */</span>
+    <span class="cm">/* Lock 3: Direct hardware pin voltage assertion (3.30V vs Safe-Low) */</span>
+    <span class="kw">return</span> compiled_result;
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commercial B2B Offering -->
+  <section id="commercial">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-label">PARTNERSHIP & COMMERCIAL MODELS</div>
+        <h2 class="section-title">How Blockchain Foundations Can License MYC Network</h2>
+        <p class="section-desc">
+          Flexible B2B models tailored for Layer-1 ecosystems, enterprise consortiums, and DePIN startups.
+        </p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Model 1 -->
+        <div class="pricing-card">
+          <div>
+            <h3 class="pricing-tier">L1/L2 Ecosystem Grant & Bridge</h3>
+            <p class="pricing-sub">Ideal for public Layer-1 foundations wanting an industrial showcase.</p>
+            <ul class="pricing-features">
+              <li>Custom RPC Bridge connecting our C99 kernel to your chain</li>
+              <li>Co-branded developer documentation & guides</li>
+              <li>Turnkey Testnet Simulator configured with your native token</li>
+              <li>Community workshop & hackathon technical support</li>
+            </ul>
+          </div>
+          <button class="btn-outline" style="width:100%; justify-content:center;" onclick="openContactModal('Ecosystem Grant Model')">Inquire for Grant</button>
+        </div>
+
+        <!-- Model 2 -->
+        <div class="pricing-card featured">
+          <span class="pricing-badge">MOST POPULAR</span>
+          <div>
+            <h3 class="pricing-tier">Full IP & Source Code Licensing</h3>
+            <p class="pricing-sub">For chains or DePIN networks wanting complete ownership of the industrial layer.</p>
+            <ul class="pricing-features">
+              <li>Full repository ownership (C99 core, Safe-Sign, Lattice DAG)</li>
+              <li>Re-branding rights (integrate as your native edge protocol)</li>
+              <li>Hardware reference designs for RS-485, Modbus & LoRa</li>
+              <li>Dedicated architecture handover & engineering integration</li>
+            </ul>
+          </div>
+          <button class="btn-primary" style="width:100%; justify-content:center;" onclick="openContactModal('Full IP License')">Request Commercial Terms</button>
+        </div>
+
+        <!-- Model 3 -->
+        <div class="pricing-card">
+          <div>
+            <h3 class="pricing-tier">Enterprise SaaS Middleware</h3>
+            <p class="pricing-sub">For industrial consortia wanting hosted enterprise gateways.</p>
+            <ul class="pricing-features">
+              <li>Hosted Gateway relaying machine logs onto selected chain</li>
+              <li>Managed Silicon PUF keys and cryptographic notarization</li>
+              <li>Custom compliance exporter (EU CBAM / FDA 21 CFR)</li>
+              <li>99.99% SLA edge uptime monitoring</li>
+            </ul>
+          </div>
+          <button class="btn-outline" style="width:100%; justify-content:center;" onclick="openContactModal('Enterprise SaaS Model')">Schedule Architecture Call</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Modal -->
+  <div class="modal-backdrop" id="contactModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeContactModal()">&times;</button>
+      <h3 class="modal-title">Partner with MYC Network</h3>
+      <p class="modal-desc" id="modalSubject">Connect with our architecture team for technical partnerships or IP licensing.</p>
+      
+      <form id="contactForm" onsubmit="handleFormSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">YOUR ORGANIZATION / BLOCKCHAIN PROTOCOL</label>
+          <input type="text" class="form-input" placeholder="e.g. Solana Foundation / IoTeX Ecosystem / Private Consortium" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">YOUR WORK EMAIL</label>
+          <input type="email" class="form-input" placeholder="partner@yourchain.org" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PARTNERSHIP INQUIRY TYPE</label>
+          <input type="text" id="inquiryTypeInput" class="form-input" value="L1 Ecosystem Integration" readonly style="color:var(--f-moss); font-weight:600;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">BRIEF MESSAGE / SCOPE</label>
+          <textarea class="form-input" rows="3" placeholder="Tell us about your chain and timeline..."></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Submit Inquiry</button>
+      </form>
+      <div id="formSuccess" style="display:none; text-align:center; padding:20px; color:var(--f-moss); font-family:var(--f-mono); font-size:13px;">
+        ✓ Inquiry registered. Our technical partnership lead will respond within 24 hours.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (Forest Floor styling) -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="nav-logo-title">
+          <img src="/mycai_logo.png" alt="MYC Network" class="nav-logo-icon" style="width:24px; height:24px;">
+          <span class="nav-logo-text" style="font-size:20px;">myc network</span>
+        </div>
+        <p>A specialized physical computing & DePIN middleware layer of the <strong>MYCAI</strong> autonomous intelligence ecosystem.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Portals & Apps</h4>
+          <a href="/hub">Mycelium Hub</a>
+          <a href="/hub#swap">Mycelial Swap DEX</a>
+          <a href="/hub#bridge">Hyphae Bridge</a>
+          <a href="/hub#swap">MycStreamPay & Wallet</a>
+          <a href="/depin">Rhizome DePIN Fleet</a>
+        </div>
+        <div class="footer-col">
+          <h4>Engineering</h4>
+          <a href="/explorer">Lattice DAG Explorer</a>
+          <a href="/agent">Mycelial AI Colony</a>
+          <a href="/contracts">Mycelium Contracts Studio</a>
+          <a href="/depin">Rhizome DePIN Fleet</a>
+          <a href="#architecture">C99 Micro-Kernel</a>
+        </div>
+        <div class="footer-col">
+          <h4>Commercial & IP</h4>
+          <a href="#commercial">L1/L2 Foundations</a>
+          <a href="#commercial">DePIN Protocols</a>
+          <a href="#commercial">IP Licensing</a>
+          <a href="#ecosystem">MYCAI Vision</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>&copy; 2026 MYC Network. All Rights Reserved. Mycelium Lattice OS & DePIN Infrastructure.</div>
+      <div style="color:var(--f-moss); font-weight:600;">Chain ID 108 — Testnet Spheroid 1</div>
+    </div>
+  </footer>
+
+  <script>
+    function openContactModal(type) {
+      document.getElementById('inquiryTypeInput').value = type || 'Commercial Inquiry';
+      document.getElementById('modalSubject').innerText = 'Inquiry for: ' + (type || 'General Partnership');
+      document.getElementById('contactModal').classList.add('active');
+    }
+    function closeContactModal() {
+      document.getElementById('contactModal').classList.remove('active');
+    }
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('formSuccess').style.display = 'block';
+      setTimeout(function() {
+        closeContactModal();
+        document.getElementById('contactForm').reset();
+        document.getElementById('contactForm').style.display = 'block';
+        document.getElementById('formSuccess').style.display = 'none';
+      }, 2500);
+    }
+    // Close on backdrop click
+    document.getElementById('contactModal').addEventListener('click', function(e) {
+      if (e.target === this) closeContactModal();
+    });
+
+    // Mobile dropdown toggle
+    const dropdown = document.getElementById('ecosystemDropdown');
+    const dropdownBtn = dropdown.querySelector('.nav-dropdown-btn');
+    dropdownBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      dropdown.classList.toggle('is-open');
+    });
+    document.addEventListener('click', function() {
+      dropdown.classList.remove('is-open');
+    });
+  </script>
+</body>
+</html>

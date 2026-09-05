@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYCA Web3 dApp Portal — Zero-Gas & OpacusPay Integration</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">M</div>
+      <div class="brand-title">MYCA <span>Sovereign dApp</span></div>
+    </div>
+    <div class="header-actions">
+      <div class="network-badge">
+        <div class="pulse-dot"></div>
+        <span>Chain ID 108 (Zero-Gas PoR)</span>
+      </div>
+      <button id="connectBtn" class="btn btn-primary" onclick="connectWallet()">
+        <span>⚡ Connect Sovereign Wallet</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero">
+      <h1>Decentralized Web3 Application Portal</h1>
+      <p>Demonstrating zero-gas on-chain transfers, autonomous colony AI task escrow, and OpacusPay multi-chain settlement on the MYCA Protocol.</p>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Balance Card: Native MYC -->
+      <div class="card balance-card col-6">
+        <div class="balance-header">Native Balance (Zero-Gas L1)</div>
+        <div class="balance-amount"><span id="mycBalance">0.00</span> <span class="balance-unit">MYC</span></div>
+        <div class="wallet-address" id="connectedAccount">Not Connected</div>
+        <div style="margin-top: 14px;">
+          <button class="btn btn-secondary" onclick="requestFaucet()">🎁 Request 1,000 $MYC Faucet</button>
+        </div>
+      </div>
+
+      <!-- Balance Card: Opacus USDC Compute -->
+      <div class="card balance-card opacus col-6">
+        <div class="balance-header">Opacus Kernel Compute Balance</div>
+        <div class="balance-amount"><span id="usdcBalance">0.00</span> <span class="balance-unit opacus">USDC</span></div>
+        <div class="wallet-address">Settlement: Multichain Crypto & Fiat Rails</div>
+        <div style="margin-top: 14px;">
+          <button class="btn btn-opacus" onclick="openOpacusBridgeModal()">🔄 Deposit / Bridge to Compute</button>
+        </div>
+      </div>
+
+      <!-- Transaction Card: Zero-Gas Transfer -->
+      <div class="card col-6">
+        <div class="card-title">
+          <span class="icon">💸</span>
+          <span>Zero-Gas Token Transfer</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="sendRecipient">Recipient MYC Address</label>
+          <input type="text" id="sendRecipient" class="form-input" placeholder="myc1recipient000000000000000000000" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="sendAmount">Amount ($MYC)</label>
+          <input type="number" id="sendAmount" class="form-input" placeholder="10.0" value="25">
+        </div>
+        <div class="gas-indicator">
+          <span>⚡ Network Fee / Gas:</span>
+          <span>0.00 MYC (PoR Lattice)</span>
+        </div>
+        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="sendTransfer()">
+          Execute Zero-Gas Transfer
+        </button>
+      </div>
+
+      <!-- Opacus Task Escrow Card -->
+      <div class="card col-6">
+        <div class="card-title">
+          <span class="icon">🤖</span>
+          <span>Opacus AI Task Escrow Funding</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="taskType">Colony AI Task Type</label>
+          <select id="taskType" class="form-select">
+            <option value="MARKET_MAKING_INFERENCE">Autonomous Market Making (Dual-PoR)</option>
+            <option value="PROTEIN_FOLDING">AlphaFold Biomolecular Prediction</option>
+            <option value="INDUSTRIAL_SENTINEL">DePIN Sensor Anomaly Classification</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="taskDeposit">USDC Escrow Deposit</label>
+          <input type="number" id="taskDeposit" class="form-input" placeholder="5.0" value="5.0">
+        </div>
+        <div class="gas-indicator" style="background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.2); color: var(--purple-glow);">
+          <span>🔒 Escrow Guarantee:</span>
+          <span>Settle on Verified Execution Proof</span>
+        </div>
+        <button class="btn btn-opacus" style="width: 100%; justify-content: center;" onclick="fundOpacusTask()">
+          Lock Escrow & Dispatch Task
+        </button>
+      </div>
+
+      <!-- Real-Time Activity & Event Log -->
+      <div class="card col-12">
+        <div class="card-title" style="justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="icon">📡</span>
+            <span>Live Protocol Events & Activity Log (SSE /api/events)</span>
+          </div>
+          <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px;" onclick="clearLogs()">Clear</button>
+        </div>
+        <div class="log-console" id="logConsole">
+          <div class="log-entry info"><span class="log-time">[System]</span> Connected to MYCA Network Node (http://localhost:4040). Ready.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

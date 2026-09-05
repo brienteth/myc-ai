@@ -1,0 +1,14 @@
+{
+  "name": "myc-colony-ai-agent",
+  "version": "1.0.0",
+  "description": "Autonomous AI Colony Agent built on MYC Network (Chain ID 108) with Dual-PoR Verification",
+  "type": "module",
+  "main": "agent.js",
+  "scripts": {
+    "start": "node agent.js",
+    "test": "node test_agent.js"
+  },
+  "keywords": ["myc", "ai-agent", "colony", "dual-por", "zero-gas"],
+  "author": "MYC Ecosystem Developer",
+  "license": "MIT"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "iotex-edge-network",
+  "version": "1.0.0",
+  "description": "IoTeX Edge: 240-Byte Bare-Metal C99 ioID & W3bstream Nano Kernel for DePIN",
+  "type": "module"
+}

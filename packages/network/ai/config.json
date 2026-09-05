@@ -1,0 +1,17 @@
+{
+  "hdc": {
+    "dimension": 4096,
+    "defaultType": "complex"
+  },
+  "spectral": {
+    "transform": "fft",
+    "top_k": 100
+  },
+  "resonance": {
+    "alpha": 0.30,
+    "beta": 0.20,
+    "gamma": 0.20,
+    "delta": 0.20,
+    "epsilon": 0.10
+  }
+}

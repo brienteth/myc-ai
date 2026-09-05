@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Docs | Mycelium Network</title>
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
+  <style>
+    body {
+      background: var(--f-cream);
+      color: var(--f-humus);
+      font-family: var(--f-sans);
+      margin: 0;
+      padding-top: 90px;
+    }
+    .docs-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+    }
+    .docs-sidebar {
+      position: sticky;
+      top: 100px;
+      height: fit-content;
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .docs-sidebar h4 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--f-soil);
+      margin: 16px 0 8px 12px;
+    }
+    .docs-sidebar h4:first-child { margin-top: 0; }
+    .sidebar-link {
+      display: block;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--f-humus);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .sidebar-link:hover, .sidebar-link.active {
+      background: var(--f-glow);
+      color: var(--f-moss);
+      font-weight: 600;
+    }
+    .docs-content {
+      min-width: 0;
+    }
+    .docs-header {
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--f-bark);
+      padding-bottom: 24px;
+    }
+    .docs-header h1 {
+      font-family: var(--f-serif);
+      font-size: 38px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      color: var(--f-humus);
+    }
+    .docs-header p {
+      font-size: 16px;
+      color: var(--f-soil);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .docs-card {
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .docs-card h2 {
+      font-family: var(--f-serif);
+      font-size: 22px;
+      margin: 0 0 16px;
+      color: var(--f-humus);
+    }
+    .code-block {
+      background: #191B1A;
+      color: #E6EAE7;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 14px 0;
+      line-height: 1.5;
+    }
+    .endpoint-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .badge-post { background: rgba(46, 107, 69, 0.2); color: var(--f-moss); border: 1px solid var(--f-moss); }
+    .badge-get { background: rgba(63, 140, 89, 0.2); color: var(--f-thread); border: 1px solid var(--f-thread); }
+    table.api-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    table.api-table th, table.api-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--f-bark);
+      text-align: left;
+    }
+    table.api-table th {
+      background: var(--f-linen);
+      color: var(--f-humus);
+      font-weight: 600;
+    }
+    .quickstart-selector-card {
+      background: #F2F7F4;
+      border: 2px solid var(--f-moss);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(46, 107, 69, 0.08);
+    }
+    .qs-btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .qs-btn {
+      background: #fff;
+      border: 1px solid var(--f-bark);
+      color: var(--f-humus);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qs-btn:hover, .qs-btn.active {
+      background: var(--f-moss);
+      color: #fff;
+      border-color: var(--f-moss);
+      box-shadow: 0 2px 8px rgba(46, 107, 69, 0.2);
+    }
+    @media (max-width: 900px) {
+      .docs-container { grid-template-columns: 1fr; }
+      .docs-sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED 0G-STYLE HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: Navigation Menus -->
+      <div class="myca-nav-center">
+        <!-- Ecosystem Dropdown -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger">
+            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/hub" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
+                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
+                </div>
+              </a>
+              <a href="/explorer" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧭</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Lattice DAG Explorer</div>
+                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & DAG vertices</div>
+                </div>
+              </a>
+              <a href="/depin" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🤖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
+                  <div class="myca-dd-sub">Silicon PUF identity, turbines & actuator nodes</div>
+                </div>
+              </a>
+              <a href="/agent" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧠</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial AI Colony</div>
+                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📜</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial Contracts Studio</div>
+                  <div class="myca-dd-sub">Verified contracts, bytecode runner & ABIs</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build Dropdown (Developer Focus) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger active">
+            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/build" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">0→1 Quickstart Studio <span class="myca-dd-badge">STUDIO</span></div>
+                  <div class="myca-dd-sub">Proje tipi seç, otomatik faucet al, canlı playground'da çalıştır</div>
+                </div>
+              </a>
+              <a href="/dev-docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛠️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Developer Docs <span class="myca-dd-badge">DEV</span></div>
+                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples & quickstart</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📋</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Smart Contract ABIs</div>
+                  <div class="myca-dd-sub">Chain ID 108 tokenomics, bridge & escrow interfaces</div>
+                </div>
+              </a>
+              <a href="/agent#hardware" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔌</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Hardware & Modbus SDK</div>
+                  <div class="myca-dd-sub">WebSerial PUF keyrings & 0-Byte Negation Shield</div>
+                </div>
+              </a>
+              <a href="https://github.com/bl10buer/myc-network" target="_blank" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🐙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">GitHub Repositories ↗</div>
+                  <div class="myca-dd-sub">Open-source core crates, consensus & test suites</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Docs Dropdown (Architecture & Whitepaper) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger">
+            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Network Whitepaper</div>
+                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
+                </div>
+              </a>
+              <a href="/docs.html#tokenomics" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🪙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Tokenomics Specs</div>
+                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
+                </div>
+              </a>
+              <a href="/docs.html#zero-gas" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛡️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Zero-Gas Invariant</div>
+                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
+                </div>
+              </a>
+              <a href="/docs.html#security" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔒</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Security & BFT Quorum</div>
+                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons & Live App Launch -->
+      <div class="myca-nav-right">
+        <a href="/build" class="myca-btn-secondary">Build</a>
+        <a href="/hub" class="myca-btn-primary">
+          <span>Launch NEXUS</span>
+          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- MAIN DOCS CONTAINER -->
+  <div class="docs-container">
+    <!-- Sidebar Navigation -->
+    <aside class="docs-sidebar">
+      <h4>Platform Architecture</h4>
+      <a href="#overview" class="sidebar-link active">Network Parameters</a>
+      <a href="#platform-layers" class="sidebar-link">4-Layer Platform Model</a>
+      <a href="#quickstart" class="sidebar-link">Node & RPC Gateway</a>
+      
+      <h4>Smart Contract Engine</h4>
+      <a href="#contract-deploy" class="sidebar-link">Deploy Custom Contract</a>
+      <a href="#contract-call" class="sidebar-link">Calling & Transacting</a>
+      <a href="#contracts-deployed" class="sidebar-link">Core System Contracts</a>
+
+      <h4>Developer SDK</h4>
+      <a href="#sdk-guide" class="sidebar-link">@myca/sdk & MycContract</a>
+      <a href="#sdk-depin" class="sidebar-link">DePIN & Machine Wallets</a>
+
+      <h4>Colony & AI Runtime</h4>
+      <a href="#colony-marketplace" class="sidebar-link">Capability Marketplace</a>
+      <a href="#realtime-events" class="sidebar-link">WebSocket & SSE Events</a>
+
+      <h4>REST & JSON-RPC API</h4>
+      <a href="#api-balances" class="sidebar-link">Wallet Balances API</a>
+      <a href="#api-faucet" class="sidebar-link">Testnet Faucet</a>
+      <a href="#api-swap" class="sidebar-link">Resonance AMM Swap</a>
+      <a href="#api-bridge" class="sidebar-link">Multi-Asset Bridge</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-content">
+      <div class="docs-header">
+        <h1>Developer Documentation</h1>
+        <p>Complete technical reference for building decentralized applications, custom smart contracts, autonomous AI agent colonies, and DePIN hardware fleets on MYCA Platform Blockchain (Chain ID 108).</p>
+      </div>
+
+      <!-- 0->1 Quickstart Selector -->
+      <div class="quickstart-selector-card" id="quickstart">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="margin: 0; font-family: var(--f-serif); font-size: 24px; color: var(--f-humus);">What do you want to build?</h2>
+            <div style="font-size: 13px; color: var(--f-soil); margin-top: 4px;">Fastest 0→1 experience: Select your project type, claim instant testnet faucet, and execute live code.</div>
+          </div>
+          <a href="/build" class="myca-btn-primary" style="padding: 8px 18px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <span>🚀 Open 0→1 Build Studio</span>
+            <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </a>
+        </div>
+
+        <div class="qs-btn-group">
+          <button class="qs-btn active" id="btn-qs-token" onclick="showTemplate('token')">🪙 Token / Contract</button>
+          <button class="qs-btn" id="btn-qs-depin" onclick="showTemplate('depin')">🤖 DePIN Device</button>
+          <button class="qs-btn" id="btn-qs-agent" onclick="showTemplate('agent')">🧠 AI Agent</button>
+          <button class="qs-btn" id="btn-qs-defi" onclick="showTemplate('defi')">🌉 Cross-chain DeFi</button>
+        </div>
+
+        <div id="template-area" style="background: #141715; border-radius: 14px; padding: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <span id="qs-code-title" style="color: #E2E8E4; font-family: var(--f-mono); font-size: 12.5px; font-weight: 600;">index.js — @myca/sdk Token Deployment</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="/build" style="background: rgba(46,107,69,0.3); color: #A3E635; border: 1px solid var(--f-moss); padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                🚰 Claim Daily 5 MYC Faucet ➔
+              </a>
+              <button onclick="copyDevCode()" id="btn-copy-code" style="background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 600; cursor: pointer;">
+                📋 Copy Code
+              </button>
+              <a href="/build" style="background: var(--f-moss); color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">
+                ⚡ Run in Live Playground ➔
+              </a>
+            </div>
+          </div>
+          <pre id="qs-code-snippet" style="margin: 0; color: #A3E635; font-family: var(--f-mono); font-size: 12px; line-height: 1.55; overflow-x: auto; white-space: pre;">// Loading code snippet...</pre>
+          <div id="qs-faucet-status" style="margin-top: 10px; font-size: 12px; color: #A3E635; display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Network Overview -->
+      <section id="overview" class="docs-card">
+        <h2>Network Parameters (Chain ID 108)</h2>
+        <table class="api-table">
+          <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+          <tr><td>Network Name</td><td><code>MYC-TESTNET-SPHEROID-1</code></td><td>Sovereign testnet network identifier</td></tr>
+          <tr><td>Chain ID</td><td><code>108</code></td><td>EVM & Substrate-compatible network chain ID</td></tr>
+          <tr><td>Consensus</td><td><code>Proof-of-Resonance (PoR)</code></td><td>Deterministic sub-38.4 µs lattice DAG finality</td></tr>
+          <tr><td>Gas Fee Invariant</td><td><code>0.00 MYC</code></td><td>Strict zero-gas protocol guarantee for all users and machines</td></tr>
+          <tr><td>Native Currency</td><td><code>MYC (18 Decimals)</code></td><td>Fixed 1 Billion supply substrate token</td></tr>
+          <tr><td>Stablecoins</td><td><code>USDT (6 Dec), USDC (6 Dec)</code></td><td>Native on-chain Tether & Circle representations</td></tr>
+          <tr><td>JSON-RPC Endpoint</td><td><code>http://localhost:4040/rpc</code></td><td>EVM JSON-RPC 2.0 gateway (dual /rpc & /api/rpc)</td></tr>
+          <tr><td>WebSocket Stream</td><td><code>ws://localhost:4041</code></td><td>Real-time RFC-6455 event streaming bus</td></tr>
+        </table>
+      </section>
+
+      <!-- 4-Layer Platform Architecture -->
+      <section id="platform-layers" class="docs-card">
+        <h2>4-Layer Platform Architecture</h2>
+        <p>MYCA operates as an open, layer-separated platform substrate engineered for decentralized compute, sovereign contracts, and autonomous hardware:</p>
+        <table class="api-table">
+          <tr><th>Layer</th><th>Name</th><th>Components & Responsibilities</th></tr>
+          <tr>
+            <td><strong>Katman 1</strong></td>
+            <td>MYC Protokol Çekirdeği</td>
+            <td>Chain ID 108, PoR Consensus, Colony Runtime, Zero-Gas Engine, DePIN Hardware Registry, Resonance AMM, Multi-Asset Bridge.</td>
+          </tr>
+          <tr>
+            <td><strong>Katman 2</strong></td>
+            <td>Geliştirici SDK & API Gateway</td>
+            <td><code>@myca/sdk</code>, <code>MycContract</code> wrapper, JSON-RPC 2.0 gateway, REST API, WebSocket/SSE Event Bus, ABI definitions.</td>
+          </tr>
+          <tr>
+            <td><strong>Katman 3</strong></td>
+            <td>Dış Projeler & Ekosistem</td>
+            <td>Üçüncü taraf DePIN projeleri, AI Agent pazar yerleri, sektörel DEX/DeFi protokolleri, RWA tokenize varlıklar, IoT veri havuzları.</td>
+          </tr>
+          <tr>
+            <td><strong>Katman 4</strong></td>
+            <td>Son Kullanıcı & Uç Cihazlar</td>
+            <td>Makine cüzdanları (Silicon PUF), Web & Mobil dApp arayüzleri, WebSerial donanım anahtarları, endüstriyel rüzgar türbinleri ve aktüatörler.</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- Quickstart -->
+      <section id="quickstart" class="docs-card">
+        <h2>RPC Quickstart & cURL</h2>
+        <p>Send standard JSON-RPC 2.0 payloads to the MYCA RPC gateway:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "eth_chainId",
+    "params": [],
+    "id": 1
+  }'</div>
+        <p>Response:</p>
+        <div class="code-block">{"jsonrpc":"2.0","id":1,"result":"0x6c"} // 0x6c = 108 in hexadecimal</div>
+      </section>
+
+      <!-- Smart Contract Deployment -->
+      <section id="contract-deploy" class="docs-card">
+        <h2><span class="endpoint-badge badge-post">POST</span> Custom Smart Contract Deployment</h2>
+        <p>Deploy arbitrary smart contracts directly to the MYCA Living Lattice with <strong>0.00 MYC gas fee</strong>. Use REST or JSON-RPC (<code>myc_deployUserContract</code>):</p>
+        
+        <h4>1. REST Deployment (POST /api/contract/deploy)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/contract/deploy \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sender": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "name": "CommunityLoyaltyToken",
+    "abi": [
+      {"name": "name", "type": "function", "inputs": [], "outputs": [{"type": "string"}]},
+      {"name": "balanceOf", "type": "function", "inputs": [{"name": "account", "type": "address"}], "outputs": [{"type": "uint256"}]},
+      {"name": "transfer", "type": "function", "inputs": [{"name": "to", "type": "address"}, {"name": "amount", "type": "uint256"}], "outputs": [{"type": "bool"}]}
+    ],
+    "args": ["CommunityLoyaltyToken", 1000000]
+  }'</div>
+
+        <h4>2. JSON-RPC Deployment (myc_deployUserContract)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "myc_deployUserContract",
+    "params": [{
+      "sender": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      "name": "AIInferenceBounty",
+      "abi": [...]
+    }],
+    "id": 1
+  }'</div>
+
+        <p>Sample Deployment Response:</p>
+        <div class="code-block">{
+  "success": true,
+  "contractAddress": "myc1c87a2dfb77626efcf32a417684db9675",
+  "name": "CommunityLoyaltyToken",
+  "deployedAt": 1788599300000,
+  "deployer": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+  "gasUsed": "0.00 MYC",
+  "txHash": "0x5d9b23..."
+}</div>
+      </section>
+
+      <!-- Calling & Transacting -->
+      <section id="contract-call" class="docs-card">
+        <h2>Contract Calls & State Transitions</h2>
+        <p>Interact with deployed contracts without gas fees. Read contract state using <code>myc_callContract</code> or mutate state using <code>myc_sendTransaction</code>:</p>
+
+        <h4>Read-Only Call (myc_callContract)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "myc_callContract",
+    "params": [{
+      "to": "myc1c87a2dfb77626efcf32a417684db9675",
+      "method": "balanceOf",
+      "args": ["myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002"]
+    }],
+    "id": 2
+  }'</div>
+
+        <h4>State-Changing Transaction (myc_sendTransaction)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "myc_sendTransaction",
+    "params": [{
+      "from": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      "to": "myc1c87a2dfb77626efcf32a417684db9675",
+      "method": "transfer",
+      "args": ["myc14d29b6c4b38b2ac4a6e2bbb9c4d7c999", 500]
+    }],
+    "id": 3
+  }'</div>
+      </section>
+
+      <!-- Developer SDK -->
+      <section id="sdk-guide" class="docs-card">
+        <h2>JavaScript SDK (@myca/sdk)</h2>
+        <p>Integrate MYCA in Node.js or browser dApps using our unified zero-dependency SDK:</p>
+        <div class="code-block">import { MycaSDK } from '@myca/sdk';
+
+const myca = new MycaSDK({
+  rpcUrl: 'http://localhost:4040/rpc',
+  wsUrl: 'ws://localhost:4041',
+  privateKey: '0x0123456789abcdef...'
+});
+
+// 1. Deploy Contract
+const contract = await myca.deployContract({
+  name: 'YieldVault',
+  abi: VAULT_ABI,
+  args: ['USDT-VAULT', 1000]
+});
+console.log('Deployed at:', contract.address);
+
+// 2. Call methods cleanly
+const balance = await contract.call('balanceOf', [userAddress]);
+
+// 3. Send Zero-Gas Transactions
+const receipt = await contract.send('deposit', [250]);
+console.log('Tx Hash:', receipt.txHash, 'Gas:', receipt.gasUsed);
+
+// 4. Listen for contract events
+contract.on('Deposit', (event) => {
+  console.log('New Deposit detected:', event);
+});</div>
+      </section>
+
+      <!-- DePIN Machine Wallets -->
+      <section id="sdk-depin" class="docs-card">
+        <h2>DePIN & Machine Wallets (Silicon PUF)</h2>
+        <p>Register IoT edge devices and industrial hardware with autonomous micro-wallets and physical unclonable function (PUF) identities:</p>
+        <div class="code-block">// Register device with hardware PUF and 0-Byte Negation Shield
+const device = await myca.registerDevice({
+  deviceId: 'turbine-nordex-08',
+  type: 'WIND_TURBINE_EDGE',
+  pufChallenge: '0x8899aabbccddeeff...',
+  pufResponse: '0x1122334455667788...'
+});
+
+console.log('Machine Wallet Address:', device.walletAddress);
+console.log('Negation Shield Active:', device.negationShield);
+
+// Perform autonomous M2M data settlement
+const settleReceipt = await device.settleM2MTelemetry({
+  consumerAddress: 'myc1pump772...',
+  readings: 128,
+  pricePerReading: '0.005 MYC'
+});</div>
+      </section>
+
+      <!-- Colony Capability Marketplace -->
+      <section id="colony-marketplace" class="docs-card">
+        <h2>Colony Open Capability Marketplace</h2>
+        <p>Register and monetize off-chain and on-chain capabilities (AI models, IoT actuators, or data feeds) in the global Colony scheduler:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/capability/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "ai.sentiment.crypto",
+    "providerAddress": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "pricePerExecution": 0.05,
+    "description": "Real-time crypto sentiment analyzer with PoR signature verification"
+  }'</div>
+
+        <h4>Query Available Capabilities</h4>
+        <div class="code-block">curl -s http://localhost:4040/api/capabilities</div>
+      </section>
+
+      <!-- Real-time Event Streaming -->
+      <section id="realtime-events" class="docs-card">
+        <h2>Real-Time Event Streaming (WebSocket & SSE)</h2>
+        <p>Subscribe to live network events, contract mutations, block formations, and bridge transactions.</p>
+        
+        <h4>1. Native RFC-6455 WebSocket (ws://localhost:4041)</h4>
+        <div class="code-block">const ws = new WebSocket('ws://localhost:4041');
+
+ws.onopen = () => {
+  // Subscribe to all contract and bridge events
+  ws.send(JSON.stringify({
+    action: 'subscribe',
+    topic: 'contract:*'
+  }));
+};
+
+ws.onmessage = (e) => {
+  const event = JSON.parse(e.data);
+  console.log('Received Event:', event.topic, event.data);
+};</div>
+
+        <h4>2. Server-Sent Events (SSE) (GET /api/events)</h4>
+        <div class="code-block">const eventSource = new EventSource('http://localhost:4040/api/events?topic=swap:*');
+
+eventSource.onmessage = (e) => {
+  const data = JSON.parse(e.data);
+  console.log('Real-time Swap Event:', data);
+};</div>
+      </section>
+
+      <!-- Deployed Contracts -->
+      <section id="contracts-deployed" class="docs-card">
+        <h2>Core Smart Contracts on Chain ID 108</h2>
+        <table class="api-table">
+          <tr><th>Contract</th><th>Address</th><th>Standard</th></tr>
+          <tr><td>MycToken ($MYC)</td><td><code>myc1c3502d27aa5bbeb948d1ec7e812f6090</code></td><td>Substrate Native ERC20</td></tr>
+          <tr><td>MycUSDToken ($USDT)</td><td><code>myc1c06dd0aa90e2040ec55f29771c2e272b</code></td><td>6-Decimal Tether ERC20</td></tr>
+          <tr><td>MycUSDCToken ($USDC)</td><td><code>myc1c42542ba58f45dd5498cf5d24be70337</code></td><td>6-Decimal USD Coin ERC20</td></tr>
+          <tr><td>MycBridge</td><td><code>myc1c040466016d07ac2752822a603761127</code></td><td>BFT 2/3+1 Multi-Asset Bridge</td></tr>
+          <tr><td>MycDEX (Resonance)</td><td><code>myc1c498e86015b7c417a13232ea56311c90</code></td><td>AMM Constant-Product DEX</td></tr>
+          <tr><td>MycEscrow</td><td><code>myc1c4e6f0a1897130608866b20c8476163c</code></td><td>Dual-PoR Agent Escrow</td></tr>
+        </table>
+      </section>
+
+      <!-- Balances API -->
+      <section id="api-balances" class="docs-card">
+        <h2><span class="endpoint-badge badge-get">GET</span> /api/wallet/balance</h2>
+        <p>Fetch real-time on-chain balances for all 3 tokens ($MYC, $USDT, $USDC):</p>
+        <div class="code-block">curl -s "http://localhost:4040/api/wallet/balance?address=myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002"</div>
+      </section>
+
+      <!-- Faucet API -->
+      <section id="api-faucet" class="docs-card">
+        <h2><span class="endpoint-badge badge-post">POST</span> /api/faucet &amp; <span class="endpoint-badge badge-get">GET</span> /api/faucet/status</h2>
+        <p>Günde 1 kez sınırlı 5 $MYC testnet hibesi. Twitter/X üzerinde <code>@myc_ai</code> hesabını takip etme şartı ve istenilen hedef cüzdan adresine sıfır gas ile anında transfer sağlar.</p>
+
+        <h4>1. Musluk Uygunluk ve Cooldown Kontrolü</h4>
+        <div class="code-block">curl -s "http://localhost:4040/api/faucet/status?address=myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002&amp;twitter=myc_ai"</div>
+
+        <h4>2. 5 $MYC Testnet Hibesi Talep Et (İstenilen Cüzdana Gönderim)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/faucet \
+  -H "Content-Type: application/json" \
+  -d '{
+    "recipient": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "twitter": "@developer_x",
+    "verifiedFollow": true
+  }'</div>
+
+        <p><strong>Kurallar &amp; Kısıtlar:</strong></p>
+        <ul style="color: var(--f-humus); font-size: 13px; line-height: 1.6; padding-left: 20px;">
+          <li><strong>Miktar:</strong> Talep başına 5 $MYC token (Chain ID 108).</li>
+          <li><strong>Periyot:</strong> Cüzdan ve Twitter hesabı başına 24 saatte bir (günde 1 kez).</li>
+          <li><strong>Şart:</strong> Twitter / X üzerinde <code>@myc_ai</code> hesabını takip etmek.</li>
+          <li><strong>Esneklik:</strong> <code>recipient</code> parametresi ile istenilen herhangi bir cüzdan adresine gönderilebilir.</li>
+          <li><strong>Gas Ücreti:</strong> 0.00 MYC (Zero-Gas Invariant).</li>
+        </ul>
+      </section>
+
+      <!-- Multi-Asset Bridge API -->
+      <section id="api-bridge" class="docs-card">
+        <h2>Cross-Chain Bridge &amp; Cryptographic Proof Verification</h2>
+        <p>The sovereign cross-chain bridge connects the MYCA Living Lattice (Chain ID 108) with EVM ecosystems (Base, Arbitrum, Ethereum) using BFT 2/3 + 1 supermajority quorum and Merkle inclusion proofs.</p>
+
+        <h4>1. Base (EVM 8453) ➔ MYCA Lattice (Chain 108) [Inbound]</h4>
+        <p>Verify a lock event on Base and credit the recipient on MYCA with 0 gas fee:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/bridge/base-to-myc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "baseTxHash": "0x9a8f3b7c4a1622345890eefcd1234567890abcdef1234567890abcdef1234567",
+    "senderOnBase": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    "recipientOnMyc": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "asset": "USDT",
+    "amount": 100
+  }'</div>
+
+        <h4>2. MYCA Lattice (Chain 108) ➔ Any EVM (Arbitrum, Ethereum, Base) [Outbound]</h4>
+        <p>Lock tokens on MYCA (0 gas) and generate cryptographic proof + EVM Calldata for the destination network:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/bridge/myc-to-evm \
+  -H "Content-Type: application/json" \
+  -d '{
+    "senderOnMyc": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "targetChain": "ARBITRUM",
+    "recipientOnEvm": "0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A",
+    "asset": "USDT",
+    "amount": 250
+  }'</div>
+
+        <h4>3. Retrieve Cryptographic Proof &amp; Verification Certificate</h4>
+        <div class="code-block">curl -s "http://localhost:4040/api/bridge/proof?id=bridge_..."</div>
+        <p>Sample Proof Structure:</p>
+        <div class="code-block">{
+  "bridgeId": "bridge_7f3b...",
+  "direction": "MYCA_TO_EVM",
+  "status": "COMPLETED",
+  "bftQuorumProof": {
+    "requiredSignatures": 3,
+    "signatures": [
+      {"validator": "myc1validatoralpha...", "signature": "0x4b9a..."},
+      {"validator": "myc1validatorbeta...", "signature": "0x8c21..."},
+      {"validator": "myc1validatorgamma...", "signature": "0xdf72..."}
+    ]
+  },
+  "latticeExecution": {
+    "consensusProtocol": "Proof-of-Resonance (PoR)",
+    "coherenceScore": 0.9991,
+    "certificate": "POR_CERT_38f29c..."
+  }
+}</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const DEV_TEMPLATES = {
+      token: {
+        title: 'index.js — @myca/sdk Token Deployment (Chain ID 108)',
+        code: `import { MycNetwork, MycContract } from '@myca/sdk';
+
+// 1. Initialize Zero-Gas Lattice Provider (Chain ID 108)
+const provider = new MycNetwork({
+  rpcUrl: 'http://localhost:4040/rpc',
+  chainId: 108,
+  zeroGas: true // Zero-Gas Invariant Guarantee
+});
+
+// 2. Define standard ERC20 / Substrate Token Spec
+const tokenSpec = {
+  name: "MyCustomToken",
+  symbol: "MCT",
+  decimals: 18,
+  initialSupply: 1_000_000,
+  zeroGasRelay: true
+};
+
+// 3. Deploy without paying any gas
+async function main() {
+  console.log("Deploying contract to MYCA Living Lattice...");
+  const contract = await MycContract.deploy(provider, tokenSpec);
+  console.log("✅ Deployed at:", contract.address);
+  console.log("⚡ Gas Fee:", "0.00 MYC");
+  console.log("⏱️ DAG Finality:", "38.4 µs");
+}
+
+main();`
+      },
+      depin: {
+        title: 'device_node.js — DePIN Hardware PUF & 0-Byte Negation Shield',
+        code: `import { MycHardwareWallet, MycLatticeClient } from '@myca/sdk';
+
+// 1. Connect physical or virtual hardware device
+const device = new MycHardwareWallet({
+  port: '/dev/ttyUSB0', // or WebSerial PUF bridge
+  baudRate: 115200,
+  deviceType: 'SHT40_CLIMATE_SENSOR'
+});
+
+// 2. Connect to Living Lattice DAG
+const client = new MycLatticeClient('http://localhost:4040');
+
+// 3. Stream authenticated sensor telemetry with 0-Byte Negation Shield
+device.on('telemetry', async (data) => {
+  const porProof = await device.generatePoRProof(data);
+  const tx = await client.submitDeviceProof({
+    deviceId: device.id,
+    sensorData: data,
+    porProof: porProof,
+    gasLimit: 0 // Strict zero-gas guarantee
+  });
+  console.log("Telemetri onaylandı | Tx:", tx.hash, "| Coherence:", tx.coherence);
+});`
+      },
+      agent: {
+        title: 'agent_runner.js — Colony AI Agent Capability Registration',
+        code: `import { MycColonyAgent } from '@myca/sdk';
+
+// 1. Initialize Autonomous Colony Agent
+const agent = new MycColonyAgent({
+  agentId: 'colony.deepseek-r1.v1',
+  walletAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+  nodeUrl: 'http://localhost:4040'
+});
+
+// 2. Register inference capability in Colony registry
+await agent.registerCapability({
+  name: 'ai.reasoning.deepseek',
+  minVramMb: 16384,
+  pricePerTask: 0.05,
+  priceAsset: 'MYC',
+  description: 'Zero-gas decentralized reasoning worker'
+});
+
+// 3. Listen for autonomous compute jobs
+agent.onTask(async (task) => {
+  console.log("Gelen AI Görevi:", task.id, "Prompt:", task.prompt);
+  const response = await agent.solve(task.prompt);
+  await task.submitProofAndClaimReward(response);
+  console.log("Görev tamamlandı ve 0.05 MYC ödül alındı.");
+});`
+      },
+      defi: {
+        title: 'bridge_swap.js — Cross-Chain Multi-Asset Bridge & AMM Swap',
+        code: `import { MycBridgeClient, MycDexClient } from '@myca/sdk';
+
+const bridge = new MycBridgeClient('http://localhost:4040');
+const dex = new MycDexClient('http://localhost:4040');
+
+async function crossChainFlow() {
+  // 1. Base (EVM 8453) -> MYCA Lattice Inbound Bridge
+  console.log("Initiating Base to MYCA bridge...");
+  const bridgeIn = await bridge.depositFromBase({
+    baseTxHash: '0x9a8f3b7c4a1622345890eefcd1234567890abcdef1234567890abcdef1234567',
+    asset: 'USDT',
+    amount: 500,
+    recipient: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002'
+  });
+  console.log("✅ Inbound Bridge Status:", bridgeIn.status);
+
+  // 2. Zero-Gas AMM Swap on MYCA (USDT -> MYC)
+  console.log("Swapping 250 USDT for MYC on Resonance AMM...");
+  const swapResult = await dex.swap({
+    fromAsset: 'USDT',
+    toAsset: 'MYC',
+    amount: 250,
+    slippageTolerance: 0.005
+  });
+  console.log("✅ Swap Executed | Gas:", "0.00 MYC", "| Output:", swapResult.amountOut, "$MYC");
+}
+
+crossChainFlow();`
+      }
+    };
+
+    let currentDevType = 'token';
+
+    function showTemplate(type) {
+      currentDevType = type;
+      ['token', 'depin', 'agent', 'defi'].forEach(t => {
+        const btn = document.getElementById('btn-qs-' + t);
+        if (btn) btn.classList.toggle('active', t === type);
+      });
+
+      const tmpl = DEV_TEMPLATES[type] || DEV_TEMPLATES.token;
+      const titleEl = document.getElementById('qs-code-title');
+      const codeEl = document.getElementById('qs-code-snippet');
+      if (titleEl) titleEl.innerText = tmpl.title;
+      if (codeEl) codeEl.innerText = tmpl.code;
+    }
+
+    function copyDevCode() {
+      const tmpl = DEV_TEMPLATES[currentDevType] || DEV_TEMPLATES.token;
+      navigator.clipboard.writeText(tmpl.code).then(() => {
+        const btn = document.getElementById('btn-copy-code');
+        if (btn) {
+          btn.innerText = '✅ Kopyalandı!';
+          setTimeout(() => { btn.innerText = '📋 Kodu Kopyala'; }, 2000);
+        }
+      });
+    }
+
+    async function requestDevFaucet() {
+      const statusEl = document.getElementById('qs-faucet-status');
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.innerText = '⏳ Faucet talebi gönderiliyor (0 Gas)...';
+      }
+      try {
+        const res = await fetch('/api/faucet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002' })
+        });
+        const data = await res.json();
+        if (data.success && statusEl) {
+          statusEl.innerText = '🎉 Başarılı! Cüzdanına 1,000 MYC, 500 USDT ve 500 USDC testnet bakiyesi yüklendi!';
+          setTimeout(() => { statusEl.style.display = 'none'; }, 6000);
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerText = '❌ Faucet hatası: ' + err.message;
+      }
+    }
+
+    // Initialize default template on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      showTemplate('token');
+    });
+  </script>
+</body>
+</html>

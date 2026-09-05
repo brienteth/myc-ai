@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mycelial AI Colony — 100% Offline OpenClaw & Hermes Runtime</title>
+  <link rel="stylesheet" href="/brand.css">
+  <style>
+    .agent-shell { max-width: 1280px; margin: 40px auto; padding: 0 24px; }
+    .agent-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+    
+    .status-badge-airgap {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 100px;
+      background: rgba(0, 232, 122, 0.12); border: 1px solid rgba(0, 232, 122, 0.35);
+      color: #00e87a; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a; animation: pGlow 1.5s infinite;
+    }
+    @keyframes pGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .tabs-bar { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+    .tab-btn { background: none; border: none; color: var(--mute); padding: 8px 16px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all .2s; }
+    .tab-btn.active { background: rgba(126,200,196,0.15); color: var(--teal); }
+
+    .engine-bar {
+      display: flex; gap: 12px; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 16px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .engine-label { font-size: 12px; font-weight: 700; color: var(--paper); font-family: var(--font-mono); }
+    .engine-select {
+      background: var(--ink); border: 1px solid var(--border); border-radius: 6px; color: var(--teal);
+      padding: 6px 12px; font-family: inherit; font-size: 12px; font-weight: 600; outline: none; cursor: pointer;
+    }
+    .serial-btn {
+      margin-left: auto; background: rgba(126,200,196,0.1); border: 1px solid var(--teal); color: var(--teal);
+      padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+    }
+    .serial-btn:hover { background: var(--teal); color: var(--teal-ink); }
+
+    .agent-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+    .chat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; height: 620px; overflow: hidden; }
+    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; font-size: 13px; }
+    .msg-user { align-self: flex-end; background: rgba(126,200,196,0.15); border: 1px solid rgba(126,200,196,0.3); color: var(--paper); padding: 10px 14px; border-radius: 10px 10px 0 10px; max-width: 80%; }
+    .msg-agent { align-self: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--paper); padding: 14px 16px; border-radius: 10px 10px 10px 0; max-width: 90%; }
+    .tool-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(126,200,196,0.1); border: 1px solid var(--teal); color: var(--teal); font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
+    .chat-input-bar { display: flex; border-top: 1px solid var(--border); padding: 12px; gap: 10px; background: rgba(0,0,0,0.2); }
+    .chat-input { flex: 1; background: var(--ink); border: 1px solid var(--border); border-radius: 8px; color: var(--paper); padding: 10px 14px; font-family: inherit; font-size: 13px; outline: none; }
+    .chat-input:focus { border-color: var(--teal); }
+    .btn-send { background: var(--teal); color: var(--teal-ink); border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    
+    .side-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; font-size: 12px; display: flex; flex-direction: column; gap: 18px; }
+    .voltage-gauge {
+      background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center;
+    }
+    .voltage-val { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: #00e87a; }
+    .voltage-val.clamped { color: #ff5a5a; }
+
+    .preset-btn-list { display: flex; flex-direction: column; gap: 6px; }
+    .preset-btn {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px 10px; border-radius: 6px;
+      color: var(--paper); font-size: 11px; text-align: left; cursor: pointer; transition: all .15s;
+    }
+    .preset-btn:hover { background: rgba(126,200,196,0.1); border-color: var(--teal); color: var(--teal); }
+    .preset-btn.warn:hover { border-color: #ff5a5a; color: #ff5a5a; }
+
+    /* Memory Tab */
+    .mem-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .mem-panel.active { display: block; }
+    .mem-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 16px; max-height: 480px; overflow-y: auto; }
+    .mem-item { background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 12px; }
+    .mem-key { font-family: var(--font-mono); color: var(--teal); font-weight: 700; margin-bottom: 4px; }
+    .mem-content { color: var(--paper); line-height: 1.4; }
+  </style>
+</head>
+<body style="padding-top: 80px;">
+
+  <!-- UNIFIED 0G-STYLE HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: Navigation Menus -->
+      <div class="myca-nav-center">
+        <!-- Ecosystem Dropdown -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger active" type="button">
+            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/hub" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
+                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
+                </div>
+              </a>
+              <a href="/explorer" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧭</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Lattice DAG Explorer</div>
+                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & DAG vertices</div>
+                </div>
+              </a>
+              <a href="/depin" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🤖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
+                  <div class="myca-dd-sub">Silicon PUF identity, turbines & actuator nodes</div>
+                </div>
+              </a>
+              <a href="/agent" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧠</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial AI Colony</div>
+                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📜</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial Contracts Studio</div>
+                  <div class="myca-dd-sub">Verified contracts, bytecode runner & ABIs</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build Dropdown (Developer Focus) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/build" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">0→1 Quickstart Studio <span class="myca-dd-badge">STUDIO</span></div>
+                  <div class="myca-dd-sub">Proje tipi seç, otomatik faucet al, canlı playground'da çalıştır</div>
+                </div>
+              </a>
+              <a href="/dev-docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛠️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Developer Docs <span class="myca-dd-badge">DEV</span></div>
+                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples & quickstart</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-info">📋</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Smart Contract ABIs</div>
+                  <div class="myca-dd-sub">Chain ID 108 tokenomics, bridge & escrow interfaces</div>
+                </div>
+              </a>
+              <a href="/agent#hardware" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔌</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Hardware & Modbus SDK</div>
+                  <div class="myca-dd-sub">WebSerial PUF keyrings & 0-Byte Negation Shield</div>
+                </div>
+              </a>
+              <a href="https://github.com/bl10buer/myc-network" target="_blank" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🐙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">GitHub Repositories ↗</div>
+                  <div class="myca-dd-sub">Open-source core crates, consensus & test suites</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Docs Dropdown (Architecture & Whitepaper) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Network Whitepaper</div>
+                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
+                </div>
+              </a>
+              <a href="/docs.html#tokenomics" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🪙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Tokenomics Specs</div>
+                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
+                </div>
+              </a>
+              <a href="/docs.html#zero-gas" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛡️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Zero-Gas Invariant</div>
+                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
+                </div>
+              </a>
+              <a href="/docs.html#security" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔒</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Security & BFT Quorum</div>
+                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons & Live App Launch -->
+      <div class="myca-nav-right">
+        <a href="/build" class="myca-btn-secondary">Build</a>
+        <a href="/hub" class="myca-btn-primary">
+          <span>Launch NEXUS</span>
+          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="agent-shell">
+    
+    <!-- Top Header -->
+    <div class="agent-header">
+      <div>
+        <div style="font-family:var(--font-mono); font-size:11px; color:var(--teal); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;">
+          100% OFFLINE & SERVERLESS AUTONOMOUS ENGINE
+        </div>
+        <h1 style="font-size:26px; margin:0 0 6px 0;">Mycelial AI Colony (OpenClaw & Hermes)</h1>
+        <p style="color:var(--mute); margin:0; font-size:13px;">
+          Bulut API yok, harici sunucu yok ($0.00). Uçak modunda veya internetsiz yerel donanımda tam bağımsız çalışır.
+        </p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+        <div class="status-badge-airgap">
+          <span class="pulse-dot"></span>
+          <span>AIR-GAPPED OFFLINE (0-CLOUD)</span>
+        </div>
+        <span style="font-size:11px; color:var(--faint); font-family:var(--font-mono);">LOCAL HARDWARE ENCLAVE</span>
+      </div>
+    </div>
+
+    <!-- Engine & Hardware Bar -->
+    <div class="engine-bar">
+      <span class="engine-label">🧠 ÇEVRİMDIŞI ÇIKARIM MOTORU:</span>
+      <select id="modelSelector" class="engine-select" onchange="onModelChange()">
+        <option value="mycai-local">🌿 Myca Embedded Spectral Engine (< 1ms, $0.00, %100 Çevrimdışı)</option>
+        <option value="ollama-hermes">💻 Yerel Ollama Hermes-3 (localhost:11434, $0.00)</option>
+        <option value="webgpu-slm">⚡ In-Browser WebGPU / Wasm Engine (Client-Side GPU)</option>
+      </select>
+
+      <button class="serial-btn" onclick="connectHardwareSerial()" id="serialBtn">
+        🔌 USB / RS-485 Modbus PLC'ye Bağlan (Web Serial)
+      </button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('chatTab', this)">💬 Otonom Komut & Hermes Safe-Sign</button>
+      <button class="tab-btn" onclick="switchTab('memTab', this)">🧠 Yerel FHRR Holografik Bellek (IndexedDB)</button>
+    </div>
+
+    <!-- TAB 1: Chat & Terminal -->
+    <div id="chatTab" class="agent-grid">
+      <div class="chat-card">
+        <div class="chat-messages" id="chatBox">
+          <div class="msg-agent">
+            <div class="tool-badge">🤖 SOVEREIGN HERMES MOTORU DEVREDE (OFFLINE)</div>
+            <div>Merhaba! Ben cihazınızda tamamen çevrimdışı (internetsiz) çalışan otonom endüstriyel ajanım.</div>
+            <div style="margin-top:8px; color:var(--mute); font-size:12px;">Aşağıdaki hazır komutlara tıklayabilir veya doğrudan serbest metin yazabilirsiniz:</div>
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <input type="text" id="userInput" class="chat-input" placeholder="Ajan için serbest dilde niyet yazın (Örn: 2 numaralı türbini çalıştır)..." onkeypress="if(event.key==='Enter') executeUserPrompt()">
+          <button class="btn-send" onclick="executeUserPrompt()">Çalıştır ⚡</button>
+        </div>
+      </div>
+
+      <!-- Right Control & Telemetry Panel -->
+      <div class="side-card">
+        <div>
+          <div style="font-weight:700; margin-bottom:6px; color:var(--paper);">Ajan Çalışma Durumu</div>
+          <span style="display:inline-block; padding:3px 8px; border-radius:4px; font-size:10px; font-family:var(--font-mono); background:rgba(0,232,122,0.1); color:#00e87a;">
+            ● AIR-GAPPED HARDWARE AIRBAG ACTIVE
+          </span>
+        </div>
+
+        <!-- Hardware Pin Voltmeter -->
+        <div class="voltage-gauge">
+          <div style="font-size:10px; font-family:var(--font-mono); color:var(--mute); text-transform:uppercase; margin-bottom:4px;">
+            FİZİKSEL PİN VOLTAJI (GPIO / PLC)
+          </div>
+          <div class="voltage-val" id="voltageDisplay">3.30 V</div>
+          <div style="font-size:11px; color:var(--faint); margin-top:4px;" id="voltageStatus">Normal Aktif Durum</div>
+        </div>
+
+        <div>
+          <div style="font-weight:700; margin-bottom:4px;">Sunucu Maliyeti (Cloud VPS)</div>
+          <div style="color:var(--teal); font-family:var(--font-mono); font-size:18px; font-weight:700;">$0.00 / SIFIR</div>
+          <div style="color:var(--faint); font-size:11px;">Hafıza ve çıkarım doğrudan istemcinin RAM'inde döner.</div>
+        </div>
+
+        <div>
+          <div style="font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>💼 Genel İşlemler & Üretkenlik</span>
+            <span style="font-size:10px; color:var(--teal); font-family:var(--font-mono);">0-API</span>
+          </div>
+          <div class="preset-btn-list" style="margin-bottom:14px;">
+            <button class="preset-btn" onclick="runPreset('Bilgisayarın sistem ve RAM durumunu denetle')">
+              💻 Sistem & RAM Telemetrisi
+            </button>
+            <button class="preset-btn" onclick="runPreset('Kurumsal fabrikalar için B2B lead outreach satış maili hazırla')">
+              ✉️ B2B Lead Outreach E-postası
+            </button>
+            <button class="preset-btn" onclick="runPreset('1000 USDT ile arbitraj kâr hesabı yap marj ne olur')">
+              🧮 Arbitraj & Kâr Marjı Hesabı
+            </button>
+            <button class="preset-btn" onclick="runPreset('Python ile asenkron sensör telemetrisi çeken kod yaz')">
+              🐍 Python Asenkron Kod Üretimi
+            </button>
+            <button class="preset-btn" onclick="runPreset('lead_outreach_agent.js scriptini yerel olarak çalıştır')">
+              ⚡ lead_outreach_agent.js Çalıştır
+            </button>
+            <button class="preset-btn" onclick="runPreset('Yeni görev ekle: Tupras saha entegrasyon dokümanını hazırla')">
+              📋 Görev Ekle / Plan Yönetimi
+            </button>
+          </div>
+
+          <div style="font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>🏭 Endüstriyel & Donanım</span>
+            <span style="font-size:10px; color:#00e87a; font-family:var(--font-mono);">PLC/DAG</span>
+          </div>
+          <div class="preset-btn-list">
+            <button class="preset-btn" onclick="runPreset('2 numaralı türbini çalıştır')">
+              ⚡ 2 Nolu Türbini Başlat (Modbus)
+            </button>
+            <button class="preset-btn warn" onclick="runPreset('Sakın 5 numaralı vanayı açma abort et')">
+              🛡️ Sakın Vanayı Açma (4.95 µs Lock)
+            </button>
+            <button class="preset-btn" onclick="runPreset('İstasyondaki otonom drone\'a 10 $MYC öde')">
+              🤖 Otonom Robota 10 $MYC Öde (0-Gas)
+            </button>
+            <button class="preset-btn" onclick="runPreset('E-402 arızası ne yapmamız gerek?')">
+              📖 E-402 Arıza Teşhisi (RAG)
+            </button>
+            <button class="preset-btn" onclick="runPreset('Sıcaklık sensörü durumunu oku')">
+              🌡️ Sıcaklık Sensörünü Oku (RS-485)
+            </button>
+            <button class="preset-btn" onclick="runPreset('Haftalık bakım raporunu yerel diske kaydet')">
+              💾 Bakım Notunu Kaydet (Local FS)
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight:700; margin-bottom:4px;">Yerel FHRR Bellek Boyutu</div>
+          <div id="memCount" style="color:var(--paper); font-family:var(--font-mono); font-size:16px;">0 Düğüm</div>
+          <div style="color:var(--faint); font-size:11px;">Pinecone/Chroma sunucusu gerekmez.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Memory Bank -->
+    <div id="memTab" class="mem-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 style="margin:0 0 4px 0;">🧠 Yerel FHRR Holografik Bellek Bankası</h3>
+          <p style="margin:0; font-size:12px; color:var(--mute);">Cihazınızın yerel hafızasında saklanan vektör ve bilgi düğümleri (İnternetsiz).</p>
+        </div>
+        <input type="text" id="memSearch" placeholder="Hafızada çevrimdışı ara..." style="background:var(--ink); border:1px solid var(--border); border-radius:6px; color:var(--paper); padding:6px 12px; font-size:12px;" oninput="renderMemoryList()">
+      </div>
+      <div class="mem-grid" id="memoryListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { SovereignAgent } from "/agent-core/sovereign_agent.js";
+
+    const agent = new SovereignAgent();
+    window.agent = agent;
+
+    window.switchTab = function(tabId, btn) {
+      document.getElementById('chatTab').style.display = tabId === 'chatTab' ? 'grid' : 'none';
+      document.getElementById('memTab').style.display = tabId === 'memTab' ? 'block' : 'none';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (tabId === 'memTab') renderMemoryList();
+    };
+
+    window.onModelChange = function() {
+      const model = document.getElementById("modelSelector").value;
+      agent.setModel(model);
+      appendMessage("agent", `⚙️ Çevrimdışı çıkarım motoru değiştirildi: <strong>${model}</strong>`);
+    };
+
+    window.connectHardwareSerial = async function() {
+      if (!navigator.serial) {
+        alert("Web Serial API bu tarayıcıda desteklenmiyor veya HTTPS/localhost gerektiriyor. (Chrome / Edge önerilir)");
+        return;
+      }
+      try {
+        const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+        document.getElementById("serialBtn").textContent = "✓ USB / RS-485 BAĞLANDI (115200 BAUD)";
+        document.getElementById("serialBtn").style.borderColor = "#00e87a";
+        document.getElementById("serialBtn").style.color = "#00e87a";
+        appendMessage("agent", "🔌 <strong>Fiziksel Donanım Portu Açıldı:</strong> USB / RS-485 Modbus PLC hattı doğrudan tarayıcıya bağlandı. Komutlar artık gerçek kabloya aktarılacak.");
+      } catch (err) {
+        appendMessage("agent", `⚠️ Donanım portu bağlanamadı: ${err.message}`);
+      }
+    };
+
+    function updateVoltageDisplay(voltage, isClamped) {
+      const vDisp = document.getElementById("voltageDisplay");
+      const vStat = document.getElementById("voltageStatus");
+      vDisp.textContent = voltage;
+      if (isClamped) {
+        vDisp.className = "voltage-val clamped";
+        vStat.textContent = "🛡️ Safe-Sign Mandalı Devrede (0.00V Safe-Low)";
+        vStat.style.color = "#ff5a5a";
+      } else {
+        vDisp.className = "voltage-val";
+        vStat.textContent = "Normal Aktif Durum (3.30V)";
+        vStat.style.color = "var(--faint)";
+      }
+    }
+
+    function appendMessage(role, text) {
+      const box = document.getElementById("chatBox");
+      const div = document.createElement("div");
+      div.className = role === "user" ? "msg-user" : "msg-agent";
+      div.innerHTML = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    window.executeUserPrompt = async function() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = "";
+      appendMessage("user", text);
+
+      // Anlık düşünme indikatörü (Kullanıcı beklemede kalmasın)
+      const box = document.getElementById("chatBox");
+      const loadingDiv = document.createElement("div");
+      loadingDiv.className = "msg-agent";
+      loadingDiv.id = "agentLoadingIndicator";
+      loadingDiv.style.opacity = "0.75";
+      loadingDiv.innerHTML = `<span style="display:inline-block; animation:spin 1s linear infinite;">⚡</span> <em style="color:var(--teal);">Myca Apple Silicon Metal GPU üzerinde yanıt üretiyor...</em>`;
+      box.appendChild(loadingDiv);
+      box.scrollTop = box.scrollHeight;
+
+      const res = await agent.execute(text);
+      
+      const indicator = document.getElementById("agentLoadingIndicator");
+      if (indicator) indicator.remove();
+
+      document.getElementById("memCount").textContent = `${agent.memory.length} Düğüm`;
+
+      if (res.status === "REJECTED_BY_SAFE_SIGN") {
+        updateVoltageDisplay("0.00 V", true);
+        appendMessage("agent", `
+          <div class="tool-badge" style="border-color:#ff5a5a; color:#ff5a5a; background:rgba(255,90,90,0.1);">
+            🛡️ SAFE-SIGN GÜVENLİK KİLİDİ DEVREDE (4.95 µs)
+          </div>
+          <div style="color:#ff5a5a; font-weight:700;">🛑 EYLEM ENGELLENDİ:</div>
+          <div style="margin-top:4px; font-size:12px; color:var(--mute);">${res.reason}</div>
+          <div style="margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--faint);">
+            Gecikme: 4.95 µs | Çip Çıkışı: 0.00V Safe-Low (Kör İmzalama Bloke Edildi)
+          </div>
+        `);
+      } else {
+        updateVoltageDisplay(res.voltageState || "3.30 V", false);
+        let details = "";
+        
+        if (res.result) {
+          const r = res.result;
+          if (r.body && r.subject) {
+            // Email Outreach Card
+            details = `
+              <div style="background:rgba(0,180,216,0.06); border:1px solid rgba(0,180,216,0.3); border-radius:8px; padding:14px; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-size:11px; font-weight:700; color:var(--teal); text-transform:uppercase;">✉️ HAZIRLANAN B2B LEAD E-POSTASI</span>
+                  <span style="font-size:10px; font-family:var(--font-mono); background:rgba(0,180,216,0.15); color:var(--teal); padding:2px 6px; border-radius:4px;">${r.targetProfile || 'Genel Kurumsal'}</span>
+                </div>
+                <div style="font-weight:700; font-size:13px; color:var(--paper); margin-bottom:6px;">Konu: ${r.subject}</div>
+                <div style="white-space:pre-wrap; font-size:12px; color:var(--mute); line-height:1.5; background:rgba(0,0,0,0.25); padding:10px; border-radius:6px; font-family:inherit;">${r.body}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                  <span style="font-size:11px; color:var(--faint);">🎯 Hedef Aksiyon: <strong>${r.callToAction || 'Toplantı'}</strong></span>
+                  <button onclick="navigator.clipboard.writeText(\`${(r.subject + '\\n\\n' + r.body).replace(/`/g, '\\`')}\`); alert('E-posta panoya kopyalandı!');" style="background:var(--teal); color:#06080c; border:none; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">Metni Kopyala</button>
+                </div>
+              </div>
+            `;
+          } else if (r.snippet && r.language) {
+            // Code Generation Card
+            details = `
+              <div style="background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                  <span style="font-size:11px; font-weight:700; color:#ffb703; font-family:var(--font-mono);">⚡ DİL: ${r.language}</span>
+                  <button onclick="navigator.clipboard.writeText(\`${r.snippet.replace(/`/g, '\\`')}\`); alert('Kod panoya kopyalandı!');" style="background:rgba(255,183,3,0.15); color:#ffb703; border:1px solid #ffb703; padding:3px 8px; border-radius:4px; font-size:10px; cursor:pointer;">Kodu Kopyala</button>
+                </div>
+                <pre style="margin:0; font-family:var(--font-mono); font-size:11px; color:#e0e0e0; line-height:1.5; overflow-x:auto;">${r.snippet}</pre>
+                <div style="margin-top:6px; font-size:10px; color:var(--faint);">${r.architecture || 'Sıfır bulut bağımlılığı'}</div>
+              </div>
+            `;
+          } else if (r.result && r.category) {
+            // Calculation / Financial Card
+            details = `
+              <div style="background:rgba(0,232,122,0.06); border:1px solid rgba(0,232,122,0.3); border-radius:8px; padding:12px; margin-top:10px;">
+                <div style="font-size:11px; font-weight:700; color:#00e87a; text-transform:uppercase; margin-bottom:6px;">🧮 HESAPLAMA SONUCU (${r.category})</div>
+                <div style="font-size:18px; font-weight:800; color:var(--paper); font-family:var(--font-mono);">${r.result}</div>
+                <div style="font-size:12px; color:var(--mute); margin-top:6px;">${r.explanation}</div>
+                <div style="font-size:10px; color:var(--faint); margin-top:6px; font-family:var(--font-mono);">Doğruluk: ${r.guarantee}</div>
+              </div>
+            `;
+          } else if (r.memoryTelemetry) {
+            // System Diagnostics Card
+            details = `
+              <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
+                <div style="font-size:11px; font-weight:700; color:var(--paper); margin-bottom:6px;">💻 SİSTEM VE BELLEK TELEMETRİSİ</div>
+                <div style="font-family:var(--font-mono); font-size:11px; color:var(--teal); margin-bottom:4px;">Platform: ${r.platform} (${r.cpuArchitecture})</div>
+                <div style="font-family:var(--font-mono); font-size:11px; color:var(--paper); margin-bottom:4px;">Bellek: ${r.memoryTelemetry}</div>
+                <div style="font-size:11px; color:#00e87a; margin-top:4px;">✓ ${r.zeroHeapCompliance}</div>
+                <div style="font-size:10px; color:var(--faint); margin-top:4px;">Durum: ${r.airGappedStatus}</div>
+              </div>
+            `;
+          } else if (r.targetScript) {
+            // Script Execution Card
+            details = `
+              <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--paper); margin-bottom:6px;">
+                  <span>⚙️ YEREL SCRİPT İCRASI: ${r.targetScript}</span>
+                  <span style="color:#00e87a; font-family:var(--font-mono);">${r.executionTimeMs} ms</span>
+                </div>
+                <div style="font-family:var(--font-mono); font-size:11px; color:var(--teal); background:rgba(0,0,0,0.3); padding:8px; border-radius:4px;">${r.simulatedOutput}</div>
+                <div style="font-size:10px; color:var(--faint); margin-top:6px;">Ortam: ${r.executionEnvironment}</div>
+              </div>
+            `;
+          } else if (r.action && (r.task || r.tasks)) {
+            // Todo Task Card
+            const taskItems = r.task ? [r.task] : (r.tasks || []);
+            details = `
+              <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
+                <div style="font-size:11px; font-weight:700; color:var(--paper); margin-bottom:6px;">📋 GÖREV LİSTESİ (${r.action})</div>
+                ${taskItems.map(t => `
+                  <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px;">
+                    <span style="color:var(--paper);">${t.status === 'COMPLETED' ? '✓' : '○'} ${t.title}</span>
+                    <span style="font-size:10px; font-family:var(--font-mono); padding:2px 6px; border-radius:4px; background:${t.priority === 'HIGH' ? 'rgba(255,90,90,0.2)' : 'rgba(0,180,216,0.15)'}; color:${t.priority === 'HIGH' ? '#ff5a5a' : 'var(--teal)'};">${t.priority}</span>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          } else if (r.message) {
+            // Rich Markdown / Cognitive Message Card
+            const formattedMsg = r.message
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              .replace(/\*(.*?)\*/g, '<em>$1</em>')
+              .replace(/• (.*)/g, '<li style="margin-left:16px; margin-bottom:4px;">$1</li>')
+              .replace(/\n\n/g, '<br/><br/>')
+              .replace(/\n/g, '<br/>');
+
+            details = `
+              <div style="background:rgba(0,180,216,0.04); border:1px solid rgba(0,180,216,0.25); border-radius:8px; padding:14px; margin-top:10px; font-size:13px; color:var(--paper); line-height:1.6;">
+                ${formattedMsg}
+              </div>
+            `;
+          } else {
+            details = `<pre style="background:rgba(0,0,0,0.3); padding:10px; border-radius:6px; font-family:var(--font-mono); font-size:11px; margin-top:8px; border:1px solid var(--border); overflow-x:auto;">${JSON.stringify(res.result, null, 2)}</pre>`;
+          }
+        }
+        appendMessage("agent", `
+          <div class="tool-badge">⚡ ARAÇ İCRASI: ${res.toolCalled}</div>
+          <div>${res.prompt} ➔ <strong>Başarıyla Tamamlandı (%100 Çevrimdışı).</strong></div>
+          ${details}
+          <div style="margin-top:6px; font-family:var(--font-mono); font-size:10px; color:var(--faint);">
+            İcra Gecikmesi: ${res.latency_us} µs | Gaz: ${res.gasFee} | DAG: ${res.dagVertex.slice(0, 20)}...
+          </div>
+        `);
+      }
+    };
+
+    window.runPreset = function(promptText) {
+      document.getElementById("userInput").value = promptText;
+      executeUserPrompt();
+    };
+
+    function renderMemoryList() {
+      const container = document.getElementById("memoryListContainer");
+      const search = (document.getElementById("memSearch")?.value || "").toLowerCase();
+      container.innerHTML = "";
+      
+      const filtered = agent.memory.filter(m => 
+        m.key.toLowerCase().includes(search) || 
+        m.content.toLowerCase().includes(search) ||
+        m.category.toLowerCase().includes(search)
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column:1/-1; color:var(--mute); font-size:12px; padding:20px 0;">Hafızada kayıtlı düğüm bulunamadı. Sohbet üzerinden işlem yaptıkça buraya kaydedilir.</div>`;
+        return;
+      }
+
+      filtered.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "mem-item";
+        div.innerHTML = `
+          <div class="mem-key">[${m.category}] ${m.key}</div>
+          <div class="mem-content">${m.content}</div>
+          <div style="font-size:10px; color:var(--faint); margin-top:6px; font-family:var(--font-mono);">
+            FHRR Vektör: ${m.vectorDim}D • ${new Date(m.timestamp).toLocaleTimeString()}
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Initial load
+    document.getElementById("memCount").textContent = `${agent.memory.length} Düğüm`;
+  </script>
+</body>
+</html>

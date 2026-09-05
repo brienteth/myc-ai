@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  myc-node:
+    image: node:20-alpine
+    container_name: myc-production-node
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - myc-ledger-data:/app/data
+    ports:
+      - "4040:4040"
+      - "50346:50346"
+      - "50347:50347"
+    environment:
+      - NODE_ENV=production
+      - CHAIN_ID=108
+      - NETWORK_NAME=MYC-LATTICE-MAINNET
+      - P2P_PORT=50346
+      - RPC_PORT=4040
+    command: ["node", "server.js"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:4040/api/status"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  myc-ledger-data:
+    driver: local

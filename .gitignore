@@ -43,3 +43,18 @@ desktop/resonance_core/
 scratch/
 *.wasm
 
+
+# Temporary & Data Uploads
+data/uploads/
+*.pdf
+*.jpg
+*.png
+!hero.png
+!icon.png
+!logo.png
+__grok/
+.continue/
+.cursor/
+*.db
+*.sqlite
+

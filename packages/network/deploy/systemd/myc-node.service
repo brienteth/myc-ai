@@ -1,0 +1,27 @@
+[Unit]
+Description=MYCA Sovereign Cognitive Infrastructure Node Daemon
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/myc-network
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=5s
+
+# Security and Sandbox Controls
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=myc-node
+
+# Environment Overrides
+Environment=NODE_ENV=production
+Environment=PORT=4040
+Environment=CHAIN_ID=108
+Environment=NETWORK_NAME=MYC-LATTICE-MAINNET
+
+[Install]
+WantedBy=multi-user.target

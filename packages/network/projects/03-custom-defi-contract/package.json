@@ -1,0 +1,14 @@
+{
+  "name": "myc-custom-defi-contract",
+  "version": "1.0.0",
+  "description": "Zero-Gas DeFi Staking & Yield Smart Contract deployed on MYC Platform Blockchain (Chain 108)",
+  "type": "module",
+  "main": "deploy_and_interact.js",
+  "scripts": {
+    "start": "node deploy_and_interact.js",
+    "test": "node deploy_and_interact.js"
+  },
+  "keywords": ["myc", "smart-contract", "defi", "staking", "zero-gas"],
+  "author": "MYC Ecosystem Developer",
+  "license": "MIT"
+}
