@@ -16,6 +16,7 @@ import EnterpriseDomain from './views/Enterprise/EnterpriseDomain';
 import SecondBrain from './views/SecondBrain';
 import SkillsView from './views/SkillsView';
 import SimuleView from './views/SimuleView';
+import FrequencyAnalyzer from './views/FrequencyAnalyzer';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
@@ -52,6 +53,7 @@ function App() {
             <Route path="automation" element={<ErrorBoundary title="Execution Studio"><Automation /></ErrorBoundary>} />
             <Route path="brain" element={<ErrorBoundary title="Second Brain"><SecondBrain /></ErrorBoundary>} />
             <Route path="skills" element={<ErrorBoundary title="Skills & MCP Registry"><SkillsView /></ErrorBoundary>} />
+            <Route path="analyzer" element={<ErrorBoundary title="Resonance Frequency & Media Intelligence"><FrequencyAnalyzer /></ErrorBoundary>} />
             <Route path="lab" element={<ErrorBoundary title="Research Lab"><SimuleView /></ErrorBoundary>} />
             <Route path="simule" element={<ErrorBoundary title="Research Lab"><SimuleView /></ErrorBoundary>} />
             <Route path="enterprise/*" element={<ErrorBoundary title="Enterprise"><EnterpriseDomain /></ErrorBoundary>} />

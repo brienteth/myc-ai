@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2, Brain, FlaskConical } from 'lucide-react';
+import { Home, Library as LibraryIcon, Zap, Network, Settings, Cpu, Share2, Building2, Brain, FlaskConical, Activity } from 'lucide-react';
 import '../Layout/Layout.css';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useNodes } from '../../hooks/useNodes';
@@ -58,9 +58,16 @@ const Sidebar = () => {
         </NavLink>
 
         <div className="nav-section-label" style={{ marginTop: '16px' }}>CAPABILITIES</div>
+        <NavLink to="/analyzer" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
+          <Activity size={16} color="#00e87a" />
+          <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            Frequency &amp; Media
+            <span style={{ fontSize: 9, background: "rgba(0,232,122,0.15)", color: "#00b05b", padding: "1px 5px", borderRadius: 4, fontWeight: 700 }}>NEW</span>
+          </span>
+        </NavLink>
         <NavLink to="/skills" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <Cpu size={16} />
-          <span>Skills & MCP</span>
+          <span>Skills &amp; MCP</span>
         </NavLink>
         <NavLink to="/lab" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
           <FlaskConical size={16} />
