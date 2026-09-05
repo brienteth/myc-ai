@@ -4,157 +4,386 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Autonomous AI Arcade & 0-Gas Gaming Substrate | MYCA Network</title>
-  <meta name="description" content="Experience autonomous Web3 gaming: Living Sovereign NPCs with silicon PUF identities, 0-gas action ticks, and sub-millisecond M2M economies on Mycelium Network.">
+  <meta name="description" content="Experience sovereign autonomous on-chain gaming: Living NPCs with silicon PUF identities, 0-gas action ticks, and sub-millisecond M2M economies on Mycelium Network.">
+
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/brand.css">
   <link rel="icon" type="image/png" href="/mycai_logo.png">
+
   <style>
     :root {
-      --arena-bg: #0d130e;
-      --grid-line: rgba(74, 124, 89, 0.12);
-      --agent-scout: #10b981;
-      --agent-battler: #ef4444;
-      --agent-merchant: #f59e0b;
-      --agent-turret: #3b82f6;
-      --laser-green: #34d399;
+      --bg-dark: #070a0e;
+      --bg-surface: #0b1118;
+      --bg-card: rgba(13, 20, 32, 0.75);
+      --bg-card-hover: rgba(18, 28, 46, 0.90);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-card-glow: rgba(16, 185, 129, 0.35);
+
+      --emerald: #10b981;
+      --emerald-light: #34d399;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #06b6d4;
+      --cyan-light: #38bdf8;
+      --amber: #f59e0b;
+      --crimson: #ef4444;
+      --blue: #3b82f6;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+
+      --f-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+      --f-display: 'Outfit', var(--f-sans);
+      --f-mono: 'JetBrains Mono', monospace;
     }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      background: var(--f-cream);
-      color: var(--f-humus);
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.12), transparent 70%),
+        radial-gradient(circle at 85% 90%, rgba(6, 182, 212, 0.05), transparent 60%),
+        radial-gradient(circle at 10% 70%, rgba(16, 185, 129, 0.04), transparent 50%);
+      color: var(--text-main);
       font-family: var(--f-sans);
-      margin: 0;
-      padding-top: 88px;
+      min-height: 100vh;
+      padding-top: 86px;
+      padding-bottom: 60px;
       overflow-x: hidden;
-    }
-    .arcade-hero {
-      background: linear-gradient(180deg, #131f17 0%, #0c140e 100%);
-      color: #f1f5f2;
-      padding: 40px 24px 30px;
-      border-bottom: 1px solid rgba(74, 124, 89, 0.3);
-      position: relative;
-    }
-    .arcade-hero-inner {
-      max-width: 1320px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 24px;
-    }
-    .badge-arcade {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: 999px;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #34d399;
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    .arcade-hero h1 {
-      font-family: var(--f-display);
-      font-size: 32px;
-      font-weight: 800;
-      margin: 0 0 8px;
-      letter-spacing: -0.02em;
-    }
-    .arcade-hero p {
-      color: #94a3b8;
-      font-size: 15px;
-      margin: 0;
-      max-width: 760px;
       line-height: 1.5;
     }
-    .hero-metrics {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .metric-pill {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 12px 18px;
-      min-width: 130px;
-    }
-    .metric-pill .label {
-      font-size: 11px;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
-    .metric-pill .val {
-      font-size: 20px;
-      font-weight: 700;
-      color: #34d399;
-      font-family: var(--f-mono, monospace);
-    }
 
-    /* Main Container */
-    .arcade-main {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 28px 24px 60px;
-      display: grid;
-      grid-template-columns: 1fr 380px;
-      gap: 24px;
-    }
-    @media (max-width: 1024px) {
-      .arcade-main {
-        grid-template-columns: 1fr;
-      }
-    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
 
-    /* Arena Viewport */
-    .arena-panel {
-      background: var(--arena-bg);
-      border-radius: 18px;
-      border: 1px solid rgba(74, 124, 89, 0.4);
-      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    /* Top Floating Capsule Navbar */
+    .myca-header-wrapper {
+      position: fixed;
+      top: 14px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
       display: flex;
-      flex-direction: column;
-      overflow: hidden;
+      justify-content: center;
+      padding: 0 16px;
+      pointer-events: none;
     }
-    .arena-header {
-      padding: 14px 20px;
-      background: rgba(0, 0, 0, 0.4);
-      border-bottom: 1px solid rgba(74, 124, 89, 0.25);
+    .myca-navbar {
+      pointer-events: auto;
+      max-width: 1320px;
+      width: 100%;
+      background: rgba(10, 16, 26, 0.85);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 7px 18px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      color: #f1f5f2;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.08);
     }
-    .arena-header .title {
-      font-weight: 700;
-      font-size: 14px;
+    .myca-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .myca-brand-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    }
+    .myca-brand-text {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 10px #10b981;
-      animation: pulse 1.5s infinite;
+    .myca-brand-name {
+      font-family: var(--f-display);
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
     }
-    @keyframes pulse {
+    .myca-brand-accent {
+      color: var(--emerald-light);
+    }
+    .myca-chain-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+      letter-spacing: 0.05em;
+    }
+
+    .myca-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-item {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 13px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+    .nav-item:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .nav-item.active {
+      color: #fff;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-weight: 600;
+    }
+
+    .myca-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-lang {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-lang:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .btn-sdk-doc {
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #042f20;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 6px 15px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-sdk-doc:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.5);
+      background: linear-gradient(135deg, var(--emerald-light) 0%, var(--emerald) 100%);
+    }
+
+    /* Hero Section */
+    .arcade-hero {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px 20px 16px;
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(13, 20, 32, 0.85) 0%, rgba(9, 14, 22, 0.95) 100%);
+      border: 1px solid var(--border-card);
+      border-radius: 24px;
+      padding: 32px 36px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content {
+      max-width: 720px;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--emerald-light);
+      box-shadow: 0 0 10px var(--emerald-light);
+      animation: pulseAnim 1.6s infinite ease-in-out;
+    }
+    @keyframes pulseAnim {
       0% { transform: scale(0.9); opacity: 0.7; }
-      50% { transform: scale(1.3); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 1; }
       100% { transform: scale(0.9); opacity: 0.7; }
     }
-    .canvas-wrapper {
+    .hero-title {
+      font-family: var(--f-display);
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 60%, var(--emerald-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+    .hero-desc code {
+      color: var(--emerald-light);
+      background: rgba(16, 185, 129, 0.12);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--f-mono);
+      font-size: 12.5px;
+    }
+
+    /* Metric Cards in Hero */
+    .hero-metrics {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 14px 20px;
+      min-width: 140px;
+      transition: all 0.2s ease;
+    }
+    .metric-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(16, 185, 129, 0.25);
+      transform: translateY(-2px);
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-family: var(--f-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--emerald-light);
+      text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Main Grid Layout */
+    .arcade-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+    }
+    @media (max-width: 1040px) {
+      .arcade-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left: Arena Viewport */
+    .arena-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(16, 185, 129, 0.04);
+      backdrop-filter: blur(16px);
+      transition: border-color 0.3s ease;
+    }
+    .arena-card:hover {
+      border-color: var(--border-card-glow);
+    }
+    .arena-topbar {
+      padding: 14px 22px;
+      background: rgba(9, 14, 22, 0.85);
+      border-bottom: 1px solid var(--border-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .arena-top-title {
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      letter-spacing: 0.04em;
+      color: #e2e8f0;
+    }
+    .arena-clock-chip {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    /* Canvas Frame */
+    .canvas-viewport {
       position: relative;
       width: 100%;
       height: 520px;
-      background: #090e0a;
+      background: #060b0e;
       overflow: hidden;
       cursor: crosshair;
     }
@@ -163,310 +392,383 @@
       width: 100%;
       height: 100%;
     }
-    .arena-overlay-stats {
+    .canvas-hud-overlay {
       position: absolute;
-      top: 14px;
-      left: 14px;
+      top: 16px;
+      left: 16px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
       pointer-events: none;
     }
-    .stat-badge {
-      background: rgba(13, 19, 14, 0.85);
-      border: 1px solid rgba(74, 124, 89, 0.4);
-      backdrop-filter: blur(8px);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 11.5px;
-      color: #94a3b8;
-      font-family: var(--f-mono, monospace);
+    .hud-badge {
+      background: rgba(8, 14, 23, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
-    .stat-badge strong {
-      color: #34d399;
+    .hud-badge strong {
+      color: var(--emerald-light);
     }
 
     /* Arena Controls Bar */
-    .arena-toolbar {
-      padding: 14px 20px;
-      background: rgba(13, 19, 14, 0.95);
-      border-top: 1px solid rgba(74, 124, 89, 0.25);
+    .arena-controls {
+      padding: 16px 22px;
+      background: rgba(9, 14, 22, 0.95);
+      border-top: 1px solid var(--border-card);
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
     }
-    .btn-group {
+    .btn-cluster {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
-    .btn-game {
-      padding: 9px 16px;
-      border-radius: 8px;
-      font-size: 12.5px;
+    .btn-action {
+      border: 1px solid transparent;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      border: 1px solid transparent;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: var(--f-sans);
     }
-    .btn-game-primary {
-      background: #10b981;
-      color: #064e3b;
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #042f20;
       font-weight: 700;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
     }
-    .btn-game-primary:hover {
-      background: #34d399;
+    .btn-action-primary:hover {
       transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.45);
+      background: linear-gradient(135deg, var(--emerald-light) 0%, var(--emerald) 100%);
     }
-    .btn-game-dark {
-      background: rgba(255, 255, 255, 0.08);
+    .btn-action-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
       color: #e2e8f0;
-      border-color: rgba(255, 255, 255, 0.15);
     }
-    .btn-game-dark:hover {
-      background: rgba(255, 255, 255, 0.14);
+    .btn-action-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
       color: #fff;
     }
-    .btn-game-danger {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
+    .btn-action-danger {
+      background: rgba(239, 68, 68, 0.12);
       border-color: rgba(239, 68, 68, 0.3);
-    }
-    .btn-game-danger:hover {
-      background: rgba(239, 68, 68, 0.25);
       color: #fca5a5;
     }
+    .btn-action-danger:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fecaca;
+    }
 
-    /* Sidebar - NPCs & Live Ticks */
+    .hint-label {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    /* Right Sidebar */
     .arcade-sidebar {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
-    .card-sidebar {
-      background: var(--f-parchment);
-      border: 1px solid var(--f-bark);
-      border-radius: 16px;
-      padding: 18px;
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 22px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
     }
-    .card-sidebar h3 {
-      font-size: 14px;
-      font-weight: 700;
-      margin: 0 0 14px;
+    .glass-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      color: var(--f-moss);
+      margin-bottom: 16px;
     }
-    .npc-item {
-      background: var(--f-cream);
-      border: 1px solid var(--f-bark);
-      border-radius: 10px;
-      padding: 12px;
+    .glass-card-header h3 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-family: var(--f-mono);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+    }
+
+    /* NPC Card Items */
+    .npc-card {
+      background: rgba(10, 16, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-left: 3px solid var(--emerald);
+      border-radius: 12px;
+      padding: 13px 15px;
       margin-bottom: 10px;
       transition: all 0.2s ease;
     }
-    .npc-item:hover {
-      border-color: var(--f-moss);
+    .npc-card:hover {
+      background: rgba(18, 28, 46, 0.8);
+      border-color: rgba(255, 255, 255, 0.12);
       transform: translateX(2px);
     }
-    .npc-item:last-child {
+    .npc-card:last-child {
       margin-bottom: 0;
     }
-    .npc-top {
+    .npc-card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
-    .npc-name {
+    .npc-title {
       font-weight: 700;
       font-size: 13px;
+      color: #fff;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
     }
-    .npc-badge {
-      font-size: 10.5px;
+    .npc-role-tag {
+      font-size: 10px;
+      font-weight: 700;
       padding: 2px 7px;
       border-radius: 4px;
-      font-weight: 600;
+      letter-spacing: 0.04em;
     }
-    .npc-did {
+    .npc-id {
       font-size: 11px;
-      color: var(--f-soil);
-      font-family: var(--f-mono, monospace);
+      font-family: var(--f-mono);
+      color: var(--text-faint);
+      margin-bottom: 8px;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-bottom: 8px;
     }
-    .npc-bar-wrap {
+    .npc-stat-bar {
       display: flex;
+      align-items: center;
       gap: 8px;
       font-size: 11px;
-      align-items: center;
-      color: var(--f-humus);
+      color: var(--text-muted);
     }
-    .bar-outer {
+    .stat-track {
       flex: 1;
       height: 6px;
-      background: rgba(0, 0, 0, 0.08);
-      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
       overflow: hidden;
     }
-    .bar-inner {
+    .stat-fill {
       height: 100%;
-      border-radius: 3px;
+      border-radius: 999px;
       transition: width 0.3s ease;
     }
 
-    /* Live Action Ledger */
-    .ledger-box {
-      background: #0d130e;
+    /* Live Action Ledger Terminal */
+    .ledger-terminal {
+      background: #05090d;
+      border: 1px solid rgba(16, 185, 129, 0.2);
       border-radius: 12px;
-      padding: 10px;
-      height: 220px;
+      padding: 12px;
+      height: 230px;
       overflow-y: auto;
-      font-family: var(--f-mono, monospace);
+      font-family: var(--f-mono);
       font-size: 11px;
-      color: #94a3b8;
-      border: 1px solid rgba(74, 124, 89, 0.3);
+      color: var(--text-muted);
     }
-    .ledger-entry {
+    .ledger-row {
       padding: 5px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       display: flex;
       justify-content: space-between;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
     }
-    .ledger-entry:last-child {
+    .ledger-row:last-child {
       border-bottom: none;
     }
     .tx-hash {
-      color: #38bdf8;
+      color: var(--cyan-light);
     }
     .tx-action {
-      color: #34d399;
+      color: var(--emerald-light);
       font-weight: 600;
     }
+    .tx-actor {
+      color: #cbd5e1;
+    }
     .tx-gas {
-      color: #a7f3d0;
+      color: #86efac;
     }
     .tx-coherence {
-      color: #f59e0b;
+      color: var(--amber);
     }
     .tx-rejected {
-      color: #f87171;
+      color: var(--crimson);
+      font-weight: 700;
+    }
+
+    /* Floating Toast System */
+    #arcade-toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast-card {
+      pointer-events: auto;
+      background: rgba(13, 20, 32, 0.95);
+      border: 1px solid var(--border-card-glow);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(16, 185, 129, 0.15);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: #fff;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(16px);
+      animation: slideToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      max-width: 360px;
+    }
+    @keyframes slideToast {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
   </style>
 </head>
 <body>
 
-  <!-- App Header & Navigation -->
-  <header class="myca-nav-shell">
-    <div class="myca-nav-container">
-      <div class="myca-nav-left">
-        <a href="/" class="myca-logo-group">
-          <img src="/mycai_logo.png" alt="MYCA Logo" class="myca-logo-img">
-          <span class="myca-brand-title">MYCA</span>
-        </a>
-        <div class="myca-pill-badge" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#065f46;">
-          <span class="myca-pulse-dot" style="background:#10b981;"></span>
-          ARCADE SUBSTRATE
+  <!-- Toast Notification Container -->
+  <div id="arcade-toast-container"></div>
+
+  <!-- Unified Dark Capsule Navigation Bar -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
         </div>
+      </a>
+
+      <div class="myca-nav-links">
+        <a href="/hub" class="nav-item">Nexus Hub</a>
+        <a href="/depin" class="nav-item">DePIN Fleet</a>
+        <a href="/arcade" class="nav-item active">AI Arcade</a>
+        <a href="/explorer" class="nav-item">Lattice DAG</a>
+        <a href="/docs" class="nav-item">Docs & Specs</a>
       </div>
 
-      <div class="myca-nav-center">
-        <a href="/hub" class="myca-nav-link">Nexus Hub</a>
-        <a href="/depin" class="myca-nav-link">DePIN Fleet</a>
-        <a href="/arcade" class="myca-nav-link active">AI Arcade</a>
-        <a href="/explorer" class="myca-nav-link">DAG Explorer</a>
-        <a href="/docs" class="myca-nav-link">Docs & Specs</a>
-      </div>
-
-      <div class="myca-nav-right">
-        <button id="arcadeLangBtn" class="myca-btn-secondary" onclick="toggleArcadeLang()" style="padding: 7px 12px; font-size:12.5px;">TR / EN</button>
-        <a href="/docs#autonomous-gaming" class="myca-btn-primary" style="background:var(--f-moss); color:#fff; text-decoration:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600;">
-          Gaming SDK Docs ↗
+      <div class="myca-nav-actions">
+        <button id="langToggleBtn" class="btn-lang" onclick="toggleArcadeLang()">TR / EN</button>
+        <a href="/docs#autonomous-gaming" class="btn-sdk-doc">
+          <span>Gaming Docs ↗</span>
         </a>
       </div>
-    </div>
-  </header>
+    </nav>
+  </div>
 
   <!-- Hero Header -->
-  <div class="arcade-hero">
-    <div class="arcade-hero-inner">
-      <div>
-        <div class="badge-arcade">
-          <span>⚡</span> ZERO-GAS AUTONOMOUS GAMING ENGINE
+  <header class="arcade-hero">
+    <div class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-tag">
+          <span class="pulse-dot"></span>
+          <span id="heroTagText">0-GAS DETERMINISTIC GAMING SUBSTRATE</span>
         </div>
-        <h1 id="heroTitle">Autonomous AI Arcade & Living NPC Arena</h1>
-        <p id="heroDesc">
-          Witness true autonomous on-chain gaming: living AI NPCs equipped with silicon PUF credentials (<code style="color:#34d399;">did:myc:puf</code>),
-          making independent tactical moves, trading resources via sub-second <strong>MycStreamPay</strong>, and broadcasting deterministic state ticks at <strong>0.00000000 MYC gas</strong>.
+        <h1 class="hero-title" id="heroTitle">Autonomous AI Arcade & Living NPC Arena</h1>
+        <p class="hero-desc" id="heroDesc">
+          Witness true autonomous on-chain gaming: living AI NPCs equipped with silicon PUF credentials (<code>did:myc:puf</code>),
+          making independent tactical moves, trading resources via sub-second <strong>MycStreamPay</strong> channels, and broadcasting state ticks at <strong>0.00000000 MYC gas</strong>.
         </p>
       </div>
 
       <div class="hero-metrics">
-        <div class="metric-pill">
-          <div class="label" id="lblTickGas">Action Tick Fee</div>
-          <div class="val">0.0000 MYC</div>
+        <div class="metric-card">
+          <div class="metric-label" id="lblTickGas">Action Tick Fee</div>
+          <div class="metric-value">0.0000 MYC</div>
         </div>
-        <div class="metric-pill">
-          <div class="label" id="lblLatticeTps">Lattice Ticks/s</div>
-          <div class="val" id="valTps">1,840</div>
+        <div class="metric-card">
+          <div class="metric-label" id="lblLatticeTps">Lattice Ticks/s</div>
+          <div class="metric-value" id="valTps">1,840</div>
         </div>
-        <div class="metric-pill">
-          <div class="label" id="lblStateFinality">Tick Finality</div>
-          <div class="val">&lt; 34.8 µs</div>
+        <div class="metric-card">
+          <div class="metric-label" id="lblStateFinality">Tick Finality</div>
+          <div class="metric-value">&lt; 34.8 µs</div>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 
   <!-- Main Arcade Layout -->
-  <main class="arcade-main">
+  <main class="arcade-container">
     
     <!-- Left: Canvas Arena & Interactive Controls -->
-    <section class="arena-panel">
-      <div class="arena-header">
-        <div class="title">
-          <div class="pulse-dot"></div>
+    <section class="arena-card">
+      <div class="arena-topbar">
+        <div class="arena-top-title">
+          <span class="pulse-dot"></span>
           <span id="arenaTitle">LIVING LATTICE 2D ARENA: AUTONOMOUS WARDS & RESOURCE MINES</span>
         </div>
-        <span style="font-size:12px; color:#94a3b8; font-family:var(--f-mono, monospace);" id="arenaClock">TICK #104,912</span>
+        <span class="arena-clock-chip" id="arenaClock">TICK #104,912</span>
       </div>
 
-      <div class="canvas-wrapper" id="canvasContainer">
+      <!-- Canvas Viewport -->
+      <div class="canvas-viewport" id="canvasContainer">
         <canvas id="gameCanvas"></canvas>
-        <div class="arena-overlay-stats">
-          <div class="stat-badge">DAG SUBSTRATE: <strong>ONLINE (Chain ID 108)</strong></div>
-          <div class="stat-badge">PROOF-OF-RESONANCE: <strong>COHERENCE &ge; 0.50</strong></div>
-          <div class="stat-badge">M2M PAYMENT RAILS: <strong>MycStreamPay ACTIVE</strong></div>
+        <div class="canvas-hud-overlay">
+          <div class="hud-badge">DAG SUBSTRATE: <strong>ONLINE (Chain ID 108)</strong></div>
+          <div class="hud-badge">PROOF-OF-RESONANCE: <strong>COHERENCE &ge; 0.50</strong></div>
+          <div class="hud-badge">M2M PAYMENT RAILS: <strong>MycStreamPay ACTIVE</strong></div>
         </div>
       </div>
 
       <!-- Controls & Commands -->
-      <div class="arena-toolbar">
-        <div class="btn-group">
-          <button class="btn-game btn-game-primary" onclick="triggerPlayerTick()">
+      <div class="arena-controls">
+        <div class="btn-cluster">
+          <button class="btn-action btn-action-primary" onclick="triggerPlayerTick()">
             <span>⚡</span> <span id="btnSpawnAction">Broadcast 0-Gas Action</span>
           </button>
-          <button class="btn-game btn-game-dark" onclick="triggerStreamPayTrade()">
+          <button class="btn-action btn-action-secondary" onclick="triggerStreamPayTrade()">
             <span>💸</span> <span id="btnStreamTrade">P2P StreamPay Trade (0-Gas)</span>
           </button>
-          <button class="btn-game btn-game-danger" onclick="triggerAntiCheatTest()">
+          <button class="btn-action btn-action-danger" onclick="triggerAntiCheatTest()">
             <span>🛡️</span> <span id="btnTestCheat">Test Anti-Cheat (Reject Tamper)</span>
           </button>
         </div>
 
-        <div style="font-size:12px; color:#94a3b8;">
+        <div class="hint-label">
           <span id="hintClick">💡 Click on the arena to place a resource beacon for the bots</span>
         </div>
       </div>
@@ -476,76 +778,80 @@
     <aside class="arcade-sidebar">
       
       <!-- Living NPCs -->
-      <div class="card-sidebar">
-        <h3 id="sidebarNpcTitle">
-          <span>🧠 Living Sovereign NPCs</span>
-          <span style="font-size:11px; background:#dcfce7; color:#166534; padding:2px 8px; border-radius:6px;">4 ACTIVE</span>
-        </h3>
+      <div class="glass-card">
+        <div class="glass-card-header">
+          <h3 id="sidebarNpcTitle">
+            <span>🧠 Living Sovereign NPCs</span>
+          </h3>
+          <span class="card-badge">4 ACTIVE</span>
+        </div>
 
         <!-- NPC 1: Scout -->
-        <div class="npc-item">
-          <div class="npc-top">
-            <span class="npc-name" style="color:var(--agent-scout);">🟢 AGENT_KAIROS</span>
-            <span class="npc-badge" style="background:rgba(16,185,129,0.15); color:#065f46;">SCOUT</span>
+        <div class="npc-card" style="border-left-color: var(--emerald);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: var(--emerald-light);">🟢 AGENT_KAIROS</span>
+            <span class="npc-role-tag" style="background: rgba(16,185,129,0.15); color: var(--emerald-light);">SCOUT</span>
           </div>
-          <div class="npc-did">did:myc:puf:0x4f81...a3e9</div>
-          <div class="npc-bar-wrap">
+          <div class="npc-id">did:myc:puf:0x4f81...a3e9</div>
+          <div class="npc-stat-bar">
             <span>Energy</span>
-            <div class="bar-outer"><div class="bar-inner" id="barKairos" style="width:88%; background:#10b981;"></div></div>
+            <div class="stat-track"><div class="stat-fill" id="barKairos" style="width: 88%; background: var(--emerald);"></div></div>
             <span id="valKairos">88%</span>
           </div>
         </div>
 
         <!-- NPC 2: Auto Battler -->
-        <div class="npc-item">
-          <div class="npc-top">
-            <span class="npc-name" style="color:var(--agent-battler);">🔴 AGENT_VORTEX</span>
-            <span class="npc-badge" style="background:rgba(239,68,68,0.15); color:#991b1b;">AUTO-BATTLER</span>
+        <div class="npc-card" style="border-left-color: var(--crimson);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: #f87171;">🔴 AGENT_VORTEX</span>
+            <span class="npc-role-tag" style="background: rgba(239,68,68,0.15); color: #fca5a5;">AUTO-BATTLER</span>
           </div>
-          <div class="npc-did">did:myc:puf:0x89c2...b714</div>
-          <div class="npc-bar-wrap">
+          <div class="npc-id">did:myc:puf:0x89c2...b714</div>
+          <div class="npc-stat-bar">
             <span>Hull</span>
-            <div class="bar-outer"><div class="bar-inner" id="barVortex" style="width:72%; background:#ef4444;"></div></div>
+            <div class="stat-track"><div class="stat-fill" id="barVortex" style="width: 72%; background: var(--crimson);"></div></div>
             <span id="valVortex">72%</span>
           </div>
         </div>
 
         <!-- NPC 3: Merchant -->
-        <div class="npc-item">
-          <div class="npc-top">
-            <span class="npc-name" style="color:var(--agent-merchant);">🟡 NPC_AURELIA</span>
-            <span class="npc-badge" style="background:rgba(245,158,11,0.15); color:#92400e;">MERCHANT</span>
+        <div class="npc-card" style="border-left-color: var(--amber);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: #fbbf24;">🟡 NPC_AURELIA</span>
+            <span class="npc-role-tag" style="background: rgba(245,158,11,0.15); color: #fde68a;">MERCHANT</span>
           </div>
-          <div class="npc-did">did:myc:puf:0xd3e5...19f2</div>
-          <div class="npc-bar-wrap">
-            <span>Inventory</span>
-            <div class="bar-outer"><div class="bar-inner" id="barAurelia" style="width:94%; background:#f59e0b;"></div></div>
+          <div class="npc-id">did:myc:puf:0xd3e5...19f2</div>
+          <div class="npc-stat-bar">
+            <span>Stock</span>
+            <div class="stat-track"><div class="stat-fill" id="barAurelia" style="width: 94%; background: var(--amber);"></div></div>
             <span id="valAurelia">94/100</span>
           </div>
         </div>
 
         <!-- NPC 4: Turret -->
-        <div class="npc-item">
-          <div class="npc-top">
-            <span class="npc-name" style="color:var(--agent-turret);">🔵 TURRET_AEGIS</span>
-            <span class="npc-badge" style="background:rgba(59,130,246,0.15); color:#1e40af;">DEFENSE</span>
+        <div class="npc-card" style="border-left-color: var(--blue);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: #60a5fa;">🔵 TURRET_AEGIS</span>
+            <span class="npc-role-tag" style="background: rgba(59,130,246,0.15); color: #93c5fd;">DEFENSE</span>
           </div>
-          <div class="npc-did">did:myc:puf:0x17a0...84c1</div>
-          <div class="npc-bar-wrap">
+          <div class="npc-id">did:myc:puf:0x17a0...84c1</div>
+          <div class="npc-stat-bar">
             <span>Shield</span>
-            <div class="bar-outer"><div class="bar-inner" id="barAegis" style="width:100%; background:#3b82f6;"></div></div>
+            <div class="stat-track"><div class="stat-fill" id="barAegis" style="width: 100%; background: var(--blue);"></div></div>
             <span id="valAegis">100%</span>
           </div>
         </div>
       </div>
 
       <!-- Live Action Ledger -->
-      <div class="card-sidebar">
-        <h3 id="sidebarLedgerTitle">
-          <span>📜 Live DAG Action Ticks</span>
-          <span style="font-size:10px; color:#10b981; font-family:var(--f-mono, monospace);">0-GAS COMMITS</span>
-        </h3>
-        <div class="ledger-box" id="ledgerBox">
+      <div class="glass-card">
+        <div class="glass-card-header">
+          <h3 id="sidebarLedgerTitle">
+            <span>📜 Live DAG Action Ticks</span>
+          </h3>
+          <span class="card-badge" style="color:#34d399;">0-GAS COMMITS</span>
+        </div>
+        <div class="ledger-terminal" id="ledgerBox">
           <!-- Live updates inserted via JS -->
         </div>
       </div>
@@ -555,7 +861,6 @@
 
   <!-- Interactive Simulation Script -->
   <script>
-    // Canvas & Game State
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const ledgerBox = document.getElementById('ledgerBox');
@@ -610,7 +915,7 @@
         color: '#3b82f6',
         did: 'did:myc:puf:0x17a0...84c1',
         x: 620, y: 160,
-        vx: 0, vy: 0, // stationary turret
+        vx: 0, vy: 0,
         radius: 16,
         shield: 100,
         target: null,
@@ -618,7 +923,6 @@
       }
     ];
 
-    // Resource Nodes & Beacons
     let crystals = [
       { x: 180, y: 320, val: 50, pulse: 0 },
       { x: 520, y: 120, val: 80, pulse: 1.5 },
@@ -629,7 +933,6 @@
     let laserBeams = [];
     let beacons = [];
 
-    // Resize canvas to container
     function resizeCanvas() {
       const container = document.getElementById('canvasContainer');
       canvas.width = container.clientWidth;
@@ -638,20 +941,39 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Click to plant beacon
+    function showToast(icon, title, desc) {
+      const container = document.getElementById('arcade-toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-card';
+      toast.innerHTML = `
+        <span style="font-size: 18px;">${icon}</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px;">${title}</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">${desc}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
     canvas.addEventListener('click', (e) => {
       const rect = canvas.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      beacons.push({ x, y, radius: 1, maxRadius: 30, alpha: 1.0 });
+      beacons.push({ x, y, radius: 1, maxRadius: 36, alpha: 1.0 });
       crystals.push({ x, y, val: 100, pulse: 0 });
-      addLedgerEntry('BEACON_MINT', '0x' + Math.random().toString(16).substr(2, 6), 'USER_WALLET', '0.0000 MYC', 0.99);
+      const hash = '0x' + Math.random().toString(16).substr(2, 6);
+      addLedgerEntry('BEACON_MINT', hash, 'USER_WALLET', '0.0000 MYC', 0.99);
+      showToast('📍', 'Resource Beacon Minted', `DAG Tick #${hash} committed with strictly 0 gas fee`);
     });
 
-    // Add Live Ledger Entry
     function addLedgerEntry(action, hash, actor, gas, coherence, rejected = false) {
       const row = document.createElement('div');
-      row.className = 'ledger-entry';
+      row.className = 'ledger-row';
       if (rejected) {
         row.innerHTML = `
           <span class="tx-hash">#${hash}</span>
@@ -672,29 +994,23 @@
       }
     }
 
-    // Simulation Loop
     function updateGame() {
       tickCount++;
       document.getElementById('arenaClock').textContent = `TICK #${tickCount.toLocaleString()}`;
 
-      // Update bots
       bots.forEach(bot => {
-        // Turret rotates radar
         bot.radarAngle += 0.03;
 
         if (bot.type !== 'turret') {
           bot.x += bot.vx;
           bot.y += bot.vy;
 
-          // Bounce off bounds
           if (bot.x - bot.radius < 0 || bot.x + bot.radius > canvas.width) bot.vx *= -1;
           if (bot.y - bot.radius < 0 || bot.y + bot.radius > canvas.height) bot.vy *= -1;
 
-          // Occasional random turn
           if (Math.random() < 0.02) {
             bot.vx += (Math.random() - 0.5) * 0.8;
             bot.vy += (Math.random() - 0.5) * 0.8;
-            // clamp speed
             const speed = Math.hypot(bot.vx, bot.vy);
             if (speed > 2.5) {
               bot.vx = (bot.vx / speed) * 2.5;
@@ -703,58 +1019,51 @@
           }
         }
 
-        // Turret laser pulse to nearest battler
         if (bot.type === 'turret' && Math.random() < 0.04) {
           const battler = bots.find(b => b.type === 'battler');
           if (battler) {
             laserBeams.push({
               x1: bot.x, y1: bot.y,
               x2: battler.x, y2: battler.y,
-              life: 12,
+              life: 14,
               color: '#38bdf8'
             });
             addLedgerEntry('TURRET_FIRE', '0x' + Math.random().toString(16).substr(2, 6), bot.id, '0.0000 MYC', 0.98);
           }
         }
 
-        // Scout harvests crystal
         if (bot.type === 'scout' && Math.random() < 0.03) {
           addLedgerEntry('ORE_HARVEST', '0x' + Math.random().toString(16).substr(2, 6), bot.id, '0.0000 MYC', 0.95);
         }
 
-        // Merchant trade
         if (bot.type === 'merchant' && Math.random() < 0.025) {
           addLedgerEntry('STREAMPAY_TRADE', '0x' + Math.random().toString(16).substr(2, 6), bot.id, '0.0000 MYC', 0.97);
         }
       });
 
-      // Update lasers
       for (let i = laserBeams.length - 1; i >= 0; i--) {
         laserBeams[i].life--;
         if (laserBeams[i].life <= 0) laserBeams.splice(i, 1);
       }
 
-      // Update beacons
       for (let i = beacons.length - 1; i >= 0; i--) {
         beacons[i].radius += 1.2;
-        beacons[i].alpha -= 0.03;
+        beacons[i].alpha -= 0.025;
         if (beacons[i].alpha <= 0) beacons.splice(i, 1);
       }
 
-      // Jitter TPS slightly for live feel
       if (Math.random() < 0.1) {
         document.getElementById('valTps').textContent = (1800 + Math.floor(Math.random() * 90)).toLocaleString();
       }
     }
 
-    // Render Canvas
     function renderGame() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Grid Lines
-      ctx.strokeStyle = 'rgba(74, 124, 89, 0.08)';
+      // Subtle Cyber Grid
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.06)';
       ctx.lineWidth = 1;
-      const step = 40;
+      const step = 42;
       for (let x = 0; x < canvas.width; x += step) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -771,7 +1080,7 @@
       // Render Crystals
       crystals.forEach(c => {
         c.pulse += 0.04;
-        const glow = 6 + Math.sin(c.pulse) * 3;
+        const glow = 8 + Math.sin(c.pulse) * 4;
         ctx.save();
         ctx.fillStyle = '#10b981';
         ctx.shadowColor = '#34d399';
@@ -799,7 +1108,7 @@
         ctx.strokeStyle = l.color;
         ctx.lineWidth = 2.5;
         ctx.shadowColor = l.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 14;
         ctx.beginPath();
         ctx.moveTo(l.x1, l.y1);
         ctx.lineTo(l.x2, l.y2);
@@ -813,7 +1122,7 @@
         
         // Radar Sweep
         ctx.beginPath();
-        ctx.arc(bot.x, bot.y, 45, bot.radarAngle, bot.radarAngle + 0.6);
+        ctx.arc(bot.x, bot.y, 50, bot.radarAngle, bot.radarAngle + 0.6);
         ctx.lineTo(bot.x, bot.y);
         ctx.fillStyle = `rgba(${bot.color === '#10b981' ? '16,185,129' : bot.color === '#ef4444' ? '239,68,68' : bot.color === '#f59e0b' ? '245,158,11' : '59,130,246'}, 0.08)`;
         ctx.fill();
@@ -821,7 +1130,7 @@
         // Outer Aura
         ctx.fillStyle = bot.color;
         ctx.shadowColor = bot.color;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 12;
         ctx.beginPath();
         ctx.arc(bot.x, bot.y, bot.radius, 0, Math.PI * 2);
         ctx.fill();
@@ -833,16 +1142,15 @@
         ctx.arc(bot.x, bot.y, bot.radius * 0.45, 0, Math.PI * 2);
         ctx.fill();
 
-        // Bot Label
-        ctx.fillStyle = '#f1f5f2';
-        ctx.font = '10px monospace';
-        ctx.fillText(bot.name, bot.x - 30, bot.y - bot.radius - 6);
+        // Monospace Name Tag
+        ctx.fillStyle = '#f1f5f9';
+        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.fillText(bot.name, bot.x - 32, bot.y - bot.radius - 8);
 
         ctx.restore();
       });
     }
 
-    // Animation loop
     function loop() {
       updateGame();
       renderGame();
@@ -850,32 +1158,28 @@
     }
     loop();
 
-    // Initial Ledger entries
     addLedgerEntry('INITIALIZE_NODE', '0x108f9c', 'GENESIS', '0.0000 MYC', 1.0);
     addLedgerEntry('DID_REGISTER', '0x4f81a3', 'AGENT_KAIROS', '0.0000 MYC', 0.99);
     addLedgerEntry('DID_REGISTER', '0x89c2b7', 'AGENT_VORTEX', '0.0000 MYC', 0.99);
     addLedgerEntry('STREAMPAY_OPEN', '0xd3e519', 'NPC_AURELIA', '0.0000 MYC', 0.98);
 
-    // Interactive Actions
     function triggerPlayerTick() {
       const hash = '0x' + Math.random().toString(16).substr(2, 6);
       addLedgerEntry('PLAYER_ACTION_TICK', hash, 'USER_CONTROLLER', '0.0000 MYC', 0.99);
-      
-      // Flash turret or scout
       const scout = bots[0];
       laserBeams.push({
         x1: scout.x, y1: scout.y,
-        x2: scout.x + (Math.random() - 0.5) * 160,
-        y2: scout.y + (Math.random() - 0.5) * 160,
+        x2: scout.x + (Math.random() - 0.5) * 180,
+        y2: scout.y + (Math.random() - 0.5) * 180,
         life: 14,
         color: '#34d399'
       });
+      showToast('⚡', '0-Gas Action Dispatched', `Lattice Vertex #${hash} sealed in 31.2 µs without gas.`);
     }
 
     function triggerStreamPayTrade() {
       const hash = '0x' + Math.random().toString(16).substr(2, 6);
       addLedgerEntry('M2M_STREAMPAY_TRADE', hash, 'NPC_AURELIA -> AGENT_KAIROS', '0.0000 MYC', 0.96);
-      
       const b1 = bots[0];
       const b2 = bots[2];
       laserBeams.push({
@@ -884,19 +1188,20 @@
         life: 18,
         color: '#fbbf24'
       });
+      showToast('💸', 'M2M StreamPay Settlement', `5.00 MYC streamed P2P between Living NPCs at 0 gas.`);
     }
 
     function triggerAntiCheatTest() {
       const hash = '0x' + Math.random().toString(16).substr(2, 6);
-      // Deliberately fail coherence (0.24 < 0.50 threshold)
       addLedgerEntry('SPEED_HACK_INJECT', hash, 'UNKNOWN_INTRUDER', '0.0000 MYC', 0.24, true);
+      showToast('🛡️', 'Anti-Cheat Triggered', `Tampered tick rejected: Coherence C=0.24 < 0.50 threshold.`);
     }
 
-    // Language Toggle (TR / EN)
     const i18n = {
       en: {
+        heroTagText: "0-GAS DETERMINISTIC GAMING SUBSTRATE",
         heroTitle: "Autonomous AI Arcade & Living NPC Arena",
-        heroDesc: "Witness true autonomous on-chain gaming: living AI NPCs equipped with silicon PUF credentials (did:myc:puf), making independent tactical moves, trading resources via sub-second MycStreamPay, and broadcasting deterministic state ticks at 0.00000000 MYC gas.",
+        heroDesc: "Witness true autonomous on-chain gaming: living AI NPCs equipped with silicon PUF credentials (did:myc:puf), making independent tactical moves, trading resources via sub-second MycStreamPay channels, and broadcasting state ticks at 0.00000000 MYC gas.",
         lblTickGas: "Action Tick Fee",
         lblLatticeTps: "Lattice Ticks/s",
         lblStateFinality: "Tick Finality",
@@ -909,6 +1214,7 @@
         sidebarLedgerTitle: "📜 Live DAG Action Ticks"
       },
       tr: {
+        heroTagText: "0-GAZ DETERMINİSTİK OYUN ALTYAPISI",
         heroTitle: "Otonom Yapay Zeka Arenası & Yaşayan NPC Dünyası",
         heroDesc: "Gerçek otonom blokzincir oyununu deneyimleyin: silikon PUF kimliklerine (did:myc:puf) sahip yaşayan yapay zeka NPC'leri; bağımsız taktiksel hamleler yapar, saniye-altı MycStreamPay ile kaynak takas eder ve kesinlikle 0.00000000 MYC gaz ile ağa işlenir.",
         lblTickGas: "Hamle Gaz Ücreti",
@@ -927,6 +1233,7 @@
     function toggleArcadeLang() {
       currentLang = currentLang === 'en' ? 'tr' : 'en';
       const d = i18n[currentLang];
+      document.getElementById('heroTagText').textContent = d.heroTagText;
       document.getElementById('heroTitle').textContent = d.heroTitle;
       document.getElementById('heroDesc').textContent = d.heroDesc;
       document.getElementById('lblTickGas').textContent = d.lblTickGas;
@@ -937,8 +1244,8 @@
       document.getElementById('btnStreamTrade').textContent = d.btnStreamTrade;
       document.getElementById('btnTestCheat').textContent = d.btnTestCheat;
       document.getElementById('hintClick').textContent = d.hintClick;
-      document.getElementById('sidebarNpcTitle').innerHTML = `<span>${d.sidebarNpcTitle}</span> <span style="font-size:11px; background:#dcfce7; color:#166534; padding:2px 8px; border-radius:6px;">4 AKTİF</span>`;
-      document.getElementById('sidebarLedgerTitle').innerHTML = `<span>${d.sidebarLedgerTitle}</span> <span style="font-size:10px; color:#10b981; font-family:var(--f-mono, monospace);">0-GAZ İŞLEMLER</span>`;
+      document.getElementById('sidebarNpcTitle').innerHTML = `<span>${d.sidebarNpcTitle}</span>`;
+      document.getElementById('sidebarLedgerTitle').innerHTML = `<span>${d.sidebarLedgerTitle}</span>`;
     }
   </script>
 </body>
