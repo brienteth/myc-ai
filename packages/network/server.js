@@ -2400,6 +2400,7 @@ const server = http.createServer((req, res) => {
   if (reqPath === "/docs" || reqPath === "/docs/") reqPath = "/docs.html";
   if (reqPath === "/dev-docs" || reqPath === "/dev-docs/") reqPath = "/dev-docs.html";
   if (reqPath === "/build" || reqPath === "/build/") reqPath = "/build.html";
+  if (reqPath === "/arcade" || reqPath === "/arcade/" || reqPath === "/game" || reqPath === "/game/") reqPath = "/arcade.html";
   
   let targetPath;
   if (reqPath === "/install.sh" || reqPath === "/install.ps1" || reqPath.startsWith("/dist/")) {

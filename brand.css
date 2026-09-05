@@ -1,0 +1,26 @@
+:root {
+  --f-cream: #FAF8F3;
+  --f-parchment: #F3EFE6;
+  --f-bark: #E2DBD0;
+  --f-soil: #5C584E;
+  --f-humus: #2B2925;
+  --f-moss: #2E6B45;
+  --f-deep: #1E3A27;
+  --f-thread: #225134;
+  --f-spore: #2E6B45;
+  --f-accent: #D4A373;
+  --f-danger: #D94841;
+  --f-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --f-serif: 'Playfair Display', Georgia, serif;
+  --f-mono: 'JetBrains Mono', monospace;
+
+  --border: rgba(30, 58, 39, 0.12);
+  --surface: #ffffff;
+  --ink: #FAF8F3;
+  --paper: #2B2925;
+  --teal: #2E6B45;
+  --teal-ink: #ffffff;
+  --mute: #5C584E;
+  --faint: #8A857A;
+  --font-mono: 'JetBrains Mono', monospace;
+}
