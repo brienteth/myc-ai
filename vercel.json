@@ -83,6 +83,14 @@
       "destination": "/depin/hub.html"
     },
     {
+      "source": "/depin/nexus",
+      "destination": "/depin/nexus.html"
+    },
+    {
+      "source": "/nexus",
+      "destination": "/nexus.html"
+    },
+    {
       "source": "/skills",
       "destination": "/docs/skills.html"
     },
