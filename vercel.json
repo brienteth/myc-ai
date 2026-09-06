@@ -3,12 +3,88 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/skills",
-      "destination": "/docs/skills.html"
+      "source": "/depin",
+      "destination": "/depin/index.html"
     },
     {
-      "source": "/depin",
-      "destination": "/depin.html"
+      "source": "/depin/",
+      "destination": "/depin/index.html"
+    },
+    {
+      "source": "/depin/docs",
+      "destination": "/depin/docs.html"
+    },
+    {
+      "source": "/depin/dev-docs",
+      "destination": "/depin/dev-docs.html"
+    },
+    {
+      "source": "/depin/hub",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/discover",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/mint",
+      "destination": "/depin/mint.html"
+    },
+    {
+      "source": "/depin/marketplace",
+      "destination": "/depin/marketplace.html"
+    },
+    {
+      "source": "/depin/market",
+      "destination": "/depin/marketplace.html"
+    },
+    {
+      "source": "/depin/x-card",
+      "destination": "/depin/x-card.html"
+    },
+    {
+      "source": "/depin/arcade",
+      "destination": "/depin/arcade.html"
+    },
+    {
+      "source": "/depin/game",
+      "destination": "/depin/arcade.html"
+    },
+    {
+      "source": "/depin/contracts",
+      "destination": "/depin/contracts.html"
+    },
+    {
+      "source": "/depin/explorer",
+      "destination": "/depin/explorer.html"
+    },
+    {
+      "source": "/depin/build",
+      "destination": "/depin/build.html"
+    },
+    {
+      "source": "/depin/swap",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/bridge",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/faucet",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/staking",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/streampay",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/skills",
+      "destination": "/docs/skills.html"
     },
     {
       "source": "/agent",
