@@ -211,7 +211,7 @@ export default function handler(req, res) {
   // =========================================================================
   // CANONICAL EXPLORER & BLOCKCHAIN CONTINUOUS STATE ENGINE
   // =========================================================================
-  if (parsedUrl.pathname.endsWith("/api/explorer/overview") || parsedUrl.pathname.endsWith("/explorer/overview")) {
+  if (parsedUrl.pathname.includes("explorer/overview")) {
     const GENESIS_BLOCK = 492100;
     const GENESIS_TS = 1736942400000;
     const BLOCK_INTERVAL = 2500;
@@ -286,7 +286,7 @@ export default function handler(req, res) {
   }
 
   // Route: /api/contracts
-  if (parsedUrl.pathname.endsWith("/api/contracts")) {
+  if (parsedUrl.pathname.includes("contracts")) {
     return res.status(200).json({
       contracts: [
         { name: "MycToken (Sovereign 100M Cap)", address: "0x0000000000000000000000000000000000001080" },
@@ -301,7 +301,7 @@ export default function handler(req, res) {
   }
 
   // Route: /api/explorer/devices
-  if (parsedUrl.pathname.endsWith("/api/explorer/devices")) {
+  if (parsedUrl.pathname.includes("devices")) {
     return res.status(200).json({
       success: true,
       count: 5,
@@ -316,7 +316,7 @@ export default function handler(req, res) {
   }
 
   // Route: /api/explorer/tasks
-  if (parsedUrl.pathname.endsWith("/api/explorer/tasks")) {
+  if (parsedUrl.pathname.includes("tasks")) {
     return res.status(200).json({
       success: true,
       count: 3,
@@ -329,7 +329,7 @@ export default function handler(req, res) {
   }
 
   // Route: /api/explorer/channels
-  if (parsedUrl.pathname.endsWith("/api/explorer/channels")) {
+  if (parsedUrl.pathname.includes("channels")) {
     return res.status(200).json({
       success: true,
       count: 2,
