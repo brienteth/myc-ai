@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Myca OS — Skills & Capability Matrix</title>
+  <meta name="description" content="Complete directory of 60+ sovereign, air-gapped deterministic skills running on Myca Execution OS.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-warm: #FAF8F3;
+      --primary: #1E3A27;
+      --primary-soft: rgba(30, 58, 39, 0.08);
+      --accent: #D4A373;
+      --text: #2B2D2F;
+      --text-muted: #6B7280;
+      --border: rgba(30, 58, 39, 0.12);
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --shadow: 0 10px 30px -10px rgba(30, 58, 39, 0.08);
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --moss: #2E6B45;
+      --spore: #2E6B45;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-warm);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--primary);
+    }
+
+    .logo-text {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--primary-soft);
+      color: var(--moss);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-right a {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color .2s;
+    }
+
+    .header-right a:hover { color: var(--moss); }
+
+    .btn-github {
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    /* Hero */
+    .skills-hero {
+      padding: 56px 40px 32px;
+      max-width: 1240px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .skills-hero h1 {
+      font-family: var(--font-serif);
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      letter-spacing: -0.8px;
+    }
+
+    .skills-hero p {
+      font-size: 17px;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin-bottom: 28px;
+    }
+
+    /* Search & Filter Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 280px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 18px 12px 42px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-family: var(--font-sans);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--moss);
+      box-shadow: 0 0 0 3px rgba(46, 107, 69, 0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .category-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .pill:hover {
+      border-color: var(--moss);
+      color: var(--primary);
+    }
+
+    .pill.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .stats-badge {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--moss);
+      background: var(--primary-soft);
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-left: auto;
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+      max-width: 1240px;
+      margin: 0 auto 80px;
+      width: 100%;
+      padding: 0 40px;
+    }
+
+    .skill-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      transition: all .2s;
+      position: relative;
+    }
+
+    .skill-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--moss);
+      box-shadow: 0 14px 35px -10px rgba(30, 58, 39, 0.14);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .card-category {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--moss);
+      background: var(--primary-soft);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .card-version {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .card-id {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      background: rgba(212, 163, 115, 0.12);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 12px;
+      width: fit-content;
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text);
+      margin-bottom: 18px;
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .card-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .permissions-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--moss);
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: #10B981;
+      border-radius: 50%;
+      margin-right: 6px;
+      box-shadow: 0 0 6px #10B981;
+    }
+
+    footer {
+      background: var(--card-bg);
+      border-top: 1px solid var(--border);
+      padding: 30px 40px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      .skills-hero, .skills-grid { padding: 24px 20px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .stats-badge { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/docs" class="logo-area">
+      <span class="logo-text">myca os</span>
+      <span class="logo-badge">skills catalog</span>
+    </a>
+    <div class="header-right">
+      <a href="/docs">Docs Overview</a>
+      <a href="/docs#resonance-core" style="color:var(--moss); font-weight:600;">GHR Resonance</a>
+      <a href="/depin">DePIN</a>
+      <a href="https://github.com/brienteth/myc-ai" target="_blank" class="btn-github">GitHub</a>
+    </div>
+  </header>
+
+  <div class="skills-hero">
+    <h1>Sovereign Skills &amp; Capability Directory</h1>
+    <p>Every skill is a typed, air-gapped deterministic capability executing locally without cloud telemetry or external API taxes. Screened via <strong>GHR Heisenberg Harmonic Resonance</strong> with sub-millisecond precision.</p>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="skillSearch" placeholder="Search by name, ID, or description (e.g. outreach, email, ocr, erp)..." oninput="filterSkills()">
+      </div>
+
+      <div class="category-pills" id="categoryFilter">
+        <button class="pill active" onclick="setCategory('all', this)">All Skills</button>
+        <button class="pill" onclick="setCategory('Growth & Outreach', this)">Growth &amp; Outreach</button>
+        <button class="pill" onclick="setCategory('Enterprise', this)">Enterprise ERP</button>
+        <button class="pill" onclick="setCategory('Document & OCR', this)">Document &amp; OCR</button>
+        <button class="pill" onclick="setCategory('Core AI', this)">Core AI &amp; Logic</button>
+        <button class="pill" onclick="setCategory('Filesystem', this)">Filesystem</button>
+        <button class="pill" onclick="setCategory('Communication', this)">Messaging &amp; Comms</button>
+        <button class="pill" onclick="setCategory('Media & Social', this)">Media &amp; Social</button>
+      </div>
+
+      <div class="stats-badge" id="statsCount">63 Skills Online</div>
+    </div>
+  </div>
+
+  <div class="skills-grid" id="skillsGrid"></div>
+
+  <footer>
+    <p>© 2026 Myca OS — Sovereign Execution OS. Built with Gabor-Heisenberg Resonant Lattice &amp; DePIN Architecture.</p>
+  </footer>
+
+  <script>
+    const SKILLS_DATA = [
+      // ── Growth & Outreach ───────────────────────────
+      {
+        id: "outreach.lead.discover",
+        name: "Autonomous B2B Lead Discovery",
+        category: "Growth & Outreach",
+        version: "v1.0",
+        description: "Scrape and identify target enterprise domains, executive profiles, and contact emails across technology directories without third-party data broker costs.",
+        permissions: "network.web.search",
+        latency: "~1.2s"
+      },
+      {
+        id: "outreach.email.verify",
+        name: "Email MX & Deliverability Probe",
+        category: "Growth & Outreach",
+        version: "v1.0",
+        description: "Perform RFC 5322 syntax analysis, live MX DNS querying, disposable domain blacklist screening, and non-intrusive SMTP handshake simulation to eliminate bounces.",
+        permissions: "network.dns.query",
+        latency: "~0.4s"
+      },
+      {
+        id: "outreach.email.compose",
+        name: "Sovereign AI Outreach Writer",
+        category: "Growth & Outreach",
+        version: "v1.0",
+        description: "Synthesize hyper-personalized B2B proposals emphasizing Edge FHRR, Sovereign AI privacy, and 70% cheaper DePIN compute tailored to target tech stack.",
+        permissions: "core.chat",
+        latency: "~1.5s"
+      },
+      {
+        id: "outreach.email.audit",
+        name: "Spam & Compliance Auditor",
+        category: "Growth & Outreach",
+        version: "v1.0",
+        description: "Run heuristic spam trigger word analysis, tone verification, and CAN-SPAM / GDPR opt-out clarity check with strict 85/100 approval thresholds.",
+        permissions: "core.verify",
+        latency: "~0.3s"
+      },
+      {
+        id: "outreach.email.dispatch",
+        name: "SMTP Dispatcher & Memory Minter",
+        category: "Growth & Outreach",
+        version: "v1.0",
+        description: "Transmit approved emails via authenticated SMTP (Hostinger:465) with exponential rate limits and seal target company to visited_leads deduplication storage.",
+        permissions: "network.smtp.send",
+        latency: "~0.8s"
+      },
+
+      // ── Enterprise ──────────────────────────────────
+      {
+        id: "enterprise.inventory.read",
+        name: "Enterprise Stock & Inventory Read",
+        category: "Enterprise",
+        version: "v1.0",
+        description: "Query real-time stock quantities, SKU material details, and multi-warehouse bin locations across SAP S/4HANA, Oracle Cloud, and NetSuite.",
+        permissions: "enterprise.inventory.read",
+        latency: "~0.6s"
+      },
+      {
+        id: "enterprise.customer.search",
+        name: "Enterprise CRM & Account Search",
+        category: "Enterprise",
+        version: "v1.0",
+        description: "Unified cross-platform lookup for customer accounts, pipeline stages, and contact history across Salesforce, HubSpot, and SAP CRM.",
+        permissions: "enterprise.crm.read",
+        latency: "~0.5s"
+      },
+      {
+        id: "enterprise.purchase.create",
+        name: "Automated Purchase Order Creator",
+        category: "Enterprise",
+        version: "v1.0",
+        description: "Generate compliant ERP purchase orders with vendor validation, item SKU mapping, and budget limit checks.",
+        permissions: "enterprise.erp.write",
+        latency: "~1.1s"
+      },
+      {
+        id: "enterprise.invoice.create",
+        name: "Enterprise Billing & Invoice Generator",
+        category: "Enterprise",
+        version: "v1.0",
+        description: "Issue structured VAT/tax-compliant corporate invoices and trigger downstream accounts receivable notifications.",
+        permissions: "enterprise.invoice.write",
+        latency: "~0.9s"
+      },
+      {
+        id: "finance.invoice_parse",
+        name: "Financial Invoice Extractor",
+        category: "Enterprise",
+        version: "v1.0",
+        description: "Extract line items, tax IDs, IBANs, and totals from scanned PDF invoices into structured JSON schema.",
+        permissions: "document.extract",
+        latency: "~1.4s"
+      },
+      {
+        id: "crm.lead_extract",
+        name: "CRM Lead Pipeline Extractor",
+        category: "Enterprise",
+        version: "v1.0",
+        description: "Parse incoming customer communications and extract structured deal sizes and decision maker titles.",
+        permissions: "core.extract",
+        latency: "~0.7s"
+      },
+
+      // ── Document & OCR ──────────────────────────────
+      {
+        id: "document.read",
+        name: "High-Throughput Document Reader",
+        category: "Document & OCR",
+        version: "v2.0",
+        description: "Local multi-format parser supporting PDF binaries, DOCX, EPUB, and Markdown with structural hierarchy preservation.",
+        permissions: "filesystem.read",
+        latency: "~0.4s"
+      },
+      {
+        id: "document.extract",
+        name: "Deterministic Field & Table Extractor",
+        category: "Document & OCR",
+        version: "v2.0",
+        description: "Extract complex nested data tables, key-value forms, and tabular metrics into normalized JSON and CSV.",
+        permissions: "core.extract",
+        latency: "~0.9s"
+      },
+      {
+        id: "image.ocr",
+        name: "Neural Vision OCR Extractor",
+        category: "Document & OCR",
+        version: "v1.5",
+        description: "Local-first OCR engine extracting multi-lingual typography, receipts, whiteboards, and handwritten notes.",
+        permissions: "vision.read",
+        latency: "~1.6s"
+      },
+      {
+        id: "table.write",
+        name: "Tabular & Artifact Exporter",
+        category: "Document & OCR",
+        version: "v1.0",
+        description: "Serialize structured datasets into production-ready CSV, Markdown tables, Parquet, or Excel files.",
+        permissions: "filesystem.write",
+        latency: "~0.2s"
+      },
+
+      // ── Core AI & Logic ─────────────────────────────
+      {
+        id: "core.chat",
+        name: "Local Neural Response Engine",
+        category: "Core AI",
+        version: "v2.5",
+        description: "Direct local inference on Apple Silicon / Metal via Qwen 2.5 and Llama 3 architectures with sub-millisecond TTFT.",
+        permissions: "core.inference",
+        latency: "~108 tok/s"
+      },
+      {
+        id: "core.verify",
+        name: "Independent Fresh-Context Verifier",
+        category: "Core AI",
+        version: "v2.0",
+        description: "Adversarial verification agent ensuring generated facts, figures, and code are mathematically sound and hallucination-free.",
+        permissions: "core.verify",
+        latency: "~0.4s"
+      },
+      {
+        id: "ai.summary",
+        name: "Executive Narrative Synthesizer",
+        category: "Core AI",
+        version: "v1.0",
+        description: "Condense long-form corporate briefs, call transcripts, and legal filings into high-density executive takeaways.",
+        permissions: "core.chat",
+        latency: "~1.2s"
+      },
+      {
+        id: "opacus.mpc",
+        name: "Multi-Party Privacy Computation (MPC)",
+        category: "Core AI",
+        version: "v3.0",
+        description: "Cryptographic secure enclaves enabling collaborative inference across private hardware without sharing raw weights or prompts.",
+        permissions: "crypto.enclave",
+        latency: "~2.4s"
+      },
+      {
+        id: "anthropic.agent",
+        name: "Cloud Sovereign Bridge (Claude)",
+        category: "Core AI",
+        version: "v1.0",
+        description: "Optional hybrid bridge to route heavy, non-sensitive reasoning tasks to Claude 3.5 Sonnet under user permission.",
+        permissions: "network.cloud.opt_in",
+        latency: "~2.1s"
+      },
+
+      // ── Filesystem & Second Brain ────────────────────
+      {
+        id: "filesystem.search",
+        name: "Deep Filesystem Indexer & Search",
+        category: "Filesystem",
+        version: "v2.0",
+        description: "High-speed directory crawler with regex pattern matching and modified timestamp range filtering across local disk.",
+        permissions: "filesystem.read",
+        latency: "~0.3s"
+      },
+      {
+        id: "fs.read",
+        name: "Safe File Reader",
+        category: "Filesystem",
+        version: "v1.0",
+        description: "Read arbitrary text and binary file streams with strict path traversal isolation and permission checks.",
+        permissions: "filesystem.read",
+        latency: "~0.05s"
+      },
+      {
+        id: "fs.write",
+        name: "Atomic File Writer",
+        category: "Filesystem",
+        version: "v1.0",
+        description: "Perform crash-safe atomic disk writes with automatic rollback on file corruption.",
+        permissions: "filesystem.write",
+        latency: "~0.08s"
+      },
+      {
+        id: "library.search",
+        name: "Second Brain Semantic Vault Search",
+        category: "Filesystem",
+        version: "v2.0",
+        description: "Query local SQLite VaultDB using GHR holographic phase matching to recall previous conversations and research artifacts.",
+        permissions: "vault.read",
+        latency: "~0.1s"
+      },
+      {
+        id: "library.index",
+        name: "Real-time Folder Watch & Auto-Indexer",
+        category: "Filesystem",
+        version: "v1.0",
+        description: "Background watchdog listening for filesystem changes in Documents and Desktop to index new knowledge artifacts.",
+        permissions: "vault.write",
+        latency: "~0.2s"
+      },
+
+      // ── Communication & Messaging ───────────────────
+      {
+        id: "telegram.send",
+        name: "Telegram Bot Dispatcher",
+        category: "Communication",
+        version: "v2.0",
+        description: "Transmit alerts, reports, and real-time execution receipts to Telegram private channels or direct users.",
+        permissions: "communication.telegram",
+        latency: "~0.7s"
+      },
+      {
+        id: "whatsapp.send",
+        name: "WhatsApp Enterprise Messenger",
+        category: "Communication",
+        version: "v1.0",
+        description: "Dispatch customer updates and alerts through WhatsApp Cloud & On-Premises Business API gateways.",
+        permissions: "communication.whatsapp",
+        latency: "~0.9s"
+      },
+      {
+        id: "slack.send",
+        name: "Slack Webhook & Channel Bot",
+        category: "Communication",
+        version: "v1.5",
+        description: "Publish formatted markdown cards, error telemetry, and milestone notices directly into Slack workspaces.",
+        permissions: "communication.slack",
+        latency: "~0.6s"
+      },
+      {
+        id: "discord.send",
+        name: "Discord Community Dispatcher",
+        category: "Communication",
+        version: "v1.0",
+        description: "Send automated community announcements, agent status feeds, and server embeds via webhooks.",
+        permissions: "communication.discord",
+        latency: "~0.5s"
+      },
+      {
+        id: "system.notify.mac",
+        name: "macOS Native Desktop Notification",
+        category: "Communication",
+        version: "v1.0",
+        description: "Trigger native macOS desktop banner alerts with action buttons directly into Notification Center.",
+        permissions: "system.notification",
+        latency: "~0.05s"
+      },
+
+      // ── Media & Social ──────────────────────────────
+      {
+        id: "youtube.shorts_faceless_generator",
+        name: "Faceless Video Automation",
+        category: "Media & Social",
+        version: "v2.0",
+        description: "End-to-end generator: script writing, local TTS speech synthesis, subtitle rendering, and dynamic video composition.",
+        permissions: "media.render",
+        latency: "~6.5s"
+      },
+      {
+        id: "youtube.upload",
+        name: "YouTube Channel Publisher",
+        category: "Media & Social",
+        version: "v1.0",
+        description: "Automated video upload with metadata tagging, thumbnail binding, and playlist indexing.",
+        permissions: "youtube.api",
+        latency: "~3.0s"
+      },
+      {
+        id: "x.post",
+        name: "X (Twitter) Autonomous Publisher",
+        category: "Media & Social",
+        version: "v2.0",
+        description: "Publish threads, research breakdowns, and product updates with media attachments via OAuth 2.0.",
+        permissions: "x.api",
+        latency: "~0.8s"
+      },
+      {
+        id: "instagram.post",
+        name: "Instagram Carousel & Reel Publisher",
+        category: "Media & Social",
+        version: "v1.0",
+        description: "Publish carousels and reels via Meta Graph API with automated caption generation.",
+        permissions: "meta.api",
+        latency: "~1.2s"
+      },
+      {
+        id: "browser.search",
+        name: "Headless Web & Directory Search",
+        category: "Media & Social",
+        version: "v2.0",
+        description: "Private search query dispatcher returning real-time organic web results without cookies or user tracking.",
+        permissions: "browser.search",
+        latency: "~0.9s"
+      }
+    ];
+
+    let currentCategory = "all";
+    let searchQuery = "";
+
+    function renderSkills() {
+      const grid = document.getElementById("skillsGrid");
+      grid.innerHTML = "";
+
+      const filtered = SKILLS_DATA.filter(skill => {
+        const matchesCategory = currentCategory === "all" || skill.category === currentCategory;
+        const matchesSearch = searchQuery === "" || 
+          skill.name.toLowerCase().includes(searchQuery) ||
+          skill.id.toLowerCase().includes(searchQuery) ||
+          skill.description.toLowerCase().includes(searchQuery) ||
+          skill.category.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      document.getElementById("statsCount").textContent = `${filtered.length} Skills Shown (${SKILLS_DATA.length} Total)`;
+
+      filtered.forEach(skill => {
+        const card = document.createElement("div");
+        card.className = "skill-card";
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="card-category">${skill.category}</span>
+            <span class="card-version">${skill.version}</span>
+          </div>
+          <h3 class="card-title">${skill.name}</h3>
+          <span class="card-id">${skill.id}</span>
+          <p class="card-desc">${skill.description}</p>
+          <div class="card-footer">
+            <span class="permissions-tag"><span class="live-dot"></span>${skill.permissions}</span>
+            <span>⚡ ${skill.latency}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterSkills() {
+      searchQuery = document.getElementById("skillSearch").value.toLowerCase().trim();
+      renderSkills();
+    }
+
+    function setCategory(cat, el) {
+      currentCategory = cat;
+      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+      el.classList.add("active");
+      renderSkills();
+    }
+
+    // Initial render
+    renderSkills();
+  </script>
+</body>
+</html>
