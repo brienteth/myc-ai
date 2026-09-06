@@ -1,0 +1,84 @@
+{
+  "$schema": "https://depinscan.io/schemas/project-v1.json",
+  "name": "MYCA Network",
+  "slug": "myca-network",
+  "category": "AI / Compute / Sensor DePIN",
+  "subCategory": "Living Mycelium Mesh & Edge AI",
+  "description": "Sovereign Zero-Gas Living Lattice DAG & DePIN Network featuring Silicon PUF hardware attestation, Monad OCC parallel execution, and Proof-of-Quantum-Resonance (PoQR) peer consensus.",
+  "website": "https://www.mycai.pro",
+  "appUrl": "https://www.mycai.pro/depin/mint",
+  "whitepaper": "https://www.mycai.pro/depin/docs",
+  "twitter": "https://x.com/myc_ai",
+  "github": "https://github.com/bl10buer/myc-network",
+  "token": {
+    "symbol": "MYC",
+    "name": "MYC Living Token",
+    "network": "MYC Chain / Base L2",
+    "contract": "0x0000000000000000000000000000000000001080",
+    "decimals": 18,
+    "maxSupply": 100000000,
+    "circulatingSupply": 25000000,
+    "dailyEmission": 100000
+  },
+  "depinMetrics": {
+    "totalNodesHardcap": 10000,
+    "activeNodes": 10000,
+    "hardwareIdentity": "Silicon PUF (Physical Unclonable Function) W3C DIDs",
+    "consensusMechanism": "Proof-of-Quantum-Resonance (PoQR) with Phase-Locked Loop (PLL)",
+    "topology": "Colony Mycelium Mesh (K=8 Peer Neighborhoods, 80,000 P2P Links)",
+    "antiSybilMechanism": "Quantum Coherence Quenching (cos^2(Delta_Phi > 45 deg) = 0)",
+    "capitalRaisedUSDC": 6965000,
+    "tiers": [
+      {
+        "tierId": 1,
+        "name": "Tier 1: Spore",
+        "priceUSDC": 299,
+        "cap": 1000,
+        "multiplier": "1.0x",
+        "bandwidthMB": 10,
+        "dailyEstRewardMYC": 1.48
+      },
+      {
+        "tierId": 2,
+        "name": "Tier 2: Hyphae",
+        "priceUSDC": 449,
+        "cap": 2500,
+        "multiplier": "1.3x",
+        "bandwidthMB": 25,
+        "dailyEstRewardMYC": 4.18
+      },
+      {
+        "tierId": 3,
+        "name": "Tier 3: Mycelial Highway",
+        "priceUSDC": 699,
+        "cap": 4000,
+        "multiplier": "1.8x",
+        "bandwidthMB": 50,
+        "dailyEstRewardMYC": 9.31
+      },
+      {
+        "tierId": 4,
+        "name": "Tier 4: Fruiting Body",
+        "priceUSDC": 1099,
+        "cap": 2500,
+        "multiplier": "2.5x",
+        "bandwidthMB": 100,
+        "dailyEstRewardMYC": 17.68
+      }
+    ],
+    "treasuryAllocation": {
+      "protocolGrowthAndLiquidity": "40% ($2,786,000 USDC)",
+      "hardwareSubsidiesAndDePINLogistics": "25% ($1,741,250 USDC)",
+      "ecosystemGrantsAndResearch": "20% ($1,393,000 USDC)",
+      "coreDevAndSecurityReserve": "15% ($1,044,750 USDC)"
+    }
+  },
+  "performance": {
+    "gasFee": "$0.00000000 (Zero-Gas Protocol Invariant)",
+    "effectiveTPS": "15,147+ tx/s",
+    "peakBurstTPS": "20,449+ tx/s",
+    "timeToFinality": "9.79 ms",
+    "hardwareSafetyBrake": "4.95 µs (0-Byte Negation Shield)",
+    "megaGasThroughput": "318.79 Mgas/s"
+  }
+}

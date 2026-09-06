@@ -1,0 +1,38 @@
+{
+  "name": "MYC Living Lattice Mainnet",
+  "chain": "MYC",
+  "icon": "myc",
+  "rpc": [
+    "https://rpc.mycai.pro",
+    "https://mainnet-rpc.mycai.pro",
+    "wss://ws.mycai.pro"
+  ],
+  "features": [
+    { "name": "EIP-155" },
+    { "name": "EIP-1559" },
+    { "name": "Zero-Gas Invariant" },
+    { "name": "Monad OCC Parallel Execution" }
+  ],
+  "faucets": [
+    "https://www.mycai.pro/depin/faucet"
+  ],
+  "nativeCurrency": {
+    "name": "MYC Living Token",
+    "symbol": "MYC",
+    "decimals": 18
+  },
+  "infoURL": "https://www.mycai.pro",
+  "shortName": "myc",
+  "chainId": 108,
+  "networkId": 108,
+  "slip44": 1080,
+  "explorers": [
+    {
+      "name": "MYC Explorer",
+      "url": "https://www.mycai.pro/depin/explorer",
+      "standard": "EIP3091",
+      "icon": "myc"
+    }
+  ],
+  "redFlags": []
+}

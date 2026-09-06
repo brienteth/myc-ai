@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYC Network — Base DePIN Living Node Sale & Quantum Resonance Staking Portal</title>
+  <meta name="description" content="Official Base L2 DePIN Living Node License mint & staking portal. Proof-of-Quantum-Resonance (PoQR), 10,000 Hardcap, Tier 1-4, EIP-712 Hardware Binding, and Cumulative Merkle Claims.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/depin/brand.css">
+  <link rel="icon" type="image/png" href="/depin/mycai_logo.png">
+
+  <style>
+    :root {
+      --bg-dark: #06090e;
+      --bg-card: rgba(13, 20, 31, 0.75);
+      --bg-card-hover: rgba(18, 28, 44, 0.9);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-card-hover: rgba(16, 185, 129, 0.4);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.25);
+      --purple: #a855f7;
+      --purple-glow: rgba(168, 85, 247, 0.25);
+      --amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --f-sans: 'DM Sans', system-ui, sans-serif;
+      --f-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(ellipse 70% 40% at 50% -10%, rgba(16, 185, 129, 0.12), transparent 70%),
+        radial-gradient(circle at 85% 85%, rgba(0, 240, 255, 0.06), transparent 60%),
+        radial-gradient(circle at 15% 45%, rgba(168, 85, 247, 0.06), transparent 50%);
+      color: var(--text-main);
+      font-family: var(--f-sans);
+      padding-top: 86px;
+      padding-bottom: 90px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    .myca-navbar {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: 1240px;
+      height: 58px;
+      background: rgba(10, 15, 24, 0.88);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-brand img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .nav-brand-text {
+      font-family: var(--f-mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .nav-brand-badge {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      padding: 2px 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald);
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-link {
+      padding: 6px 14px;
+      border-radius: 999px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .nav-link.active {
+      color: #fff;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Hero Banner */
+    .mint-hero {
+      text-align: center;
+      margin-top: 36px;
+      margin-bottom: 40px;
+    }
+    .mint-tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .mint-title {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .mint-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    /* Live Hardcap & Global Stats bar */
+    .global-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      background: rgba(13, 20, 31, 0.6);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 16px 24px;
+      margin-bottom: 40px;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-label {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+    }
+    .stat-val {
+      font-family: var(--f-mono);
+      font-size: 18px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .stat-val.accent { color: var(--emerald); }
+
+    /* Navigation Tabs */
+    .tab-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 34px;
+    }
+    .tab-btn {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .tab-btn.active {
+      color: #000;
+      background: var(--emerald);
+      border-color: var(--emerald);
+      box-shadow: 0 4px 18px var(--emerald-glow);
+    }
+
+    /* 4-Tier Cards Grid */
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .tier-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tier-card:hover {
+      border-color: var(--border-card-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+    }
+    .tier-badge {
+      align-self: flex-start;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .tier-card.t1 .tier-badge { background: rgba(16, 185, 129, 0.15); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tier-card.t2 .tier-badge { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid rgba(0, 240, 255, 0.3); }
+    .tier-card.t3 .tier-badge { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .tier-card.t4 .tier-badge { background: rgba(168, 85, 247, 0.15); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    .tier-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .tier-role {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .tier-price-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .price-val {
+      font-family: var(--f-mono);
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .price-unit {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--emerald);
+      font-weight: 700;
+    }
+
+    .quota-box {
+      margin-bottom: 16px;
+    }
+    .quota-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .quota-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .quota-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--emerald);
+      transition: width 0.4s ease;
+    }
+    .tier-card.t2 .quota-fill { background: var(--cyan); }
+    .tier-card.t3 .quota-fill { background: var(--amber); }
+    .tier-card.t4 .quota-fill { background: var(--purple); }
+
+    .tier-perks {
+      list-style: none;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 22px;
+      flex-grow: 1;
+    }
+    .tier-perks li {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 3px 0;
+    }
+    .tier-perks li strong {
+      font-family: var(--f-mono);
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .btn-buy {
+      width: 100%;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .tier-card.t1 .btn-buy { background: var(--emerald); color: #000; }
+    .tier-card.t2 .btn-buy { background: var(--cyan); color: #000; }
+    .tier-card.t3 .btn-buy { background: var(--amber); color: #000; }
+    .tier-card.t4 .btn-buy { background: var(--purple); color: #fff; }
+    .btn-buy:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    /* PoQR Interactive ROI Calculator */
+    .calc-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 48px;
+    }
+    .calc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+    }
+    .calc-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .calc-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .calc-disclaimer {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      padding: 6px 12px;
+      border-radius: 8px;
+      max-width: 440px;
+      text-align: right;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .calc-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .ctrl-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ctrl-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .ctrl-val {
+      font-weight: 700;
+      color: var(--emerald);
+    }
+    .ctrl-slider {
+      width: 100%;
+      accent-color: var(--emerald);
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .calc-results {
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .res-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 10px 0;
+    }
+    .res-metric:last-child { border-bottom: none; }
+    .res-label {
+      font-family: var(--f-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .res-num {
+      font-family: var(--f-mono);
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .res-num.highlight {
+      color: var(--emerald);
+      font-size: 22px;
+    }
+
+    /* Modal for Hardware Attestation */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #0b111c;
+      border: 1px solid var(--border-card-hover);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 540px;
+      width: calc(100% - 40px);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+    }
+    .modal-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .modal-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: block;
+      text-transform: uppercase;
+    }
+    .form-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: var(--f-mono);
+      font-size: 13px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      flex: 2;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--emerald);
+      border: none;
+      color: #000;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ========================================== */
+    /* LANGUAGE SWITCHER                         */
+    /* ========================================== */
+    .lang-selector {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 2px 6px;
+      gap: 3px;
+      margin-right: 8px;
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .lang-btn:hover {
+      color: #fff;
+    }
+    .lang-btn.active {
+      color: #000;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald-glow);
+    }
+    .lang-divider {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 10px;
+      user-select: none;
+    }
+
+    /* ========================================== */
+    /* LIVING MYCELIUM ARCHITECTURE SECTION CSS   */
+    /* ========================================== */
+    .mycelium-arch-card {
+      background: linear-gradient(180deg, rgba(13, 22, 35, 0.88) 0%, rgba(7, 12, 20, 0.96) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 24px;
+      padding: 36px 32px;
+      margin-bottom: 40px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .mycelium-arch-card::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .arch-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 28px;
+    }
+    .arch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .arch-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .arch-subtitle {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      max-width: 820px;
+      line-height: 1.6;
+    }
+
+    .arch-body {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 28px;
+      margin-bottom: 32px;
+    }
+
+    /* Canvas Panel */
+    .canvas-panel {
+      background: rgba(4, 8, 14, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .canvas-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .canvas-live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      color: var(--emerald);
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulseLive 1.8s infinite;
+    }
+    @keyframes pulseLive {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .canvas-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .canvas-btn {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .canvas-btn:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--emerald);
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 440px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: radial-gradient(circle at center, rgba(16, 185, 129, 0.05) 0%, rgba(4, 7, 12, 0.95) 75%);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    #myceliumCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+    .canvas-tooltip {
+      position: absolute;
+      display: none;
+      background: rgba(10, 16, 26, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-card-hover);
+      padding: 10px 14px;
+      border-radius: 10px;
+      pointer-events: none;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      max-width: 260px;
+      line-height: 1.5;
+    }
+
+    .canvas-legend {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .legend-item:hover, .legend-item.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .legend-color {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .t1-dot { background: var(--emerald); box-shadow: 0 0 6px var(--emerald); }
+    .t2-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+    .t3-dot { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+    .t4-dot { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+
+    /* Right Layers Column */
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: space-between;
+    }
+    .arch-layer-card {
+      background: rgba(13, 20, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .arch-layer-card:hover {
+      background: rgba(18, 28, 44, 0.8);
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateX(4px);
+    }
+    .arch-layer-card.active {
+      background: rgba(16, 26, 40, 0.95);
+      border-color: var(--emerald);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    }
+    .arch-layer-card.active.t2-active { border-color: var(--cyan); box-shadow: 0 8px 24px rgba(0, 240, 255, 0.15); }
+    .arch-layer-card.active.t3-active { border-color: var(--amber); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15); }
+    .arch-layer-card.active.t4-active { border-color: var(--purple); box-shadow: 0 8px 24px rgba(168, 85, 247, 0.15); }
+
+    .layer-num {
+      font-family: var(--f-mono);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-faint);
+      line-height: 1;
+      padding-top: 2px;
+    }
+    .arch-layer-card.active .layer-num { color: var(--emerald); }
+    .arch-layer-card.active.t2-active .layer-num { color: var(--cyan); }
+    .arch-layer-card.active.t3-active .layer-num { color: var(--amber); }
+    .arch-layer-card.active.t4-active .layer-num { color: var(--purple); }
+
+    .layer-content {
+      flex: 1;
+    }
+    .layer-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .layer-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .layer-badge {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .layer-badge.t1 { background: rgba(16, 185, 129, 0.15); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .layer-badge.t2 { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid rgba(0, 240, 255, 0.3); }
+    .layer-badge.t3 { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .layer-badge.t4 { background: rgba(168, 85, 247, 0.15); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    .layer-bio-analogy {
+      font-size: 11.5px;
+      color: #93c5fd;
+      margin-bottom: 4px;
+    }
+    .layer-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+    .layer-meta {
+      display: flex;
+      gap: 14px;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      color: var(--text-faint);
+    }
+    .layer-meta span strong {
+      color: var(--text-main);
+    }
+
+    /* 3 Biological Principles Micro-Grid */
+    .arch-principles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 24px;
+    }
+    .principle-box {
+      background: rgba(13, 20, 31, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .principle-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .principle-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .principle-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1024px) {
+      .arch-body { grid-template-columns: 1fr; }
+      .arch-principles-grid { grid-template-columns: 1fr; }
+      .canvas-wrapper { height: 380px; }
+      .canvas-legend { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 1024px) {
+      .tiers-grid { grid-template-columns: repeat(2, 1fr); }
+      .calc-grid { grid-template-columns: 1fr; }
+      .global-stats-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .tiers-grid { grid-template-columns: 1fr; }
+      .global-stats-bar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="myca-navbar">
+    <a href="/depin" class="nav-brand">
+      <img src="/depin/mycai_logo.png" alt="MYC Logo">
+      <span class="nav-brand-text">MYC NETWORK</span>
+      <span class="nav-brand-badge">Base L2</span>
+    </a>
+    <nav class="nav-links">
+      <a href="/depin" class="nav-link" id="navOverview">Overview</a>
+      <a href="/depin/docs" class="nav-link" id="navDocs">GitBook Docs</a>
+      <a href="/depin/dev-docs" class="nav-link" id="navDevDocs">Developer Docs</a>
+      <a href="/depin/mint" class="nav-link active" id="navNodeSale">Node Sale</a>
+      <a href="/depin/hub" class="nav-link" id="navHub">Ecosystem Hub</a>
+      <a href="/depin/x-card" class="nav-link" id="navXStudio">X Studio</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div class="lang-selector">
+        <button class="lang-btn active" id="langBtnEn" onclick="setLanguage('en')">EN</button>
+        <span class="lang-divider">/</span>
+        <button class="lang-btn" id="langBtnTr" onclick="setLanguage('tr')">TR</button>
+      </div>
+      <button id="btnWallet" class="tab-btn active" style="padding: 6px 16px; font-size: 12px;" onclick="connectWallet()">
+        Connect Base Wallet
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Living Mycelium Network Architecture & Colony Mesh Visualizer -->
+    <section class="mycelium-arch-card" id="myceliumArchSection" style="margin-top: 24px;">
+      <div class="arch-header">
+        <div class="arch-badge" id="txtArchBadge">🌱 Colony Mesh Topology • Biological-to-DePIN Architecture</div>
+        <h2 class="arch-title" id="txtArchTitle">Living Mycelium Network Architecture</h2>
+        <p class="arch-subtitle" id="txtArchSubtitle">
+          How nature's oldest decentralized intelligence coordinates 10,000 nodes without a single point of failure.
+          From microscopic Spore sensors to sovereign Fruiting Body anchors, explore how the Colony Mesh routes data and locks phase coherence.
+        </p>
+      </div>
+
+      <div class="arch-body">
+        <!-- Canvas Visualizer Column -->
+        <div class="canvas-panel">
+          <div class="canvas-top-bar">
+            <div class="canvas-live-indicator">
+              <span class="live-dot"></span>
+              <span class="live-text" id="txtLiveSim">Living Mesh Simulation (60 FPS)</span>
+            </div>
+            <div class="canvas-actions">
+              <button class="canvas-btn" id="btnPulseWave" onclick="triggerMeshPulse()">⚡ Send Micro-Pulse</button>
+              <button class="canvas-btn" id="btnReroute" onclick="triggerStressReroute()">🔄 Test Self-Healing</button>
+            </div>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="myceliumCanvas"></canvas>
+            <div id="canvasTooltip" class="canvas-tooltip"></div>
+          </div>
+          <div class="canvas-legend">
+            <div class="legend-item active" id="leg1" onclick="selectTierLayer(1)">
+              <span class="legend-color t1-dot"></span>
+              <span id="txtLeg1">Spore (Edge)</span>
+            </div>
+            <div class="legend-item" id="leg2" onclick="selectTierLayer(2)">
+              <span class="legend-color t2-dot"></span>
+              <span id="txtLeg2">Hyphae (Mesh)</span>
+            </div>
+            <div class="legend-item" id="leg3" onclick="selectTierLayer(3)">
+              <span class="legend-color t3-dot"></span>
+              <span id="txtLeg3">Trunk (Highway)</span>
+            </div>
+            <div class="legend-item" id="leg4" onclick="selectTierLayer(4)">
+              <span class="legend-color t4-dot"></span>
+              <span id="txtLeg4">Apex (Crown)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biological to DePIN Mapping Cards -->
+        <div class="arch-layers">
+          <!-- Layer 1: Spore -->
+          <div class="arch-layer-card active" id="layerCard1" onclick="selectTierLayer(1)">
+            <div class="layer-num">01</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL1Name">Spore (Seed Sensor)</span>
+                <span class="layer-badge t1">Tier 1 • $299 • 1,000 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL1Bio">🍄 <strong>In Nature:</strong> Single microscopic seed spore dispersed across the forest canopy.</div>
+              <p class="layer-desc" id="txtL1Desc">
+                <strong>DePIN Architecture:</strong> Ultra-lightweight edge sensor (ESP32/RP2350) equipped with Silicon PUF root identity. Gathers boundary telemetry and broadcasts 48-byte quantum pulse signals to neighboring peers.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL1Topo">Edge Sensor</strong></span>
+                <span>Weight: <strong id="txtL1Mult">1.0x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL1Hw">ESP32</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 2: Hyphae -->
+          <div class="arch-layer-card" id="layerCard2" onclick="selectTierLayer(2)">
+            <div class="layer-num">02</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL2Name">Hyphae (Local Mesh)</span>
+                <span class="layer-badge t2">Tier 2 • $449 • 2,500 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL2Bio">🌿 <strong>In Nature:</strong> Interconnected living fungal threads branching beneath the forest floor.</div>
+              <p class="layer-desc" id="txtL2Desc">
+                <strong>DePIN Architecture:</strong> Cluster routing nodes (Raspberry Pi 4/5) forming the local Colony Mesh. Establishes Phase-Locked Loops (PLL) across K=8 peers to synchronize latency without central servers.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL2Topo">Local Relay</strong></span>
+                <span>Weight: <strong id="txtL2Mult">1.3x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL2Hw">Raspberry Pi</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 3: Mycelial Highway -->
+          <div class="arch-layer-card" id="layerCard3" onclick="selectTierLayer(3)">
+            <div class="layer-num">03</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL3Name">Mycelial Highway (Trunk Substrate)</span>
+                <span class="layer-badge t3">Tier 3 • $699 • 4,000 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL3Bio">⚡ <strong>In Nature:</strong> High-density nutrient super-highway transferring minerals across vast distances.</div>
+              <p class="layer-desc" id="txtL3Desc">
+                <strong>DePIN Architecture:</strong> Industrial regional gateways (Mini PC / Jetson). Aggregates edge sensor feeds, coordinates distributed AI inference, and manages zero-gas micropayment streams.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL3Topo">Regional Gateway</strong></span>
+                <span>Weight: <strong id="txtL3Mult">1.8x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL3Hw">Mini PC/Jetson</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 4: Fruiting Body -->
+          <div class="arch-layer-card" id="layerCard4" onclick="selectTierLayer(4)">
+            <div class="layer-num">04</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL4Name">Fruiting Body (Sovereign Apex)</span>
+                <span class="layer-badge t4">Tier 4 • $1,099 • 2,500 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL4Bio">👑 <strong>In Nature:</strong> The crown emerging above the soil, unifying the forest colony and releasing new spores.</div>
+              <p class="layer-desc" id="txtL4Desc">
+                <strong>DePIN Architecture:</strong> Global phase synchronization and state anchor (Sovereign GPU/Server). Calculates network-wide PoQR energy and Merkle state roots, sealing verified cumulative proofs onto Base L2.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL4Topo">Consensus & Anchor</strong></span>
+                <span>Weight: <strong id="txtL4Mult">2.5x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL4Hw">Sovereign GPU</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Biological Principles Micro-Grid -->
+      <div class="arch-principles-grid">
+        <div class="principle-box">
+          <div class="principle-icon">🛡️</div>
+          <div class="principle-title" id="txtP1Title">Self-Healing Topology</div>
+          <div class="principle-desc" id="txtP1Desc">
+            Just like a living mycelium network, if a physical node loses power or connectivity, neighboring hyphae automatically establish alternative routes within 500ms. Zero single points of failure.
+          </div>
+        </div>
+        <div class="principle-box">
+          <div class="principle-icon">⚛️</div>
+          <div class="principle-title" id="txtP2Title">Anti-Sybil Phase Damping</div>
+          <div class="principle-desc" id="txtP2Desc">
+            Virtual clones cannot replicate real-world physical jitter. Nodes with clock offsets exceeding 45° undergo destructive quantum interference: cos²(ΔΦ) → 0, eliminating malicious reward extraction.
+          </div>
+        </div>
+        <div class="principle-box">
+          <div class="principle-icon">🔄</div>
+          <div class="principle-title" id="txtP3Title">Symbiotic Zero-Waste Equilibrium</div>
+          <div class="principle-desc" id="txtP3Desc">
+            Every compute cycle and data packet converts into metabolic energy (E_i). All network fees and slashed penalties are recycled back into the soil (the daily 100,000 MYC reward pool) to nourish active hardware stakers.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Network Statistics Bar -->
+    <section class="global-stats-bar">
+      <div class="stat-item">
+        <span class="stat-label" id="txtStatHardcap">Total Hardcap</span>
+        <span class="stat-val">10,000 Licenses</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label" id="txtStatEmission">Daily Emission Cap</span>
+        <span class="stat-val accent">100,000 MYC / day</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label" id="txtStatActiveMesh">Active Colony Mesh</span>
+        <span class="stat-val" id="statMeshNodes">1,248 Nodes Online</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label" id="txtStatSettlement">Settlement Layer</span>
+        <span class="stat-val">Base (USDC / ETH)</span>
+      </div>
+    </section>
+
+    <!-- Hero Banner: Node License Sale -->
+    <section class="mint-hero" style="margin-top: 8px; margin-bottom: 32px;">
+      <div class="mint-tagline" id="txtHeroTag">⚛️ Proof-of-Quantum-Resonance (PoQR) • Base L2 Node Mint</div>
+      <h1 class="mint-title" id="txtHeroTitle">Living DePIN Node License Sale</h1>
+      <p class="mint-desc" id="txtHeroDesc">
+        Participate in the sovereign cognitive edge network. 10,000 Hardcapped ERC-721 node licenses on Base with 
+        hardware-bound PUF authentication, 100,000 $MYC daily emission pool, and auto-compounding resonance yield.
+      </p>
+    </section>
+
+    <!-- Tabs Navigation -->
+    <div class="tab-nav">
+      <button class="tab-btn active" id="txtTabSale" onclick="switchTab('sale')">Node License Sale</button>
+      <button class="tab-btn" id="txtTabCalc" onclick="switchTab('calc')">Quantum ROI Calculator</button>
+      <button class="tab-btn" id="txtTabClaim" onclick="switchTab('claim')">Cumulative Claim & Staking</button>
+      <button class="tab-btn" id="txtTabHw" onclick="openHardwareModal()">Hardware Binding (PUF)</button>
+    </div>
+
+    <!-- TAB 1: 4-Tier Node Cards -->
+    <div id="tabSale" class="tab-content">
+      <div class="tiers-grid">
+
+        <!-- Tier 1: Spore -->
+        <div class="tier-card t1" id="tierCard1">
+          <span class="tier-badge">Tier 1 • Seed Cohort</span>
+          <h2 class="tier-name">Spore</h2>
+          <p class="tier-role">Edge Sensor & Micro-Pulse</p>
+          <div class="tier-price-box">
+            <span class="price-val">$299</span>
+            <span class="price-unit">USDC on Base</span>
+          </div>
+          <div class="quota-box">
+            <div class="quota-meta">
+              <span>Supply Cap</span>
+              <strong id="q1">842 / 1,000 Minted</strong>
+            </div>
+            <div class="quota-track">
+              <div class="quota-fill" style="width: 84.2%;"></div>
+            </div>
+          </div>
+          <ul class="tier-perks">
+            <li><span>Base Multiplier</span> <strong>1.0x Weight</strong></li>
+            <li><span>Hardware Req</span> <strong>ESP32 / RP2350</strong></li>
+            <li><span>Bandwidth Bound</span> <strong>10 MB / day</strong></li>
+            <li><span>Colony Role</span> <strong>Pulse Producer</strong></li>
+          </ul>
+          <button class="btn-buy" onclick="purchaseNode(1, 299)">Buy with USDC ($299)</button>
+        </div>
+
+        <!-- Tier 2: Hyphae -->
+        <div class="tier-card t2" id="tierCard2">
+          <span class="tier-badge">Tier 2 • Network Backbone</span>
+          <h2 class="tier-name">Hyphae</h2>
+          <p class="tier-role">Local Mesh Relay & Router</p>
+          <div class="tier-price-box">
+            <span class="price-val">$449</span>
+            <span class="price-unit">USDC on Base</span>
+          </div>
+          <div class="quota-box">
+            <div class="quota-meta">
+              <span>Supply Cap</span>
+              <strong id="q2">1,420 / 2,500 Minted</strong>
+            </div>
+            <div class="quota-track">
+              <div class="quota-fill" style="width: 56.8%;"></div>
+            </div>
+          </div>
+          <ul class="tier-perks">
+            <li><span>Base Multiplier</span> <strong>1.3x Weight</strong></li>
+            <li><span>Hardware Req</span> <strong>Raspberry Pi 4/5</strong></li>
+            <li><span>Bandwidth Bound</span> <strong>25 MB / day</strong></li>
+            <li><span>Colony Role</span> <strong>Cluster Router</strong></li>
+          </ul>
+          <button class="btn-buy" onclick="purchaseNode(2, 449)">Buy with USDC ($449)</button>
+        </div>
+
+        <!-- Tier 3: Mycelial -->
+        <div class="tier-card t3" id="tierCard3">
+          <span class="tier-badge">Tier 3 • Industrial Master</span>
+          <h2 class="tier-name">Mycelial</h2>
+          <p class="tier-role">Regional Cluster Gateway</p>
+          <div class="tier-price-box">
+            <span class="price-val">$699</span>
+            <span class="price-unit">USDC on Base</span>
+          </div>
+          <div class="quota-box">
+            <div class="quota-meta">
+              <span>Supply Cap</span>
+              <strong id="q3">1,890 / 4,000 Minted</strong>
+            </div>
+            <div class="quota-track">
+              <div class="quota-fill" style="width: 47.2%;"></div>
+            </div>
+          </div>
+          <ul class="tier-perks">
+            <li><span>Base Multiplier</span> <strong>1.8x Weight</strong></li>
+            <li><span>Hardware Req</span> <strong>Mini PC / Jetson</strong></li>
+            <li><span>Bandwidth Bound</span> <strong>50 MB / day</strong></li>
+            <li><span>Colony Role</span> <strong>Cognitive Arbiter</strong></li>
+          </ul>
+          <button class="btn-buy" onclick="purchaseNode(3, 699)">Buy with USDC ($699)</button>
+        </div>
+
+        <!-- Tier 4: Fruiting Body -->
+        <div class="tier-card t4" id="tierCard4">
+          <span class="tier-badge">Tier 4 • Sovereign Apex</span>
+          <h2 class="tier-name">Fruiting Body</h2>
+          <p class="tier-role">Global Phase Synchronizer</p>
+          <div class="tier-price-box">
+            <span class="price-val">$1,099</span>
+            <span class="price-unit">USDC on Base</span>
+          </div>
+          <div class="quota-box">
+            <div class="quota-meta">
+              <span>Supply Cap</span>
+              <strong id="q4">780 / 2,500 Minted</strong>
+            </div>
+            <div class="quota-track">
+              <div class="quota-fill" style="width: 31.2%;"></div>
+            </div>
+          </div>
+          <ul class="tier-perks">
+            <li><span>Base Multiplier</span> <strong>2.5x Weight</strong></li>
+            <li><span>Hardware Req</span> <strong>Dedicated Server / GPU</strong></li>
+            <li><span>Bandwidth Bound</span> <strong>100 MB / day</strong></li>
+            <li><span>Colony Role</span> <strong>BFT Verifier</strong></li>
+          </ul>
+          <button class="btn-buy" onclick="purchaseNode(4, 1099)">Buy with USDC ($1,099)</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: Interactive PoQR ROI Calculator -->
+    <div id="tabCalc" class="tab-content" style="display: none;">
+      <div class="calc-card">
+        <div class="calc-header">
+          <div>
+            <h2 class="calc-title">Proof-of-Quantum-Resonance (PoQR) Yield Visualizer</h2>
+            <p class="calc-sub">Simulate estimated reward distributions from the fixed 100,000 MYC/day emission pool.</p>
+          </div>
+          <div class="calc-disclaimer">
+            ⚠️ <strong>Illustrative Estimate:</strong> Dependent on active nodes, phase coherence, and market price. No guaranteed financial return.
+          </div>
+        </div>
+
+        <div class="calc-grid">
+          <!-- Controls -->
+          <div class="calc-controls">
+            <div class="ctrl-group">
+              <div class="ctrl-header">
+                <span>Node Tier</span>
+                <span class="ctrl-val" id="lblTier">Tier 1 — Spore (1.0x)</span>
+              </div>
+              <input type="range" class="ctrl-slider" id="rngTier" min="1" max="4" value="1" oninput="updateROI()">
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-header">
+                <span>Number of Nodes</span>
+                <span class="ctrl-val" id="lblNodeCount">1 Node</span>
+              </div>
+              <input type="range" class="ctrl-slider" id="rngNodes" min="1" max="50" value="1" oninput="updateROI()">
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-header">
+                <span>Total Active Network Nodes</span>
+                <span class="ctrl-val" id="lblNetSize">2,500 Nodes</span>
+              </div>
+              <input type="range" class="ctrl-slider" id="rngNetSize" min="1000" max="10000" step="250" value="2500" oninput="updateROI()">
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-header">
+                <span>Projected $MYC Price</span>
+                <span class="ctrl-val" id="lblPrice">$0.25</span>
+              </div>
+              <input type="range" class="ctrl-slider" id="rngPrice" min="0.05" max="2.00" step="0.05" value="0.25" oninput="updateROI()">
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-header">
+                <span>Phase Coherence Offset (ΔΦ)</span>
+                <span class="ctrl-val" id="lblPhase">2.5° (99.8% Coherent)</span>
+              </div>
+              <input type="range" class="ctrl-slider" id="rngPhase" min="0" max="60" step="1" value="2" oninput="updateROI()">
+            </div>
+
+            <div class="ctrl-group">
+              <div class="ctrl-header">
+                <span>Settlement Mode</span>
+                <span class="ctrl-val" id="lblMode">Auto-Compound Mode (1.25x Multiplier)</span>
+              </div>
+              <input type="range" class="ctrl-slider" id="rngMode" min="0" max="1" value="1" oninput="updateROI()">
+            </div>
+          </div>
+
+          <!-- Output Metrics -->
+          <div class="calc-results">
+            <div class="res-metric">
+              <span class="res-label">Phase Coherence cos²(ΔΦ)</span>
+              <span class="res-num" id="resCoherence">99.8% (Phase-Locked)</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Daily Resonant Energy (E_i)</span>
+              <span class="res-num" id="resEnergy">1.248 Quantum Units</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Estimated Daily $MYC Reward</span>
+              <span class="res-num highlight" id="resDailyMYC">41.24 MYC</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Estimated Monthly Cashflow</span>
+              <span class="res-num highlight" id="resMonthlyUSD">$309.30 USD</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Illustrative Payback Period</span>
+              <span class="res-num" id="resPayback">~29 Days</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Cumulative Claim & Vesting -->
+    <div id="tabClaim" class="tab-content" style="display: none;">
+      <div class="calc-card">
+        <h2 class="calc-title">Cumulative Merkle Claim & Staking Console</h2>
+        <p class="calc-sub" style="margin-bottom: 24px;">
+          Claim your verified Proof-of-Quantum-Resonance rewards using single-proof cumulative settlement.
+        </p>
+
+        <div class="calc-grid">
+          <div class="calc-results">
+            <div class="res-metric">
+              <span class="res-label">Total Cumulative Proven</span>
+              <span class="res-num" id="claimCumulative">1,842.50 MYC</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Previously Claimed</span>
+              <span class="res-num" id="claimPrevious">600.00 MYC</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Current Claimable Balance</span>
+              <span class="res-num highlight" id="claimAvailable">1,242.50 MYC</span>
+            </div>
+            <div class="res-metric">
+              <span class="res-label">Streaming Linear Vesting (90d)</span>
+              <span class="res-num" id="claimVesting">420.00 MYC</span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+            <button class="btn-buy" style="background: var(--emerald); color: #000; padding: 16px;" onclick="executeClaim(false)">
+              Claim Liquid (30% Now / 70% 90d Linear Stream)
+            </button>
+            <button class="btn-buy" style="background: var(--cyan); color: #000; padding: 16px;" onclick="executeClaim(true)">
+              Auto-Compound 100% Staked (+1.25x Resonance Boost)
+            </button>
+            <button class="btn-secondary" style="padding: 14px;" onclick="claimVestedTokens()">
+              Stream Available Vested Tokens
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Hardware Binding Modal -->
+  <div id="modalHw" class="modal-overlay">
+    <div class="modal-box">
+      <h3 class="modal-title">EIP-712 Hardware Attestation</h3>
+      <p class="modal-desc">
+        Bind your physical device (ESP32, STM32, Raspberry Pi) to your Base Node License NFT.
+        Generates an immutable on-chain challenge signed with your device's Silicon PUF private key.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">Node License Token ID</label>
+        <input type="number" class="form-input" id="hwTokenId" value="101" placeholder="e.g. 101">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Machine DID (PUF Silicon Identity)</label>
+        <input type="text" class="form-input" id="hwDid" value="did:myc:puf:0x4d29b6c4b38b2ac4a6e2bbb9c4d7c002" placeholder="did:myc:puf:0x...">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Active Challenge Nonce</label>
+        <input type="text" class="form-input" id="hwChallenge" value="0x7f4a21... [Click Request Challenge]" readonly>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeHardwareModal()">Cancel</button>
+        <button class="btn-primary" onclick="requestChallenge()">Request Challenge & Bind</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab Switcher
+    function switchTab(tabId) {
+      document.getElementById('tabSale').style.display = tabId === 'sale' ? 'block' : 'none';
+      document.getElementById('tabCalc').style.display = tabId === 'calc' ? 'block' : 'none';
+      document.getElementById('tabClaim').style.display = tabId === 'claim' ? 'block' : 'none';
+
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // Modal controls
+    function openHardwareModal() {
+      document.getElementById('modalHw').classList.add('active');
+    }
+    function closeHardwareModal() {
+      document.getElementById('modalHw').classList.remove('active');
+    }
+
+    // Interactive ROI Calculator Logic
+    function updateROI() {
+      const tierId = parseInt(document.getElementById('rngTier').value);
+      const nodes = parseInt(document.getElementById('rngNodes').value);
+      const netSize = parseInt(document.getElementById('rngNetSize').value);
+      const price = parseFloat(document.getElementById('rngPrice').value);
+      const phaseDeg = parseFloat(document.getElementById('rngPhase').value);
+      const isCompound = parseInt(document.getElementById('rngMode').value) === 1;
+
+      const tierNames = ["", "Tier 1 — Spore (1.0x)", "Tier 2 — Hyphae (1.3x)", "Tier 3 — Mycelial (1.8x)", "Tier 4 — Fruiting Body (2.5x)"];
+      const tierMultipliers = [0, 1.0, 1.3, 1.8, 2.5];
+      const tierPrices = [0, 299, 449, 699, 1099];
+
+      document.getElementById('lblTier').innerText = tierNames[tierId];
+      document.getElementById('lblNodeCount').innerText = `${nodes} ${nodes > 1 ? 'Nodes' : 'Node'}`;
+      document.getElementById('lblNetSize').innerText = `${netSize.toLocaleString()} Nodes`;
+      document.getElementById('lblPrice').innerText = `$${price.toFixed(2)}`;
+      document.getElementById('lblMode').innerText = isCompound ? 'Auto-Compound Mode (1.25x Multiplier)' : 'Liquid Claim Mode (30/70 Vesting)';
+
+      // Phase Coherence
+      const deltaRad = phaseDeg * (Math.PI / 180);
+      let coherence = 0.0;
+      if (phaseDeg <= 45) {
+        coherence = Math.pow(Math.cos(deltaRad), 2);
+      } // Cutoff at 45 degrees
+
+      document.getElementById('lblPhase').innerText = phaseDeg > 45 
+        ? `${phaseDeg}° (DESTABILIZED / QUENCHED)`
+        : `${phaseDeg}° (${(coherence * 100).toFixed(1)}% Coherent)`;
+
+      // Energy E_i
+      const saturation = 1.0 - Math.exp(-48 / 50); // ~0.617
+      const compoundMult = isCompound ? 1.25 : 1.0;
+      const singleNodeEnergy = 1.0 * saturation * coherence * 1.0 * tierMultipliers[tierId] * compoundMult;
+      const totalUserEnergy = singleNodeEnergy * nodes;
+
+      // Estimated share of fixed 100,000 MYC daily pool
+      const avgNetworkNodeEnergy = 1.0 * saturation * 0.99 * 1.0 * 1.6; // average across tiers
+      const totalNetworkEnergy = avgNetworkNodeEnergy * netSize;
+
+      let dailyMYC = 0;
+      if (totalNetworkEnergy > 0 && coherence > 0) {
+        dailyMYC = (100000 * totalUserEnergy) / totalNetworkEnergy;
+      }
+
+      const monthlyUSD = dailyMYC * 30 * price;
+      const totalCost = tierPrices[tierId] * nodes;
+      const paybackDays = monthlyUSD > 0 ? Math.round(totalCost / (monthlyUSD / 30)) : 'INFINITE (0)';
+
+      document.getElementById('resCoherence').innerText = phaseDeg > 45 ? '0.0% (Destructive Interference)' : `${(coherence * 100).toFixed(1)}% Phase-Locked`;
+      document.getElementById('resEnergy').innerText = `${totalUserEnergy.toFixed(3)} Quantum Units`;
+      document.getElementById('resDailyMYC').innerText = `${dailyMYC.toFixed(2)} MYC`;
+      document.getElementById('resMonthlyUSD').innerText = `$${monthlyUSD.toFixed(2)} USD`;
+      document.getElementById('resPayback').innerText = typeof paybackDays === 'number' ? `~${paybackDays} Days` : 'INFINITE';
+    }
+
+    // Purchase simulation / Base Web3 flow
+    async function purchaseNode(tierId, priceUSD) {
+      if (typeof window.ethereum === 'undefined') {
+        alert('MetaMask or Coinbase Wallet not detected. Please install a Web3 wallet to connect to Base.');
+        return;
+      }
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        if (chainId !== '0x2105' && chainId !== '0x14a34') { // Base Mainnet (8453) or Base Sepolia (84532)
+          alert('Please switch to Base L2 network in your wallet.');
+          return;
+        }
+        alert(`Connected: ${accounts[0]}\nInitiating permit signature & USDC approval for Tier ${tierId} ($${priceUSD} USDC)...`);
+      } catch (e) {
+        console.error(e);
+        alert('Wallet connection cancelled.');
+      }
+    }
+
+    function executeClaim(isAutoCompound) {
+      alert(`Claim executed! Mode: ${isAutoCompound ? 'Auto-Compound 100% Staked (+1.25x Resonance Multiplier)' : 'Liquid Claim (30% Instant + 70% 90d Linear Vesting)'}`);
+    }
+
+    function claimVestedTokens() {
+      alert('Streaming available vested tokens to your Base wallet!');
+    }
+
+    function requestChallenge() {
+      const tokenId = document.getElementById('hwTokenId').value;
+      const did = document.getElementById('hwDid').value;
+      const fakeChallenge = '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      document.getElementById('hwChallenge').value = fakeChallenge;
+      alert(`Challenge generated for Token #${tokenId} & DID ${did}!\nChallenge: ${fakeChallenge.slice(0, 18)}...\nHardware attestation verified.`);
+      closeHardwareModal();
+    }
+
+    async function connectWallet() {
+      if (typeof window.ethereum !== 'undefined') {
+        const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        document.getElementById('btnWallet').innerText = accs[0].slice(0, 6) + '...' + accs[0].slice(-4);
+      } else {
+        alert('MetaMask or Coinbase Wallet required for Base L2.');
+      }
+    }
+
+    // ==========================================
+    // LIVING MYCELIUM NETWORK SIMULATION ENGINE
+    // ==========================================
+    let canvas, ctx;
+    let meshNodes = [];
+    let meshEdges = [];
+    let meshParticles = [];
+    let pulseRings = [];
+    let activeTierFilter = 1;
+    let hoveredNode = null;
+    let selfHealingActive = false;
+    let selfHealingTimer = null;
+    let emergencyLinks = [];
+
+    function initMyceliumCanvas() {
+      canvas = document.getElementById('myceliumCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      buildMeshGraph();
+      setupCanvasInteractions();
+      requestAnimationFrame(renderMeshLoop);
+    }
+
+    function buildMeshGraph() {
+      meshNodes = [];
+      meshEdges = [];
+      meshParticles = [];
+
+      // 1 Apex Fruiting Body (Center)
+      meshNodes.push({
+        id: 0,
+        tier: 4,
+        name: 'Fruiting Body (Apex #01)',
+        did: 'did:myc:puf:0x7a3f8901',
+        relX: 0.5,
+        relY: 0.5,
+        radius: 14,
+        color: '#c084fc',
+        glow: 'rgba(168, 85, 247, 0.6)',
+        coherence: 99.9,
+        latency: 4,
+        pulseOffset: 0
+      });
+
+      // 4 Primary Trunk Hubs (Tier 3)
+      for (let i = 0; i < 4; i++) {
+        const angle = (i * Math.PI / 2) + Math.PI / 4;
+        const dist = 0.20;
+        meshNodes.push({
+          id: meshNodes.length,
+          tier: 3,
+          name: `Mycelial Trunk #0${i + 1}`,
+          did: `did:myc:puf:0x${(100 + i).toString(16)}bc4f`,
+          relX: 0.5 + Math.cos(angle) * dist,
+          relY: 0.5 + Math.sin(angle) * dist * 0.9,
+          radius: 9,
+          color: '#fbbf24',
+          glow: 'rgba(245, 158, 11, 0.5)',
+          coherence: 99.6,
+          latency: 8,
+          pulseOffset: i * 0.4
+        });
+        meshEdges.push({ from: 0, to: meshNodes.length - 1, width: 2.8, color: 'rgba(245, 158, 11, 0.35)' });
+      }
+
+      // Connect trunks in a loop
+      for (let i = 1; i <= 4; i++) {
+        const next = i === 4 ? 1 : i + 1;
+        meshEdges.push({ from: i, to: next, width: 1.8, color: 'rgba(245, 158, 11, 0.2)' });
+      }
+
+      // 12 Hyphae Nodes (Tier 2)
+      for (let i = 0; i < 12; i++) {
+        const parentTrunk = 1 + Math.floor(i / 3);
+        const baseAngle = (i * (2 * Math.PI / 12));
+        const dist = 0.33 + (i % 2 === 0 ? 0.03 : -0.02);
+        meshNodes.push({
+          id: meshNodes.length,
+          tier: 2,
+          name: `Hyphae Relay #0${i + 1}`,
+          did: `did:myc:puf:0x${(200 + i).toString(16)}a7d1`,
+          relX: 0.5 + Math.cos(baseAngle) * dist,
+          relY: 0.5 + Math.sin(baseAngle) * dist * 0.9,
+          radius: 6,
+          color: '#22d3ee',
+          glow: 'rgba(0, 240, 255, 0.45)',
+          coherence: 99.2,
+          latency: 14,
+          pulseOffset: i * 0.3
+        });
+        meshEdges.push({ from: parentTrunk, to: meshNodes.length - 1, width: 1.5, color: 'rgba(0, 240, 255, 0.25)' });
+      }
+
+      // Add cross-mesh links between neighboring hyphae
+      for (let i = 5; i < 17; i++) {
+        const next = i === 16 ? 5 : i + 1;
+        meshEdges.push({ from: i, to: next, width: 1.0, color: 'rgba(0, 240, 255, 0.18)' });
+      }
+
+      // 24 Spore Nodes (Tier 1) along outer periphery
+      for (let i = 0; i < 24; i++) {
+        const parentHypha = 5 + (i % 12);
+        const angle = (i * (2 * Math.PI / 24)) + (Math.sin(i) * 0.08);
+        const dist = 0.44 + (Math.sin(i * 3) * 0.04);
+        meshNodes.push({
+          id: meshNodes.length,
+          tier: 1,
+          name: `Spore Sensor #0${i + 1}`,
+          did: `did:myc:puf:0x${(300 + i).toString(16)}f8e9`,
+          relX: 0.5 + Math.cos(angle) * dist,
+          relY: 0.5 + Math.sin(angle) * dist * 0.9,
+          radius: 4,
+          color: '#34d399',
+          glow: 'rgba(16, 185, 129, 0.5)',
+          coherence: 98.8,
+          latency: 22,
+          pulseOffset: i * 0.2
+        });
+        meshEdges.push({ from: parentHypha, to: meshNodes.length - 1, width: 0.8, color: 'rgba(16, 185, 129, 0.2)' });
+      }
+
+      // Spawn 40 ambient moving nutrient particles
+      for (let i = 0; i < 42; i++) {
+        const edgeIdx = Math.floor(Math.random() * meshEdges.length);
+        meshParticles.push({
+          edgeIdx: edgeIdx,
+          t: Math.random(),
+          speed: 0.003 + Math.random() * 0.005,
+          dir: Math.random() > 0.5 ? 1 : -1,
+          size: 1.5 + Math.random() * 1.5
+        });
+      }
+    }
+
+    function setupCanvasInteractions() {
+      const tooltip = document.getElementById('canvasTooltip');
+      if (!tooltip || !canvas) return;
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const w = rect.width;
+        const h = rect.height;
+
+        hoveredNode = null;
+        for (const n of meshNodes) {
+          const nx = n.relX * w;
+          const ny = n.relY * h;
+          const dist = Math.hypot(mx - nx, my - ny);
+          if (dist <= n.radius + 8) {
+            hoveredNode = n;
+            break;
+          }
+        }
+
+        if (hoveredNode) {
+          tooltip.style.display = 'block';
+          tooltip.style.left = `${Math.min(mx + 14, w - 240)}px`;
+          tooltip.style.top = `${Math.min(my + 14, h - 120)}px`;
+          tooltip.innerHTML = `
+            <div style="color: ${hoveredNode.color}; font-weight: 800; font-size: 12px; margin-bottom: 2px;">
+              Tier ${hoveredNode.tier} • ${hoveredNode.name}
+            </div>
+            <div style="color: var(--text-faint); margin-bottom: 4px; font-size: 10px;">${hoveredNode.did}</div>
+            <div style="display: flex; justify-content: space-between; gap: 8px;">
+              <span style="color: var(--text-muted);">Coherence:</span>
+              <strong style="color: #fff;">${hoveredNode.coherence}% cos²(ΔΦ)</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 8px;">
+              <span style="color: var(--text-muted);">Mesh Latency:</span>
+              <strong style="color: var(--emerald);">${hoveredNode.latency} ms</strong>
+            </div>
+          `;
+        } else {
+          tooltip.style.display = 'none';
+        }
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        hoveredNode = null;
+        const tt = document.getElementById('canvasTooltip');
+        if (tt) tt.style.display = 'none';
+      });
+
+      canvas.addEventListener('click', () => {
+        if (hoveredNode) {
+          selectTierLayer(hoveredNode.tier);
+        }
+      });
+    }
+
+    function renderMeshLoop(time) {
+      if (!canvas || !ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Draw Expanding Pulse Waves
+      for (let i = pulseRings.length - 1; i >= 0; i--) {
+        const ring = pulseRings[i];
+        ring.radius += ring.speed;
+        ring.alpha -= 0.012;
+
+        if (ring.alpha <= 0) {
+          pulseRings.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(w * 0.5, h * 0.5, ring.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(16, 185, 129, ${ring.alpha * 0.8})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(w * 0.5, h * 0.5, ring.radius * 0.85, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 240, 255, ${ring.alpha * 0.4})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // 2. Draw Edges (Filaments)
+      for (const edge of meshEdges) {
+        const n1 = meshNodes[edge.from];
+        const n2 = meshNodes[edge.to];
+        if (!n1 || !n2) continue;
+
+        const x1 = n1.relX * w;
+        const y1 = n1.relY * h;
+        const x2 = n2.relX * w;
+        const y2 = n2.relY * h;
+
+        const isDimmed = activeTierFilter !== 0 && n1.tier !== activeTierFilter && n2.tier !== activeTierFilter;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = isDimmed ? 'rgba(255, 255, 255, 0.04)' : (edge.color || 'rgba(16, 185, 129, 0.15)');
+        ctx.lineWidth = isDimmed ? 0.6 : (edge.width || 1);
+        ctx.stroke();
+      }
+
+      // Draw Emergency Self-Healing Links
+      if (selfHealingActive && emergencyLinks.length > 0) {
+        for (const e of emergencyLinks) {
+          const n1 = meshNodes[e.from];
+          const n2 = meshNodes[e.to];
+          if (!n1 || !n2) continue;
+          ctx.beginPath();
+          ctx.moveTo(n1.relX * w, n1.relY * h);
+          ctx.lineTo(n2.relX * w, n2.relY * h);
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 2.4;
+          ctx.setLineDash([4, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      // 3. Draw Animated Nutrient / Micro-pulse Particles
+      for (const p of meshParticles) {
+        p.t += p.speed * p.dir;
+        if (p.t >= 1) { p.t = 1; p.dir = -1; }
+        else if (p.t <= 0) { p.t = 0; p.dir = 1; }
+
+        const edge = meshEdges[p.edgeIdx];
+        if (!edge) continue;
+        const n1 = meshNodes[edge.from];
+        const n2 = meshNodes[edge.to];
+        if (!n1 || !n2) continue;
+
+        const px = (n1.relX + (n2.relX - n1.relX) * p.t) * w;
+        const py = (n1.relY + (n2.relY - n1.relY) * p.t) * h;
+
+        ctx.beginPath();
+        ctx.arc(px, py, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = n1.tier === 4 || n2.tier === 4 ? '#c084fc' : (n1.tier === 3 || n2.tier === 3 ? '#fbbf24' : '#10b981');
+        ctx.fill();
+      }
+
+      // 4. Draw Nodes
+      const now = (time || performance.now()) * 0.003;
+      for (const node of meshNodes) {
+        const nx = node.relX * w;
+        const ny = node.relY * h;
+        const isSelected = activeTierFilter === node.tier;
+        const isDimmed = activeTierFilter !== 0 && !isSelected;
+        const pulse = Math.sin(now + node.pulseOffset) * 1.5;
+
+        // Severed node state
+        if (selfHealingActive && node.id === 8) {
+          ctx.beginPath();
+          ctx.arc(nx, ny, node.radius + 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+          // Draw X
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(nx - 4, ny - 4); ctx.lineTo(nx + 4, ny + 4);
+          ctx.moveTo(nx + 4, ny - 4); ctx.lineTo(nx - 4, ny + 4);
+          ctx.stroke();
+          continue;
+        }
+
+        // Outer Halo for active or selected tier
+        if (isSelected || hoveredNode === node) {
+          ctx.beginPath();
+          ctx.arc(nx, ny, node.radius + 6 + pulse, 0, Math.PI * 2);
+          ctx.fillStyle = node.glow;
+          ctx.fill();
+        }
+
+        // Main Node Body
+        ctx.beginPath();
+        ctx.arc(nx, ny, Math.max(2, node.radius + (isSelected ? pulse * 0.5 : 0)), 0, Math.PI * 2);
+        ctx.fillStyle = isDimmed ? 'rgba(255, 255, 255, 0.2)' : node.color;
+        ctx.shadowColor = isDimmed ? 'transparent' : node.color;
+        ctx.shadowBlur = isDimmed ? 0 : 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Central core highlight
+        ctx.beginPath();
+        ctx.arc(nx, ny, node.radius * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(renderMeshLoop);
+    }
+
+    // Trigger Pulse Wave
+    function triggerMeshPulse() {
+      pulseRings.push({ radius: 10, speed: 4.5, alpha: 1.0 });
+      pulseRings.push({ radius: 4, speed: 3.5, alpha: 0.8 });
+      for (const p of meshParticles) {
+        p.speed *= 2.2;
+      }
+      setTimeout(() => {
+        for (const p of meshParticles) { p.speed /= 2.2; }
+      }, 1500);
+    }
+
+    // Test Self-Healing Failover
+    function triggerStressReroute() {
+      if (selfHealingActive) return;
+      selfHealingActive = true;
+      emergencyLinks = [
+        { from: 7, to: 9 },
+        { from: 2, to: 9 }
+      ];
+
+      const btn = document.getElementById('btnReroute');
+      if (btn) btn.innerText = '⚡ Severing Link & Rerouting...';
+
+      setTimeout(() => {
+        if (btn) btn.innerText = '✅ Rerouted via Peer (18ms) — 0% Loss';
+      }, 500);
+
+      if (selfHealingTimer) clearTimeout(selfHealingTimer);
+      selfHealingTimer = setTimeout(() => {
+        selfHealingActive = false;
+        emergencyLinks = [];
+        if (btn) btn.innerText = '🔄 Test Self-Healing';
+      }, 4000);
+    }
+
+    // Tier Layer Selection Synchronization
+    function selectTierLayer(tierId) {
+      activeTierFilter = tierId;
+
+      // Update Layer Cards
+      for (let i = 1; i <= 4; i++) {
+        const card = document.getElementById(`layerCard${i}`);
+        const leg = document.getElementById(`leg${i}`);
+        if (card) {
+          card.classList.remove('active', 't2-active', 't3-active', 't4-active');
+          if (i === tierId) {
+            card.classList.add('active');
+            if (tierId === 2) card.classList.add('t2-active');
+            if (tierId === 3) card.classList.add('t3-active');
+            if (tierId === 4) card.classList.add('t4-active');
+          }
+        }
+        if (leg) {
+          if (i === tierId) leg.classList.add('active');
+          else leg.classList.remove('active');
+        }
+      }
+
+      // Highlight target Tier Card in Tab 1
+      for (let i = 1; i <= 4; i++) {
+        const tc = document.getElementById(`tierCard${i}`);
+        if (tc) {
+          if (i === tierId) {
+            tc.style.borderColor = tierId === 1 ? 'var(--emerald)' : (tierId === 2 ? 'var(--cyan)' : (tierId === 3 ? 'var(--amber)' : 'var(--purple)'));
+            tc.style.boxShadow = `0 16px 40px rgba(0, 0, 0, 0.8)`;
+          } else {
+            tc.style.borderColor = 'var(--border-card)';
+            tc.style.boxShadow = 'none';
+          }
+        }
+      }
+
+      // Pulse wave on selection
+      pulseRings.push({ radius: 8, speed: 4.0, alpha: 0.9 });
+    }
+
+    // ==========================================
+    // MULTI-LANGUAGE (i18n) ENGINE: EN / TR
+    // ==========================================
+    const I18N = {
+      en: {
+        navOverview: "Overview",
+        navDocs: "GitBook Docs",
+        navDevDocs: "Developer Docs",
+        navNodeSale: "Node Sale",
+        navHub: "Ecosystem Hub",
+        navXStudio: "X Studio",
+        btnWallet: "Connect Base Wallet",
+        archBadge: "🌱 Colony Mesh Topology • Biological-to-DePIN Architecture",
+        archTitle: "Living Mycelium Network Architecture",
+        archSubtitle: "How nature's oldest decentralized intelligence coordinates 10,000 nodes without a single point of failure. From microscopic Spore sensors to sovereign Fruiting Body anchors, explore how the Colony Mesh routes data and locks phase coherence.",
+        btnPulse: "⚡ Send Micro-Pulse",
+        btnReroute: "🔄 Test Self-Healing",
+        liveSim: "Living Mesh Simulation (60 FPS)",
+        legSpore: "Spore (Edge)",
+        legHyphae: "Hyphae (Mesh)",
+        legTrunk: "Trunk (Highway)",
+        legApex: "Apex (Crown)",
+        l1Name: "Spore (Seed Sensor)",
+        l1Bio: "🍄 <strong>In Nature:</strong> Single microscopic seed spore dispersed across the forest canopy.",
+        l1Desc: "<strong>DePIN Architecture:</strong> Ultra-lightweight edge sensor (ESP32/RP2350) equipped with Silicon PUF root identity. Gathers boundary telemetry and broadcasts 48-byte quantum pulse signals to neighboring peers.",
+        l1Topo: "Edge Sensor",
+        l1Mult: "1.0x Weight",
+        l1Hw: "ESP32",
+        l2Name: "Hyphae (Local Mesh)",
+        l2Bio: "🌿 <strong>In Nature:</strong> Interconnected living fungal threads branching beneath the forest floor.",
+        l2Desc: "<strong>DePIN Architecture:</strong> Cluster routing nodes (Raspberry Pi 4/5) forming the local Colony Mesh. Establishes Phase-Locked Loops (PLL) across K=8 peers to synchronize latency without central servers.",
+        l2Topo: "Local Relay",
+        l2Mult: "1.3x Weight",
+        l2Hw: "Raspberry Pi",
+        l3Name: "Mycelial Highway (Trunk Substrate)",
+        l3Bio: "⚡ <strong>In Nature:</strong> High-density nutrient super-highway transferring minerals across vast distances.",
+        l3Desc: "<strong>DePIN Architecture:</strong> Industrial regional gateways (Mini PC / Jetson). Aggregates edge sensor feeds, coordinates distributed AI inference, and manages zero-gas micropayment streams.",
+        l3Topo: "Regional Gateway",
+        l3Mult: "1.8x Weight",
+        l3Hw: "Mini PC/Jetson",
+        l4Name: "Fruiting Body (Sovereign Apex)",
+        l4Bio: "👑 <strong>In Nature:</strong> The crown emerging above the soil, unifying the forest colony and releasing new spores.",
+        l4Desc: "<strong>DePIN Architecture:</strong> Global phase synchronization and state anchor (Sovereign GPU/Server). Calculates network-wide PoQR energy and Merkle state roots, sealing verified cumulative proofs onto Base L2.",
+        l4Topo: "Consensus & Anchor",
+        l4Mult: "2.5x Weight",
+        l4Hw: "Sovereign GPU",
+        p1Title: "Self-Healing Topology",
+        p1Desc: "Just like a living mycelium network, if a physical node loses power or connectivity, neighboring hyphae automatically establish alternative routes within 500ms. Zero single points of failure.",
+        p2Title: "Anti-Sybil Phase Damping",
+        p2Desc: "Virtual clones cannot replicate real-world physical jitter. Nodes with clock offsets exceeding 45° undergo destructive quantum interference: cos²(ΔΦ) → 0, eliminating malicious reward extraction.",
+        p3Title: "Symbiotic Zero-Waste Equilibrium",
+        p3Desc: "Every compute cycle and data packet converts into metabolic energy (E_i). All network fees and slashed penalties are recycled back into the soil (the daily 100,000 MYC reward pool) to nourish active hardware stakers.",
+        statHardcap: "Total Hardcap",
+        statEmission: "Daily Emission Cap",
+        statActiveMesh: "Active Colony Mesh",
+        statSettlement: "Settlement Layer",
+        heroTag: "⚛️ Proof-of-Quantum-Resonance (PoQR) • Base L2 Node Mint",
+        heroTitle: "Living DePIN Node License Sale",
+        heroDesc: "Participate in the sovereign cognitive edge network. 10,000 Hardcapped ERC-721 node licenses on Base with hardware-bound PUF authentication, 100,000 $MYC daily emission pool, and auto-compounding resonance yield.",
+        tabSale: "Node License Sale",
+        tabCalc: "Quantum ROI Calculator",
+        tabClaim: "Cumulative Claim & Staking",
+        tabHw: "Hardware Binding (PUF)"
+      },
+      tr: {
+        navOverview: "Genel Bakış",
+        navDocs: "GitBook Dokümanları",
+        navDevDocs: "Geliştirici Dokümanları",
+        navNodeSale: "Node Satışı",
+        navHub: "Ekosistem Portalı",
+        navXStudio: "X Stüdyo",
+        btnWallet: "Base Cüzdanı Bağla",
+        archBadge: "🌱 Koloni Mesh Topolojisi • Biyolojik DePIN Mimarisi",
+        archTitle: "Yaşayan Miselyum Ağı Mimarisi",
+        archSubtitle: "Doğanın en eski merkeziyetsiz zekasının tek bir hata noktası olmaksızın 10.000 nodu nasıl koordine ettiğini keşfedin. Mikroskobik Spor sensörlerinden tepe Gövde çapalarına kadar, Koloni Mesh'inin verileri nasıl yönlendirdiğini ve faz uyumunu nasıl kilitlediğini inceleyin.",
+        btnPulse: "⚡ Mikro-Nabız Gönder",
+        btnReroute: "🔄 Kendini Onarmayı Test Et",
+        liveSim: "Canlı Koloni Simülasyonu (60 FPS)",
+        legSpore: "Spor (Uç Sensör)",
+        legHyphae: "Hif (Yerel Mesh)",
+        legTrunk: "Otoban (Ana Omurga)",
+        legApex: "Tepe Gövde (Apex)",
+        l1Name: "Spore (Spor Sensörü)",
+        l1Bio: "🍄 <strong>Doğadaki Rolü:</strong> Orman örtüsüne yayılan tekil mikroskobik tohum hücresi (Seed spore).",
+        l1Desc: "<strong>DePIN Mimarisi:</strong> Donanım kök kimliğini (Silicon PUF) taşıyan ultra-düşük tüketimli (ESP32/RP2350) uç sensör. Çevre telemetrisini toplar ve komşu nodlara 48-byte'lık nabız sinyalleri yayınlar.",
+        l1Topo: "Uç Sensör",
+        l1Mult: "1.0x Çarpan",
+        l1Hw: "ESP32",
+        l2Name: "Hyphae (Hif İplikçikleri)",
+        l2Bio: "🌿 <strong>Doğadaki Rolü:</strong> Toprak altında birbirine kenetlenen canlı mantar lifleri (Mesh threads).",
+        l2Desc: "<strong>DePIN Mimarisi:</strong> Yerel Colony Mesh oluşturan yönlendirici nodlar (Raspberry Pi 4/5). Komşu K=8 eş nodla Faz Kilitleme Döngüsü (PLL) kurarak gecikmeleri eşitler, trafiği merkezi sunucu olmadan aktarır.",
+        l2Topo: "Yerel Röle",
+        l2Mult: "1.3x Çarpan",
+        l2Hw: "Raspberry Pi",
+        l3Name: "Mycelial Highway (Miselyum Ağı)",
+        l3Bio: "⚡ <strong>Doğadaki Rolü:</strong> Ağaçlar arası yüksek hızlı besin & mineral otobanı (Trunk conduit).",
+        l3Desc: "<strong>DePIN Mimarisi:</strong> Bölgesel endüstriyel ağ geçitleri (Mini PC / Jetson). Uç noktalardan gelen verileri toplar, yapay zeka çıkarım (AI inference) iş yüklerini dağıtır ve zero-gas mikro-ödeme kanallarını yönetir.",
+        l3Topo: "Bölgesel Ağ Geçidi",
+        l3Mult: "1.8x Çarpan",
+        l3Hw: "Mini PC/Jetson",
+        l4Name: "Fruiting Body (Mantar Gövdesi / Apex)",
+        l4Bio: "👑 <strong>Doğadaki Rolü:</strong> Toprak üstüne çıkan, spor üreten ve koloniyi birleştiren tepe taç (Apex crown).",
+        l4Desc: "<strong>DePIN Mimarisi:</strong> Küresel faz senkronizasyonu ve durum mühürleyicisi (Sovereign GPU/Sunucu). Tüm ormanın PoQR enerjisini ve Merkle durum kökünü hesaplar, Base L2 sözleşmelerine nihai kanıtları basar.",
+        l4Topo: "Konsensüs & Çapa",
+        l4Mult: "2.5x Çarpan",
+        l4Hw: "Sovereign GPU",
+        p1Title: "Otomatik İyileşen Topoloji (Self-Healing)",
+        p1Desc: "Doğadaki bir miselyum ağı gibi, fiziksel bir nod elektriğini veya internetini kaybetse dahi, çevreleyen hif nodları 500ms içinde alternatif rotalar açar. Ağda hiçbir zaman tek nokta arızası oluşmaz.",
+        p2Title: "Anti-Sybil Faz Sönümlemesi (Phase Damping)",
+        p2Desc: "Sahte sunucular (Sybil) fiziksel gecikmeyi taklit edemez. Yerel saat sapması (Jitter) 45 dereceyi aşan nodlar kuantum bozucu girişim ile karşılaşır: cos²(ΔΦ) → 0 olarak ödül enerjileri sıfırlanır.",
+        p3Title: "Simbiyotik Sıfır-Atık Döngüsü (Zero-Waste)",
+        p3Desc: "Ağda üretilen her hesaplama ve veri transferi metabolik enerjiye (E_i) dönüşür. İşlem ücretleri ve ceza kesintileri toprağa (günlük 100.000 $MYC havuzuna) geri dönerek staker'ları besler.",
+        statHardcap: "Toplam Hardcap",
+        statEmission: "Günlük Emisyon Havuzu",
+        statActiveMesh: "Aktif Koloni Ağı",
+        statSettlement: "Uzlaşma Katmanı",
+        heroTag: "⚛️ Proof-of-Quantum-Resonance (PoQR) • Base L2 Node Satışı",
+        heroTitle: "Yaşayan DePIN Node Lisans Satışı",
+        heroDesc: "Egemen bilişsel uç ağına katılın. Donanım tabanlı PUF doğrulamalı 10.000 sınırlı Base ERC-721 node lisansı, günlük 100.000 $MYC emisyon havuzu ve otomatik bileşik rezonans getirisi.",
+        tabSale: "Node Lisans Satışı",
+        tabCalc: "Kuantum ROI Hesaplayıcı",
+        tabClaim: "Kümülatif Talep & Staking",
+        tabHw: "Donanım Bağlama (PUF)"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      if (!I18N[lang]) lang = 'en';
+      currentLang = lang;
+      try { localStorage.setItem('myca_lang', lang); } catch (e) {}
+
+      const btnEn = document.getElementById('langBtnEn');
+      const btnTr = document.getElementById('langBtnTr');
+      if (btnEn && btnTr) {
+        if (lang === 'en') {
+          btnEn.classList.add('active');
+          btnTr.classList.remove('active');
+        } else {
+          btnTr.classList.add('active');
+          btnEn.classList.remove('active');
+        }
+      }
+
+      const t = I18N[lang];
+      const setText = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+      const setHtml = (id, val) => { const el = document.getElementById(id); if (el) el.innerHTML = val; };
+
+      setText('navOverview', t.navOverview);
+      setText('navDocs', t.navDocs);
+      setText('navDevDocs', t.navDevDocs);
+      setText('navNodeSale', t.navNodeSale);
+      setText('navHub', t.navHub);
+      setText('navXStudio', t.navXStudio);
+      setText('btnWallet', t.btnWallet);
+
+      setText('txtArchBadge', t.archBadge);
+      setText('txtArchTitle', t.archTitle);
+      setText('txtArchSubtitle', t.archSubtitle);
+
+      setText('btnPulseWave', t.btnPulse);
+      setText('btnReroute', t.btnReroute);
+      setText('txtLiveSim', t.liveSim);
+
+      setText('txtLeg1', t.legSpore);
+      setText('txtLeg2', t.legHyphae);
+      setText('txtLeg3', t.legTrunk);
+      setText('txtLeg4', t.legApex);
+
+      setText('txtL1Name', t.l1Name);
+      setHtml('txtL1Bio', t.l1Bio);
+      setHtml('txtL1Desc', t.l1Desc);
+      setText('txtL1Topo', t.l1Topo);
+      setText('txtL1Mult', t.l1Mult);
+      setText('txtL1Hw', t.l1Hw);
+
+      setText('txtL2Name', t.l2Name);
+      setHtml('txtL2Bio', t.l2Bio);
+      setHtml('txtL2Desc', t.l2Desc);
+      setText('txtL2Topo', t.l2Topo);
+      setText('txtL2Mult', t.l2Mult);
+      setText('txtL2Hw', t.l2Hw);
+
+      setText('txtL3Name', t.l3Name);
+      setHtml('txtL3Bio', t.l3Bio);
+      setHtml('txtL3Desc', t.l3Desc);
+      setText('txtL3Topo', t.l3Topo);
+      setText('txtL3Mult', t.l3Mult);
+      setText('txtL3Hw', t.l3Hw);
+
+      setText('txtL4Name', t.l4Name);
+      setHtml('txtL4Bio', t.l4Bio);
+      setHtml('txtL4Desc', t.l4Desc);
+      setText('txtL4Topo', t.l4Topo);
+      setText('txtL4Mult', t.l4Mult);
+      setText('txtL4Hw', t.l4Hw);
+
+      setText('txtP1Title', t.p1Title);
+      setText('txtP1Desc', t.p1Desc);
+      setText('txtP2Title', t.p2Title);
+      setText('txtP2Desc', t.p2Desc);
+      setText('txtP3Title', t.p3Title);
+      setText('txtP3Desc', t.p3Desc);
+
+      setText('txtStatHardcap', t.statHardcap);
+      setText('txtStatEmission', t.statEmission);
+      setText('txtStatActiveMesh', t.statActiveMesh);
+      setText('txtStatSettlement', t.statSettlement);
+
+      setText('txtHeroTag', t.heroTag);
+      setText('txtHeroTitle', t.heroTitle);
+      setText('txtHeroDesc', t.heroDesc);
+
+      setText('txtTabSale', t.tabSale);
+      setText('txtTabCalc', t.tabCalc);
+      setText('txtTabClaim', t.tabClaim);
+      setText('txtTabHw', t.tabHw);
+    }
+
+    // Initialize ROI, Living Mycelium Canvas, and Multi-language on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedLang = (function() {
+        try { return localStorage.getItem('myca_lang') || 'en'; } catch (e) { return 'en'; }
+      })();
+      setLanguage(savedLang);
+      updateROI();
+      initMyceliumCanvas();
+    });
+  </script>
+</body>
+</html>

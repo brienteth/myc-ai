@@ -1,0 +1,71 @@
+{
+  "name": "MYCA Network Official Token List",
+  "timestamp": "2025-01-15T00:00:00Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {
+    "depin": {
+      "name": "DePIN",
+      "description": "Decentralized Physical Infrastructure Networks"
+    },
+    "zeroGas": {
+      "name": "Zero-Gas",
+      "description": "Zero gas fee sovereign protocol native assets"
+    },
+    "stablecoin": {
+      "name": "Stablecoin",
+      "description": "Fiat pegged stable assets"
+    }
+  },
+  "logoURI": "https://www.mycai.pro/depin/mycai_logo.png",
+  "keywords": [
+    "myca",
+    "myc",
+    "depin",
+    "zero-gas",
+    "monad",
+    "poqr",
+    "mesh"
+  ],
+  "tokens": [
+    {
+      "chainId": 108,
+      "address": "0x0000000000000000000000000000000000001080",
+      "name": "MYC Living Token",
+      "symbol": "MYC",
+      "decimals": 18,
+      "logoURI": "https://www.mycai.pro/depin/mycai_logo.png",
+      "tags": ["depin", "zeroGas"]
+    },
+    {
+      "chainId": 108,
+      "address": "0x0000000000000000000000000000000000005080",
+      "name": "USD Coin (MYC Bridge)",
+      "symbol": "USDC",
+      "decimals": 6,
+      "logoURI": "https://assets.coingecko.com/coins/images/6319/thumb/USD_Coin_icon.png",
+      "tags": ["stablecoin"]
+    },
+    {
+      "chainId": 108,
+      "address": "0x0000000000000000000000000000000000007080",
+      "name": "Tether USD (MYC Bridge)",
+      "symbol": "USDT",
+      "decimals": 6,
+      "logoURI": "https://assets.coingecko.com/coins/images/325/thumb/Tether.png",
+      "tags": ["stablecoin"]
+    },
+    {
+      "chainId": 8453,
+      "address": "0x0000000000000000000000000000000000001080",
+      "name": "MYCA Living Token (Base L2)",
+      "symbol": "MYC",
+      "decimals": 18,
+      "logoURI": "https://www.mycai.pro/depin/mycai_logo.png",
+      "tags": ["depin"]
+    }
+  ]
+}
