@@ -1,0 +1,11 @@
+name = "myca-edge-rpc"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+
+[observability]
+enabled = true
+
+# Optional Custom Domain (e.g. rpc.mycai.pro)
+# routes = [
+#   { pattern = "rpc.mycai.pro/*", zone_name = "mycai.pro" }
+# ]
