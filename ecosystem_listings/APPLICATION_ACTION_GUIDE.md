@@ -92,7 +92,7 @@ DePINscan is the premier tracking dashboard for physical nodes and hardware netw
 ## 🎯 SUMMARY OF VERIFIED METRICS FOR APPLICATIONS
 * **Total Max Supply**: `100,000,000 MYC`
 * **Circulating Supply**: `25,000,000 MYC`
-* **Node Hardcap**: `10,000 Nodes ($6,965,000 USDC)`
+* **Node Capacity / Target Hardcap**: `10,000 Nodes ($6,965,000 USDC Maximum Model)` (Phase: Public Testnet Genesis)
 * **Daily PoQR Emission**: `100,000.000000 MYC`
 * **Chain ID**: `108` (Zero-Gas Invariant)
 * **Tested TPS**: `15,147+ Effective TPS` (`20,449+ Peak Burst TPS`, `318+ Mgas/s`)

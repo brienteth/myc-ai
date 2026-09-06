@@ -10,23 +10,24 @@ This dossier provides structured data for submitting and updating project profil
 * **HQ / Jurisdiction**: Sovereign Distributed / Switzerland Association
 * **Primary Sector**: DePIN / AI / Autonomous Agents / High-Throughput Layer-1
 * **Ecosystem**: Multi-chain (Native Living Lattice Chain 108 + Base L2 + Ethereum Bridge)
-* **Status**: Mainnet Alpha / DePIN Node Sale Live
+* **Status**: Public Testnet / Genesis Node Minting Live
 
 ---
 
 ## 2. Funding & Economics Overview
 * **Funding Model**: Decentralized Physical Infrastructure Node License Sale + Strategic Grants
-* **Total Node License Hardcap**: **$6,965,000 USDC** (10,000 Nodes Hardcap)
+* **Total Node License Target Hardcap**: **$6,965,000 USDC** (10,000 Nodes Maximum Economic Capacity)
 * **Pricing Tiers**:
-  * Tier 1 (1,000 Nodes): $299 USDC ($299,000 raised)
-  * Tier 2 (2,500 Nodes): $449 USDC ($1,122,500 raised)
-  * Tier 3 (4,000 Nodes): $699 USDC ($2,796,000 raised)
-  * Tier 4 (2,500 Nodes): $1,099 USDC ($2,747,500 raised)
-* **Treasury Split**:
-  * 40% ($2,786,000) -> Protocol Growth & Liquidity Pool
-  * 25% ($1,741,250) -> Hardware Subsidies & DePIN Logistics
-  * 20% ($1,393,000) -> Ecosystem Grants & Research
-  * 15% ($1,044,750) -> Core Architecture Team & Security Reserve
+  * Tier 1 (1,000 Nodes): $299 USDC ($299,000 max capacity)
+  * Tier 2 (2,500 Nodes): $449 USDC ($1,122,500 max capacity)
+  * Tier 3 (4,000 Nodes): $699 USDC ($2,796,000 max capacity)
+  * Tier 4 (2,500 Nodes): $1,099 USDC ($2,747,500 max capacity)
+* **Modeled Treasury Split (Target Invariant)**:
+  * 40% ($2,786,000 target) -> Protocol Growth & Liquidity Pool
+  * 25% ($1,741,250 target) -> Hardware Subsidies & DePIN Logistics
+  * 20% ($1,393,000 target) -> Ecosystem Grants & Research
+  * 15% ($1,044,750 target) -> Core Architecture Team & Security Reserve
+* **Important Transparency Note**: The $6,965,000 figure represents the protocol's 10,000 node mathematical capacity and stress-tested simulation model. The network is currently in active Genesis/Public Testnet phase.
 
 ---
 

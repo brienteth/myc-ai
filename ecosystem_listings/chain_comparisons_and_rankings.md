@@ -17,7 +17,7 @@
 | **Hardware Safety Brake** | **4.95 µs (Safe-Sign 0-Byte)**| None | None | None | None | None |
 | **Hardware Identity** | **Silicon PUF W3C DID** | None | None | Machine DID | ioID | None |
 | **DePIN Node Licenses** | **10,000 Active Nodes** | Validator Set | Validator Set | Fleet Nodes | Pebble Tracker | Staking Validators |
-| **Treasury Raised** | **$6,965,000 USDC** | VC Equity ($225M) | VC Equity ($315M) | Coin Offerings | Venture Capital | Genesis Allocation |
+| **Funding Model** | **Community Node Licenses ($6.965M Target Capacity)** | VC Equity ($225M) | VC Equity ($315M) | Coin Offerings | Venture Capital | Genesis Allocation |
 | **Anti-Sybil Physics** | **Quantum Quenching ($\Delta \Phi > 45^\circ$)**| Stake Weight | Stake Weight | Stake Weight | Stake Weight | Stake Weight |
 
 ---
@@ -39,22 +39,22 @@
 * **Category**: Institutional L1/L2 Metrics Dashboard
 * **Application URL**: [https://www.artemis.xyz/contact](https://www.artemis.xyz/contact)
 * **Data Points Provided**:
-  * Daily Active DePIN Nodes: `10,000 Nodes`
+  * DePIN Node Network Capacity: `10,000 Nodes (Public Testnet Genesis)`
   * Daily Emission: `100,000 MYC`
   * Gas Model: `Zero-Gas Sovereign Invariant ($0.00)`
   * Total Supply: `100,000,000 MYC`
-  * DePIN Treasury: `$6,965,000 USDC`
+  * DePIN Node Target Hardcap: `$6,965,000 USDC` across 4 Tiers
 
 ### C. Token Terminal (tokenterminal.com)
 * **Category**: Financial & Protocol Revenue Analytics
 * **Application URL**: [https://tokenterminal.com/request](https://tokenterminal.com/request)
 * **Metrics Provided**:
-  * Capital Raised from Node Licenses: `$6,965,000 USDC`
-  * Treasury Allocation:
-    * 40% ($2,786,000) Protocol Liquidity
-    * 25% ($1,741,250) DePIN Hardware Subsidies
-    * 20% ($1,393,000) Ecosystem Grants
-    * 15% ($1,044,750) Core Dev & Security
+  * Node License Economic Capacity: `10,000 Nodes ($6,965,000 USDC Target Model)`
+  * Modeled Treasury Invariant Allocation (40/25/20/15):
+    * 40% ($2,786,000 target) Protocol Liquidity
+    * 25% ($1,741,250 target) DePIN Hardware Subsidies
+    * 20% ($1,393,000 target) Ecosystem Grants
+    * 15% ($1,044,750 target) Core Dev & Security
   * Daily Reward Distribution: `100,000 MYC / day`
 
 ### D. Messari Hub (messari.io)

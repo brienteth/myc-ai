@@ -21,13 +21,13 @@
     "dailyEmission": 100000
   },
   "depinMetrics": {
-    "totalNodesHardcap": 10000,
-    "activeNodes": 10000,
+    "nodeCapacityHardcap": 10000,
+    "currentPhase": "Public Testnet / Genesis Mint",
+    "targetHardcapUSDC": 6965000,
     "hardwareIdentity": "Silicon PUF (Physical Unclonable Function) W3C DIDs",
     "consensusMechanism": "Proof-of-Quantum-Resonance (PoQR) with Phase-Locked Loop (PLL)",
     "topology": "Colony Mycelium Mesh (K=8 Peer Neighborhoods, 80,000 P2P Links)",
     "antiSybilMechanism": "Quantum Coherence Quenching (cos^2(Delta_Phi > 45 deg) = 0)",
-    "capitalRaisedUSDC": 6965000,
     "tiers": [
       {
         "tierId": 1,

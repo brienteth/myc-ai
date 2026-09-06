@@ -43,12 +43,12 @@ MYCA operates on a hard-capped network of exactly **10,000 Living DePIN Nodes** 
    * **Bandwidth Physical Bound**: 100 MB/day
    * **Estimated Reward**: ~17.68 $MYC / day
 
-* **Total Capital Raised at Hardcap**: **$6,965,000 USDC**
-* **Treasury Lock & Split Invariant**:
-  * 40% ($2,786,000 USDC) -> Protocol Growth & Liquidity Pool
-  * 25% ($1,741,250 USDC) -> Hardware Subsidies & DePIN Logistics
-  * 20% ($1,393,000 USDC) -> Ecosystem Grants & Research
-  * 15% ($1,044,750 USDC) -> Core Development & Security Reserve
+* **Total Modeled Target Hardcap (10,000 Nodes)**: **$6,965,000 USDC** (Public Genesis Mint / Testnet Phase)
+* **Treasury Split Invariant (Target Allocation Model)**:
+  * 40% ($2,786,000 USDC target) -> Protocol Growth & Liquidity Pool
+  * 25% ($1,741,250 USDC target) -> Hardware Subsidies & DePIN Logistics
+  * 20% ($1,393,000 USDC target) -> Ecosystem Grants & Research
+  * 15% ($1,044,750 USDC target) -> Core Development & Security Reserve
 
 ---
 

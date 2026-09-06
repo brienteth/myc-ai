@@ -31,11 +31,11 @@ async function tvl(timestamp, block, chainBlocks, { api }) {
     target: MYC_CHAIN_CONFIG.resonanceDEXContract,
   }).catch(() => ({ mycReserve: '0', usdcReserve: '0' }));
 
-  // 2. DePIN Node License Sale Escrow ($6,965,000 USDC Hardcap)
+  // 2. DePIN Node License Sale Escrow (On-Chain Verified USDC Reserves)
   const nodeSaleTreasury = await api.call({
     abi: 'function totalTreasuryBalance() view returns (uint256)',
     target: MYC_CHAIN_CONFIG.nodeSaleEscrow,
-  }).catch(() => '6965000000000'); // 6.965M USDC (6 decimals)
+  }).catch(() => '0'); // Safe fallback to 0 during Genesis testnet (strictly avoids unverified raise claims)
 
   // Accumulate USDC balances
   const totalUsdcWei = BigInt(dexReserves.usdcReserve || 0) + BigInt(nodeSaleTreasury || 0);

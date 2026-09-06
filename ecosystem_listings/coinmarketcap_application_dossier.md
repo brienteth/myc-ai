@@ -26,7 +26,7 @@ This document contains pre-filled, verified application answers for submission o
   * 30% Instant Liquid Disbursed
   * 70% 90-Day Continuous Streaming Vesting
   * Optional 100% Staking into NeuroYield Vault with +1.25x Resonance Boost
-* **Fundraising / Hardcap**: `$6,965,000 USDC` collected through 10,000 DePIN Node Licenses.
+* **Node License Structure / Target Hardcap**: `10,000 Node Licenses` across 4 tiers ($299 to $1,099 USDC; modeled target hardcap of `$6,965,000 USDC`). Currently in active **Public Testnet / Genesis Phase** (strictly no false or unverified pre-raise claims).
 
 ---
 
