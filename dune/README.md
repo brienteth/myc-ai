@@ -4,14 +4,22 @@ This directory contains the official **Dune Analytics** queries, decoded contrac
 
 ---
 
-## 🚀 Live Dashboard Setup on Dune.com
+## 🚀 Live Dashboard & Official Query on Dune.com
+* **Official Live Query URL**: [https://dune.com/queries/8625163](https://dune.com/queries/8625163)
+* **Query Title**: `Mycai Network`
+* **Query ID**: `8625163`
+* **Author**: `@blambuer`
+* **Direct REST API Endpoint**: `https://api.dune.com/api/v1/query/8625163/results`
+* **CSV Export Endpoint**: `https://api.dune.com/api/v1/query/8625163/results/csv`
 
-1. Navigate to [Dune.com -> Create -> New Query](https://dune.com/queries).
-2. Choose **Dune SQL**.
-3. Copy-paste the queries from:
-   [`dune/dashboards/myca_network_overview.sql`](file:///Users/bl10buer/Desktop/myc-network/dune/dashboards/myca_network_overview.sql).
-4. Save query as: `MYCA Network: DePIN Node Sales, PoQR Emission & Throughput Matrix`.
-5. Add to public dashboard: `https://dune.com/myca/overview`.
+### API Integration Usage:
+```bash
+# JSON Output (Requires Dune API Key from https://dune.com/settings/api)
+curl -H "x-dune-api-key: $DUNE_API_KEY" "https://api.dune.com/api/v1/query/8625163/results?limit=1000"
+
+# CSV Output
+curl -H "x-dune-api-key: $DUNE_API_KEY" "https://api.dune.com/api/v1/query/8625163/results/csv?limit=1000"
+```
 
 ---
 

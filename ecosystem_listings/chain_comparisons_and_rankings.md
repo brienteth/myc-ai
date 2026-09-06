@@ -63,3 +63,10 @@
 * **Key Research Thesis**:
   * Eliminating the Gas Pricing Paradox for Industrial Machines & Autonomous AI Agents.
   * Quantum resonance phase-locking replacing centralized oracle dependencies in DePIN networks.
+
+### E. Dune Analytics (dune.com)
+* **Category**: On-Chain Data Analytics & Public Dashboards
+* **Live Query URL**: [https://dune.com/queries/8625163](https://dune.com/queries/8625163)
+* **Query ID**: `8625163` (`@blambuer / Mycai Network`)
+* **API Results Endpoint**: `https://api.dune.com/api/v1/query/8625163/results`
+* **CSV Export Endpoint**: `https://api.dune.com/api/v1/query/8625163/results/csv`
