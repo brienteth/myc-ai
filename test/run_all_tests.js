@@ -118,7 +118,8 @@ const suites = [
   "test/faucet.test.js",
   "test/production_v2_1_adversarial.test.js",
   "test/full_soldout_mesh.test.js",
-  "test/offline_resilience_airgap.test.js"
+  "test/offline_resilience_airgap.test.js",
+  "test/quantum_resilience_armor.test.js"
 ];
 
 console.log("\n📦 RUNNING ALL MYCA PRODUCTION SPECIFICATION PHASE SUITES:");
