@@ -20,7 +20,9 @@ import {
   MycReputationContract,
   MycStreamPayContract,
   MycOpacusPayContract,
-  MycBridgeContract
+  MycBridgeContract,
+  MycResonanceAssetContract,
+  MycResonanceMarketplaceContract
 } from "../ledger/contracts/index.js";
 
 /**
@@ -180,6 +182,49 @@ export async function deployAllContracts(blockchain = null) {
     abi: ["function lockAndBridge", "function releaseFromRemote", "function getBridgeStatus"]
   });
 
+  // 16. MycResonanceAsset (ERC-721R Living Resonance Assets)
+  const resonanceAssetInstance = new MycResonanceAssetContract();
+  resonanceAssetInstance.attachNodeRegistry(nodeRegInstance);
+  const resonanceAssetDep = vm.deployContract({
+    name: "MycResonanceAsset",
+    instance: resonanceAssetInstance,
+    creator: genesisDeployer,
+    abi: [
+      "function mintSeed(address)",
+      "function mintResonant(address)",
+      "function mintSovereign(address)",
+      "function getRemainingSupply(string)",
+      "function getTierOfToken(uint256)",
+      "function mintResonanceAsset(string,uint256[8],uint256,uint256,address)",
+      "function interact(uint256,uint8)",
+      "function bondResonance(uint256,uint256)",
+      "function observe(uint256,bytes32)",
+      "function getAsset(uint256)",
+      "function getObservationCount(uint256)",
+      "function transferShares(uint256,address,uint256)",
+      "function getShares(uint256,address)",
+      "function transfer(address,uint256)",
+      "function transferNodeOwnership(uint256,address)",
+      "function ownerOf(uint256)"
+    ]
+  });
+
+  // 17. MycResonanceMarketplace (Secondary Living NFT Marketplace)
+  const marketplaceInstance = new MycResonanceMarketplaceContract();
+  marketplaceInstance.attachContracts(resonanceAssetInstance, usdcInstance);
+  const marketplaceDep = vm.deployContract({
+    name: "MycResonanceMarketplace",
+    instance: marketplaceInstance,
+    creator: genesisDeployer,
+    abi: [
+      "function listForSale(uint256,uint256,uint256,bool)",
+      "function cancelListing(uint256)",
+      "function buy(uint256,uint256)",
+      "function getListing(uint256)",
+      "function getActiveListings()"
+    ]
+  });
+
   // Pre-seed initial DePIN devices
   deviceInstance.registerDevice("TURBINE_01", "0x" + "1".repeat(64), "TURBINE", 0x0080, 0x0085, { msgSender: genesisDeployer });
   deviceInstance.registerDevice("TURBINE_02", "0x" + "2".repeat(64), "TURBINE", 0x0080, 0x0085, { msgSender: genesisDeployer });
@@ -211,7 +256,9 @@ export async function deployAllContracts(blockchain = null) {
       MycReputation: { address: repDep.contractAddress, name: "MycReputation" },
       MycStreamPay: { address: streamPayDep.contractAddress, name: "MycStreamPay" },
       MycOpacusPay: { address: streamPayDep.contractAddress, name: "MycStreamPay" },
-      MycBridge: { address: bridgeDep.contractAddress, name: "MycBridge" }
+      MycBridge: { address: bridgeDep.contractAddress, name: "MycBridge" },
+      MycResonanceAsset: { address: resonanceAssetDep.contractAddress, name: "MycResonanceAsset" },
+      MycResonanceMarketplace: { address: marketplaceDep.contractAddress, name: "MycResonanceMarketplace" }
     }
   };
 
@@ -225,8 +272,13 @@ export async function deployAllContracts(blockchain = null) {
 
   console.log(`✅ ALL ${Object.keys(deployedManifest.contracts).length} CONTRACTS SUCCESSFULLY DEPLOYED & EXECUTABLE:`);
   for (const [k, v] of Object.entries(deployedManifest.contracts)) {
-    console.log(`   • ${k.padEnd(20)}: ${v.address}`);
+    console.log(`   • ${k.padEnd(24)}: ${v.address}`);
   }
+
+  const seedSupply = resonanceAssetInstance.getRemainingSupply("SEED");
+  const resSupply = resonanceAssetInstance.getRemainingSupply("RESONANT");
+  const sovSupply = resonanceAssetInstance.getRemainingSupply("SOVEREIGN");
+  console.log(`📊 RESONANCE ASSET 3-TIER SUPPLY: SEED: ${seedSupply.minted}/${seedSupply.max} | RESONANT: ${resSupply.minted}/${resSupply.max} | SOVEREIGN: ${sovSupply.minted}/${sovSupply.max}`);
 
   return {
     chain,
@@ -249,7 +301,9 @@ export async function deployAllContracts(blockchain = null) {
       reputation: repInstance,
       streamPay: streamPayInstance,
       opacusPay: streamPayInstance,
-      bridge: bridgeInstance
+      bridge: bridgeInstance,
+      resonanceAsset: resonanceAssetInstance,
+      marketplace: marketplaceInstance
     }
   };
 }

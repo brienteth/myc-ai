@@ -111,6 +111,31 @@ graph TD
 
 ---
 
+## SLIDE 4B: 10-PILLAR POST-QUANTUM ARMOR & AIR-GAPPED RESILIENCE
+
+> **"A sovereign machine network cannot rely on breakable RSA/ECDSA cryptography, nor can it collapse when the internet cuts out. MYCA is hardened against quantum adversaries and operates 100% air-gapped."**
+
+```
+MYCA 10-PILLAR DEFENSE MATRIX
+┌────┬───────────────────────┬───────────────────────────────────────────────────────────┐
+│ 1  │ Silicon PUF           │ Unclonable hardware fingerprint; immune to quantum copying│
+│ 2  │ C99 Micro-Kernel      │ Constant-time O(1) ops (240B RAM); zero timing side-channel│
+│ 3  │ PoR 64-D HDC          │ Hyperdimensional vector space; resilient to 25% bit-flips │
+│ 4  │ Colony Mesh           │ K=8 decentralized mycelium topology; <350ms self-healing   │
+│ 5  │ Air-Gapped DTN        │ Delay-Tolerant Networking; local sealing & zero data loss │
+│ 6  │ Dilithium3 (ML-DSA)   │ NIST Module-LWE lattice signature; Shor algorithm-immune  │
+│ 7  │ BLAKE3-512            │ 512-bit Merkle tree-hash; 256-bit Grover quantum margin   │
+│ 8  │ 4.95 µs Safe-Sign     │ 0-Byte Negation Shield; hardware register clamp in 0.42 µs │
+│ 9  │ Quantum Quenching     │ Heisenberg-Tesla phase barrier: cos²(ΔΦ > 45°) ≡ 0.000000 │
+│ 10 │ ML-KEM-1024 (Kyber)   │ NIST Level-5 PQC KEM; neutralizes 'Store-Now-Decrypt-Later'│
+└────┴───────────────────────┴───────────────────────────────────────────────────────────┘
+```
+
+* **100% Air-Gapped Operation:** Oil rigs, mines, agricultural fields, and combat zones operate without internet connectivity. Nodes synchronize via RS-485 Modbus, LoRaWAN, and local RF mesh.
+* **Seamless Delay-Tolerant Reconnection:** When WAN connection returns, local micro-DAG vertices merge into Chain 108 with mathematically zero double-spending or state rollbacks.
+
+---
+
 ## SLIDE 5: GAMING & AUTONOMOUS WORLDS — THE LIVING NFT ENGINE
 
 Web3 GameFi collapsed because games forced players to pay gas for every move, and NFTs were static items traded on external marketplaces like OpenSea without gameplay connection. 

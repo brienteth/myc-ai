@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Documentation & Whitepaper | MYCA Network (GitBook)</title>
   <meta name="description" content="Official GitBook documentation for MYCA Network: Proof-of-Resonance (PoR), Living Lattice DAG, 3-Tier Living Colony Nodes, Zero-Gas Substrate, and DePIN Identity.">
-  <link rel="stylesheet" href="/depin/brand.css">
-  <link rel="icon" type="image/png" href="/depin/mycai_logo.png">
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
@@ -431,8 +431,8 @@
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
-      <a href="/depin" class="myca-brand">
-        <img src="/depin/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
         <div class="myca-brand-text">
           <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
           <span class="myca-chain-tag">CHAIN 108</span>
@@ -442,12 +442,12 @@
       <!-- Center: Navigation Menus -->
       <div class="myca-nav-center">
         <!-- Docs Main Switcher -->
-        <a href="/depin/docs" class="myca-nav-link active" style="font-weight:700;">📖 Docs & Whitepaper</a>
-        <a href="/depin/dev-docs" class="myca-nav-link">🛠️ Dev & RPC Docs</a>
-        <a href="/depin/x-card" class="myca-nav-link" style="color:#0284c7;">📸 X Card Studio</a>
-        <a href="/depin/mint" class="myca-nav-link" style="color:#10b981;">⚡ Mint Nodes</a>
-        <a href="/depin/marketplace" class="myca-nav-link">🏪 Machine Market</a>
-        <a href="/depin/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/docs" class="myca-nav-link active" style="font-weight:700;">📖 Docs & Whitepaper</a>
+        <a href="/dev-docs" class="myca-nav-link">🛠️ Dev & RPC Docs</a>
+        <a href="/x-card" class="myca-nav-link" style="color:#0284c7;">📸 X Card Studio</a>
+        <a href="/mint" class="myca-nav-link" style="color:#10b981;">⚡ Mint Nodes</a>
+        <a href="/marketplace" class="myca-nav-link">🏪 Machine Market</a>
+        <a href="/hub" class="myca-nav-link">🌐 Hub</a>
       </div>
 
       <!-- Right: Actions & Language Toggle -->
@@ -456,7 +456,7 @@
           <button id="btnEn" onclick="switchLang('en')" style="background:var(--f-moss); color:#fff; border:none; padding:4px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">EN</button>
           <button id="btnTr" onclick="switchLang('tr')" style="background:var(--f-cream); color:var(--f-humus); border:1px solid var(--f-bark); padding:4px 8px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">TR</button>
         </div>
-        <a href="/depin/hub" class="myca-btn-primary">
+        <a href="/hub" class="myca-btn-primary">
           <span>Launch NEXUS</span>
           <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </a>
@@ -555,9 +555,13 @@
           <span class="item-icon">🔑</span>
           <span class="item-text">Silicon PUF Machine DIDs</span>
         </a>
-        <a href="#depin-economy" class="sidebar-item" onclick="navigateChapter('depin-economy')">
-          <span class="item-icon">🤖</span>
-          <span class="item-text">M2M Industrial Actuation</span>
+        <a href="#quantum-armor" class="sidebar-item" onclick="navigateChapter('quantum-armor')">
+          <span class="item-icon">🛡️</span>
+          <span class="item-text">10-Pillar Post-Quantum Armor</span>
+        </a>
+        <a href="#offline-airgap" class="sidebar-item" onclick="navigateChapter('offline-airgap')">
+          <span class="item-icon">📡</span>
+          <span class="item-text">Offline Air-Gap & DTN Sync</span>
         </a>
       </div>
 
@@ -578,15 +582,15 @@
         <div class="sidebar-group-title">
           <span>Developer Reference</span>
         </div>
-        <a href="/depin/dev-docs#quickstart" class="sidebar-item">
+        <a href="/dev-docs#quickstart" class="sidebar-item">
           <span class="item-icon">⚡</span>
           <span class="item-text">0→1 Quickstart Studio ↗</span>
         </a>
-        <a href="/depin/dev-docs#rpc-reference" class="sidebar-item">
+        <a href="/dev-docs#rpc-reference" class="sidebar-item">
           <span class="item-icon">🔌</span>
           <span class="item-text">JSON-RPC API Reference ↗</span>
         </a>
-        <a href="/depin/contracts" class="sidebar-item">
+        <a href="/contracts" class="sidebar-item">
           <span class="item-icon">📜</span>
           <span class="item-text">Smart Contract ABIs ↗</span>
         </a>
@@ -598,7 +602,7 @@
 
       <!-- Breadcrumbs -->
       <div class="gb-breadcrumb">
-        <a href="/depin/docs">Docs</a>
+        <a href="/docs">Docs</a>
         <span class="sep">/</span>
         <span id="bcCategory">Architecture & Consensus</span>
         <span class="sep">/</span>
@@ -684,17 +688,17 @@
 
         <!-- The 16:9 X Card Infographic Embed -->
         <div class="x-infographic-container">
-          <img src="/depin/myca_resonance_asset_x.png" alt="MYCA Resonance Asset 3-Tier Architecture" class="x-infographic-img">
+          <img src="/myca_resonance_asset_x.png" alt="MYCA Resonance Asset 3-Tier Architecture" class="x-infographic-img">
           <div class="x-infographic-bar">
             <div class="x-info-desc">
               <strong>Official 16:9 X (Twitter) Graphic:</strong> Colony Node 3-Tier Mint, Lifecycle & 4 Pillars
             </div>
             <div style="display:flex; gap:8px;">
-              <a href="/depin/x-card" target="_blank" class="x-card-btn">
+              <a href="/x-card" target="_blank" class="x-card-btn">
                 <span>📸 Open in X Card Studio</span>
                 <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
               </a>
-              <a href="/depin/mint" class="x-card-btn" style="background:#0284c7;">
+              <a href="/mint" class="x-card-btn" style="background:#0284c7;">
                 <span>⚡ Mint Machine NFT</span>
               </a>
             </div>
@@ -863,6 +867,53 @@ W3C_DID = "did:myc:puf:0x" || SHA256(Address || PublicKey)[0..32]
         </p>
       </section>
 
+      <!-- SECTION: 10-PILLAR POST-QUANTUM ARMOR -->
+      <section id="quantum-armor" class="gb-section">
+        <h2><span>🛡️</span> 10-Pillar Post-Quantum & Physical Hardening Armor</h2>
+        <p>
+          Unlike legacy blockchains (e.g., Bitcoin, Ethereum, Solana) that rely exclusively on Shor-vulnerable ECDSA/Ed25519 elliptic curve math, MYCA enforces an unassailable 10-Pillar defense matrix spanning quantum mathematics, bare-metal C99 execution, and physical microcode safety brakes:
+        </p>
+        <div class="gb-code">
+1. Silicon PUF DID      → Unclonable physical SRAM wafer entropy (Q-copy impossible)
+2. Constant-Time C99    → 0-timing side-channel leaks, zero dynamic memory (malloc=0)
+3. PoR 64-D HDC         → 25% quantum bit-flip noise resilience, cosine space
+4. Colony Mesh          → K=8 neighborhood distributed topology, 0 single point of failure
+5. Air-Gapped DTN       → 100% offline local micro-DAG operation, zero WAN required
+6. Dilithium3 (ML-DSA)  → NIST post-quantum Module-LWE lattice signature (Shor-immune)
+7. BLAKE3-512           → Grover-resistant tree hashing with 256-bit post-quantum margin
+8. 4.95 µs Safe-Sign    → Zero-byte negation hardware brake clamps registers to 0x0000
+9. Heisenberg Quenching → Phase divergence ΔΦ > 45° drops coherence to 0.00000000
+10. ML-KEM-1024         → Post-quantum key encapsulation mechanism (NIST Kyber-1024)
+        </div>
+        <p>
+          Even if an adversary possesses a 10,000-qubit fault-tolerant quantum supercomputer capable of breaking digital asymmetric cryptography, they cannot violate physical semiconductor law: the 4.95 µs Safe-Sign brake zeroes registers before physical electric current can actuate any relay or valve.
+        </p>
+      </section>
+
+      <!-- SECTION: OFFLINE AIR-GAPPED OPERATION & DTN -->
+      <section id="offline-airgap" class="gb-section">
+        <h2><span>📡</span> Offline Air-Gap & Delay-Tolerant Networking (DTN)</h2>
+        <p>
+          Traditional blockchains immediately halt or partition when Internet/WAN connectivity is severed. MYCA is engineered for resilient real-world edge deployment across industrial plants, marine vessels, agricultural fields, and subterranean facilities with zero Internet:
+        </p>
+        <ul>
+          <li><strong>Local Mesh Operation:</strong> Machines discover and synchronize with neighboring nodes over physical RS-485 Modbus, LoRaWAN (868/915 MHz), or local BLE/LAN.</li>
+          <li><strong>Autonomous DID Derivation:</strong> Machine DIDs (<code>did:myc:puf:...</code>) are generated directly from local SRAM startup noise without querying external authorities or DNS.</li>
+          <li><strong>Offline Micro-DAG Sealing:</strong> Transactions and machine actuation events form locally sealed DAG vertices with state marked <code>SEALED_OFFLINE</code> at 0.00000000 gas.</li>
+          <li><strong>DTN Gossip Reconciliation:</strong> When any node in the air-gapped cluster reconnects to WAN, buffered vertices are reconciled deterministically into the global Living Lattice DAG without double-spending or reorganization forks.</li>
+        </ul>
+        <div class="gb-code">
+// Offline Air-Gapped Execution Flow
+[Isolated Edge Node] ──(SRAM PUF DID)──> [Local Mesh: RS-485 / LoRa]
+        │
+        ▼ (Local PoQR Phase-Lock & Coherence ≥ 0.985)
+[Offline Micro-DAG Vertex Sealed: SEALED_OFFLINE]
+        │
+        ▼ (WAN Uplink Restored)
+[Delay-Tolerant Network (DTN) Gossip Ingestion] ──> [Global Living Lattice DAG]
+        </div>
+      </section>
+
       <!-- SECTION 10: AUTONOMOUS GAMING & LIVING WORLDS -->
       <section id="autonomous-gaming" class="gb-section">
         <h2><span>🎮</span> Autonomous Gaming, Living NPCs & Zero-Gas Ticks</h2>
@@ -946,6 +997,8 @@ W3C_DID = "did:myc:puf:0x" || SHA256(Address || PublicKey)[0..32]
       <a href="#tokenomics" class="toc-link" onclick="navigateChapter('tokenomics')">Tokenomics & Real Yield</a>
       <a href="#security" class="toc-link" onclick="navigateChapter('security')">4.95 µs Safe-Sign</a>
       <a href="#did-attestation" class="toc-link" onclick="navigateChapter('did-attestation')">Silicon PUF DIDs</a>
+      <a href="#quantum-armor" class="toc-link" onclick="navigateChapter('quantum-armor')">10-Pillar Quantum Armor</a>
+      <a href="#offline-airgap" class="toc-link" onclick="navigateChapter('offline-airgap')">Offline Air-Gap DTN</a>
       <a href="#autonomous-gaming" class="toc-link" onclick="navigateChapter('autonomous-gaming')">Autonomous Gaming</a>
       <a href="#market-benchmarks" class="toc-link" onclick="navigateChapter('market-benchmarks')">Benchmarks</a>
     </aside>
@@ -966,7 +1019,8 @@ W3C_DID = "did:myc:puf:0x" || SHA256(Address || PublicKey)[0..32]
       { id: 'zero-gas', category: 'Hardware & DePIN', title: 'Zero-Gas Invariant ($0.00)' },
       { id: 'security', category: 'Hardware & DePIN', title: '4.95 µs Safe-Sign C99 Airbag' },
       { id: 'did-attestation', category: 'Hardware & DePIN', title: 'Silicon PUF Machine DIDs' },
-      { id: 'depin-economy', category: 'Hardware & DePIN', title: 'M2M Industrial Actuation' },
+      { id: 'quantum-armor', category: 'Security & Post-Quantum', title: '10-Pillar Post-Quantum Armor' },
+      { id: 'offline-airgap', category: 'Security & Post-Quantum', title: 'Offline Air-Gap & DTN Protocol' },
       { id: 'autonomous-gaming', category: 'Autonomous Gaming', title: 'Living NPCs & 0-Gas Ticks' },
       { id: 'market-benchmarks', category: 'Architecture & Consensus', title: 'Market Size & Benchmarks' }
     ];

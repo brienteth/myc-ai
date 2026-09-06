@@ -1,79 +1,87 @@
 {
   "network": "MYC-TESTNET-SPHEROID-1",
   "chainId": 108,
-  "deployedAt": "2026-09-05T13:58:17.330Z",
+  "deployedAt": "2026-09-06T16:53:57.504Z",
   "contracts": {
     "MycToken": {
-      "address": "myc1c4647641274ae4664bfff7634002a246",
+      "address": "myc1cb1d63f31226ddb42cf042d7f61d0d58",
       "name": "MycToken"
     },
     "MycUSDToken": {
-      "address": "myc1c22c64bc31a0b24d11ebe340a762fd2d",
+      "address": "myc1c7bb6b9db1927e13f12932cf1a3d4b1e",
       "name": "MycUSDToken"
     },
     "MycUSDCToken": {
-      "address": "myc1c0f1ea5cb17ab83ebfce71f7b4aa379d",
+      "address": "myc1c4d8101a0e2ad4715345d833d6688482",
       "name": "MycUSDCToken"
     },
     "MycDeviceRegistry": {
-      "address": "myc1c7b09d01b5307635ff7ddfeee8e9d111",
+      "address": "myc1cc8094e34476c730e05b31639ce1bfad",
       "name": "MycDeviceRegistry"
     },
     "MycStakingPool": {
-      "address": "myc1c043f39b2c1b72ab0496ac9b45828ea5",
+      "address": "myc1c55528bf1ddaf7f47efa3b0cf1337e26",
       "name": "MycStakingPool"
     },
     "MycDEX": {
-      "address": "myc1c528c51a1003d63fd98ffb25b8e3b905",
+      "address": "myc1cb32d8abcccf6718b5270f5118c81b55",
       "name": "MycDEX"
     },
     "MycResonanceDEX": {
-      "address": "myc1c528c51a1003d63fd98ffb25b8e3b905",
+      "address": "myc1cb32d8abcccf6718b5270f5118c81b55",
       "name": "MycDEX"
     },
     "MycEscrow": {
-      "address": "myc1ca5b5a4dea6aeae705e9432a70a5c327",
+      "address": "myc1c444e8a84822857fce1b44db85a32689",
       "name": "MycEscrow"
     },
     "MycActuatorGuard": {
-      "address": "myc1cda687c88e70beb188d33412e75471d5",
+      "address": "myc1c3ede88d07cabb25f55ce12a77f02f2d",
       "name": "MycActuatorGuard"
     },
     "MycAgentRegistry": {
-      "address": "myc1c1138d5582a737cbe81909527bdf9136",
+      "address": "myc1c78dba3f0899a58fc562c83f6bf23772",
       "name": "MycAgentRegistry"
     },
     "MycTaskRegistry": {
-      "address": "myc1c3d4a3bfdba0a05774988788a9473be8",
+      "address": "myc1cb95238e1f130cabc9892fc8cd6b41d7",
       "name": "MycTaskRegistry"
     },
     "MycExecutionProof": {
-      "address": "myc1ce463bf81b0309a9ecd7b763c98debdf",
+      "address": "myc1c9f5586732da39af98d556199d85aba7",
       "name": "MycExecutionProof"
     },
     "MycPolicyRegistry": {
-      "address": "myc1c149e169ac7d14f20291c49c20b8dccf",
+      "address": "myc1cf761b13451122a03dfe077bac210964",
       "name": "MycPolicyRegistry"
     },
     "MycNodeRegistry": {
-      "address": "myc1c7c3d4478d523803a22efc2865bd8f67",
+      "address": "myc1c8e70397b641e91b64a93b185e694ebd",
       "name": "MycNodeRegistry"
     },
     "MycReputation": {
-      "address": "myc1c117c004e0ad698e5bfe85444a7a76db",
+      "address": "myc1c4f1559588f112d38f6298763cb98141",
       "name": "MycReputation"
     },
     "MycStreamPay": {
-      "address": "myc1c1279a2dfe6134846aea643db123eac0",
+      "address": "myc1c2b63d97ecb85ab596414c0fed266255",
       "name": "MycStreamPay"
     },
     "MycOpacusPay": {
-      "address": "myc1c1279a2dfe6134846aea643db123eac0",
+      "address": "myc1c2b63d97ecb85ab596414c0fed266255",
       "name": "MycStreamPay"
     },
     "MycBridge": {
-      "address": "myc1c0a31114771f92f1f25541b380a1c60d",
+      "address": "myc1c5b057ed2156f4ecd64a96db86847922",
       "name": "MycBridge"
+    },
+    "MycResonanceAsset": {
+      "address": "myc1c67e425bea82bce600cf7bc542fc2d1a",
+      "name": "MycResonanceAsset"
+    },
+    "MycResonanceMarketplace": {
+      "address": "myc1c5073a252cc813a8d73b64b7d71c1cea",
+      "name": "MycResonanceMarketplace"
     }
   }
 }

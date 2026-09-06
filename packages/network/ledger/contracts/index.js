@@ -540,9 +540,125 @@ export class MycNodeRegistryContract {
     this.nodes = new Map();
   }
 
-  registerNode(nodeId, roles, context = {}) {
-    this.nodes.set(nodeId, { nodeId, roles, address: context.msgSender, registeredAt: Date.now() });
+  registerNode(nodeId, ownerOrRoles, role = "COLONY_PEER", tier = "SEED", energy = 1000, context = {}) {
+    const id = String(nodeId);
+    let owner = context.msgSender || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+    let roles = ["COLONY_PEER"];
+
+    if (typeof ownerOrRoles === "string" && ownerOrRoles.startsWith("myc")) {
+      owner = ownerOrRoles;
+    } else if (Array.isArray(ownerOrRoles)) {
+      roles = ownerOrRoles;
+    }
+
+    const nodeEntry = {
+      nodeId: id,
+      owner: (owner || "").toLowerCase(),
+      address: owner,
+      operator: (owner || "").toLowerCase(),
+      isDelegated: false,
+      revenueShareOwner: 100,
+      revenueShareOperator: 0,
+      minUptime: 99,
+      role: typeof role === "string" ? role : "COLONY_PEER",
+      tier: typeof tier === "string" ? tier : "SEED",
+      energyScore: parseInt(energy) || 1000,
+      stakedNFT: id,
+      registeredAt: Date.now(),
+      isWhitelisted: true
+    };
+
+    this.nodes.set(id, nodeEntry);
+    if (context.emit) {
+      context.emit("NodeActivated", { nodeId: id, owner: nodeEntry.owner, tier: nodeEntry.tier });
+    }
     return true;
+  }
+
+  updateNodeEnergy(nodeId, energy, context = {}) {
+    const id = String(nodeId);
+    const node = this.nodes.get(id);
+    if (!node) return false;
+
+    const en = parseInt(energy) || 0;
+    node.energyScore = en;
+    const oldTier = node.tier;
+    node.tier = en < 3000 ? "SEED" : (en < 8000 ? "RESONANT" : "SOVEREIGN");
+
+    if (context.emit) {
+      context.emit("NodeTierUpdated", { nodeId: id, tier: node.tier, energyScore: en });
+    }
+    return { nodeId: id, tier: node.tier, energyScore: en, tierChanged: oldTier !== node.tier };
+  }
+
+  transferNodeOwnership(nodeId, newOwner, context = {}) {
+    const id = String(nodeId);
+    const node = this.nodes.get(id);
+    if (!node) throw new Error("NODE_NONEXISTENT");
+
+    const oldOwner = node.owner;
+    node.owner = (newOwner || "").toLowerCase();
+    node.address = newOwner;
+    if (!node.isDelegated) {
+      node.operator = node.owner;
+    }
+
+    if (context.emit) {
+      context.emit("NodeOwnershipTransferred", { nodeId: id, oldOwner, newOwner: node.owner });
+    }
+    return true;
+  }
+
+  delegateNode(nodeId, operator, revenueShareOwner = 70, minUptime = 95, context = {}) {
+    const id = String(nodeId);
+    const node = this.nodes.get(id);
+    if (!node) throw new Error("NODE_NONEXISTENT");
+    const caller = (context.msgSender || node.owner).toLowerCase();
+    if (caller !== node.owner) throw new Error("UNAUTHORIZED_DELEGATION");
+
+    const op = (operator || "").toLowerCase();
+    if (!op || op === node.owner) throw new Error("INVALID_OPERATOR");
+
+    const shareOwner = Math.min(100, Math.max(0, parseInt(revenueShareOwner) || 70));
+    const shareOperator = 100 - shareOwner;
+
+    node.operator = op;
+    node.isDelegated = true;
+    node.revenueShareOwner = shareOwner;
+    node.revenueShareOperator = shareOperator;
+    node.minUptime = parseInt(minUptime) || 95;
+
+    if (context.emit) {
+      context.emit("NodeDelegated", { nodeId: id, owner: node.owner, operator: op, revenueShareOwner: shareOwner });
+    }
+    return { success: true, nodeId: id, owner: node.owner, operator: op, revenueShareOwner: shareOwner, revenueShareOperator: shareOperator };
+  }
+
+  undelegateNode(nodeId, context = {}) {
+    const id = String(nodeId);
+    const node = this.nodes.get(id);
+    if (!node) throw new Error("NODE_NONEXISTENT");
+    const caller = (context.msgSender || node.owner).toLowerCase();
+    if (caller !== node.owner) throw new Error("UNAUTHORIZED_UNDELEGATION");
+
+    node.operator = node.owner;
+    node.isDelegated = false;
+    node.revenueShareOwner = 100;
+    node.revenueShareOperator = 0;
+
+    if (context.emit) {
+      context.emit("NodeUndelegated", { nodeId: id, owner: node.owner });
+    }
+    return { success: true, nodeId: id, owner: node.owner, operator: node.owner };
+  }
+
+  getNode(nodeId) {
+    const id = String(nodeId);
+    return this.nodes.get(id) || null;
+  }
+
+  getAllNodes() {
+    return Array.from(this.nodes.values());
   }
 }
 
@@ -864,4 +980,595 @@ export class MycBridgeContract {
     return this.processedTransfers.has(transferId);
   }
 }
+
+export class MycResonanceAssetContract {
+  constructor() {
+    this.name = "MYCA Resonance Asset";
+    this.symbol = "MYC-RES";
+    this._nextTokenId = 1;
+    this.assets = new Map();
+    this._observations = new Map();
+    this._collective = new Map();
+    this.resonanceBonds = new Map();
+    this.nodeRegistry = null;
+
+    this.RESONANCE_THRESHOLD = 6500; // 0.65 Cosine similarity
+    this.BOOST_MULTIPLIER = 20;
+    this.DISCOVERY_THRESHOLD = 10;
+    this.DISCOVERY_BONUS = 500;
+    this.DECAY_GRACE_PERIOD = 30 * 86400 * 1000; // 30 days
+
+    this.interactionWeights = {
+      1: 50,  // Verification / query
+      2: 120, // Telemetry pulse / gaming tick
+      3: 300, // AI model inference / compute
+      4: 600  // Commercial settlement
+    };
+
+    // LAYER: VM — 3-Tier Configurations & Capabilities
+    this.tierConfigs = {
+      SEED: {
+        maxSupply: 10000,
+        mintPriceUsdc: 50,
+        initialEnergy: 500,
+        maxTasks: 1,
+        decayRate: 5,
+        name: "SEED",
+        capabilities: ["telemetry", "ping", "light_inference"]
+      },
+      RESONANT: {
+        maxSupply: 2000,
+        mintPriceUsdc: 500,
+        initialEnergy: 3500,
+        maxTasks: 5,
+        decayRate: 10,
+        name: "RESONANT",
+        capabilities: ["ai_inference", "depin_actuation", "m2m_payment", "telemetry"]
+      },
+      SOVEREIGN: {
+        maxSupply: 200,
+        mintPriceUsdc: 5000,
+        initialEnergy: 9000,
+        maxTasks: 20,
+        decayRate: 15,
+        name: "SOVEREIGN",
+        capabilities: ["validator", "escrow_arbitration", "ai_inference", "depin_actuation", "m2m_payment", "telemetry"]
+      }
+    };
+
+    this.tierMintedCount = new Map([
+      ["SEED", 0],
+      ["RESONANT", 1],
+      ["SOVEREIGN", 0]
+    ]);
+    this.tokenTier = new Map([[1, "RESONANT"]]);
+
+    // Pre-seed Genesis Living Resonance Asset #1
+    this._seedGenesisAsset();
+  }
+
+  attachNodeRegistry(nodeRegistry) {
+    this.nodeRegistry = nodeRegistry;
+    if (this.nodeRegistry && this.assets.has(1)) {
+      this.nodeRegistry.registerNode(1, "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002", "COLONY_PEER", "RESONANT", 2500);
+    }
+  }
+
+  // =========================================================================
+  // LAYER: VM / Blockchain — 3-TIER COLONY NODE MINT WRAPPERS
+  // =========================================================================
+
+  mintSeed(to, context = {}) {
+    return this._mintTier(to, "SEED", "COLONY_PEER", context);
+  }
+
+  mintResonant(to, context = {}) {
+    return this._mintTier(to, "RESONANT", "COLONY_PEER", context);
+  }
+
+  mintSovereign(to, context = {}) {
+    return this._mintTier(to, "SOVEREIGN", "VALIDATOR", context);
+  }
+
+  _mintTier(to, tierName, nodeRole, context = {}) {
+    const tier = (tierName || "SEED").toUpperCase();
+    const config = this.tierConfigs[tier];
+    if (!config) throw new Error(`INVALID_TIER: ${tierName}`);
+
+    const minted = this.tierMintedCount.get(tier) || 0;
+    if (minted >= config.maxSupply) {
+      throw new Error("Tier supply exhausted");
+    }
+
+    const creator = (to || context.msgSender || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002").toLowerCase();
+    const tokenId = this._nextTokenId++;
+
+    this.tierMintedCount.set(tier, minted + 1);
+    this.tokenTier.set(tokenId, tier);
+
+    // Deterministic Frequency Harmonics from tokenId & recipient
+    const dominantHz = tier === "SEED" ? 432 : (tier === "RESONANT" ? 528 : 963);
+    const harms = Array.from({ length: 8 }, (_, idx) => 4000 + ((tokenId * 37 + idx * 79) % 5500));
+
+    const asset = {
+      tokenId,
+      uri: `ipfs://bafkreia_myc_node_${tokenId}.json`,
+      creator,
+      energyScore: config.initialEnergy,
+      lastInteraction: Date.now(),
+      decayRate: config.decayRate,
+      status: "ACTIVE",
+      tier,
+      frequency: {
+        harmonics: harms,
+        dominantHz,
+        resonanceScore: 0
+      }
+    };
+
+    this.assets.set(tokenId, asset);
+    this._observations.set(tokenId, {
+      observers: [],
+      timestamps: [],
+      contextHashes: []
+    });
+    this._collective.set(tokenId, {
+      totalShares: 10000,
+      shares: { [creator]: 10000 },
+      governanceContract: "myc_governance_commons",
+      minimumShareForProposal: 500
+    });
+    this.resonanceBonds.set(tokenId, []);
+
+    // LAYER: Colony — Synchronous Node Registration in same transaction
+    if (this.nodeRegistry) {
+      this.nodeRegistry.registerNode(tokenId, creator, nodeRole, tier, config.initialEnergy, context);
+    }
+
+    if (context.emit) {
+      context.emit("AssetMinted", { tokenId, creator, dominantHz });
+      context.emit("NodeActivated", { tokenId, tier, operator: creator });
+    }
+
+    return {
+      tokenId,
+      tier,
+      energy: config.initialEnergy,
+      nodeId: tokenId,
+      owner: creator,
+      role: nodeRole,
+      dominantHz,
+      maxTasks: config.maxTasks,
+      capabilities: [...config.capabilities]
+    };
+  }
+
+  getRemainingSupply(tierName) {
+    const tier = (tierName || "SEED").toUpperCase();
+    const config = this.tierConfigs[tier];
+    if (!config) throw new Error(`INVALID_TIER: ${tierName}`);
+    const minted = this.tierMintedCount.get(tier) || 0;
+    const remaining = Math.max(0, config.maxSupply - minted);
+    return {
+      tier,
+      remaining,
+      minted,
+      max: config.maxSupply,
+      price: config.mintPriceUsdc
+    };
+  }
+
+  getTierCapabilities(tokenId) {
+    const id = parseInt(tokenId);
+    const tier = this.tokenTier.get(id) || (this.assets.get(id)?.tier) || "SEED";
+    const config = this.tierConfigs[tier];
+    return config ? [...config.capabilities] : ["telemetry", "ping", "light_inference"];
+  }
+
+  getTierOfToken(tokenId) {
+    const id = parseInt(tokenId);
+    return this.tokenTier.get(id) || (this.assets.get(id)?.tier) || "SEED";
+  }
+
+  _seedGenesisAsset() {
+    const genesisId = 1;
+    this._nextTokenId = 2;
+    const now = Date.now();
+    const harmonics = [7500, 8200, 9100, 6400, 8800, 7100, 9500, 8300];
+    this.assets.set(genesisId, {
+      tokenId: genesisId,
+      uri: "ipfs://bafkreia7a_genesis_hyphae_001.json",
+      creator: "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      energyScore: 2500,
+      lastInteraction: now,
+      decayRate: 10,
+      status: "RESONANT",
+      tier: "RESONANT",
+      frequency: {
+        harmonics,
+        dominantHz: 432,
+        resonanceScore: 12
+      }
+    });
+
+    this._observations.set(genesisId, {
+      observers: ["myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002"],
+      timestamps: [now],
+      contextHashes: ["0x7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069"]
+    });
+
+    this._collective.set(genesisId, {
+      totalShares: 10000,
+      shares: { "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002": 10000 },
+      governanceContract: "myc_contract_community_dao",
+      minimumShareForProposal: 500
+    });
+
+    this.resonanceBonds.set(genesisId, []);
+  }
+
+  mintResonanceAsset(uri, harmonics, dominantHz = 432, initialDecayRate = 10, governanceContract = null, context = {}) {
+    const res = this.mintSeed(context.msgSender, context);
+    const asset = this.assets.get(res.tokenId);
+    if (asset) {
+      asset.energyScore = 1000;
+      if (uri) asset.uri = uri;
+      if (harmonics) asset.frequency.harmonics = harmonics;
+      if (dominantHz) asset.frequency.dominantHz = dominantHz;
+      if (initialDecayRate) asset.decayRate = initialDecayRate;
+      if (this.nodeRegistry) {
+        this.nodeRegistry.updateNodeEnergy(res.tokenId, 1000, context);
+      }
+    }
+    return res.tokenId;
+  }
+
+
+  interact(tokenId, interactionType = 1, context = {}) {
+    const id = parseInt(tokenId);
+    const asset = this.assets.get(id);
+    if (!asset) throw new Error("ASSET_NONEXISTENT");
+
+    this.applyDecay(id);
+    const weight = this.interactionWeights[interactionType] || 25;
+    asset.energyScore += weight;
+    asset.lastInteraction = Date.now();
+    asset.tier = asset.energyScore < 3000 ? "SEED" : (asset.energyScore < 8000 ? "RESONANT" : "SOVEREIGN");
+    this.tokenTier.set(id, asset.tier);
+
+    // Colony Node Energy Recalibration
+    if (this.nodeRegistry) {
+      this.nodeRegistry.updateNodeEnergy(id, asset.energyScore, context);
+    }
+
+    if (context.emit) {
+      context.emit("EnergyUpdated", { tokenId: id, newEnergyScore: asset.energyScore, interactionType });
+      context.emit("NodeEnergyUpdated", { tokenId: id, energyScore: asset.energyScore });
+    }
+    return { success: true, tokenId: id, energyScore: asset.energyScore };
+  }
+
+  applyDecay(tokenId) {
+    const asset = this.assets.get(parseInt(tokenId));
+    if (!asset) return;
+    const now = Date.now();
+    if (now <= asset.lastInteraction + this.DECAY_GRACE_PERIOD) return;
+
+    const overdueDays = Math.floor((now - (asset.lastInteraction + this.DECAY_GRACE_PERIOD)) / 86400000);
+    if (overdueDays > 0) {
+      const decayAmount = overdueDays * asset.decayRate;
+      if (decayAmount >= asset.energyScore) {
+        asset.energyScore = 0;
+        asset.status = "DORMANT";
+      } else {
+        asset.energyScore -= decayAmount;
+      }
+      asset.lastInteraction = now;
+      if (this.nodeRegistry) {
+        this.nodeRegistry.updateNodeEnergy(tokenId, asset.energyScore);
+      }
+    }
+  }
+
+  cosineSimilarity(a, b) {
+    if (!Array.isArray(a) || !Array.isArray(b) || a.length !== 8 || b.length !== 8) return 0;
+    let dot = 0;
+    let normA = 0;
+    let normB = 0;
+    for (let i = 0; i < 8; i++) {
+      dot += a[i] * b[i];
+      normA += a[i] * a[i];
+      normB += b[i] * b[i];
+    }
+    if (normA === 0 || normB === 0) return 0;
+    const denom = Math.sqrt(normA) * Math.sqrt(normB);
+    return Math.floor((dot * 10000) / denom);
+  }
+
+  bondResonance(tokenA, tokenB, context = {}) {
+    const idA = parseInt(tokenA);
+    const idB = parseInt(tokenB);
+    if (idA === idB) throw new Error("IDENTICAL_TOKENS");
+    const assetA = this.assets.get(idA);
+    const assetB = this.assets.get(idB);
+    if (!assetA || !assetB) throw new Error("INVALID_TOKENS");
+
+    this.applyDecay(idA);
+    this.applyDecay(idB);
+
+    const similarity = this.cosineSimilarity(assetA.frequency.harmonics, assetB.frequency.harmonics);
+    if (similarity < this.RESONANCE_THRESHOLD) {
+      throw new Error(`FREQUENCY_INCOHERENT: Similarity ${similarity} < ${this.RESONANCE_THRESHOLD}`);
+    }
+
+    const boost = Math.floor((similarity * this.BOOST_MULTIPLIER) / 100);
+    assetA.energyScore += boost;
+    assetB.energyScore += boost;
+    assetA.frequency.resonanceScore += 1;
+    assetB.frequency.resonanceScore += 1;
+    assetA.status = "RESONANT";
+    assetB.status = "RESONANT";
+
+    const bondsA = this.resonanceBonds.get(idA) || [];
+    const bondsB = this.resonanceBonds.get(idB) || [];
+    if (!bondsA.includes(idB)) bondsA.push(idB);
+    if (!bondsB.includes(idA)) bondsB.push(idA);
+    this.resonanceBonds.set(idA, bondsA);
+    this.resonanceBonds.set(idB, bondsB);
+
+    if (this.nodeRegistry) {
+      this.nodeRegistry.updateNodeEnergy(idA, assetA.energyScore, context);
+      this.nodeRegistry.updateNodeEnergy(idB, assetB.energyScore, context);
+    }
+
+    if (context.emit) {
+      context.emit("ResonantBondFormed", { tokenA: idA, tokenB: idB, similarity, boost });
+    }
+    return { success: true, similarity, boost, tokenA: idA, tokenB: idB };
+  }
+
+  observe(tokenId, contextHash, context = {}) {
+    const id = parseInt(tokenId);
+    const asset = this.assets.get(id);
+    if (!asset) throw new Error("NONEXISTENT_ASSET");
+
+    this.applyDecay(id);
+    const observer = (context.msgSender || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002").toLowerCase();
+    const obs = this._observations.get(id);
+    obs.observers.push(observer);
+    obs.timestamps.push(Date.now());
+    obs.contextHashes.push(contextHash || ("0x" + crypto.randomBytes(32).toString("hex")));
+
+    if (obs.observers.length >= this.DISCOVERY_THRESHOLD && asset.status !== "DISCOVERED") {
+      asset.status = "DISCOVERED";
+      asset.energyScore += this.DISCOVERY_BONUS;
+    }
+
+    if (context.emit) {
+      context.emit("Observed", { tokenId: id, observer, timestamp: Date.now() });
+    }
+    return { success: true, tokenId: id, totalObservers: obs.observers.length, status: asset.status, energyScore: asset.energyScore };
+  }
+
+  getAsset(tokenId) {
+    const id = parseInt(tokenId);
+    const asset = this.assets.get(id);
+    if (!asset) return null;
+    this.applyDecay(id);
+    return {
+      ...asset,
+      bonds: this.resonanceBonds.get(id) || [],
+      observationCount: (this._observations.get(id)?.observers || []).length
+    };
+  }
+
+  getObservationCount(tokenId) {
+    return (this._observations.get(parseInt(tokenId))?.observers || []).length;
+  }
+
+  transferShares(tokenId, to, shareAmount, context = {}) {
+    const id = parseInt(tokenId);
+    const sender = (context.msgSender || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002").toLowerCase();
+    const recipient = (to || "").toLowerCase();
+    const amount = parseInt(shareAmount);
+
+    const coll = this._collective.get(id);
+    if (!coll) throw new Error("NONEXISTENT_ASSET");
+    const senderShares = coll.shares[sender] || 0;
+    if (senderShares < amount) throw new Error(`INSUFFICIENT_SHARES: ${senderShares} < ${amount}`);
+
+    coll.shares[sender] = senderShares - amount;
+    coll.shares[recipient] = (coll.shares[recipient] || 0) + amount;
+
+    if (context.emit) {
+      context.emit("SharesTransferred", { tokenId: id, from: sender, to: recipient, shares: amount });
+    }
+    return true;
+  }
+
+  getShares(tokenId, stakeholder) {
+    const coll = this._collective.get(parseInt(tokenId));
+    if (!coll) return 0;
+    return coll.shares[(stakeholder || "").toLowerCase()] || 0;
+  }
+
+  ownerOf(tokenId) {
+    const asset = this.assets.get(parseInt(tokenId));
+    return asset ? asset.creator : null;
+  }
+
+  transfer(tokenId, to, context = {}) {
+    const id = parseInt(tokenId);
+    const asset = this.assets.get(id);
+    if (!asset) throw new Error("NONEXISTENT_ASSET");
+    const sender = (context.msgSender || asset.creator).toLowerCase();
+    const recipient = (to || "").toLowerCase();
+
+    // Reassign creator/owner and collective shares
+    asset.creator = recipient;
+    const coll = this._collective.get(id);
+    if (coll) {
+      coll.shares[sender] = 0;
+      coll.shares[recipient] = 10000;
+    }
+
+    this._afterTokenTransfer(sender, recipient, id, context);
+    if (context.emit) {
+      context.emit("Transfer", { from: sender, to: recipient, tokenId: id });
+    }
+    return true;
+  }
+
+  _afterTokenTransfer(from, to, tokenId, context = {}) {
+    if (this.nodeRegistry) {
+      this.nodeRegistry.transferNodeOwnership(tokenId, to, context);
+    }
+    if (context.emit) {
+      context.emit("NodeOwnershipTransferred", { tokenId, oldOwner: from, newOwner: to });
+    }
+  }
+
+  transferNodeOwnership(tokenId, newOwner, context = {}) {
+    return this.transfer(tokenId, newOwner, context);
+  }
+}
+
+export class MycResonanceMarketplaceContract {
+  constructor() {
+    this.listings = new Map();
+    this.resonanceAsset = null;
+    this.usdcToken = null;
+    this.protocolTreasury = "myc1protocoltreasury000000000000000000";
+    this.PROTOCOL_FEE_BPS = 200; // 2% protocol fee
+  }
+
+  attachContracts(resonanceAsset, usdcToken) {
+    this.resonanceAsset = resonanceAsset;
+    this.usdcToken = usdcToken;
+  }
+
+  listForSale(tokenId, priceUSDC, minEnergy = 0, showYieldHistory = true, context = {}) {
+    const id = parseInt(tokenId);
+    const price = parseFloat(priceUSDC);
+    if (price <= 0) throw new Error("INVALID_PRICE");
+    if (!this.resonanceAsset) throw new Error("RESONANCE_ASSET_NOT_ATTACHED");
+
+    const asset = this.resonanceAsset.getAsset(id);
+    if (!asset) throw new Error("ASSET_NONEXISTENT");
+
+    const seller = (context.msgSender || asset.creator).toLowerCase();
+    if (asset.creator.toLowerCase() !== seller) throw new Error("ONLY_OWNER_CAN_LIST");
+
+    const minEn = parseInt(minEnergy) || 0;
+    if (asset.energyScore < minEn) {
+      throw new Error(`ASSET_ENERGY_BELOW_MINIMUM: current ${asset.energyScore} < min ${minEn}`);
+    }
+
+    const listing = {
+      tokenId: id,
+      seller,
+      priceUSDC: price,
+      minEnergy: minEn,
+      showYieldHistory: Boolean(showYieldHistory),
+      active: true,
+      listedAt: Date.now()
+    };
+
+    this.listings.set(id, listing);
+    if (context.emit) {
+      context.emit("AssetListed", { tokenId: id, seller, priceUSDC: price, minEnergy: minEn });
+    }
+    return listing;
+  }
+
+  cancelListing(tokenId, context = {}) {
+    const id = parseInt(tokenId);
+    const listing = this.listings.get(id);
+    if (!listing || !listing.active) throw new Error("LISTING_NOT_ACTIVE");
+
+    const caller = (context.msgSender || listing.seller).toLowerCase();
+    if (caller !== listing.seller) throw new Error("ONLY_SELLER_CAN_CANCEL");
+
+    listing.active = false;
+    if (context.emit) {
+      context.emit("ListingCancelled", { tokenId: id, seller: listing.seller });
+    }
+    return true;
+  }
+
+  buy(tokenId, maxPrice = null, context = {}) {
+    const id = parseInt(tokenId);
+    const listing = this.listings.get(id);
+    if (!listing || !listing.active) throw new Error("LISTING_NOT_ACTIVE");
+
+    const buyer = (context.msgSender || "myc1buyerdefault00000000000000000000000000").toLowerCase();
+    if (buyer === listing.seller) throw new Error("CANNOT_BUY_OWN_ASSET");
+
+    if (maxPrice !== null && listing.priceUSDC > parseFloat(maxPrice)) {
+      throw new Error(`PRICE_EXCEEDS_MAX: ${listing.priceUSDC} > ${maxPrice}`);
+    }
+
+    const asset = this.resonanceAsset.getAsset(id);
+    if (!asset) throw new Error("ASSET_NONEXISTENT");
+
+    // LIVING MACHINE SAFETY INVARIANT: If asset energy decayed below minEnergy, listing is auto-cancelled!
+    if (asset.energyScore < listing.minEnergy) {
+      listing.active = false;
+      throw new Error(`ENERGY_DROPPED_BELOW_MINIMUM: Asset energy decayed to ${asset.energyScore} < minEnergy ${listing.minEnergy}. Listing cancelled for buyer protection.`);
+    }
+
+    // Atomic USDC Payment (98% seller, 2% protocol commons)
+    const fee = parseFloat((listing.priceUSDC * (this.PROTOCOL_FEE_BPS / 10000)).toFixed(6));
+    const sellerProceeds = parseFloat((listing.priceUSDC - fee).toFixed(6));
+
+    if (this.usdcToken) {
+      try {
+        this.usdcToken.transfer(listing.seller, sellerProceeds, { msgSender: buyer });
+        this.usdcToken.transfer(this.protocolTreasury, fee, { msgSender: buyer });
+      } catch (e) {}
+    }
+
+    // Transfer living NFT to buyer (triggers automatic node handoff)
+    this.resonanceAsset.transfer(id, buyer, { msgSender: listing.seller });
+
+    listing.active = false;
+
+    if (context.emit) {
+      context.emit("AssetSold", {
+        tokenId: id,
+        seller: listing.seller,
+        buyer,
+        priceUSDC: listing.priceUSDC,
+        sellerProceeds,
+        fee
+      });
+    }
+
+    return {
+      success: true,
+      tokenId: id,
+      seller: listing.seller,
+      buyer,
+      priceUSDC: listing.priceUSDC,
+      sellerProceeds,
+      fee,
+      newOwner: buyer
+    };
+  }
+
+  delist(tokenId, context = {}) {
+    return this.cancelListing(tokenId, context);
+  }
+
+  getListing(tokenId) {
+    return this.listings.get(parseInt(tokenId)) || null;
+  }
+
+  getActiveListings() {
+    return Array.from(this.listings.values()).filter(l => l.active);
+  }
+}
+
+export const MycMarketplaceContract = MycResonanceMarketplaceContract;
+
 
