@@ -1,0 +1,38 @@
+{
+  "protocol": "MYCA Network",
+  "chainId": 108,
+  "nativeToken": {
+    "symbol": "MYC",
+    "name": "MYC Living Token",
+    "decimals": 18,
+    "maxTotalSupply": 100000000,
+    "circulatingSupply": 25000000,
+    "dailyEmission": 100000
+  },
+  "depinFleet": {
+    "totalNodes": 10000,
+    "activeNodes": 10000,
+    "meshConnections": 80000,
+    "peerNeighborhoodK": 8,
+    "capitalRaisedUSDC": 6965000,
+    "hardwareIdentity": "Silicon PUF W3C DID",
+    "consensus": "Proof-of-Quantum-Resonance (PoQR)"
+  },
+  "performance": {
+    "gasFeeModel": "Strict Zero-Gas ($0.00000000)",
+    "effectiveAverageTPS": 15147.51,
+    "peakBurstTPS": 20449.13,
+    "timeToFinalityMs": 9.79,
+    "hardwareSafetyBrakeUs": 4.95,
+    "throughputMgasSec": 318.79
+  },
+  "endpoints": {
+    "website": "https://www.mycai.pro",
+    "mintApp": "https://www.mycai.pro/depin/mint",
+    "explorer": "https://www.mycai.pro/depin/explorer",
+    "rpc": "https://rpc.mycai.pro",
+    "whitepaper": "https://www.mycai.pro/depin/docs",
+    "github": "https://github.com/brienteth/myc-ai"
+  },
+  "timestamp": 1788708269772
+}
