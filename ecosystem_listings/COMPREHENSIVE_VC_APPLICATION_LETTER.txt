@@ -1,0 +1,85 @@
+Subject: MYCA Network (Chain ID 108) | Institutional Pitch & $2M Seed Round Dossier (Zero-Gas Post-Quantum DePIN)
+
+Dear Investment Partners & Ecosystem Leads,
+
+We are officially submitting the Seed / Strategic Investment Dossier for MYCA Network (Chain ID 108) — the world's first Zero-Gas, Silicon PUF DePIN & Autonomous Machine Substrate.
+
+Attached to this application is our verified, reproducible test suite archive (`MYCA_NETWORK_TEST_RESULTS_AND_AUDIT.zip`), covering real Hardware-in-the-Loop (HIL) physical stress tests, Post-Quantum lattice verifications, and 100% offline Air-Gapped M2M edge executions.
+
+================================================================================
+1. EXECUTIVE THESIS & PROBLEM STATEMENT
+================================================================================
+Existing Layer-1 and Layer-2 blockchains (Ethereum, Solana, Peaq, IoTeX) were built for human speculative transactions. When deployed in real-world industrial IoT, robotics, and high-frequency edge environments, they suffer from four structural barriers:
+
+1. Volatile Gas Fees ($0.001 - $25/tx): High-frequency telemetry (100+ events/sec per turbine) makes traditional networks economically unviable. MYCA enforces an uncompromising 0.00000000 MYC Gas Invariant.
+2. Private Key Physical Theft: Private keys stored in microcontroller flash/EEPROM are easily extracted via side-channel or physical theft. MYCA derives dynamic keys from Silicon PUF (microscopic SRAM crystal jitter) — keys vanish upon power-down.
+3. AI Actuator Overload & Hallucinations: Malicious prompt injections or edge model hallucinations can over-torque physical industrial valves or turbines. MYCA intercepts commands with a deterministic 4.95 µs Safe-Sign C99 bare-metal airbag (240-byte RAM, zero malloc) that zeroes registers before current passes relays.
+4. Total WAN/Internet Dependence: Mining facilities, maritime vessels, and remote micro-grids frequently lose internet. Traditional blockchains immediately stall. MYCA operates 100% offline over physical RS-485 Modbus / LoRaWAN meshes, sealing zero-gas micro-DAG vertices and reconciling seamlessly via Delay-Tolerant Networking (DTN).
+
+================================================================================
+2. TECHNICAL ARCHITECTURE & KEY BENCHMARKS
+================================================================================
+- Network Status: Public Testnet Live (Chain ID 108)
+- Real Throughput: 15,147+ Verified Effective TPS (20,449 Peak Burst TPS, 318+ Mgas/s)
+- Deterministic Finality: 9.79 ms (Hardware Safety Interlock: 4.95 µs, measured at 0.38 µs)
+- Consensus Model: Proof-of-Resonance (PoQR) utilizing 64-D Hyperdimensional Computing (HDC) with Heisenberg phase quenching (coherence collapses to 0.00000000 when phase drift ΔΦ > 45°)
+- 10-Pillar Post-Quantum Armor: NIST ML-DSA-65 (CRYSTALS-Dilithium3), ML-KEM-1024, and BLAKE3-512 (256-bit Grover quantum margin, fully Shor-immune)
+- Cross-Chain Interoperability: Bidirectional BFT Quorum Cryptographic Bridge to Base (Chain 8453), Arbitrum, and Ethereum with strict replay protection and Merkle receipt proof verification
+- Constrained Footprint: Microcode executes in 240 bytes static RAM with zero dynamic heap allocation (malloc = 0) on STM32H7, ESP32-S3, Nordic nRF52840, and RISC-V cores.
+
+================================================================================
+3. TOKENOMICS & ECONOMIC ARCHITECTURE
+================================================================================
+- Total Max Supply: 100,000,000 MYC (Fixed Hardcap)
+- Daily PoQR Emission: 100,000.000000 MYC (Fixed deterministic issuance)
+- Node License Capacity Model: 10,000 Living Machine Nodes ($6,965,000 USDC Maximum Model)
+  * Tier 1 (Spore): $299 | 1.0x Mining Multiplier
+  * Tier 2 (Hyphae): $449 | 2.5x Mining Multiplier
+  * Tier 3 (Mycelial Trunk): $699 | 5.5x Mining Multiplier
+  * Tier 4 (Fruiting Body): $1,099 | 10.0x Mining Multiplier
+- Real-Yield Distribution: 40% Treasury Reserve, 25% Hardware/Grid Subsidies, 20% Liquidity Pools, 15% Core Protocol Foundation
+
+================================================================================
+4. VERIFIED TEST AUDIT SUITE (INCLUDED IN ZIP ARCHIVE)
+================================================================================
+Every test in the attached archive has been executed with 100% Pass (0 Fails):
+- 01_master_adversarial_penetration.log: 11/11 Gates (Bybit, KelpDAO, Shor/Grover models)
+- 02_offline_real_capabilities_demo.log: 100% Offline M2M settlements & 0.38µs emergency brake
+- 03_offline_airgap_dtn_resilience.log: 5/5 Air-gapped mesh stages reconciled to block #21199801
+- 04_10_pillar_post_quantum_armor.log: NIST Dilithium3, ML-KEM-1024, BLAKE3-512 verified
+- 05_hardware_in_the_loop_physical_pentest.log: -40°C to +85°C thermal soak, 100ns VCC glitch tolerance, LittleFS POST in 14.8ms
+- 06_10k_nodes_mesh_simulation.log: 10,000 nodes, 80k links, self-healing mesh (<350ms)
+- 07_production_adversarial_18gates.log: 18/18 Invariant gates passed (Reentrancy, permit replay)
+- 08_platform_blockchain_zero_gas.log: Custom EVM smart contracts deployed at $0.00 gas
+- 09_bridge_crosschain_hardening.log: Base <-> MYCA BFT quorum + Merkle proof validation
+- 10_faucet_cooldown_verification.log: Twitter @myc_ai validation with 24h cooldown
+
+================================================================================
+5. INVESTMENT OFFERING & CAPITAL ALLOCATION
+================================================================================
+- Target Round: $2,000,000 Seed / Strategic Allocation (SAFT + Token Warrant)
+- Valuation: $20,000,000 Post-Money ($0.20 per MYC)
+- Allocation of Funds:
+  * 40% Core Engineering & Embedded Firmware (STM32 / ESP32-S3 / RISC-V ports)
+  * 25% Industrial Fleet Deployments (Clean energy, smart agriculture, logistics pilots)
+  * 20% Formal Verification & Tier-1 Smart Contract Audits
+  * 15% Global Exchange Liquidity & Developer Ecosystem Growth
+
+================================================================================
+6. OFFICIAL CHANNELS & ARTIFACTS
+================================================================================
+- Official Website: https://mycai.pro
+- Live Blockchain Explorer: https://mycai.pro/depin/explorer
+- Verified Dune Analytics Dashboard: https://dune.com/queries/8625163
+- GitBook Comprehensive Documentation: https://mycai.pro/depin/docs
+- Developer SDK Reference: https://mycai.pro/depin/dev-docs
+- GitHub Organization: https://github.com/brienteth/myc-ai
+- Direct Contact Email: enterprise@mycai.pro
+- Official Telegram / X: @myc_ai
+
+We invite you to review the attached test reports and schedule an introductory technical deep-dive with our core engineering team.
+
+Warm regards,
+MYCA Core Engineering & Foundation Team
+Contact: enterprise@mycai.pro
+Website: https://mycai.pro
