@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Developer Docs | Mycelium Network</title>
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
+  <style>
+    :root {
+      --gb-bg: var(--f-cream);
+      --gb-sidebar: var(--f-parchment);
+      --gb-border: var(--f-bark);
+      --gb-text: var(--f-humus);
+      --gb-muted: var(--f-soil);
+      --gb-accent: var(--f-moss);
+      --gb-accent-light: rgba(46, 107, 69, 0.1);
+      --gb-glow: var(--f-glow);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--gb-bg);
+      color: var(--gb-text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      margin: 0;
+      padding-top: 86px;
+      line-height: 1.6;
+    }
+
+    /* GITBOOK 3-COLUMN MASTER LAYOUT */
+    .gitbook-layout {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 240px;
+      gap: 36px;
+      padding: 24px 28px 80px;
+    }
+
+    .gitbook-sidebar {
+      position: sticky;
+      top: 104px;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gb-border) transparent;
+    }
+    .gitbook-sidebar::-webkit-scrollbar { width: 4px; }
+    .gitbook-sidebar::-webkit-scrollbar-thumb { background: var(--gb-border); border-radius: 4px; }
+
+    .sidebar-search-box {
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .sidebar-search-input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--gb-border);
+      border-radius: 10px;
+      padding: 9px 12px 9px 34px;
+      font-size: 13px;
+      color: var(--gb-text);
+      outline: none;
+      transition: all 0.2s;
+    }
+    .sidebar-search-input:focus {
+      border-color: var(--gb-accent);
+      box-shadow: 0 0 0 3px rgba(46, 107, 69, 0.12);
+    }
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gb-muted);
+      pointer-events: none;
+    }
+
+    .sidebar-group { margin-bottom: 22px; }
+    .sidebar-group-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gb-muted);
+      margin: 0 0 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sidebar-group-title span.badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      background: var(--gb-accent-light);
+      color: var(--gb-accent);
+      border-radius: 4px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--gb-text);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      margin-bottom: 3px;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-item:hover {
+      background: rgba(46, 107, 69, 0.06);
+      color: var(--gb-accent);
+    }
+    .sidebar-item.active {
+      background: #FFFFFF;
+      color: var(--gb-accent);
+      font-weight: 700;
+      border-left: 3px solid var(--gb-accent);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+    .sidebar-item .item-icon { font-size: 14px; margin-right: 8px; }
+    .sidebar-item .item-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* CENTER CONTENT */
+    .gitbook-content {
+      min-width: 0;
+      background: #FFFFFF;
+      border: 1px solid var(--gb-border);
+      border-radius: 20px;
+      padding: 40px 48px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+    .gb-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--gb-muted);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .gb-breadcrumb a { color: var(--gb-muted); text-decoration: none; }
+    .gb-breadcrumb a:hover { color: var(--gb-accent); }
+    .gb-breadcrumb .sep { font-size: 11px; opacity: 0.6; }
+    .gb-breadcrumb .curr { color: var(--gb-accent); font-weight: 700; }
+
+    /* RIGHT TOC */
+    .gitbook-toc {
+      position: sticky;
+      top: 104px;
+      height: fit-content;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-left: 8px;
+      font-size: 13px;
+    }
+    .toc-header {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gb-muted);
+      margin-bottom: 12px;
+    }
+    .toc-link {
+      display: block;
+      color: var(--gb-muted);
+      text-decoration: none;
+      padding: 4px 0 4px 10px;
+      border-left: 2px solid transparent;
+      margin-bottom: 4px;
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+    .toc-link:hover, .toc-link.active {
+      color: var(--gb-accent);
+      border-left-color: var(--gb-accent);
+      font-weight: 600;
+    }
+
+    @media (max-width: 1200px) {
+      .gitbook-layout { grid-template-columns: 260px 1fr; }
+      .gitbook-toc { display: none; }
+    }
+    @media (max-width: 860px) {
+      .gitbook-layout { grid-template-columns: 1fr; padding: 16px; }
+      .gitbook-sidebar { display: none; }
+      .gitbook-content { padding: 24px 20px; }
+    }
+    .docs-header {
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--f-bark);
+      padding-bottom: 24px;
+    }
+    .docs-header h1 {
+      font-family: var(--f-serif);
+      font-size: 38px;
+      font-weight: 700;
+      margin: 0 0 12px;
+      color: var(--f-humus);
+    }
+    .docs-header p {
+      font-size: 16px;
+      color: var(--f-soil);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .docs-card {
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .docs-card h2 {
+      font-family: var(--f-serif);
+      font-size: 22px;
+      margin: 0 0 16px;
+      color: var(--f-humus);
+    }
+    .code-block {
+      background: #191B1A;
+      color: #E6EAE7;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      overflow-x: auto;
+      margin: 14px 0;
+      line-height: 1.5;
+    }
+    .endpoint-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .badge-post { background: rgba(46, 107, 69, 0.2); color: var(--f-moss); border: 1px solid var(--f-moss); }
+    .badge-get { background: rgba(63, 140, 89, 0.2); color: var(--f-thread); border: 1px solid var(--f-thread); }
+    table.api-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    table.api-table th, table.api-table td {
+      padding: 10px 14px;
+      border: 1px solid var(--f-bark);
+      text-align: left;
+    }
+    table.api-table th {
+      background: var(--f-linen);
+      color: var(--f-humus);
+      font-weight: 600;
+    }
+    .quickstart-selector-card {
+      background: #F2F7F4;
+      border: 2px solid var(--f-moss);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 20px rgba(46, 107, 69, 0.08);
+    }
+    .qs-btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+    .qs-btn {
+      background: #fff;
+      border: 1px solid var(--f-bark);
+      color: var(--f-humus);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qs-btn:hover, .qs-btn.active {
+      background: var(--f-moss);
+      color: #fff;
+      border-color: var(--f-moss);
+      box-shadow: 0 2px 8px rgba(46, 107, 69, 0.2);
+    }
+    @media (max-width: 900px) {
+      .docs-container { grid-template-columns: 1fr; }
+      .docs-sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED 0G-STYLE HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: Navigation Menus -->
+      <div class="myca-nav-center">
+        <!-- Ecosystem Dropdown -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger">
+            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/hub" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
+                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
+                </div>
+              </a>
+              <a href="/explorer" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧭</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Lattice DAG Explorer</div>
+                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & DAG vertices</div>
+                </div>
+              </a>
+              <a href="/depin" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🤖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
+                  <div class="myca-dd-sub">Silicon PUF identity, turbines & actuator nodes</div>
+                </div>
+              </a>
+              <a href="/agent" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧠</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial AI Colony</div>
+                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📜</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial Contracts Studio</div>
+                  <div class="myca-dd-sub">Verified contracts, bytecode runner & ABIs</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build Dropdown (Developer Focus) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger active">
+            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/build" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">0→1 Quickstart Studio <span class="myca-dd-badge">STUDIO</span></div>
+                  <div class="myca-dd-sub">Proje tipi seç, otomatik faucet al, canlı playground'da çalıştır</div>
+                </div>
+              </a>
+              <a href="/dev-docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛠️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Developer Docs <span class="myca-dd-badge">DEV</span></div>
+                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples & quickstart</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📋</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Smart Contract ABIs</div>
+                  <div class="myca-dd-sub">Chain ID 108 tokenomics, bridge & escrow interfaces</div>
+                </div>
+              </a>
+              <a href="/agent#hardware" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔌</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Hardware & Modbus SDK</div>
+                  <div class="myca-dd-sub">WebSerial PUF keyrings & 0-Byte Negation Shield</div>
+                </div>
+              </a>
+              <a href="https://github.com/bl10buer/myc-network" target="_blank" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🐙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">GitHub Repositories ↗</div>
+                  <div class="myca-dd-sub">Open-source core crates, consensus & test suites</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Docs Dropdown (Architecture & Whitepaper) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger">
+            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Network Whitepaper</div>
+                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
+                </div>
+              </a>
+              <a href="/docs.html#tokenomics" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🪙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Tokenomics Specs</div>
+                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
+                </div>
+              </a>
+              <a href="/docs.html#zero-gas" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛡️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Zero-Gas Invariant</div>
+                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
+                </div>
+              </a>
+              <a href="/docs.html#security" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔒</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Security & BFT Quorum</div>
+                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons & Live App Launch -->
+      <div class="myca-nav-right">
+        <a href="/build" class="myca-btn-secondary">Build</a>
+        <a href="/hub" class="myca-btn-primary">
+          <span>Launch NEXUS</span>
+          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- GITBOOK 3-COLUMN MASTER CONTAINER -->
+  <div class="gitbook-layout">
+    <!-- Left Sidebar: Dynamic Chapter Navigation -->
+    <aside class="gitbook-sidebar">
+      <!-- Search Filter -->
+      <div class="sidebar-search-box">
+        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="devFilterInput" class="sidebar-search-input" placeholder="Quick search dev docs... (Ctrl+K)" onkeyup="filterDevNav()">
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Architecture & Core</span>
+          <span class="badge">L1</span>
+        </div>
+        <a href="#overview" class="sidebar-item active" onclick="navigateDevChapter('overview')">
+          <span class="item-icon">⚙️</span>
+          <span class="item-text">Network Parameters</span>
+        </a>
+        <a href="#platform-layers" class="sidebar-item" onclick="navigateDevChapter('platform-layers')">
+          <span class="item-icon">📐</span>
+          <span class="item-text">4-Layer Platform Model</span>
+        </a>
+        <a href="#quickstart" class="sidebar-item" onclick="navigateDevChapter('quickstart')">
+          <span class="item-icon">⚡</span>
+          <span class="item-text">Node & RPC Gateway</span>
+        </a>
+        <a href="/docs#tier-mint" class="sidebar-item" style="color:#10B981;">
+          <span class="item-icon">🌱</span>
+          <span class="item-text">3-Tier Living Mint ↗</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Smart Contract Engine</span>
+          <span class="badge">VM</span>
+        </div>
+        <a href="#contract-deploy" class="sidebar-item" onclick="navigateDevChapter('contract-deploy')">
+          <span class="item-icon">🚀</span>
+          <span class="item-text">Deploy Custom Contract</span>
+        </a>
+        <a href="#contract-call" class="sidebar-item" onclick="navigateDevChapter('contract-call')">
+          <span class="item-icon">📞</span>
+          <span class="item-text">Calling & Transacting</span>
+        </a>
+        <a href="#contracts-deployed" class="sidebar-item" onclick="navigateDevChapter('contracts-deployed')">
+          <span class="item-icon">📜</span>
+          <span class="item-text">Core System Contracts</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Developer SDK</span>
+          <span class="badge">SDK</span>
+        </div>
+        <a href="#sdk-guide" class="sidebar-item" onclick="navigateDevChapter('sdk-guide')">
+          <span class="item-icon">📦</span>
+          <span class="item-text">@myca/sdk & MycContract</span>
+        </a>
+        <a href="#sdk-depin" class="sidebar-item" onclick="navigateDevChapter('sdk-depin')">
+          <span class="item-icon">🤖</span>
+          <span class="item-text">DePIN & Machine Wallets</span>
+        </a>
+        <a href="#offline-dtn" class="sidebar-item" onclick="navigateDevChapter('offline-dtn')">
+          <span class="item-icon">📡</span>
+          <span class="item-text">Offline Air-Gap & DTN Sync</span>
+        </a>
+        <a href="#post-quantum-armor" class="sidebar-item" onclick="navigateDevChapter('post-quantum-armor')">
+          <span class="item-icon">🛡️</span>
+          <span class="item-text">10-Pillar Quantum Armor</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Game & Living Assets</span>
+          <span class="badge" style="background:#dcfce7; color:#15803d;">0-GAS</span>
+        </div>
+        <a href="#game-dev" class="sidebar-item" onclick="navigateDevChapter('game-dev')">
+          <span class="item-icon">🎮</span>
+          <span class="item-text">Arcade & Game Dev</span>
+        </a>
+        <a href="#resonance-nft" class="sidebar-item" onclick="navigateDevChapter('resonance-nft')">
+          <span class="item-icon">💎</span>
+          <span class="item-text">Living Assets (ERC-721R)</span>
+        </a>
+        <a href="/marketplace" class="sidebar-item">
+          <span class="item-icon">🏪</span>
+          <span class="item-text">Secondary Marketplace ↗</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Colony & AI Runtime</span>
+        </div>
+        <a href="#colony-marketplace" class="sidebar-item" onclick="navigateDevChapter('colony-marketplace')">
+          <span class="item-icon">🐝</span>
+          <span class="item-text">Capability Marketplace</span>
+        </a>
+        <a href="#realtime-events" class="sidebar-item" onclick="navigateDevChapter('realtime-events')">
+          <span class="item-icon">📡</span>
+          <span class="item-text">WebSocket & SSE Events</span>
+        </a>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>REST & JSON-RPC API</span>
+        </div>
+        <a href="#api-balances" class="sidebar-item" onclick="navigateDevChapter('api-balances')">
+          <span class="item-icon">💰</span>
+          <span class="item-text">Wallet Balances API</span>
+        </a>
+        <a href="#api-faucet" class="sidebar-item" onclick="navigateDevChapter('api-faucet')">
+          <span class="item-icon">🚰</span>
+          <span class="item-text">Testnet Faucet</span>
+        </a>
+        <a href="#api-swap" class="sidebar-item" onclick="navigateDevChapter('api-swap')">
+          <span class="item-icon">🔄</span>
+          <span class="item-text">Resonance AMM Swap</span>
+        </a>
+        <a href="#api-bridge" class="sidebar-item" onclick="navigateDevChapter('api-bridge')">
+          <span class="item-icon">🌉</span>
+          <span class="item-text">Multi-Asset Bridge</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <main class="gitbook-content">
+      <!-- Breadcrumb -->
+      <div class="gb-breadcrumb">
+        <a href="/dev-docs">Dev Docs</a>
+        <span class="sep">/</span>
+        <span id="devBcCategory">Platform Architecture</span>
+        <span class="sep">/</span>
+        <span class="curr" id="devBcPage">Network Parameters</span>
+      </div>
+
+      <div class="docs-header">
+        <div class="gb-tag-row">
+          <span class="gb-badge">DEV SPEC v3.5</span>
+          <span class="gb-badge" style="background:#e0f2fe; color:#0369a1;">CHAIN ID: 108</span>
+          <span class="gb-badge" style="background:#dcfce7; color:#15803d;">0.00000000 GAS</span>
+        </div>
+        <h1 id="devMainTitle">Developer Documentation</h1>
+        <p>Complete technical reference for building decentralized applications, custom smart contracts, autonomous AI agent colonies, and DePIN hardware fleets on MYCA Platform Blockchain (Chain ID 108).</p>
+      </div>
+
+      <!-- 0->1 Quickstart Selector -->
+      <div class="quickstart-selector-card" id="quickstart">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="margin: 0; font-family: var(--f-serif); font-size: 24px; color: var(--f-humus);">What do you want to build?</h2>
+            <div style="font-size: 13px; color: var(--f-soil); margin-top: 4px;">Fastest 0→1 experience: Select your project type, claim instant testnet faucet, and execute live code.</div>
+          </div>
+          <a href="/build" class="myca-btn-primary" style="padding: 8px 18px; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <span>🚀 Open 0→1 Build Studio</span>
+            <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </a>
+        </div>
+
+        <div class="qs-btn-group">
+          <button class="qs-btn active" id="btn-qs-token" onclick="showTemplate('token')">🪙 Token / Contract</button>
+          <button class="qs-btn" id="btn-qs-game" onclick="showTemplate('game')">🎮 Game / Arcade</button>
+          <button class="qs-btn" id="btn-qs-nft" onclick="showTemplate('nft')">💎 Living NFT (ERC-721R)</button>
+          <button class="qs-btn" id="btn-qs-depin" onclick="showTemplate('depin')">🤖 DePIN Device</button>
+          <button class="qs-btn" id="btn-qs-agent" onclick="showTemplate('agent')">🧠 AI Agent</button>
+          <button class="qs-btn" id="btn-qs-defi" onclick="showTemplate('defi')">🌉 Cross-chain DeFi</button>
+        </div>
+
+        <div id="template-area" style="background: #141715; border-radius: 14px; padding: 18px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <span id="qs-code-title" style="color: #E2E8E4; font-family: var(--f-mono); font-size: 12.5px; font-weight: 600;">index.js — @myca/sdk Token Deployment</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <a href="/build" style="background: rgba(46,107,69,0.3); color: #A3E635; border: 1px solid var(--f-moss); padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                🚰 Claim Daily 5 MYC Faucet ➔
+              </a>
+              <button onclick="copyDevCode()" id="btn-copy-code" style="background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 600; cursor: pointer;">
+                📋 Copy Code
+              </button>
+              <a href="/build" style="background: var(--f-moss); color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center;">
+                ⚡ Run in Live Playground ➔
+              </a>
+            </div>
+          </div>
+          <pre id="qs-code-snippet" style="margin: 0; color: #A3E635; font-family: var(--f-mono); font-size: 12px; line-height: 1.55; overflow-x: auto; white-space: pre;">// Loading code snippet...</pre>
+          <div id="qs-faucet-status" style="margin-top: 10px; font-size: 12px; color: #A3E635; display: none;"></div>
+        </div>
+      </div>
+
+      <!-- Network Overview -->
+      <section id="overview" class="docs-card">
+        <h2>Network Parameters (Chain ID 108)</h2>
+        <table class="api-table">
+          <tr><th>Parameter</th><th>Value</th><th>Description</th></tr>
+          <tr><td>Network Name</td><td><code>MYC-TESTNET-SPHEROID-1</code></td><td>Sovereign testnet network identifier</td></tr>
+          <tr><td>Chain ID</td><td><code>108</code></td><td>EVM & Substrate-compatible network chain ID</td></tr>
+          <tr><td>Consensus</td><td><code>Proof-of-Resonance (PoR)</code></td><td>Deterministic sub-38.4 µs lattice DAG finality</td></tr>
+          <tr><td>Gas Fee Invariant</td><td><code>0.00 MYC</code></td><td>Strict zero-gas protocol guarantee for all users and machines</td></tr>
+          <tr><td>Native Currency</td><td><code>MYC (18 Decimals)</code></td><td>Fixed 1 Billion supply substrate token</td></tr>
+          <tr><td>Stablecoins</td><td><code>USDT (6 Dec), USDC (6 Dec)</code></td><td>Native on-chain Tether & Circle representations</td></tr>
+          <tr><td>JSON-RPC Endpoint</td><td><code>http://localhost:4040/rpc</code></td><td>EVM JSON-RPC 2.0 gateway (dual /rpc & /api/rpc)</td></tr>
+          <tr><td>WebSocket Stream</td><td><code>ws://localhost:4041</code></td><td>Real-time RFC-6455 event streaming bus</td></tr>
+        </table>
+      </section>
+
+      <!-- 4-Layer Platform Architecture -->
+      <section id="platform-layers" class="docs-card">
+        <h2>4-Layer Platform Architecture</h2>
+        <p>MYCA operates as an open, layer-separated platform substrate engineered for decentralized compute, sovereign contracts, and autonomous hardware:</p>
+        <table class="api-table">
+          <tr><th>Layer</th><th>Name</th><th>Components & Responsibilities</th></tr>
+          <tr>
+            <td><strong>Katman 1</strong></td>
+            <td>MYC Protokol Çekirdeği</td>
+            <td>Chain ID 108, PoR Consensus, Colony Runtime, Zero-Gas Engine, DePIN Hardware Registry, Resonance AMM, Multi-Asset Bridge.</td>
+          </tr>
+          <tr>
+            <td><strong>Katman 2</strong></td>
+            <td>Geliştirici SDK & API Gateway</td>
+            <td><code>@myca/sdk</code>, <code>MycContract</code> wrapper, JSON-RPC 2.0 gateway, REST API, WebSocket/SSE Event Bus, ABI definitions.</td>
+          </tr>
+          <tr>
+            <td><strong>Katman 3</strong></td>
+            <td>Dış Projeler & Ekosistem</td>
+            <td>Üçüncü taraf DePIN projeleri, AI Agent pazar yerleri, sektörel DEX/DeFi protokolleri, RWA tokenize varlıklar, IoT veri havuzları.</td>
+          </tr>
+          <tr>
+            <td><strong>Katman 4</strong></td>
+            <td>Son Kullanıcı & Uç Cihazlar</td>
+            <td>Makine cüzdanları (Silicon PUF), Web & Mobil dApp arayüzleri, WebSerial donanım anahtarları, endüstriyel rüzgar türbinleri ve aktüatörler.</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- Quickstart -->
+      <section id="quickstart" class="docs-card">
+        <h2>RPC Quickstart & cURL</h2>
+        <p>Send standard JSON-RPC 2.0 payloads to the MYCA RPC gateway:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "eth_chainId",
+    "params": [],
+    "id": 1
+  }'</div>
+        <p>Response:</p>
+        <div class="code-block">{"jsonrpc":"2.0","id":1,"result":"0x6c"} // 0x6c = 108 in hexadecimal</div>
+      </section>
+
+      <!-- Smart Contract Deployment -->
+      <section id="contract-deploy" class="docs-card">
+        <h2><span class="endpoint-badge badge-post">POST</span> Custom Smart Contract Deployment</h2>
+        <p>Deploy arbitrary smart contracts directly to the MYCA Living Lattice with <strong>0.00 MYC gas fee</strong>. Use REST or JSON-RPC (<code>myc_deployUserContract</code>):</p>
+        
+        <h4>1. REST Deployment (POST /api/contract/deploy)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/contract/deploy \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sender": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "name": "CommunityLoyaltyToken",
+    "abi": [
+      {"name": "name", "type": "function", "inputs": [], "outputs": [{"type": "string"}]},
+      {"name": "balanceOf", "type": "function", "inputs": [{"name": "account", "type": "address"}], "outputs": [{"type": "uint256"}]},
+      {"name": "transfer", "type": "function", "inputs": [{"name": "to", "type": "address"}, {"name": "amount", "type": "uint256"}], "outputs": [{"type": "bool"}]}
+    ],
+    "args": ["CommunityLoyaltyToken", 1000000]
+  }'</div>
+
+        <h4>2. JSON-RPC Deployment (myc_deployUserContract)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "myc_deployUserContract",
+    "params": [{
+      "sender": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      "name": "AIInferenceBounty",
+      "abi": [...]
+    }],
+    "id": 1
+  }'</div>
+
+        <p>Sample Deployment Response:</p>
+        <div class="code-block">{
+  "success": true,
+  "contractAddress": "myc1c87a2dfb77626efcf32a417684db9675",
+  "name": "CommunityLoyaltyToken",
+  "deployedAt": 1788599300000,
+  "deployer": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+  "gasUsed": "0.00 MYC",
+  "txHash": "0x5d9b23..."
+}</div>
+      </section>
+
+      <!-- Calling & Transacting -->
+      <section id="contract-call" class="docs-card">
+        <h2>Contract Calls & State Transitions</h2>
+        <p>Interact with deployed contracts without gas fees. Read contract state using <code>myc_callContract</code> or mutate state using <code>myc_sendTransaction</code>:</p>
+
+        <h4>Read-Only Call (myc_callContract)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "myc_callContract",
+    "params": [{
+      "to": "myc1c87a2dfb77626efcf32a417684db9675",
+      "method": "balanceOf",
+      "args": ["myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002"]
+    }],
+    "id": 2
+  }'</div>
+
+        <h4>State-Changing Transaction (myc_sendTransaction)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/rpc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "myc_sendTransaction",
+    "params": [{
+      "from": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      "to": "myc1c87a2dfb77626efcf32a417684db9675",
+      "method": "transfer",
+      "args": ["myc14d29b6c4b38b2ac4a6e2bbb9c4d7c999", 500]
+    }],
+    "id": 3
+  }'</div>
+      </section>
+
+      <!-- Developer SDK -->
+      <section id="sdk-guide" class="docs-card">
+        <h2>JavaScript SDK (@myca/sdk)</h2>
+        <p>Integrate MYCA in Node.js or browser dApps using our unified zero-dependency SDK:</p>
+        <div class="code-block">import { MycaSDK } from '@myca/sdk';
+
+const myca = new MycaSDK({
+  rpcUrl: 'http://localhost:4040/rpc',
+  wsUrl: 'ws://localhost:4041',
+  privateKey: '0x0123456789abcdef...'
+});
+
+// 1. Deploy Contract
+const contract = await myca.deployContract({
+  name: 'YieldVault',
+  abi: VAULT_ABI,
+  args: ['USDT-VAULT', 1000]
+});
+console.log('Deployed at:', contract.address);
+
+// 2. Call methods cleanly
+const balance = await contract.call('balanceOf', [userAddress]);
+
+// 3. Send Zero-Gas Transactions
+const receipt = await contract.send('deposit', [250]);
+console.log('Tx Hash:', receipt.txHash, 'Gas:', receipt.gasUsed);
+
+// 4. Listen for contract events
+contract.on('Deposit', (event) => {
+  console.log('New Deposit detected:', event);
+});</div>
+      </section>
+
+      <!-- DePIN Machine Wallets -->
+      <section id="sdk-depin" class="docs-card">
+        <h2>DePIN & Machine Wallets (Silicon PUF)</h2>
+        <p>Register IoT edge devices and industrial hardware with autonomous micro-wallets and physical unclonable function (PUF) identities:</p>
+        <div class="code-block">// Register device with hardware PUF and 0-Byte Negation Shield
+const device = await myca.registerDevice({
+  deviceId: 'turbine-nordex-08',
+  type: 'WIND_TURBINE_EDGE',
+  pufChallenge: '0x8899aabbccddeeff...',
+  pufResponse: '0x1122334455667788...'
+});
+
+console.log('Machine Wallet Address:', device.walletAddress);
+console.log('Negation Shield Active:', device.negationShield);
+
+// Perform autonomous M2M data settlement
+const settleReceipt = await device.settleM2MTelemetry({
+  consumerAddress: 'myc1pump772...',
+  readings: 128,
+  pricePerReading: '0.005 MYC'
+});</div>
+      </section>
+
+      <!-- Offline Air-Gapped DTN & Mesh Sync -->
+      <section id="offline-dtn" class="docs-card">
+        <h2>Offline Air-Gap & Delay-Tolerant Networking (DTN)</h2>
+        <p>Deploy edge nodes that operate completely severed from the Internet. Nodes synchronize locally via RS-485 Modbus, LoRa, or BLE, seal zero-gas micro-DAG vertices, and reconcile upon WAN restoration via Delay-Tolerant Networking (DTN):</p>
+        <div class="code-block">// Initialize node in 100% offline air-gapped mode
+const { OfflineAirGapEngine } = require('@myca/sdk');
+
+const offlineNode = new OfflineAirGapEngine({
+  transport: 'RS485_MODBUS',     // or 'LORA_868MHZ', 'BLE_MESH'
+  pufEntropySource: 'SRAM_WAFER',
+  autoReconciliation: true
+});
+
+// Derive local Silicon PUF identity without WAN/DNS
+const identity = await offlineNode.deriveLocalIdentity();
+console.log('Air-gapped Machine DID:', identity.did); // did:myc:puf:0x...
+
+// Record telemetry & mint local 0-gas micro-DAG vertex
+const vertex = await offlineNode.sealLocalVertex({
+  action: 'VALVE_PRESSURE_CALIBRATION',
+  payload: { psi: 142.8, tempC: 21.4 },
+  state: 'SEALED_OFFLINE'
+});
+
+// When WAN link returns, DTN reconciles seamlessly with global DAG
+offlineNode.on('wan_reconnected', async () => {
+  const syncReport = await offlineNode.reconcileDTNGossip();
+  console.log(`Reconciled ${syncReport.syncedVertices} vertices with Living Lattice DAG.`);
+});</div>
+      </section>
+
+      <!-- 10-Pillar Post-Quantum Armor -->
+      <section id="post-quantum-armor" class="docs-card">
+        <h2>10-Pillar Post-Quantum & Physical Hardening Armor</h2>
+        <p>Protect high-value DePIN physical infrastructure from Shor/Grover quantum attacks and prompt-injection hallucinations:</p>
+        <div class="code-block">const { QuantumResilienceArmor } = require('@myca/sdk');
+
+const armor = new QuantumResilienceArmor();
+
+// 1. Dilithium3 (ML-DSA-65) NIST Post-Quantum Signature Verification
+const isPqcValid = armor.verifyDilithium3({
+  message: 'TRANSACTION_PAYLOAD_HASH',
+  publicKey: '0xPQC_DILITHIUM3_PUBKEY...',
+  signature: '0xPQC_SIGNATURE_LATTICE...'
+});
+
+// 2. 4.95 µs Safe-Sign C99 Hardware Negation Brake
+const safetyVerdict = armor.evaluateSafeSignNegation({
+  instruction: 'HALT PUMP UNLESS EMERGENCY',
+  registers: ['0x0001', '0x00FF']
+});
+
+if (safetyVerdict.negationDetected) {
+  // Clamped to 0x0000 in 0.42 microseconds before electric relay actuates!
+  console.warn('Physical relay execution aborted by Safe-Sign airbag.');
+}</div>
+      </section>
+
+      <!-- Colony Capability Marketplace -->
+      <section id="colony-marketplace" class="docs-card">
+        <h2>Colony Open Capability Marketplace</h2>
+        <p>Register and monetize off-chain and on-chain capabilities (AI models, IoT actuators, or data feeds) in the global Colony scheduler:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/capability/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "ai.sentiment.crypto",
+    "providerAddress": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "pricePerExecution": 0.05,
+    "description": "Real-time crypto sentiment analyzer with PoR signature verification"
+  }'</div>
+
+        <h4>Query Available Capabilities</h4>
+        <div class="code-block">curl -s http://localhost:4040/api/capabilities</div>
+      </section>
+
+      <!-- Real-time Event Streaming -->
+      <section id="realtime-events" class="docs-card">
+        <h2>Real-Time Event Streaming (WebSocket & SSE)</h2>
+        <p>Subscribe to live network events, contract mutations, block formations, and bridge transactions.</p>
+        
+        <h4>1. Native RFC-6455 WebSocket (ws://localhost:4041)</h4>
+        <div class="code-block">const ws = new WebSocket('ws://localhost:4041');
+
+ws.onopen = () => {
+  // Subscribe to all contract and bridge events
+  ws.send(JSON.stringify({
+    action: 'subscribe',
+    topic: 'contract:*'
+  }));
+};
+
+ws.onmessage = (e) => {
+  const event = JSON.parse(e.data);
+  console.log('Received Event:', event.topic, event.data);
+};</div>
+
+        <h4>2. Server-Sent Events (SSE) (GET /api/events)</h4>
+        <div class="code-block">const eventSource = new EventSource('http://localhost:4040/api/events?topic=swap:*');
+
+eventSource.onmessage = (e) => {
+  const data = JSON.parse(e.data);
+  console.log('Real-time Swap Event:', data);
+};</div>
+      </section>
+
+      <!-- GAME & ARCADE DEVELOPMENT GUIDE -->
+      <section id="game-dev" class="docs-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+          <h2>🎮 Arcade &amp; Real-Time Game Development</h2>
+          <span style="background: rgba(46, 107, 69, 0.2); color: var(--f-moss); padding: 4px 12px; border-radius: 100px; font-family: var(--f-mono); font-size: 11px; font-weight: 700; border: 1px solid var(--f-moss);">
+            38.4 µs DETERMINISTIC EDGE • ZERO-GAS
+          </span>
+        </div>
+        
+        <p>MYCA provides an ultra-low latency blockchain edge substrate designed for Web3 gaming, interactive arcade titles, and high-frequency multiplayer state synchronization without player gas friction.</p>
+
+        <table class="api-table">
+          <tr><th>Gaming Engine Invariant</th><th>MYCA Implementation</th><th>Benefit for Game Studios</th></tr>
+          <tr>
+            <td><strong>Zero-Gas Player Loop</strong></td>
+            <td>Zero-gas invariant enforced on Chain ID 108</td>
+            <td>Players execute millions of micro-actions (attacks, hits, inventory drops) with 0 transaction fees.</td>
+          </tr>
+          <tr>
+            <td><strong>Deterministic Edge Physics</strong></td>
+            <td>38.4 µs C99 bare-metal kernel execution</td>
+            <td>Sub-millisecond state validation faster than a single frame at 144Hz (6.9ms).</td>
+          </tr>
+          <tr>
+            <td><strong>Hardware Anti-Cheat</strong></td>
+            <td>Silicon PUF &amp; Modbus RTU telemetry signature</td>
+            <td>Cryptographic proof that game events originate from un-tampered client binaries.</td>
+          </tr>
+          <tr>
+            <td><strong>Automated Tournament Escrows</strong></td>
+            <td><code>MycEscrow</code> with PoR multi-party release</td>
+            <td>Trustless entry fee staking and automated prize distribution to winners upon match completion.</td>
+          </tr>
+        </table>
+
+        <h3>Step 1: Connect Game Client via WebSocket or REST</h3>
+        <p>Initialize the connection to the MYCA gaming engine from your browser, Node.js, Unity C#, or Godot engine:</p>
+        <div class="code-block">// JavaScript / TypeScript Game Client
+import { MycGameClient } from '@myca/sdk';
+
+const game = new MycGameClient({
+  nodeUrl: 'http://localhost:4040',
+  wsUrl: 'ws://localhost:4041',
+  gameId: 'ARCADE_SPORE_ESCAPE',
+  playerAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002'
+});
+
+// Subscribe to real-time multiplayer arcade leaderboard & game events
+game.on('GameStateSync', (event) => {
+  console.log(`[Lattice Tick] Leaderboard Rank: #${event.rank} | Score: ${event.score}`);
+});</div>
+
+        <h3>Step 2: Submit In-Game Actions with Zero-Gas Invariant</h3>
+        <p>When players clear a wave, eliminate a boss, or submit high scores, dispatch the event via <code>POST /api/game/action</code>:</p>
+        <div class="code-block">const actionReceipt = await fetch('http://localhost:4040/api/game/action', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    playerAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    gameId: 'ARCADE_SPORE_ESCAPE',
+    eventType: 'STAGE_CLEAR',
+    score: 4850,
+    metadata: { stage: 4, comboMultiplier: 3.5, timeSeconds: 42.8 }
+  })
+}).then(r => r.json());
+
+console.log(`✅ Game Action Confirmed | Tx: ${actionReceipt.transactionHash}`);
+console.log(`⏱ Latency: ${actionReceipt.latencyMicroseconds} µs | Block: #${actionReceipt.blockNumber}`);</div>
+
+        <h3>Step 3: Staking &amp; Tournament Prize Pool Escrow</h3>
+        <p>Wager or lock tournament buy-ins using the sovereign <code>MycEscrow</code> contract:</p>
+        <div class="code-block">// Lock 50 $MYC Tournament Entry into Escrow
+const escrowTx = await fetch('http://localhost:4040/api/contracts/call', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    contractAddress: 'myc1c57b439d7a93b3330c69343c087d0b38', // MycEscrow
+    method: 'deposit',
+    args: ['tournament_lobby_049', 50],
+    isWrite: true
+  })
+});</div>
+
+        <!-- Live Interactive Game Action Runner -->
+        <div style="background: #141816; border: 1px solid rgba(46, 107, 69, 0.4); border-radius: 14px; padding: 20px; margin: 24px 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+            <div style="color: #34d399; font-family: var(--f-mono); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <span>⚡ Live Interactive Game Action Runner</span>
+              <span style="background: rgba(52, 211, 153, 0.15); color: #34d399; font-size: 10px; padding: 2px 8px; border-radius: 100px;">Chain ID 108</span>
+            </div>
+            <a href="/arcade" target="_blank" style="color: #38bdf8; font-family: var(--f-mono); font-size: 11.5px; text-decoration: none;">
+              Open Full Arcade UI ➔
+            </a>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px;">
+            <div>
+              <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">GAME ID</label>
+              <select id="live-game-id" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(46,107,69,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;">
+                <option value="ARCADE_SPORE_ESCAPE">ARCADE_SPORE_ESCAPE (Default)</option>
+                <option value="MYCELIUM_RACER_2049">MYCELIUM_RACER_2049</option>
+                <option value="LATTICE_DUEL_ARENA">LATTICE_DUEL_ARENA</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">EVENT TYPE</label>
+              <select id="live-game-event" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(46,107,69,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;">
+                <option value="SCORE_SUBMISSION">SCORE_SUBMISSION</option>
+                <option value="STAGE_CLEAR">STAGE_CLEAR</option>
+                <option value="BOSS_DEFEAT">BOSS_DEFEAT</option>
+                <option value="TOURNAMENT_WIN">TOURNAMENT_WIN</option>
+              </select>
+            </div>
+            <div>
+              <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">SCORE / POINTS</label>
+              <input type="number" id="live-game-score" value="4920" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(46,107,69,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+            </div>
+          </div>
+
+          <button onclick="testLiveGameAction()" style="background: linear-gradient(135deg, #2E6B45 0%, #3F8C59 100%); color: #fff; border: 1px solid #3F8C59; padding: 8px 18px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+            <span>🚀 Execute Live Game Action (POST /api/game/action)</span>
+          </button>
+
+          <pre id="live-game-output" style="margin-top: 14px; background: #080B0A; border: 1px solid rgba(46,107,69,0.3); border-radius: 8px; padding: 12px; color: #34d399; font-family: var(--f-mono); font-size: 11.5px; display: none; overflow-x: auto;"></pre>
+        </div>
+      </section>
+
+      <!-- LIVING RESONANCE ASSETS (ERC-721R) GUIDE -->
+      <section id="resonance-nft" class="docs-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+          <h2>💎 Living Resonance Assets (ERC-721R Standard)</h2>
+          <span style="background: rgba(168, 85, 247, 0.2); color: #c084fc; padding: 4px 12px; border-radius: 100px; font-family: var(--f-mono); font-size: 11px; font-weight: 700; border: 1px solid #c084fc;">
+            4-PILLAR PHILOSOPHICAL STANDARD
+          </span>
+        </div>
+
+        <p>Unlike legacy static NFTs, <strong>Resonance Assets (ERC-721R)</strong> are dynamic, living economic artifacts inspired by four foundational physical and societal principles:</p>
+
+        <table class="api-table">
+          <tr><th>Pillar</th><th>Core Concept</th><th>Smart Contract Rule (<code>MycResonanceAsset.sol</code>)</th></tr>
+          <tr>
+            <td><strong>1. Einstein Layer</strong></td>
+            <td>Conservation &amp; Dynamic Vitality</td>
+            <td>Value increases with activity. Unmaintained assets decay gradually after a 30-day grace period.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Tesla Layer</strong></td>
+            <td>Frequency Harmonics &amp; Synergistic Bonding</td>
+            <td>8D harmonic frequency vector. Assets with cosine similarity ≥ 0.65 bond synergistically for energy boosts.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Heisenberg Layer</strong></td>
+            <td>Observer Effect &amp; Provenance Context</td>
+            <td>Observation alters state. Records witness context metadata. 10 unique observers trigger the DISCOVERED bonus (+500 energy).</td>
+          </tr>
+          <tr>
+            <td><strong>4. Atatürk Layer</strong></td>
+            <td>Institutional Permanence &amp; Fractional Commons</td>
+            <td>Collective perpetuity: 10,000 basis points of fractional equity for guild co-ownership and DAO governance.</td>
+          </tr>
+        </table>
+
+        <h3>Lifecycle Step-by-Step Tutorial</h3>
+
+        <h4>1. Minting an ERC-721R Living Asset</h4>
+        <div class="code-block">// Minting a Living Resonance Asset with 8D Harmonics & Dominant Frequency (e.g. 432 Hz)
+const res = await fetch('http://localhost:4040/api/resonance/mint', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    uri: 'ipfs://bafkrei_spore_crystal_blade.json',
+    harmonics: [7800, 8500, 9200, 6400, 8900, 7100, 9600, 8300],
+    dominantHz: 432,
+    decayRate: 10
+  })
+});
+const { tokenId, contractAddress } = await res.json();
+console.log(`✅ Living NFT Minted | Token ID: #${tokenId} at ${contractAddress}`);</div>
+
+        <h4>2. Recharging Vitality through In-Game Utility (Einstein)</h4>
+        <div class="code-block">// Interaction Types: 1=Routine (50), 2=Gaming/Telemetry (120), 3=AI Compute (300), 4=Commercial (600)
+await fetch('http://localhost:4040/api/resonance/interact', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ tokenId: 1, interactionType: 2 })
+});</div>
+
+        <h4>3. Synergistic Resonant Bonding (Tesla)</h4>
+        <div class="code-block">// Cosine Similarity >= 6500 (65.0%) forms a permanent synergistic bond
+const bondRes = await fetch('http://localhost:4040/api/resonance/bond', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ tokenA: 1, tokenB: 2 })
+}).then(r => r.json());
+console.log(`⚡ Resonance Bond Formed! Boost: +${bondRes.boost} Energy`);</div>
+
+        <h4>4. Logging Player / Spectator Witnesses (Heisenberg)</h4>
+        <div class="code-block">// Observing alters the asset provenance and tracks context hashes
+await fetch('http://localhost:4040/api/resonance/observe', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ tokenId: 1, contextHash: '0x8f3c...arena_spectator_view' })
+});</div>
+
+        <!-- NFT = Colony Node Architecture Subsection -->
+        <div style="margin: 32px 0; background: linear-gradient(180deg, rgba(16,24,20,0.95) 0%, rgba(11,14,13,0.95) 100%); border: 1px solid rgba(16,185,129,0.3); border-radius: 16px; padding: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+            <h3 style="margin: 0; color: #10b981; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+              <span>🌐 NFT = Colony Node (Ownership is Participation: Living Machine Paradigm)</span>
+            </h3>
+            <span style="background: rgba(16,185,129,0.15); color: #34d399; font-size: 11px; padding: 3px 10px; border-radius: 100px; font-family: var(--f-mono); border: 1px solid rgba(16,185,129,0.3);">
+              DECENTRALIZED COMPUTE COMMONS
+            </span>
+          </div>
+
+          <p style="color: #cbd5e1; font-size: 13.5px; line-height: 1.6; margin-bottom: 16px;">
+            In traditional Web3, NFTs are passive: <em>Buy → wait → speculate</em>. On <strong>MYC Network</strong>, a Living Resonance Asset is not a membership pass, but a <strong>living machine</strong>: <em>Acquire → operate → earn USDC → boost energy &amp; tier → sell (or continue earning residual yield)</em>. An NFT's market value is grounded in provable work produced for the network, not speculation.
+          </p>
+
+          <!-- Visual Schematic Diagram -->
+          <div style="background: #080C0A; border: 1px solid rgba(16,185,129,0.25); border-radius: 14px; padding: 24px; margin: 20px 0;">
+            <div style="text-align: center; color: #10b981; font-family: var(--f-mono); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">
+              ⚡ Fully Integrated Architecture: ERC-721R → Colony Node Mesh
+            </div>
+
+            <!-- Top Row: Mint to Mesh -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+              <div style="background: rgba(168,85,247,0.12); border: 1px solid #c084fc; border-radius: 10px; padding: 14px; text-align: center;">
+                <div style="color: #c084fc; font-weight: 700; font-size: 14px;">Resonance Asset</div>
+                <div style="color: #a855f7; font-size: 11.5px; margin-top: 4px; font-family: var(--f-mono);">ERC-721R Minted</div>
+              </div>
+              <div style="background: rgba(16,185,129,0.12); border: 1px solid #10b981; border-radius: 10px; padding: 14px; text-align: center;">
+                <div style="color: #34d399; font-weight: 700; font-size: 14px;">Colony Node Identity</div>
+                <div style="color: #10b981; font-size: 11.5px; margin-top: 4px; font-family: var(--f-mono);">tokenId = nodeId (Staked)</div>
+              </div>
+              <div style="background: rgba(56,189,248,0.12); border: 1px solid #38bdf8; border-radius: 10px; padding: 14px; text-align: center;">
+                <div style="color: #38bdf8; font-weight: 700; font-size: 14px;">Colony Mesh</div>
+                <div style="color: #0284c7; font-size: 11.5px; margin-top: 4px; font-family: var(--f-mono);">Join P2P Mesh &amp; Listen</div>
+              </div>
+            </div>
+
+            <!-- Flow Divider -->
+            <div style="text-align: center; color: #94a3b8; font-size: 11.5px; font-family: var(--f-mono); margin: 12px 0;">
+              ↓ NFT Energy Score determines Colony task execution capacity ↓
+            </div>
+
+            <!-- Tier Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+              <div style="background: #111714; border: 1px solid rgba(148,163,184,0.3); border-radius: 10px; padding: 14px;">
+                <div style="color: #cbd5e1; font-weight: 700; font-size: 13px;">🌱 Seed Tier</div>
+                <div style="color: #94a3b8; font-size: 11.5px; font-family: var(--f-mono); margin: 4px 0;">Energy 0–2,999 | 1 Task</div>
+                <div style="color: #64748b; font-size: 11px;">Light telemetry, sensor ping, health checks</div>
+              </div>
+              <div style="background: #19160e; border: 1px solid #d97706; border-radius: 10px; padding: 14px;">
+                <div style="color: #fbbf24; font-weight: 700; font-size: 13px;">⚡ Resonant Tier</div>
+                <div style="color: #f59e0b; font-size: 11.5px; font-family: var(--f-mono); margin: 4px 0;">Energy 3,000–7,999 | 5 Tasks</div>
+                <div style="color: #d97706; font-size: 11px;">AI model inference, DePIN actuation, payment routing</div>
+              </div>
+              <div style="background: #1a1012; border: 1px solid #e11d48; border-radius: 10px; padding: 14px;">
+                <div style="color: #fb7185; font-weight: 700; font-size: 13px;">👑 Sovereign Tier</div>
+                <div style="color: #f43f5e; font-size: 11.5px; font-family: var(--f-mono); margin: 4px 0;">Energy 8,000+ | 20 Tasks</div>
+                <div style="color: #e11d48; font-size: 11px;">PoR validation, autonomous escrow arbitration, consensus</div>
+              </div>
+            </div>
+
+            <!-- Task Router Box -->
+            <div style="background: rgba(59,130,246,0.1); border: 1px solid #3b82f6; border-radius: 10px; padding: 14px; text-align: center; margin-bottom: 20px;">
+              <div style="color: #60a5fa; font-weight: 700; font-size: 13.5px;">🎯 Colony Task Router</div>
+              <div style="color: #93c5fd; font-size: 11.5px; font-family: var(--f-mono); margin-top: 4px;">
+                tier + frequency coherence (Tesla Cosine) + energy score → task dispatch
+              </div>
+            </div>
+
+            <!-- Target Capabilities -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+              <div style="background: #0f1519; border: 1px solid #0284c7; border-radius: 8px; padding: 10px; text-align: center;">
+                <div style="color: #38bdf8; font-weight: 600; font-size: 12.5px;">🧠 AI Inference</div>
+                <div style="color: #7dd3fc; font-size: 11px; font-family: var(--f-mono);">Edge model execution</div>
+              </div>
+              <div style="background: #141712; border: 1px solid #65a30d; border-radius: 8px; padding: 10px; text-align: center;">
+                <div style="color: #a3e635; font-weight: 600; font-size: 12.5px;">📡 DePIN Telemetry</div>
+                <div style="color: #bef264; font-size: 11px; font-family: var(--f-mono);">Sensor actuation &amp; telemetry</div>
+              </div>
+              <div style="background: #181119; border: 1px solid #a21caf; border-radius: 8px; padding: 10px; text-align: center;">
+                <div style="color: #f472b6; font-weight: 600; font-size: 12.5px;">🛡 Validation</div>
+                <div style="color: #fbcfe8; font-size: 11px; font-family: var(--f-mono);">PoR co-verification &amp; arbitration</div>
+              </div>
+            </div>
+
+            <!-- Settlement & Yield Box -->
+            <div style="background: rgba(16,185,129,0.15); border: 1px solid #10b981; border-radius: 12px; padding: 16px; text-align: center;">
+              <div style="color: #34d399; font-weight: 700; font-size: 14px; margin-bottom: 6px;">💰 Automated Revenue Settlement (3 Simultaneous Outputs)</div>
+              <div style="color: #e2e8f0; font-size: 12.5px; line-height: 1.5;">
+                <strong>1. USDC → NFT Owner:</strong> 95% net reward to owner, 5% to protocol commons treasury.<br/>
+                <strong>2. Energy → NFT:</strong> Commercial task completion awards +600 energy (can escalate tier).<br/>
+                <strong>3. Reputation → Node:</strong> On-chain success score increases by +10, improving priority.<br/>
+                <span style="color: #f87171; font-size: 11.5px; font-family: var(--f-mono); display: inline-block; margin-top: 6px;">
+                  ⚠️ Temporal Entropy: An NFT idle for 30 days loses energy → demotes tier → receives fewer tasks.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Walkthrough -->
+          <div style="margin-top: 20px;">
+            <h4 style="color: #34d399;">3-Line Seamless Smart Contract Integration</h4>
+            <div class="code-block">// 1. In mint(): NFT is instantly registered as an active Colony node
+nodeRegistry.registerNode(tokenId, msg.sender, NodeRole.COLONY_PEER, NodeTier.SEED, 1000);
+
+// 2. In interact(): Energy updates as tasks complete, recalibrating Colony scheduler tier
+emit NodeEnergyUpdated(tokenId, energyScore[tokenId]);
+nodeRegistry.updateNodeEnergy(tokenId, energyScore[tokenId]);
+
+// 3. In _afterTokenTransfer(): Node ownership & yield routing transfer atomically upon sale
+nodeRegistry.transferNodeOwnership(tokenId, newOwner);</div>
+          </div>
+        </div>
+
+        <!-- 1. Secondary Market Valuation Engine -->
+        <div style="margin: 28px 0; background: #0c1210; border: 1px solid rgba(251,191,36,0.3); border-radius: 14px; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+            <h4 style="margin: 0; color: #fbbf24; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+              <span>📈 1. Secondary Market Valuation Engine (Cashflow-Based Valuation)</span>
+            </h4>
+            <span style="background: rgba(251,191,36,0.15); color: #fbbf24; font-size: 11px; padding: 3px 10px; border-radius: 100px; font-family: var(--f-mono);">
+              GET /api/resonance/valuation/:tokenId
+            </span>
+          </div>
+          <p style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
+            In traditional NFT markets, pricing relies on speculation. On MYC, because an NFT is a live Colony node, pricing is derived mathematically from <strong>verified 30-day on-chain task execution and USDC yields</strong>.
+          </p>
+          <div class="code-block">// GET /api/resonance/valuation?id=42
+{
+  "tokenId": 42,
+  "currentEnergy": 6800,
+  "tier": "RESONANT",
+  "last30Days": {
+    "tasksCompleted": 847,
+    "usdcEarned": 423.50,
+    "avgDailyYield": 14.12   // USDC / day (Verified cashflow)
+  },
+  "impliedValue": {
+    "paybackPeriod": "71 days",  // Break-even horizon based on production
+    "annualYield": 5148.00,      // USDC / year estimated gross yield
+    "energyTrajectory": "RISING",// Energy trajectory: RISING, STABLE, DECAYING
+    "fairPriceUSDC": 1050.50     // Capitalized fair value multiple
+  },
+  "resonanceBonds": 3,           // Number of coherent partner nodes bonded
+  "bondMultiplier": 1.24         // Tesla frequency resonance multiplier
+}</div>
+        </div>
+
+        <!-- 2. Living NFT Marketplace -->
+        <div style="margin: 28px 0; background: #0c1210; border: 1px solid rgba(56,189,248,0.3); border-radius: 14px; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+            <h4 style="margin: 0; color: #38bdf8; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+              <span>🏪 2. Living Machine Marketplace (Decay-Protected Secondary Trading)</span>
+            </h4>
+            <span style="background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 11px; padding: 3px 10px; border-radius: 100px; font-family: var(--f-mono);">
+              MycResonanceMarketplace.sol
+            </span>
+          </div>
+          <p style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
+            Developers and investors can list working machines. Thanks to the <code>minEnergy</code> guard, if an inactive machine decays below the promised energy threshold, buyers are protected and orders cancel automatically. Colony node ownership and revenue routing transfer atomically upon purchase:
+          </p>
+          <div class="code-block">// 1. List for Sale (with minEnergy decay guard)
+await fetch('http://localhost:4040/api/resonance/market/list', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    tokenId: 42,
+    price: 500,           // 500 USDC
+    minEnergy: 5000,      // Automatically invalidates if energy decays below 5000
+    showYieldHistory: true
+  })
+});
+
+// 2. Buy Machine (Automatic atomic node handoff)
+await fetch('http://localhost:4040/api/resonance/market/buy', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ tokenId: 42, maxPrice: 550 })
+});
+// 97.5% settles to seller, 2.5% to protocol treasury, node registry updates immediately.</div>
+        </div>
+
+        <!-- 3. NFT Staking & Operator Delegation -->
+        <div style="margin: 28px 0; background: #0c1210; border: 1px solid rgba(168,85,247,0.3); border-radius: 14px; padding: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+            <h4 style="margin: 0; color: #c084fc; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+              <span>🤝 3. Non-Custodial NFT Staking &amp; Operator Delegation</span>
+            </h4>
+            <span style="background: rgba(168,85,247,0.15); color: #c084fc; font-size: 11px; padding: 3px 10px; border-radius: 100px; font-family: var(--f-mono);">
+              REVENUE SHARING
+            </span>
+          </div>
+          <p style="color: #cbd5e1; font-size: 13px; line-height: 1.6;">
+            For owners who prefer not to run server hardware, MYC provides non-custodial delegation: <strong>retain 100% asset custody while delegating execution rights to a verified Colony operator</strong>. Task rewards are split automatically by smart contract:
+          </p>
+          <div class="code-block">// Delegate NFT to a verified Colony node operator
+await fetch('http://localhost:4040/api/resonance/delegate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    tokenId: 42,
+    operator: 'myc1operatordatacentre00000000000000000000',
+    revenueShare: 70,    // 70% to NFT owner (passive yield), 30% to hardware operator
+    minUptime: 95        // 95% uptime SLA requirement
+  })
+});
+// Result: Non-technical NFT owners earn passive USDC, operators earn yields by running hardware!</div>
+        </div>
+
+        <!-- Live Interactive Resonance Asset Sandbox -->
+        <div style="background: #141816; border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 14px; padding: 20px; margin: 24px 0;">
+          <div style="color: #c084fc; font-family: var(--f-mono); font-size: 13px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <span>💎 Live Interactive Resonance Asset Sandbox</span>
+            <span style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-size: 10px; padding: 2px 8px; border-radius: 100px;">ERC-721R</span>
+          </div>
+
+          <!-- Controls -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+            <button class="qs-btn active" id="btn-nft-inspect" onclick="setNftTab('inspect')">🔍 Query Asset</button>
+            <button class="qs-btn" id="btn-nft-valuation" onclick="setNftTab('valuation')">📈 Valuation Engine</button>
+            <button class="qs-btn" id="btn-nft-market" onclick="setNftTab('market')">🏪 Secondary Market</button>
+            <button class="qs-btn" id="btn-nft-delegate" onclick="setNftTab('delegate')">🤝 Operator Delegation</button>
+            <button class="qs-btn" id="btn-nft-colony" onclick="setNftTab('colony')">🤖 Colony Node</button>
+            <button class="qs-btn" id="btn-nft-mint" onclick="setNftTab('mint')">⚡ Mint Asset</button>
+            <button class="qs-btn" id="btn-nft-interact" onclick="setNftTab('interact')">🔋 Recharge</button>
+            <button class="qs-btn" id="btn-nft-bond" onclick="setNftTab('bond')">🧲 Bond</button>
+            <button class="qs-btn" id="btn-nft-observe" onclick="setNftTab('observe')">👁 Witness</button>
+          </div>
+
+          <!-- Tab Content Area -->
+          <div id="nft-panel-inspect">
+            <div style="display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 160px;">
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN ID TO INSPECT</label>
+                <input type="number" id="nft-inspect-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <button onclick="inspectLiveNft()" style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid #c084fc; padding: 8px 16px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                Inspect Live State
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Valuation Panel -->
+          <div id="nft-panel-valuation" style="display: none;">
+            <div style="background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+              <div style="color: #fbbf24; font-weight: 700; font-size: 13px; margin-bottom: 4px;">Secondary Market Valuation with Real Production Telemetry</div>
+              <div style="color: #94a3b8; font-size: 12px; line-height: 1.5;">
+                Computes payback period and annual yield projections based on 30-day task volume, USDC earnings, and daily average cashflow.
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN ID</label>
+                <input type="number" id="val-token-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(251,191,36,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">REFERENCE / LISTING PRICE (USDC, OPTIONAL)</label>
+                <input type="number" id="val-ref-price" value="1000" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(251,191,36,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+            <button onclick="calculateNftValuation()" style="background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+              📈 Calculate Cashflow Valuation
+            </button>
+          </div>
+
+          <!-- 2. Marketplace Panel -->
+          <div id="nft-panel-market" style="display: none;">
+            <div style="background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.25); border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+              <div style="color: #38bdf8; font-weight: 700; font-size: 13px; margin-bottom: 4px;">Living Machine Secondary Marketplace</div>
+              <div style="color: #94a3b8; font-size: 12px; line-height: 1.5;">
+                List machines with <code>minEnergy</code> protection locks or buy instantly. USDC settles atomically via escrow and Colony node execution rights transfer immediately to the buyer.
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN ID</label>
+                <input type="number" id="market-token-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(56,189,248,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">LISTING PRICE (USDC)</label>
+                <input type="number" id="market-price-usdc" value="500" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(56,189,248,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">MINIMUM ENERGY GUARD (minEnergy)</label>
+                <input type="number" id="market-min-energy" value="2000" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(56,189,248,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button onclick="listNftOnMarket()" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                🏷 List for Sale
+              </button>
+              <button onclick="buyNftFromMarket()" style="background: rgba(16,185,129,0.25); color: #34d399; border: 1px solid #10b981; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                🛒 Buy &amp; Claim Node
+              </button>
+              <button onclick="browseMarketListings()" style="background: rgba(56,189,248,0.2); color: #38bdf8; border: 1px solid #38bdf8; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                📋 Browse Active Listings
+              </button>
+            </div>
+          </div>
+
+          <!-- 3. Delegation Panel -->
+          <div id="nft-panel-delegate" style="display: none;">
+            <div style="background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.25); border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+              <div style="color: #c084fc; font-weight: 700; font-size: 13px; margin-bottom: 4px;">Non-Custodial Staking &amp; Hardware Delegation</div>
+              <div style="color: #94a3b8; font-size: 12px; line-height: 1.5;">
+                Keep NFT ownership in your wallet while assigning operational execution rights to a Colony operator. Rewards are split automatically by contract (e.g. 70% owner / 30% operator).
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN ID</label>
+                <input type="number" id="del-token-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">OPERATOR WALLET ADDRESS</label>
+                <input type="text" id="del-operator-addr" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">OWNER REVENUE SHARE (%)</label>
+                <input type="number" id="del-owner-share" value="70" min="0" max="100" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">MINIMUM UPTIME SLA (%)</label>
+                <input type="number" id="del-min-uptime" value="95" min="50" max="100" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button onclick="delegateNftNode()" style="background: linear-gradient(135deg, #7e22ce 0%, #c084fc 100%); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                🤝 Delegate to Operator
+              </button>
+              <button onclick="undelegateNftNode()" style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid #ef4444; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                🛑 Undelegate (Solo Mode)
+              </button>
+              <button onclick="queryDelegations()" style="background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid #c084fc; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                📋 View Delegations
+              </button>
+            </div>
+          </div>
+
+          <div id="nft-panel-mint" style="display: none;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 10px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">ASSET METADATA URI</label>
+                <input type="text" id="nft-mint-uri" value="ipfs://bafkrei_quantum_spore_002.json" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">DOMINANT FREQUENCY (Hz)</label>
+                <input type="number" id="nft-mint-hz" value="528" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+            <button onclick="mintLiveNft()" style="background: linear-gradient(135deg, #7e22ce 0%, #a855f7 100%); color: #fff; border: 1px solid #c084fc; padding: 8px 16px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+              ⚡ Mint Living Asset (0-Gas)
+            </button>
+          </div>
+
+          <div id="nft-panel-interact" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN ID</label>
+                <input type="number" id="nft-interact-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">INTERACTION TYPE</label>
+                <select id="nft-interact-type" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;">
+                  <option value="1">Routine Query (+50 Energy)</option>
+                  <option value="2" selected>Gaming / Telemetry (+120 Energy)</option>
+                  <option value="3">AI Model Compute (+300 Energy)</option>
+                  <option value="4">M2M Micro-Settlement (+600 Energy)</option>
+                </select>
+              </div>
+            </div>
+            <button onclick="interactLiveNft()" style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid #c084fc; padding: 8px 16px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+              🔋 Recharge Energy
+            </button>
+          </div>
+
+          <div id="nft-panel-bond" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN A ID</label>
+                <input type="number" id="nft-bond-a" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN B ID</label>
+                <input type="number" id="nft-bond-b" value="2" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+            <button onclick="bondLiveNft()" style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid #c084fc; padding: 8px 16px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+              🧲 Calculate Cosine Coherence &amp; Bond
+            </button>
+          </div>
+
+          <div id="nft-panel-observe" style="display: none;">
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TOKEN ID</label>
+                <input type="number" id="nft-obs-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">OBSERVER CONTEXT STRING / HASH</label>
+                <input type="text" id="nft-obs-ctx" value="spectator_arena_twitch_stream_view" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(168,85,247,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+            <button onclick="observeLiveNft()" style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid #c084fc; padding: 8px 16px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+              👁 Record Heisenberg Witness
+            </button>
+          </div>
+
+          <!-- Colony Node Machine Yield Panel -->
+          <div id="nft-panel-colony" style="display: none;">
+            <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+              <div style="color: #34d399; font-weight: 700; font-size: 13px; margin-bottom: 4px;">Living Machine Operator Console</div>
+              <div style="color: #94a3b8; font-size: 12px; line-height: 1.5;">
+                View your NFT's real-time capacity on the Colony Mesh, complete live tasks to claim 95% net USDC and +600 energy, or transfer machine operator control to another address.
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px;">
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">NODE / TOKEN ID</label>
+                <input type="number" id="colony-node-id" value="1" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(16,185,129,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">TASK REWARD (USDC)</label>
+                <input type="number" id="colony-task-usdc" value="50" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(16,185,129,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+              <div>
+                <label style="display: block; font-family: var(--f-mono); font-size: 11px; color: #8b949e; margin-bottom: 4px;">NEW OPERATOR ADDRESS (FOR TRANSFER)</label>
+                <input type="text" id="colony-transfer-to" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="width: 100%; background: #0B0E0D; border: 1px solid rgba(16,185,129,0.4); color: #e6eae7; padding: 8px 12px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px;" />
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button onclick="inspectColonyNode()" style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                🔍 Query Capacity &amp; Tier
+              </button>
+              <button onclick="settleColonyTask()" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #fff; border: 1px solid #34d399; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                ⚡ Settle Live Task (95% USDC + 600 Energy)
+              </button>
+              <button onclick="transferLivingMachine()" style="background: rgba(56,189,248,0.2); color: #38bdf8; border: 1px solid #38bdf8; padding: 8px 14px; border-radius: 8px; font-family: var(--f-mono); font-size: 12px; font-weight: 700; cursor: pointer;">
+                🔄 Transfer Machine Ownership
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Output Screen -->
+          <pre id="nft-live-output" style="margin-top: 14px; background: #080B0A; border: 1px solid rgba(168,85,247,0.3); border-radius: 8px; padding: 12px; color: #c084fc; font-family: var(--f-mono); font-size: 11.5px; display: none; overflow-x: auto;"></pre>
+        </div>
+      </section>
+
+      <!-- Deployed Contracts -->
+      <section id="contracts-deployed" class="docs-card">
+        <h2>Core Smart Contracts on Chain ID 108</h2>
+        <table class="api-table">
+          <tr><th>Contract</th><th>Address</th><th>Standard</th></tr>
+          <tr><td>MycToken ($MYC)</td><td><code>myc1c3502d27aa5bbeb948d1ec7e812f6090</code></td><td>Substrate Native ERC20</td></tr>
+          <tr><td>MycUSDToken ($USDT)</td><td><code>myc1c06dd0aa90e2040ec55f29771c2e272b</code></td><td>6-Decimal Tether ERC20</td></tr>
+          <tr><td>MycUSDCToken ($USDC)</td><td><code>myc1c42542ba58f45dd5498cf5d24be70337</code></td><td>6-Decimal USD Coin ERC20</td></tr>
+          <tr><td>MycBridge</td><td><code>myc1c040466016d07ac2752822a603761127</code></td><td>BFT 2/3+1 Multi-Asset Bridge</td></tr>
+          <tr><td>MycDEX (Resonance)</td><td><code>myc1c498e86015b7c417a13232ea56311c90</code></td><td>AMM Constant-Product DEX</td></tr>
+          <tr><td>MycEscrow</td><td><code>myc1c4e6f0a1897130608866b20c8476163c</code></td><td>Dual-PoR Agent Escrow</td></tr>
+          <tr><td>MycResonanceAsset (ERC-721R)</td><td><code>myc1c4a70773bf3db2ce7ccbe38e1e95a074</code></td><td>Living Resonance Asset (4-Pillars)</td></tr>
+        </table>
+      </section>
+
+      <!-- Balances API -->
+      <section id="api-balances" class="docs-card">
+        <h2><span class="endpoint-badge badge-get">GET</span> /api/wallet/balance</h2>
+        <p>Fetch real-time on-chain balances for all 3 tokens ($MYC, $USDT, $USDC):</p>
+        <div class="code-block">curl -s "http://localhost:4040/api/wallet/balance?address=myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002"</div>
+      </section>
+
+      <!-- Faucet API -->
+      <section id="api-faucet" class="docs-card">
+        <h2><span class="endpoint-badge badge-post">POST</span> /api/faucet &amp; <span class="endpoint-badge badge-get">GET</span> /api/faucet/status</h2>
+        <p>Daily 5 $MYC testnet grant. Requires following <code>@myc_ai</code> on Twitter/X, and provides instant zero-gas disbursement to any specified recipient address.</p>
+
+        <h4>1. Faucet Eligibility &amp; Cooldown Check</h4>
+        <div class="code-block">curl -s "http://localhost:4040/api/faucet/status?address=myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002&amp;twitter=myc_ai"</div>
+
+        <h4>2. Request 5 $MYC Testnet Grant (Custom Recipient Dispatch)</h4>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/faucet \
+  -H "Content-Type: application/json" \
+  -d '{
+    "recipient": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "twitter": "@developer_x",
+    "verifiedFollow": true
+  }'</div>
+
+        <p><strong>Rules &amp; Constraints:</strong></p>
+        <ul style="color: var(--f-humus); font-size: 13px; line-height: 1.6; padding-left: 20px;">
+          <li><strong>Amount:</strong> 5 $MYC tokens per claim (Chain ID 108).</li>
+          <li><strong>Period:</strong> Once per 24 hours per wallet &amp; Twitter handle.</li>
+          <li><strong>Requirement:</strong> Verified follow of <code>@myc_ai</code> on Twitter / X.</li>
+          <li><strong>Flexibility:</strong> Dispatches to any target address via the <code>recipient</code> parameter.</li>
+          <li><strong>Gas Fee:</strong> 0.00 MYC (Zero-Gas Invariant).</li>
+        </ul>
+      </section>
+
+      <!-- Multi-Asset Bridge API -->
+      <section id="api-bridge" class="docs-card">
+        <h2>Cross-Chain Bridge &amp; Cryptographic Proof Verification</h2>
+        <p>The sovereign cross-chain bridge connects the MYCA Living Lattice (Chain ID 108) with EVM ecosystems (Base, Arbitrum, Ethereum) using BFT 2/3 + 1 supermajority quorum and Merkle inclusion proofs.</p>
+
+        <h4>1. Base (EVM 8453) ➔ MYCA Lattice (Chain 108) [Inbound]</h4>
+        <p>Verify a lock event on Base and credit the recipient on MYCA with 0 gas fee:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/bridge/base-to-myc \
+  -H "Content-Type: application/json" \
+  -d '{
+    "baseTxHash": "0x9a8f3b7c4a1622345890eefcd1234567890abcdef1234567890abcdef1234567",
+    "senderOnBase": "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+    "recipientOnMyc": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "asset": "USDT",
+    "amount": 100
+  }'</div>
+
+        <h4>2. MYCA Lattice (Chain 108) ➔ Any EVM (Arbitrum, Ethereum, Base) [Outbound]</h4>
+        <p>Lock tokens on MYCA (0 gas) and generate cryptographic proof + EVM Calldata for the destination network:</p>
+        <div class="code-block">curl -s -X POST http://localhost:4040/api/bridge/myc-to-evm \
+  -H "Content-Type: application/json" \
+  -d '{
+    "senderOnMyc": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+    "targetChain": "ARBITRUM",
+    "recipientOnEvm": "0x19E7E376E7C213B7E7e7e46cc70A5dD086DAff2A",
+    "asset": "USDT",
+    "amount": 250
+  }'</div>
+
+        <h4>3. Retrieve Cryptographic Proof &amp; Verification Certificate</h4>
+        <div class="code-block">curl -s "http://localhost:4040/api/bridge/proof?id=bridge_..."</div>
+        <p>Sample Proof Structure:</p>
+        <div class="code-block">{
+  "bridgeId": "bridge_7f3b...",
+  "direction": "MYCA_TO_EVM",
+  "status": "COMPLETED",
+  "bftQuorumProof": {
+    "requiredSignatures": 3,
+    "signatures": [
+      {"validator": "myc1validatoralpha...", "signature": "0x4b9a..."},
+      {"validator": "myc1validatorbeta...", "signature": "0x8c21..."},
+      {"validator": "myc1validatorgamma...", "signature": "0xdf72..."}
+    ]
+  },
+  "latticeExecution": {
+    "consensusProtocol": "Proof-of-Resonance (PoR)",
+    "coherenceScore": 0.9991,
+    "certificate": "POR_CERT_38f29c..."
+  }
+}</div>
+      </section>
+
+      <!-- GitBook Bottom Pagination -->
+      <div class="gb-pagination" style="display:flex; justify-content:space-between; align-items:center; margin-top:56px; padding-top:24px; border-top:1px solid var(--gb-border);">
+        <a href="#overview" class="gb-pag-btn" id="btnDevPrev" onclick="navigateDevChapter('overview')" style="display:flex; flex-direction:column; text-decoration:none; padding:12px 18px; border-radius:12px; border:1px solid var(--gb-border); background:var(--gb-sidebar); min-width:180px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--gb-muted); font-weight:700;">← Previous Chapter</span>
+          <span style="font-size:14px; font-weight:700; color:var(--gb-accent);" id="lblDevPrev">Network Parameters</span>
+        </a>
+        <a href="#quickstart" class="gb-pag-btn" id="btnDevNext" onclick="navigateDevChapter('quickstart')" style="display:flex; flex-direction:column; text-align:right; text-decoration:none; padding:12px 18px; border-radius:12px; border:1px solid var(--gb-border); background:var(--gb-sidebar); min-width:180px;">
+          <span style="font-size:11px; text-transform:uppercase; color:var(--gb-muted); font-weight:700;">Next Chapter →</span>
+          <span style="font-size:14px; font-weight:700; color:var(--gb-accent);" id="lblDevNext">0→1 Quickstart Studio</span>
+        </a>
+      </div>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR ("ON THIS PAGE") -->
+    <aside class="gitbook-toc">
+      <div class="toc-header">On this page</div>
+      <a href="#overview" class="toc-link active" onclick="navigateDevChapter('overview')">Network Parameters</a>
+      <a href="#platform-layers" class="toc-link" onclick="navigateDevChapter('platform-layers')">4-Layer Model</a>
+      <a href="#quickstart" class="toc-link" onclick="navigateDevChapter('quickstart')">0→1 Quickstart</a>
+      <a href="#contract-deploy" class="toc-link" onclick="navigateDevChapter('contract-deploy')">Deploy Contract</a>
+      <a href="#contract-call" class="toc-link" onclick="navigateDevChapter('contract-call')">Calling & Transacting</a>
+      <a href="#contracts-deployed" class="toc-link" onclick="navigateDevChapter('contracts-deployed')">Core System Contracts</a>
+      <a href="#sdk-guide" class="toc-link" onclick="navigateDevChapter('sdk-guide')">@myca/sdk Guide</a>
+      <a href="#sdk-depin" class="toc-link" onclick="navigateDevChapter('sdk-depin')">DePIN Machine Wallets</a>
+      <a href="#offline-dtn" class="toc-link" onclick="navigateDevChapter('offline-dtn')">Offline Air-Gap DTN</a>
+      <a href="#post-quantum-armor" class="toc-link" onclick="navigateDevChapter('post-quantum-armor')">10-Pillar Quantum Armor</a>
+      <a href="#game-dev" class="toc-link" onclick="navigateDevChapter('game-dev')">Arcade & Gaming</a>
+      <a href="#resonance-nft" class="toc-link" onclick="navigateDevChapter('resonance-nft')">Living Assets (ERC-721R)</a>
+      <a href="#colony-marketplace" class="toc-link" onclick="navigateDevChapter('colony-marketplace')">Colony Marketplace</a>
+      <a href="#realtime-events" class="toc-link" onclick="navigateDevChapter('realtime-events')">WebSocket & SSE</a>
+      <a href="#api-balances" class="toc-link" onclick="navigateDevChapter('api-balances')">Wallet Balances API</a>
+      <a href="#api-faucet" class="toc-link" onclick="navigateDevChapter('api-faucet')">Faucet API</a>
+      <a href="#api-swap" class="toc-link" onclick="navigateDevChapter('api-swap')">AMM Swap API</a>
+      <a href="#api-bridge" class="toc-link" onclick="navigateDevChapter('api-bridge')">Bridge API</a>
+    </aside>
+  </div>
+
+  <script>
+    const devChapters = [
+      { id: 'overview', category: 'Architecture & Core', title: 'Network Parameters' },
+      { id: 'platform-layers', category: 'Architecture & Core', title: '4-Layer Platform Model' },
+      { id: 'quickstart', category: 'Developer Quickstart', title: '0→1 Quickstart Studio' },
+      { id: 'contract-deploy', category: 'Smart Contract Engine', title: 'Deploy Custom Contract' },
+      { id: 'contract-call', category: 'Smart Contract Engine', title: 'Calling & Transacting' },
+      { id: 'contracts-deployed', category: 'Smart Contract Engine', title: 'Core System Contracts' },
+      { id: 'sdk-guide', category: 'Developer SDK', title: '@myca/sdk & MycContract' },
+      { id: 'sdk-depin', category: 'Developer SDK', title: 'DePIN & Machine Wallets' },
+      { id: 'offline-dtn', category: 'Security & Post-Quantum', title: 'Offline Air-Gap & DTN Sync' },
+      { id: 'post-quantum-armor', category: 'Security & Post-Quantum', title: '10-Pillar Quantum Armor' },
+      { id: 'game-dev', category: 'Game & Living Assets', title: 'Arcade & Game Dev' },
+      { id: 'resonance-nft', category: 'Game & Living Assets', title: 'Living Assets (ERC-721R)' },
+      { id: 'colony-marketplace', category: 'Colony & AI Runtime', title: 'Capability Marketplace' },
+      { id: 'realtime-events', category: 'Colony & AI Runtime', title: 'WebSocket & SSE Events' },
+      { id: 'api-balances', category: 'REST & JSON-RPC API', title: 'Wallet Balances API' },
+      { id: 'api-faucet', category: 'REST & JSON-RPC API', title: 'Testnet Faucet' },
+      { id: 'api-swap', category: 'REST & JSON-RPC API', title: 'Resonance AMM Swap' },
+      { id: 'api-bridge', category: 'REST & JSON-RPC API', title: 'Multi-Asset Bridge' }
+    ];
+
+    function navigateDevChapter(targetId) {
+      const idx = devChapters.findIndex(c => c.id === targetId);
+      if (idx === -1) return;
+      const ch = devChapters[idx];
+
+      document.getElementById('devBcCategory').innerText = ch.category;
+      document.getElementById('devBcPage').innerText = ch.title;
+      document.getElementById('devMainTitle').innerText = ch.title;
+
+      document.querySelectorAll('.sidebar-item').forEach(el => {
+        const href = el.getAttribute('href');
+        el.classList.toggle('active', href === '#' + targetId);
+      });
+
+      document.querySelectorAll('.toc-link').forEach(el => {
+        const href = el.getAttribute('href');
+        el.classList.toggle('active', href === '#' + targetId);
+      });
+
+      const targetSec = document.getElementById(targetId);
+      if (targetSec) {
+        targetSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      const prevIdx = idx > 0 ? idx - 1 : devChapters.length - 1;
+      const nextIdx = idx < devChapters.length - 1 ? idx + 1 : 0;
+      const prevCh = devChapters[prevIdx];
+      const nextCh = devChapters[nextIdx];
+
+      const btnPrev = document.getElementById('btnDevPrev');
+      btnPrev.setAttribute('href', '#' + prevCh.id);
+      btnPrev.onclick = () => navigateDevChapter(prevCh.id);
+      document.getElementById('lblDevPrev').innerText = prevCh.title;
+
+      const btnNext = document.getElementById('btnDevNext');
+      btnNext.setAttribute('href', '#' + nextCh.id);
+      btnNext.onclick = () => navigateDevChapter(nextCh.id);
+      document.getElementById('lblDevNext').innerText = nextCh.title;
+
+      history.replaceState(null, null, '#' + targetId);
+    }
+
+    function filterDevNav() {
+      const q = document.getElementById('devFilterInput').value.toLowerCase();
+      document.querySelectorAll('.sidebar-item').forEach(el => {
+        const txt = el.innerText.toLowerCase();
+        el.style.display = txt.includes(q) ? 'flex' : 'none';
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && devChapters.some(c => c.id === hash)) {
+        navigateDevChapter(hash);
+      }
+    });
+    const DEV_TEMPLATES = {
+      token: {
+        title: 'index.js — @myca/sdk Token Deployment (Chain ID 108)',
+        code: `import { MycNetwork, MycContract } from '@myca/sdk';
+
+// 1. Initialize Zero-Gas Lattice Provider (Chain ID 108)
+const provider = new MycNetwork({
+  rpcUrl: 'http://localhost:4040/rpc',
+  chainId: 108,
+  zeroGas: true // Zero-Gas Invariant Guarantee
+});
+
+// 2. Define standard ERC20 / Substrate Token Spec
+const tokenSpec = {
+  name: "MyCustomToken",
+  symbol: "MCT",
+  decimals: 18,
+  initialSupply: 1_000_000,
+  zeroGasRelay: true
+};
+
+// 3. Deploy without paying any gas
+async function main() {
+  console.log("Deploying contract to MYCA Living Lattice...");
+  const contract = await MycContract.deploy(provider, tokenSpec);
+  console.log("✅ Deployed at:", contract.address);
+  console.log("⚡ Gas Fee:", "0.00 MYC");
+  console.log("⏱️ DAG Finality:", "38.4 µs");
+}
+
+main();`
+      },
+      depin: {
+        title: 'device_node.js — DePIN Hardware PUF & 0-Byte Negation Shield',
+        code: `import { MycHardwareWallet, MycLatticeClient } from '@myca/sdk';
+
+// 1. Connect physical or virtual hardware device
+const device = new MycHardwareWallet({
+  port: '/dev/ttyUSB0', // or WebSerial PUF bridge
+  baudRate: 115200,
+  deviceType: 'SHT40_CLIMATE_SENSOR'
+});
+
+// 2. Connect to Living Lattice DAG
+const client = new MycLatticeClient('http://localhost:4040');
+
+// 3. Stream authenticated sensor telemetry with 0-Byte Negation Shield
+device.on('telemetry', async (data) => {
+  const porProof = await device.generatePoRProof(data);
+  const tx = await client.submitDeviceProof({
+    deviceId: device.id,
+    sensorData: data,
+    porProof: porProof,
+    gasLimit: 0 // Strict zero-gas guarantee
+  });
+  console.log("Telemetri onaylandı | Tx:", tx.hash, "| Coherence:", tx.coherence);
+});`
+      },
+      agent: {
+        title: 'agent_runner.js — Colony AI Agent Capability Registration',
+        code: `import { MycColonyAgent } from '@myca/sdk';
+
+// 1. Initialize Autonomous Colony Agent
+const agent = new MycColonyAgent({
+  agentId: 'colony.deepseek-r1.v1',
+  walletAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+  nodeUrl: 'http://localhost:4040'
+});
+
+// 2. Register inference capability in Colony registry
+await agent.registerCapability({
+  name: 'ai.reasoning.deepseek',
+  minVramMb: 16384,
+  pricePerTask: 0.05,
+  priceAsset: 'MYC',
+  description: 'Zero-gas decentralized reasoning worker'
+});
+
+// 3. Listen for autonomous compute jobs
+agent.onTask(async (task) => {
+  console.log("Gelen AI Görevi:", task.id, "Prompt:", task.prompt);
+  const response = await agent.solve(task.prompt);
+  await task.submitProofAndClaimReward(response);
+  console.log("Görev tamamlandı ve 0.05 MYC ödül alındı.");
+});`
+      },
+      defi: {
+        title: 'bridge_swap.js — Cross-Chain Multi-Asset Bridge & AMM Swap',
+        code: `import { MycBridgeClient, MycDexClient } from '@myca/sdk';
+
+const bridge = new MycBridgeClient('http://localhost:4040');
+const dex = new MycDexClient('http://localhost:4040');
+
+async function crossChainFlow() {
+  // 1. Base (EVM 8453) -> MYCA Lattice Inbound Bridge
+  console.log("Initiating Base to MYCA bridge...");
+  const bridgeIn = await bridge.depositFromBase({
+    baseTxHash: '0x9a8f3b7c4a1622345890eefcd1234567890abcdef1234567890abcdef1234567',
+    asset: 'USDT',
+    amount: 500,
+    recipient: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002'
+  });
+  console.log("✅ Inbound Bridge Status:", bridgeIn.status);
+
+  // 2. Zero-Gas AMM Swap on MYCA (USDT -> MYC)
+  console.log("Swapping 250 USDT for MYC on Resonance AMM...");
+  const swapResult = await dex.swap({
+    fromAsset: 'USDT',
+    toAsset: 'MYC',
+    amount: 250,
+    slippageTolerance: 0.005
+  });
+  console.log("✅ Swap Executed | Gas:", "0.00 MYC", "| Output:", swapResult.amountOut, "$MYC");
+}
+
+crossChainFlow();`
+      },
+      game: {
+        title: 'arcade_game.js — High-Frequency Real-Time Game State Invariant',
+        code: `import { MycGameClient } from '@myca/sdk';
+
+// 1. Initialize Real-Time Arcade Client
+const game = new MycGameClient({
+  nodeUrl: 'http://localhost:4040',
+  wsUrl: 'ws://localhost:4041',
+  gameId: 'ARCADE_SPORE_ESCAPE',
+  playerAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002'
+});
+
+// 2. Submit high-frequency player event with 0-gas invariant
+const receipt = await game.submitAction({
+  eventType: 'STAGE_CLEAR',
+  score: 4850,
+  metadata: { wave: 5, combo: 12, timeSec: 48.2 }
+});
+
+console.log("✅ Game Event Finalized on Lattice!");
+console.log("• Tx Hash:", receipt.transactionHash);
+console.log("• Latency:", receipt.latencyMicroseconds, "µs (Phase-Locked)");
+console.log("• Block Height:", receipt.blockNumber);`
+      },
+      nft: {
+        title: 'resonance_asset.js — Living Resonance Asset (ERC-721R Standard)',
+        code: `import { MycResonanceClient } from '@myca/sdk';
+
+const client = new MycResonanceClient('http://localhost:4040');
+
+// 1. Mint Living Asset with 8D Frequency Harmonics
+const asset = await client.mint({
+  uri: 'ipfs://bafkrei_spore_crystal_blade.json',
+  harmonics: [7800, 8500, 9200, 6400, 8900, 7100, 9600, 8300],
+  dominantHz: 432
+});
+console.log("✨ Living Asset Minted | Token ID:", asset.tokenId);
+
+// 2. Recharge Vitality via In-Game Usage (Einstein Layer)
+await client.interact(asset.tokenId, 2); // 2 = Gaming Activity (+120)
+
+// 3. Resonant Bonding with Coherent Asset (Tesla Layer)
+const bond = await client.bond(asset.tokenId, 1);
+console.log("🧲 Coherence:", bond.similarity, "Boost:", bond.boost);
+
+// 4. Log Observer Context (Heisenberg Layer)
+await client.observe(asset.tokenId, '0xarena_witness_hash');`
+      }
+    };
+
+    let currentDevType = 'token';
+
+    function showTemplate(type) {
+      currentDevType = type;
+      ['token', 'game', 'nft', 'depin', 'agent', 'defi'].forEach(t => {
+        const btn = document.getElementById('btn-qs-' + t);
+        if (btn) btn.classList.toggle('active', t === type);
+      });
+
+      const tmpl = DEV_TEMPLATES[type] || DEV_TEMPLATES.token;
+      const titleEl = document.getElementById('qs-code-title');
+      const codeEl = document.getElementById('qs-code-snippet');
+      if (titleEl) titleEl.innerText = tmpl.title;
+      if (codeEl) codeEl.innerText = tmpl.code;
+    }
+
+    function copyDevCode() {
+      const tmpl = DEV_TEMPLATES[currentDevType] || DEV_TEMPLATES.token;
+      navigator.clipboard.writeText(tmpl.code).then(() => {
+        const btn = document.getElementById('btn-copy-code');
+        if (btn) {
+          btn.innerText = '✅ Kopyalandı!';
+          setTimeout(() => { btn.innerText = '📋 Kodu Kopyala'; }, 2000);
+        }
+      });
+    }
+
+    async function requestDevFaucet() {
+      const statusEl = document.getElementById('qs-faucet-status');
+      if (statusEl) {
+        statusEl.style.display = 'block';
+        statusEl.innerText = '⏳ Faucet talebi gönderiliyor (0 Gas)...';
+      }
+      try {
+        const res = await fetch('/api/faucet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002' })
+        });
+        const data = await res.json();
+        if (data.success && statusEl) {
+          statusEl.innerText = '🎉 Başarılı! Cüzdanına 1,000 MYC, 500 USDT ve 500 USDC testnet bakiyesi yüklendi!';
+          setTimeout(() => { statusEl.style.display = 'none'; }, 6000);
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerText = '❌ Faucet hatası: ' + err.message;
+      }
+    }
+
+    // ── LIVE GAME ACTION TESTER ──
+    async function testLiveGameAction() {
+      const out = document.getElementById('live-game-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Submitting zero-gas gaming event to Lattice DAG...</span>';
+
+      try {
+        const gameId = document.getElementById('live-game-id').value;
+        const eventType = document.getElementById('live-game-event').value;
+        const score = document.getElementById('live-game-score').value;
+
+        const res = await fetch('/api/game/action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            playerAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+            gameId,
+            eventType,
+            score: parseInt(score) || 0
+          })
+        });
+
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    // ── LIVE RESONANCE NFT SANDBOX ──
+    function setNftTab(tab) {
+      ['inspect', 'valuation', 'market', 'delegate', 'colony', 'mint', 'interact', 'bond', 'observe'].forEach(t => {
+        const p = document.getElementById('nft-panel-' + t);
+        const b = document.getElementById('btn-nft-' + t);
+        if (p) p.style.display = (t === tab) ? 'block' : 'none';
+        if (b) b.classList.toggle('active', t === tab);
+      });
+    }
+
+    async function calculateNftValuation() {
+      const id = document.getElementById('val-token-id').value || 1;
+      const refPrice = document.getElementById('val-ref-price').value || '';
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Calculating On-Chain Cashflow Valuation from Real 30-Day Task Output...</span>';
+
+      try {
+        let url = '/api/resonance/valuation?id=' + encodeURIComponent(id);
+        if (refPrice) url += '&refPrice=' + encodeURIComponent(refPrice);
+        const res = await fetch(url);
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function listNftOnMarket() {
+      const tokenId = parseInt(document.getElementById('market-token-id').value) || 1;
+      const price = parseFloat(document.getElementById('market-price-usdc').value) || 500;
+      const minEnergy = parseInt(document.getElementById('market-min-energy').value) || 2000;
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #38bdf8;">⏳ Listing Living Node Machine on MycResonanceMarketplace with minEnergy guard...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/market/list', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId, price, minEnergy })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function buyNftFromMarket() {
+      const tokenId = parseInt(document.getElementById('market-token-id').value) || 1;
+      const maxPrice = parseFloat(document.getElementById('market-price-usdc').value) || 500;
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #34d399;">⏳ Executing Atomic Purchase on Marketplace: USDC settlement & Node operator transfer...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/market/buy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId, maxPrice })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function browseMarketListings() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #38bdf8;">⏳ Fetching Active Listings from MycResonanceMarketplace...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/market/listings');
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function delegateNftNode() {
+      const tokenId = parseInt(document.getElementById('del-token-id').value) || 1;
+      const operator = document.getElementById('del-operator-addr').value.trim();
+      const revenueShare = parseInt(document.getElementById('del-owner-share').value) || 70;
+      const minUptime = parseInt(document.getElementById('del-min-uptime').value) || 95;
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #c084fc;">⏳ Staking & Delegating Living Node to Hardware Operator on MycNodeRegistry...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/delegate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId, operator, revenueShare, minUptime })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function undelegateNftNode() {
+      const tokenId = parseInt(document.getElementById('del-token-id').value) || 1;
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #f87171;">⏳ Undelegating Node: Reverting execution rights to Owner (Solo Operator)...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/undelegate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function queryDelegations() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #c084fc;">⏳ Fetching Active Operator Delegations from MycNodeRegistry...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/delegations');
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function inspectColonyNode() {
+      const id = document.getElementById('colony-node-id').value || 1;
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #34d399;">⏳ Querying Colony Node Capacity, Tier &amp; Registration on-chain...</span>';
+
+      try {
+        const res = await fetch('/api/colony/nft-node?id=' + encodeURIComponent(id));
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function settleColonyTask() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #34d399;">⏳ Executing Colony Task Settlement: 95% USDC to Owner, +600 Energy to NFT, +10 Rep to Node...</span>';
+
+      try {
+        const nodeTokenId = parseInt(document.getElementById('colony-node-id').value) || 1;
+        const usdcAmount = parseFloat(document.getElementById('colony-task-usdc').value) || 50.0;
+        const res = await fetch('/api/colony/task/settle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nodeTokenId, usdcAmount })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function transferLivingMachine() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #38bdf8;">⏳ Transferring Living NFT &amp; synchronizing Colony Node Registry...</span>';
+
+      try {
+        const tokenId = parseInt(document.getElementById('colony-node-id').value) || 1;
+        const to = document.getElementById('colony-transfer-to').value.trim();
+        const res = await fetch('/api/resonance/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId, to })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function inspectLiveNft() {
+      const id = document.getElementById('nft-inspect-id').value || 1;
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Fetching on-chain Living Asset state from VM...</span>';
+
+      try {
+        const res = await fetch('/api/resonance/asset?id=' + encodeURIComponent(id));
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function mintLiveNft() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Minting Living Resonance Asset with 8D Harmonics...</span>';
+
+      try {
+        const uri = document.getElementById('nft-mint-uri').value;
+        const dominantHz = parseInt(document.getElementById('nft-mint-hz').value) || 432;
+        const res = await fetch('/api/resonance/mint', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ uri, dominantHz })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function interactLiveNft() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Recharging Einstein Energy Score...</span>';
+
+      try {
+        const tokenId = parseInt(document.getElementById('nft-interact-id').value) || 1;
+        const interactionType = parseInt(document.getElementById('nft-interact-type').value) || 2;
+        const res = await fetch('/api/resonance/interact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId, interactionType })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function bondLiveNft() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Calculating Tesla Cosine Coherence and Bonding...</span>';
+
+      try {
+        const tokenA = parseInt(document.getElementById('nft-bond-a').value) || 1;
+        const tokenB = parseInt(document.getElementById('nft-bond-b').value) || 2;
+        const res = await fetch('/api/resonance/bond', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenA, tokenB })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    async function observeLiveNft() {
+      const out = document.getElementById('nft-live-output');
+      out.style.display = 'block';
+      out.innerHTML = '<span style="color: #fbbf24;">⏳ Recording Heisenberg Observer Witness Context...</span>';
+
+      try {
+        const tokenId = parseInt(document.getElementById('nft-obs-id').value) || 1;
+        const contextHash = document.getElementById('nft-obs-ctx').value;
+        const res = await fetch('/api/resonance/observe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tokenId, contextHash })
+        });
+        const data = await res.json();
+        out.innerHTML = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.innerHTML = `<span style="color: #ef4444;">❌ Error: ${err.message}</span>`;
+      }
+    }
+
+    // Initialize default template on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      showTemplate('token');
+    });
+  </script>
+</body>
+</html>
