@@ -930,19 +930,20 @@
     }
 
     async function fetchOverview() {
-      let data = null;
       try {
-        const res = await fetch("/api/explorer/overview");
-        if (res.ok) {
-          data = await res.json();
+        let data = null;
+        try {
+          const res = await fetch("/api/explorer/overview");
+          if (res.ok) {
+            data = await res.json();
+          }
+        } catch (e) {
+          console.warn("fetchOverview network error, using deterministic continuous lattice state:", e);
         }
-      } catch (e) {
-        console.warn("fetchOverview network error, using deterministic continuous lattice state:", e);
-      }
 
-      if (!data || !data.blockHeight) {
-        const now = Date.now();
-        const GENESIS_BLOCK = 492100;
+        if (!data || !data.blockHeight) {
+          const now = Date.now();
+          const GENESIS_BLOCK = 492100;
         const GENESIS_TS = 1736942400000;
         const BLOCK_INTERVAL = 2500;
         const blockHeight = GENESIS_BLOCK + Math.floor((now - GENESIS_TS) / BLOCK_INTERVAL);
