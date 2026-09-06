@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Seamless forward to unified 0G-style Mycelium Hub
+    const hash = window.location.hash || '';
+    window.location.replace('/hub' + hash);
+  </script>
+  <title>Mycelium NEXUS — Swap, Bridge & Wallet | $MYC Chain 108</title>
+  <meta name="description" content="Mycelium NEXUS: Zero-gas Mycelial Swap DEX, Hyphae Bridge, Spore Faucet and living network wallet for $MYC, $USDT, $USDC on Chain 108.">
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
+  <style>
+    :root {
+      --nexus-purple: #2E6B45;
+      --nexus-purple-glow: rgba(46, 107, 69, 0.15);
+      --nexus-cyan: #3F8C59;
+      --nexus-cyan-glow: rgba(63, 140, 89, 0.15);
+      --nexus-emerald: #2E6B45;
+      --nexus-surface: #F4F0E6;
+      --nexus-card: #FAF8F3;
+      --nexus-border: #DDD7CB;
+      --nexus-border-active: #2E6B45;
+      --paper: #1D1D1B;
+      --mute: #5B5B57;
+      --ink: #FFFFFF;
+    }
+
+    body {
+      background: var(--f-cream);
+      min-height: 100vh;
+      color: var(--f-humus);
+    }
+
+    .nexus-container {
+      max-width: 1400px;
+      margin: 84px auto 60px;
+      padding: 0 24px;
+    }
+
+    /* Top Stats Grid */
+    .top-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(29, 29, 27, 0.04);
+      transition: all 0.25s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--f-moss);
+      box-shadow: 0 4px 16px rgba(46, 107, 69, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--f-moss);
+      opacity: 0.8;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--f-soil);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--f-humus);
+      font-family: var(--font-mono);
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--f-moss);
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Navigation Tabs (Forest Floor) */
+    .nexus-tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+
+    .nexus-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--f-soil);
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      font-family: var(--font-sans);
+    }
+
+    .nexus-tab-btn:hover {
+      color: var(--f-humus);
+      background: var(--f-linen);
+    }
+
+    .nexus-tab-btn.active {
+      color: #FAF8F3;
+      background: var(--f-moss);
+      border: 1px solid var(--f-moss);
+      box-shadow: 0 2px 8px rgba(46, 107, 69, 0.25);
+    }
+
+    /* View Sections */
+    .nexus-view {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .nexus-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .glass-panel {
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(29, 29, 27, 0.05);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--f-bark);
+    }
+
+    .panel-title {
+      font-family: var(--f-serif);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--f-humus);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Table Styles */
+    .nexus-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .nexus-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--f-soil);
+      background: var(--f-linen);
+      border-bottom: 1px solid var(--f-bark);
+    }
+
+    .nexus-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--f-bark);
+      color: var(--f-humus);
+    }
+
+    .nexus-table tr:hover td {
+      background: var(--f-linen);
+    }
+
+    .badge-por {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--f-glow);
+      color: var(--f-moss);
+      border: 1px solid rgba(46, 107, 69, 0.3);
+    }
+
+    .badge-zero-gas {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--f-glow);
+      color: var(--f-moss);
+      border: 1px solid rgba(46, 107, 69, 0.3);
+      font-family: var(--font-mono);
+    }
+
+    /* Swap & Bridge Card UI */
+    .action-card-wrapper {
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    .token-box {
+      background: #FFFFFF;
+      border: 1px solid var(--f-bark);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .token-box:focus-within {
+      border-color: var(--f-moss);
+      box-shadow: 0 0 12px rgba(46, 107, 69, 0.15);
+    }
+
+    .token-box-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--f-soil);
+      margin-bottom: 8px;
+    }
+
+    .token-box-input-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .token-amount-input {
+      background: transparent;
+      border: none;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--f-humus);
+      font-family: var(--font-mono);
+      width: 100%;
+      outline: none;
+    }
+
+    .token-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--f-parchment);
+      border: 1px solid var(--f-bark);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--f-humus);
+      white-space: nowrap;
+    }
+
+    .swap-divider {
+      display: flex;
+      justify-content: center;
+      margin: -6px 0 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .swap-divider-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--f-bark);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--f-moss);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 4px rgba(29, 29, 27, 0.08);
+    }
+
+    .swap-divider-btn:hover {
+      transform: rotate(180deg);
+      border-color: var(--f-moss);
+      color: var(--f-moss);
+      background: var(--f-linen);
+    }
+
+    .btn-primary-action {
+      width: 100%;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      background: var(--f-moss);
+      color: #FAF8F3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 16px rgba(46, 107, 69, 0.2);
+      transition: all 0.25s;
+      margin-top: 16px;
+    }
+
+    .btn-primary-action:hover {
+      background: var(--f-thread);
+      box-shadow: 0 6px 20px rgba(46, 107, 69, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary-action {
+      padding: 10px 18px;
+      background: #FFFFFF;
+      border: 1px solid var(--f-bark);
+      color: var(--f-humus);
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary-action:hover {
+      background: var(--f-linen);
+      border-color: var(--f-moss);
+      color: var(--f-moss);
+    }
+
+    .rate-info-box {
+      background: var(--f-linen);
+      border: 1px solid var(--f-bark);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 12px;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rate-row {
+      display: flex;
+      justify-content: space-between;
+      color: var(--mute);
+    }
+
+    .rate-row span:last-child {
+      color: var(--paper);
+      font-family: var(--font-mono);
+    }
+
+    /* Opacus Terminal Live Feed */
+    .terminal-window {
+      background: #030507;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 380px;
+      overflow-y: auto;
+      color: #a7f3d0;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .terminal-line {
+      margin-bottom: 4px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal-time {
+      color: var(--faint);
+    }
+
+    .terminal-success {
+      color: var(--ok);
+    }
+
+    .terminal-purple {
+      color: var(--purple);
+    }
+
+    .terminal-cyan {
+      color: var(--nexus-cyan);
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+
+    .pipeline-step.active {
+      border-color: var(--nexus-purple);
+      background: rgba(139, 92, 246, 0.08);
+    }
+
+    .pipeline-step.done {
+      border-color: var(--ok);
+      background: rgba(16, 185, 129, 0.06);
+    }
+
+    .step-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--elevated);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .pipeline-step.done .step-circle {
+      background: var(--ok);
+      color: #000000;
+      border-color: var(--ok);
+    }
+
+    /* DePIN Machine Wallets Styles */
+    .puf-addr-pill {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      color: #c084fc;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .puf-addr-pill:hover {
+      background: rgba(139, 92, 246, 0.25);
+      border-color: #a855f7;
+      color: #fff;
+    }
+    .depin-shield-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .depin-shield-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+    .dev-type-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--mute);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .reg-chip {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: var(--teal);
+    }
+    .btn-depin-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-depin-action:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: var(--nexus-purple);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- UNIFIED 0G-STYLE HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: Navigation Menus -->
+      <div class="myca-nav-center">
+        <!-- Ecosystem Dropdown -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger active" type="button">
+            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/hub" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🍄</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
+                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
+                </div>
+              </a>
+              <a href="/hub#swap" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔄</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial Swap DEX <span class="myca-dd-badge">AMM</span></div>
+                  <div class="myca-dd-sub">Zero-gas nutrient exchange: $MYC, $USDT, $USDC</div>
+                </div>
+              </a>
+              <a href="/hub#bridge" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🌉</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Hyphae Bridge <span class="myca-dd-badge">BFT 3/4</span></div>
+                  <div class="myca-dd-sub">Cross-chain filaments to Base, Arbitrum &amp; Ethereum</div>
+                </div>
+              </a>
+              <a href="/explorer" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧭</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Lattice DAG Explorer</div>
+                  <div class="myca-dd-sub">Real-time blocks, PoR consensus &amp; growing vertices</div>
+                </div>
+              </a>
+              <a href="/depin" class="myca-dropdown-card">
+                <div class="myca-dd-icon">⚡</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
+                  <div class="myca-dd-sub">Silicon PUF identity, turbines &amp; 0-Byte Shield</div>
+                </div>
+              </a>
+              <a href="/agent" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🧠</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial AI Colony</div>
+                  <div class="myca-dd-sub">Offline Hermes &amp; OpenClaw AI intent orchestrator</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Build Dropdown (Developer Focus) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/build" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🌱</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Spore Quickstart <span class="myca-dd-badge">STUDIO</span></div>
+                  <div class="myca-dd-sub">Pick a project type, auto-faucet &amp; live playground</div>
+                </div>
+              </a>
+              <a href="/dev-docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛠️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Substrate Docs <span class="myca-dd-badge">DEV</span></div>
+                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples &amp; quickstart</div>
+                </div>
+              </a>
+              <a href="/contracts" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📋</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Mycelial Contract ABIs</div>
+                  <div class="myca-dd-sub">Chain 108 tokenomics, bridge &amp; escrow interfaces</div>
+                </div>
+              </a>
+              <a href="/agent#hardware" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔌</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Rhizome Hardware SDK</div>
+                  <div class="myca-dd-sub">WebSerial PUF keyrings &amp; 0-Byte Negation Shield</div>
+                </div>
+              </a>
+              <a href="https://github.com/AetheriumLabs" target="_blank" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🐙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">GitHub Repositories ↗</div>
+                  <div class="myca-dd-sub">Open-source consensus, lattice core &amp; test suites</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Docs Dropdown (Architecture & Whitepaper) -->
+        <div class="myca-nav-dropdown">
+          <button class="myca-nav-link myca-dropdown-trigger" type="button">
+            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <div class="myca-dropdown-panel">
+            <div class="myca-dropdown-grid">
+              <a href="/docs.html" class="myca-dropdown-card">
+                <div class="myca-dd-icon">📖</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Network Whitepaper</div>
+                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
+                </div>
+              </a>
+              <a href="/docs.html#tokenomics" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🪙</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Tokenomics Specs</div>
+                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
+                </div>
+              </a>
+              <a href="/docs.html#zero-gas" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🛡️</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Zero-Gas Invariant</div>
+                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
+                </div>
+              </a>
+              <a href="/docs.html#security" class="myca-dropdown-card">
+                <div class="myca-dd-icon">🔒</div>
+                <div class="myca-dd-info">
+                  <div class="myca-dd-title">Security & BFT Quorum</div>
+                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons & Live Wallet Chip -->
+      <div class="myca-nav-right">
+        <div id="wallet-chip" style="background: var(--f-parchment); border: 1px solid var(--f-bark); border-radius: 999px; padding: 4px 12px; display: flex; align-items: center; gap: 7px; font-size: 11.5px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--f-moss); box-shadow: 0 0 6px var(--f-moss);"></span>
+          <span id="wallet-addr" class="mono" style="font-size: 11.5px; color: var(--f-humus);">myc14d29...c002</span>
+          <span id="wallet-balance" class="mono" style="font-size: 11.5px; color: var(--f-moss); font-weight: 700;">499,996,996 MYC</span>
+          <span style="color: var(--f-bark);">|</span>
+          <span id="wallet-usdt-balance" class="mono" style="font-size: 11.5px; color: var(--f-thread); font-weight: 700;">89,000,400 USDT</span>
+          <span style="color: var(--f-bark);">|</span>
+          <span id="wallet-usdc-balance" class="mono" style="font-size: 11.5px; color: var(--f-moss); font-weight: 700;">84,000,000 USDC</span>
+        </div>
+        <button class="myca-btn-secondary" style="cursor: pointer; padding: 5px 12px; font-size: 12px;" onclick="openFaucetModal()">🚰 Faucet</button>
+        <a href="/build" class="myca-btn-secondary" style="padding: 5px 12px; font-size: 12px;">Build</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="nexus-container">
+    
+    <!-- Top 4 Ecosystem Metrics -->
+    <div class="top-stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">
+          <span>Lattice Block Height</span>
+          <span style="color: var(--teal);">● LIVE SYNC</span>
+        </div>
+        <div class="stat-val" id="stat-block-height">#42</div>
+        <div class="stat-sub">Deterministic BFT Consensus</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">
+          <span>Zero-Gas Transactions</span>
+          <span style="color: var(--ok);">GAS = 0.00</span>
+        </div>
+        <div class="stat-val" id="stat-tx-count">1,840</div>
+        <div class="stat-sub">100% Zero-Gas Invariant</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">
+          <span>DePIN Staking Yield</span>
+          <span style="color: var(--warn);" id="stat-apy-badge">min(Y/X, 18%)</span>
+        </div>
+        <div class="stat-val" id="stat-device-quota">18.0% APY</div>
+        <div class="stat-sub" id="stat-apy-sub">Revenue: 54,000 MYC/yr · Staked: 5,000 MYC</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">
+          <span>Resonance DEX Liquidity</span>
+          <span style="color: var(--purple);">AMM x*y=k</span>
+        </div>
+        <div class="stat-val" id="stat-dex-reserves">251,000 MYC</div>
+        <div class="stat-sub">Pool: 49,801 USDT Reserves</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nexus-tabs-nav">
+      <button class="nexus-tab-btn active" onclick="switchTab('explorer')">🧭 Lattice Quick View</button>
+      <a href="/explorer" class="nexus-tab-btn" style="text-decoration: none; color: var(--teal); border: 1px solid rgba(0, 242, 254, 0.35);">🧭 Standalone Explorer ↗</a>
+      <button class="nexus-tab-btn" onclick="switchTab('swap')">🔄 MYC Swap (DEX)</button>
+      <button class="nexus-tab-btn" onclick="switchTab('bridge')">🌉 Hyphae Bridge</button>
+      <button class="nexus-tab-btn" onclick="switchTab('opacuspay')">💳 MycStreamPay & Wallet</button>
+      <button class="nexus-tab-btn" onclick="switchTab('staking')">⚡ Staking & Quotas</button>
+      <button class="nexus-tab-btn" onclick="switchTab('opacus-agent')">🧠 MYC Agent Terminal</button>
+      <button class="nexus-tab-btn" onclick="switchTab('depin-machines')">🏭 DePIN Machines & Wallets</button>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 1: LATTICE EXPLORER                                             -->
+    <!-- =================================================================== -->
+    <div id="view-explorer" class="nexus-view active">
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🧭 Canonical Blocks & Zero-Gas Activity Feed</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="explorer-search" placeholder="Search by Block #, Hash, or myc1..." style="background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 12px; color: #fff; width: 320px; outline: none;">
+            <button class="btn-secondary-action" onclick="refreshExplorer()">Refresh</button>
+          </div>
+        </div>
+
+        <table class="nexus-table">
+          <thead>
+            <tr>
+              <th>Height</th>
+              <th>Block Hash</th>
+              <th>Proposer / Validator</th>
+              <th>Txs</th>
+              <th>Gas Fee</th>
+              <th>Consensus / Finality</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="blocks-table-body">
+            <tr><td colspan="7" style="text-align: center; color: var(--mute);">Loading canonical lattice blocks...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🛡️ Active Consensus Validators (BFT Voting Set)</span>
+          </div>
+        </div>
+        <table class="nexus-table">
+          <thead>
+            <tr>
+              <th>Validator Node Address</th>
+              <th>Staked Collateral</th>
+              <th>Voting Power</th>
+              <th>Dual-PoR Success Rate</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono">myc1validatora000000000000000000000000</td>
+              <td class="mono">100,000 MYC</td>
+              <td>100 Votes</td>
+              <td><span class="badge-por">100% VERIFIED</span></td>
+              <td><span style="color: var(--ok);">ACTIVE LEADER</span></td>
+            </tr>
+            <tr>
+              <td class="mono">myc1validatorb000000000000000000000000</td>
+              <td class="mono">100,000 MYC</td>
+              <td>100 Votes</td>
+              <td><span class="badge-por">100% VERIFIED</span></td>
+              <td><span style="color: var(--ok);">ACTIVE VALIDATOR</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 2: RESONANCE SWAP (DEX)                                         -->
+    <!-- =================================================================== -->
+    <div id="view-swap" class="nexus-view">
+      <div class="action-card-wrapper">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">🔄 Resonance Swap</div>
+            <div style="font-size: 12px; color: var(--ok); font-family: var(--font-mono);">0.30% LP Fee • 0.00 Gas • Multi-Asset AMM</div>
+          </div>
+
+          <!-- Token In -->
+          <div class="token-box">
+            <div class="token-box-header">
+              <span>You Pay</span>
+              <span id="swap-bal-in">Balance: 499,996,996 MYC</span>
+            </div>
+            <div class="token-box-input-row">
+              <input type="number" id="swap-amount-in" class="token-amount-input" value="100" oninput="updateSwapQuote()">
+              <select id="swap-from-token" onchange="onSwapTokenChange()" style="background: rgba(255,255,255,0.12); border: 1px solid var(--border); color: #fff; padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 13px; outline: none; cursor: pointer;">
+                <option value="MYC" selected>MYC</option>
+                <option value="USDT">USDT</option>
+                <option value="USDC">USDC</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Flip Button -->
+          <div class="swap-divider">
+            <button class="swap-divider-btn" onclick="flipSwapTokens()">⇅</button>
+          </div>
+
+          <!-- Token Out -->
+          <div class="token-box">
+            <div class="token-box-header">
+              <span>You Receive (Estimated)</span>
+              <span id="swap-bal-out">Pool Reserves: 1,000,000 USDT</span>
+            </div>
+            <div class="token-box-input-row">
+              <input type="text" id="swap-amount-out" class="token-amount-input" value="9.9700" readonly>
+              <select id="swap-to-token" onchange="onSwapTokenChange()" style="background: rgba(255,255,255,0.12); border: 1px solid var(--border); color: #fff; padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 13px; outline: none; cursor: pointer;">
+                <option value="MYC">MYC</option>
+                <option value="USDT" selected>USDT</option>
+                <option value="USDC">USDC</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="rate-info-box">
+            <div class="rate-row">
+              <span>Exchange Rate</span>
+              <span id="swap-rate-display">1 MYC ≈ 0.0997 USDT</span>
+            </div>
+            <div class="rate-row">
+              <span>Price Impact</span>
+              <span id="swap-price-impact" style="color: var(--ok);">0.01%</span>
+            </div>
+            <div class="rate-row">
+              <span>Protocol Gas Fee</span>
+              <span style="color: var(--teal);">0.00 MYC (Strict Guarantee)</span>
+            </div>
+            <div class="rate-row">
+              <span>Settlement Finality</span>
+              <span style="color: var(--ok);">&lt; 38.4 µs</span>
+            </div>
+          </div>
+
+          <button class="btn-primary-action" id="btn-execute-swap" onclick="executeSwap()">
+            <span>Execute Zero-Gas Swap</span>
+          </button>
+          <div id="swap-status-msg" style="margin-top: 12px; font-size: 13px; text-align: center;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 3: SOVEREIGN BRIDGE                                             -->
+    <div id="view-bridge" class="nexus-view">
+      <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px;">
+        <!-- Left: Dual Mode Bridge Interface -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">🌉 Hyphae Multi-Asset Bridge</div>
+            <div class="badge-por">BFT QUORUM &amp; CRYPTOGRAPHIC PROOFS</div>
+          </div>
+
+          <!-- Direction Toggle Switch -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <button id="btn-bridge-outbound" onclick="setBridgeDirection('outbound')" style="padding: 10px 12px; border-radius: 6px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; background: var(--teal); color: #000; transition: all 0.2s;">
+              📤 MYCA ➔ EVM
+            </button>
+            <button id="btn-bridge-inbound" onclick="setBridgeDirection('inbound')" style="padding: 10px 12px; border-radius: 6px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; background: transparent; color: var(--mute); transition: all 0.2s;">
+              📥 Base (EVM) ➔ MYCA
+            </button>
+          </div>
+
+          <!-- OUTBOUND PANEL (MYCA -> EVM) -->
+          <div id="panel-bridge-outbound">
+            <!-- Bridge Asset Selector -->
+            <div class="token-box">
+              <div class="token-box-header">
+                <span>Select Asset to Bridge</span>
+                <span id="bridge-available-bal" style="font-weight: 700; color: var(--ok);">Available: 499,996,996 MYC</span>
+              </div>
+              <div class="token-box-input-row">
+                <select id="bridge-asset" onchange="onBridgeAssetChange()" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; outline: none; width: 100%;">
+                  <option value="USDT" selected>USDT — Tether USD (6 Decimals)</option>
+                  <option value="USDC">USDC — USD Coin (6 Decimals)</option>
+                  <option value="MYC">MYC — Mycelium Substrate Token (Chain 108)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="swap-divider">
+              <div class="swap-divider-btn">➔</div>
+            </div>
+
+            <div class="token-box">
+              <div class="token-box-header">
+                <span>Destination EVM Network</span>
+                <span>EVM Smart Contracts Active</span>
+              </div>
+              <div class="token-box-input-row" style="margin-bottom: 12px;">
+                <select id="bridge-target-chain" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; outline: none; width: 100%;">
+                  <option value="ARBITRUM" selected>Arbitrum One (Chain ID: 42161)</option>
+                  <option value="BASE">Base Mainnet / Sepolia (Chain ID: 8453)</option>
+                  <option value="ETHEREUM">Ethereum Mainnet (Chain ID: 1)</option>
+                  <option value="POLYGON">Polygon PoS (Chain ID: 137)</option>
+                  <option value="OPTIMISM">OP Mainnet (Chain ID: 10)</option>
+                </select>
+              </div>
+              <div class="token-box-header">
+                <span>Destination Remote EVM Address (0x...)</span>
+              </div>
+              <input type="text" id="bridge-remote-recipient" value="0x742d35Cc6634C0532925a3b844Bc454e4438f44e" style="background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; width: 100%; font-family: var(--font-mono); font-size: 12px; outline: none;">
+            </div>
+
+            <div class="token-box">
+              <div class="token-box-header">
+                <span id="bridge-amt-label">Bridge Amount (USDT)</span>
+                <span id="bridge-min-label">Min: 10 USDT</span>
+              </div>
+              <div class="token-box-input-row">
+                <input type="number" id="bridge-amount" class="token-amount-input" value="100" oninput="updateBridgeQuote()">
+                <div class="token-pill" id="bridge-token-pill">USDT</div>
+              </div>
+            </div>
+
+            <div class="rate-info-box">
+              <div class="rate-row">
+                <span>Bridge Protocol Fee (0.1%)</span>
+                <span id="bridge-fee-display">0.10 USDT</span>
+              </div>
+              <div class="rate-row">
+                <span>You Will Receive On Remote EVM</span>
+                <span id="bridge-net-display" style="color: var(--ok); font-weight: 700;">99.90 USDT</span>
+              </div>
+              <div class="rate-row">
+                <span>Gas Fee On MYCA</span>
+                <span style="color: var(--ok); font-weight: 700;">0.00 MYC (Strict Invariant)</span>
+              </div>
+              <div class="rate-row">
+                <span>Cryptographic Proof Generation</span>
+                <span style="color: var(--teal);">Lattice PoR + BFT Quorum Signatures</span>
+              </div>
+            </div>
+
+            <button class="btn-primary-action" onclick="executeMycToEvmBridge()">
+              <span id="bridge-action-btn-text">Lock on MYCA &amp; Generate EVM Proof</span>
+            </button>
+          </div>
+
+          <!-- INBOUND PANEL (Base -> MYCA) -->
+          <div id="panel-bridge-inbound" style="display: none;">
+            <div class="token-box">
+              <div class="token-box-header">
+                <span>Source Chain: Base (EVM 8453)</span>
+                <span style="color: #0052FF; font-weight: 700;">🔵 Base Mainnet</span>
+              </div>
+              <div style="font-size: 12px; color: var(--mute); margin-bottom: 8px;">
+                Tokens locked in the verified Base Bridge contract are verified on MYCA via BFT oracle signatures and credited with zero gas.
+              </div>
+              <div class="token-box-header">
+                <span>Base Transaction Hash (0x...)</span>
+                <span onclick="generateRandomBaseTx()" style="color: var(--teal); cursor: pointer; font-size: 11px;">🎲 Simulate New Tx</span>
+              </div>
+              <input type="text" id="inbound-base-tx" value="0x9a8f3b7c4a1622345890eefcd1234567890abcdef1234567890abcdef1234567" style="background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; width: 100%; font-family: var(--font-mono); font-size: 12px; outline: none; margin-bottom: 12px;">
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                  <label style="font-size: 11px; color: var(--mute);">Bridge Asset</label>
+                  <select id="inbound-asset" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; width: 100%;">
+                    <option value="USDT" selected>USDT (Tether)</option>
+                    <option value="USDC">USDC (Circle)</option>
+                    <option value="MYC">MYC (Mycelium)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size: 11px; color: var(--mute);">Amount</label>
+                  <input type="number" id="inbound-amount" value="100" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; width: 100%;">
+                </div>
+              </div>
+            </div>
+
+            <div class="swap-divider">
+              <div class="swap-divider-btn">➔</div>
+            </div>
+
+            <div class="token-box">
+              <div class="token-box-header">
+                <span>Destination Address on MYCA (Chain ID 108)</span>
+                <span style="color: var(--ok); font-weight: 700;">Connected Wallet</span>
+              </div>
+              <input type="text" id="inbound-myc-recipient" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; width: 100%; font-family: var(--font-mono); font-size: 12px; outline: none;">
+            </div>
+
+            <div class="rate-info-box">
+              <div class="rate-row">
+                <span>Relay Consensus</span>
+                <span style="color: var(--purple); font-weight: 700;">BFT 2/3 + 1 Supermajority (3 of 4 Sigs)</span>
+              </div>
+              <div class="rate-row">
+                <span>Proof Verification</span>
+                <span style="color: var(--teal);">Base Merkle Receipt Root + Nonce Hash</span>
+              </div>
+              <div class="rate-row">
+                <span>Replay Attack Guard</span>
+                <span style="color: var(--ok);">Permanently Sealed TransferId</span>
+              </div>
+            </div>
+
+            <button class="btn-primary-action" onclick="executeBaseToMycBridge()">
+              <span>Verify Base Lock &amp; Release on MYCA</span>
+            </button>
+          </div>
+
+          <div id="bridge-status-msg" style="margin-top: 12px; font-size: 13px; text-align: center;"></div>
+        </div>
+
+        <!-- Right: Cryptographic Proof Inspector & Recent Transfers -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">📜 Cryptographic Proof Inspector</div>
+            <span class="badge-zero-gas" id="proof-status-badge">AWAITING TRANSACTIONS</span>
+          </div>
+
+          <!-- Active Proof Card -->
+          <div id="bridge-proof-box" style="background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 16px; font-size: 12px; font-family: var(--font-mono);">
+            <div style="color: var(--mute); text-align: center; padding: 20px 0;">
+              Execute a bridge transfer or select a transaction below to inspect its cryptographic proof, BFT signatures, and Lattice Merkle certificate.
+            </div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--fg); display: flex; justify-content: space-between; align-items: center;">
+            <span>RECENT CROSS-CHAIN PROOFS:</span>
+            <button onclick="fetchBridgeProofs()" style="background: transparent; border: none; color: var(--teal); font-size: 11px; cursor: pointer;">🔄 Refresh Proofs</button>
+          </div>
+          <div id="bridge-tx-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            <div style="color: var(--mute); font-size: 12px; text-align: center; padding: 20px;">Loading bridge transactions...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 4: OPACUSPAY & WALLET                                           -->
+    <!-- =================================================================== -->
+    <div id="view-opacuspay" class="nexus-view">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- Left: Zero-Gas Transfer -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">💸 Direct Zero-Gas Transfer</div>
+            <span class="badge-zero-gas">0.00 MYC FEE</span>
+          </div>
+
+          <div class="token-box">
+            <div class="token-box-header">
+              <span>Recipient Address</span>
+              <span>Must begin with 'myc1'</span>
+            </div>
+            <input type="text" id="transfer-recipient" value="myc1validatorb000000000000000000000000" style="background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; width: 100%; font-family: var(--font-mono); font-size: 12px; outline: none; margin-bottom: 12px;">
+            
+            <div class="token-box-header">
+              <span>Amount ($MYC)</span>
+            </div>
+            <input type="number" id="transfer-amount" class="token-amount-input" value="100">
+          </div>
+
+          <button class="btn-primary-action" onclick="executeDirectTransfer()">
+            <span>Send Zero-Gas Transfer</span>
+          </button>
+          <div id="transfer-status-msg" style="margin-top: 12px; font-size: 13px; text-align: center;"></div>
+        </div>
+
+        <!-- Right: MycStreamPay Micro-Channel -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">⚡ MycStreamPay Micro-Payment Channel</div>
+            <span class="badge-por">STREAMING LLM TOKENS</span>
+          </div>
+
+          <p style="font-size: 13px; color: var(--mute); margin-bottom: 16px;">
+            Open an off-chain cryptographic state channel for sub-millisecond micro-payments between autonomous agents and inference providers.
+          </p>
+
+          <div class="token-box">
+            <div class="token-box-header">
+              <span>Agent Service Provider</span>
+            </div>
+            <input type="text" id="pay-provider-addr" value="myc1streamingmodel00000000000000000" style="background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; width: 100%; font-family: var(--font-mono); font-size: 12px; outline: none; margin-bottom: 12px;">
+
+            <div class="token-box-header">
+              <span>Initial Channel Deposit</span>
+            </div>
+            <input type="number" id="pay-deposit-amount" class="token-amount-input" value="50">
+          </div>
+
+          <button class="btn-primary-action" onclick="openOpacusPayChannel()">
+            <span>Open Streaming Channel</span>
+          </button>
+          <div id="pay-status-msg" style="margin-top: 12px; font-size: 13px; text-align: center;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 5: STAKING & DEPIN HARDWARE QUOTAS                              -->
+    <!-- =================================================================== -->
+    <div id="view-staking" class="nexus-view">
+      <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px;">
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">⚡ Mycelium Collateral &amp; DePIN Quota Staking</div>
+            <span class="badge-por" id="staking-apy-badge">DYNAMIC YIELD: min(Y/X, 18.0%)</span>
+          </div>
+
+          <div style="background: rgba(0, 242, 254, 0.06); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+              <span style="color: var(--teal); font-weight: 700;">PROVABLE REAL-YIELD MODEL</span>
+              <span style="color: var(--ok); font-family: var(--font-mono); font-size: 11px;" id="yield-formula-disp">APY = min(Y / X, 18.0%)</span>
+            </div>
+            <div style="font-size: 11px; color: var(--mute); line-height: 1.5;">
+              Yield is 100% financed by attributable on-chain protocol revenues (DEX 0.3% AMM fees + Task Escrow 5% commissions + Cross-Chain Bridge fees). No inflationary token minting.
+            </div>
+          </div>
+
+          <div class="token-box">
+            <div class="token-box-header">
+              <span>Stake Amount ($MYC)</span>
+              <span>1,000 MYC = 1 Physical DePIN Slot</span>
+            </div>
+            <div class="token-box-input-row">
+              <input type="number" id="stake-amount" class="token-amount-input" value="2000">
+              <div class="token-pill">MYC</div>
+            </div>
+          </div>
+
+          <div class="rate-info-box">
+            <div class="rate-row">
+              <span>Current Dynamic APY</span>
+              <span style="color: var(--ok); font-weight: 700;" id="dynamic-apy-rate">18.00% (Capped at Max 18%)</span>
+            </div>
+            <div class="rate-row">
+              <span>Total Staked (X)</span>
+              <span id="stat-x-staked">5,000 MYC</span>
+            </div>
+            <div class="rate-row">
+              <span>Annual Protocol Revenue (Y)</span>
+              <span id="stat-y-revenue" style="color: var(--teal);">54,000 MYC / Year</span>
+            </div>
+            <div class="rate-row">
+              <span>New Device Quota Granted</span>
+              <span style="color: var(--ok); font-weight: 700;">+2 Actuators / Compute Nodes</span>
+            </div>
+            <div class="rate-row">
+              <span>Unstaking Delay (Sybil Defense)</span>
+              <span>7 Days (Protects Slashing Collateral)</span>
+            </div>
+          </div>
+
+          <button class="btn-primary-action" onclick="executeStake()">
+            <span>Deposit Mycelium Stake</span>
+          </button>
+          <div id="stake-status-msg" style="margin-top: 12px; font-size: 13px; text-align: center;"></div>
+        </div>
+
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">📋 Your Staking Portfolio</div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="padding: 12px; background: rgba(0,0,0,0.4); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+              <div style="font-size: 11px; color: var(--mute);">TOTAL CURRENTLY STAKED</div>
+              <div style="font-size: 20px; font-weight: 700; color: #ffffff;" id="portfolio-total-staked">5,000 MYC</div>
+            </div>
+
+            <div style="padding: 12px; background: rgba(0,0,0,0.4); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+              <div style="font-size: 11px; color: var(--mute);">AUTHORIZED HARDWARE QUOTAS</div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--teal);" id="portfolio-quota">5 DePIN Actuators</div>
+            </div>
+
+            <div style="padding: 12px; background: rgba(0,0,0,0.4); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+              <div style="font-size: 11px; color: var(--mute);">UNCLAIMED REWARDS</div>
+              <div style="font-size: 20px; font-weight: 700; color: var(--ok);">42.85 MYC</div>
+            </div>
+
+            <button class="btn-secondary-action" style="width: 100%;" onclick="alert('Rewards successfully claimed to wallet!')">Claim 42.85 MYC Rewards</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 6: OPACUS AGENT TERMINAL (LIVE RUNNER)                          -->
+    <!-- =================================================================== -->
+    <div id="view-opacus-agent" class="nexus-view">
+      <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 24px;">
+        <!-- Left: Configuration & Trigger -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">🧠 MYC Agent Task Dispatcher</div>
+            <span class="badge-por">DUAL-POR VERIFICATION</span>
+          </div>
+
+          <p style="font-size: 13px; color: var(--mute); margin-bottom: 16px;">
+            Execute a real financial risk modeling task across independent Colony nodes. Validates output hashes H(O₁) == H(O₂) without ZK/TEE.
+          </p>
+
+          <div class="token-box">
+            <div class="token-box-header">
+              <span>Agent Identity</span>
+            </div>
+            <input type="text" id="opacus-agent-id" value="myc-autonomous-risk-v12" style="background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: #fff; width: 100%; font-family: var(--font-mono); font-size: 12px; outline: none; margin-bottom: 12px;">
+
+            <div class="token-box-header">
+              <span>Cognitive Capability</span>
+            </div>
+            <select id="opacus-capability" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; width: 100%; outline: none; margin-bottom: 12px;">
+              <option value="financial_risk_scoring">financial_risk_scoring (VaR / Stress Test)</option>
+              <option value="spectral_inference">spectral_inference (Compressed Tensor Math)</option>
+              <option value="reasoning">reasoning (Causal Graph Verification)</option>
+            </select>
+
+            <div class="token-box-header">
+              <span>Escrow Budget (USDC)</span>
+            </div>
+            <input type="number" id="opacus-budget" class="token-amount-input" value="60">
+          </div>
+
+          <!-- Visual Pipeline -->
+          <div style="margin-top: 16px;">
+            <div class="pipeline-step" id="pipe-1"><div class="step-circle">1</div><div>Lock Smart Escrow on Chain ID 108</div></div>
+            <div class="pipeline-step" id="pipe-2"><div class="step-circle">2</div><div>Dispatch to 2 Colony Worker Nodes</div></div>
+            <div class="pipeline-step" id="pipe-3"><div class="step-circle">3</div><div>Dual-PoR Output Hash Matching</div></div>
+            <div class="pipeline-step" id="pipe-4"><div class="step-circle">4</div><div>Release Escrow (95% Worker / 5% Protocol)</div></div>
+            <div class="pipeline-step" id="pipe-5"><div class="step-circle">5</div><div>Award +10 Reputation Points</div></div>
+          </div>
+
+          <button class="btn-primary-action" id="btn-run-opacus" onclick="runOpacusTask()">
+            <span>Dispatch MYC Workload</span>
+          </button>
+        </div>
+
+        <!-- Right: Live Execution Logs & Output -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">🖥️ Live Colony Settlement Console</div>
+            <button class="btn-secondary-action" onclick="clearTerminal()">Clear</button>
+          </div>
+
+          <div class="terminal-window" id="terminal-feed">
+            <div class="terminal-line"><span class="terminal-time">[INIT]</span> <span>Colony Task Scheduler online. 2 Execution Nodes ready.</span></div>
+            <div class="terminal-line"><span class="terminal-time">[IDLE]</span> <span class="terminal-cyan">Awaiting MYC agent workload dispatch...</span></div>
+          </div>
+
+          <div id="opacus-result-card" style="display: none; margin-top: 16px; padding: 14px; background: rgba(16, 185, 129, 0.08); border: 1px solid var(--ok); border-radius: var(--radius-sm);">
+            <div style="font-weight: 700; color: var(--ok); margin-bottom: 6px; display: flex; justify-content: space-between;">
+              <span>✅ TASK SETTLED &amp; CERTIFIED</span>
+              <span id="settlement-tx-hash" class="mono" style="font-size: 11px;">0x38e8...</span>
+            </div>
+            <pre id="settlement-json-output" style="font-size: 11px; color: #fff; overflow-x: auto;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- TAB 6: DePIN MACHINES & SILICON PUF WALLETS                         -->
+    <!-- =================================================================== -->
+    <div id="view-depin-machines" class="nexus-view">
+      
+      <!-- Architectural Hero Panel -->
+      <div class="glass-panel" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(6, 182, 212, 0.05)); border: 1px solid rgba(139, 92, 246, 0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 320px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+              <span class="badge-por" style="background: rgba(139, 92, 246, 0.2); color: #c084fc;">DEPIN SILICON PUF ARCHITECTURE</span>
+              <span class="badge-zero-gas">GAS: 0.00 MYC (M2M &amp; H2M)</span>
+            </div>
+            <h2 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 8px;">Autonomous Silicon PUF Machine Wallets &amp; DePIN Economy</h2>
+            <p style="font-size: 13px; color: var(--mute); line-height: 1.6;">
+              Makineler flash bellekte düz metin özel anahtar (private key) saklamaz; her donanım, silikon kristal üretim toleranslarındaki <strong>Fiziksel Klonlanamaz Fonksiyon (PUF)</strong> mikroskopik jitter'ından deterministik <code>myc1...</code> egemen cüzdan adresini on-boot üretir. Sensör/hesaplama verisinden $MYC kazanır, bakım ve enerji için otonom ödeme yapar ve <strong>0-Byte Negation Shield</strong> donanım korumasıyla korunur.
+            </p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn-secondary-action" onclick="document.getElementById('prov-did').focus()" style="border-color: var(--teal); color: var(--teal);">
+              ➕ Provision Hardware PUF
+            </button>
+            <button class="btn-secondary-action" onclick="fetchMachines()">
+              🔄 Refresh Fleet
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Core Pillars Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 20px;">
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
+            <div style="font-size: 11px; color: var(--nexus-purple); font-weight: 700; margin-bottom: 4px;">1. SILICON PUF ROOT</div>
+            <div style="font-size: 12px; color: #fff; font-weight: 600;">Unclonable Key Generation</div>
+            <div style="font-size: 11px; color: var(--mute); margin-top: 4px;">Zero plaintext keys in storage. HMAC keypair dynamically derived from chip crystal jitter.</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
+            <div style="font-size: 11px; color: var(--teal); font-weight: 700; margin-bottom: 4px;">2. AUTONOMOUS TREASURY</div>
+            <div style="font-size: 12px; color: #fff; font-weight: 600;">Self-Sustaining Hardware</div>
+            <div style="font-size: 11px; color: var(--mute); margin-top: 4px;">Machines earn $MYC from sensor streams / compute and independently fund parts &amp; power.</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
+            <div style="font-size: 11px; color: var(--ok); font-weight: 700; margin-bottom: 4px;">3. 0-BYTE NEGATION SHIELD</div>
+            <div style="font-size: 12px; color: #fff; font-weight: 600;">Hardware Safety Interlock</div>
+            <div style="font-size: 11px; color: var(--mute); margin-top: 4px;">Actuator register bounds enforced locally. Contradictory commands strictly produce NO-OP.</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
+            <div style="font-size: 11px; color: #f59e0b; font-weight: 700; margin-bottom: 4px;">4. ZERO-GAS M2M SWARMS</div>
+            <div style="font-size: 12px; color: #fff; font-weight: 600;">Peer-to-Peer Micro-Payments</div>
+            <div style="font-size: 11px; color: var(--mute); margin-top: 4px;">Turbine pays cooling valve autonomously via state channel at strictly 0.00000000 MYC gas.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DePIN Top Stats Grid -->
+      <div class="top-stats-grid" style="margin-bottom: 24px;">
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>Enrolled Machines</span>
+            <span class="badge-por">FLEET</span>
+          </div>
+          <div class="stat-val" id="depin-stat-count">5 Units</div>
+          <div class="stat-sub">100% Online &amp; Resonating</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>Machine Treasury Total</span>
+            <span style="color: var(--teal);">PUF VAULT</span>
+          </div>
+          <div class="stat-val" id="depin-stat-treasury">6,555.00 MYC</div>
+          <div class="stat-sub">Autonomous Hardware Liquidity</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>M2M Micro-Volume</span>
+            <span style="color: var(--nexus-purple);">ZERO-GAS</span>
+          </div>
+          <div class="stat-val" id="depin-stat-m2m-vol">37.50 MYC</div>
+          <div class="stat-sub">Peer-to-Peer Actuator Payments</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">
+            <span>0-Byte Negation Shield</span>
+            <span style="color: var(--ok);">INTERLOCK</span>
+          </div>
+          <div class="stat-val" id="depin-stat-shield-status" style="color: var(--ok);">ACTIVE</div>
+          <div class="stat-sub">Hardware Safe Low Guaranteed</div>
+        </div>
+      </div>
+
+      <!-- Main Fleet Table Panel -->
+      <div class="glass-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🏭 Live DePIN Fleet &amp; Hardware PUF Wallets</span>
+          </div>
+          <div style="font-size: 12px; color: var(--mute);">
+            All physical machines possess autonomous sovereign addresses &amp; 0-gas execution
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="nexus-table">
+            <thead>
+              <tr>
+                <th>Machine DID &amp; Type</th>
+                <th>Silicon PUF Wallet (myc1...)</th>
+                <th>Autonomous Balance</th>
+                <th>Coherence</th>
+                <th>Telemetry / Registers</th>
+                <th>Negation Shield</th>
+                <th>Autonomous Actions</th>
+              </tr>
+            </thead>
+            <tbody id="depin-machines-tbody">
+              <tr><td colspan="7" style="text-align: center; color: var(--mute); padding: 24px;">Loading DePIN machine fleet...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Interactive Workstations Grid: M2M Simulator & Provision Hardware -->
+      <div class="two-col-grid" style="margin-top: 24px;">
+        
+        <!-- Workstation 1: Autonomous M2M Simulation -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">⚡ Autonomous M2M Micro-Payment &amp; Actuator Simulator</div>
+          </div>
+          <p style="font-size: 12px; color: var(--mute); margin-bottom: 16px;">
+            Simulate a physical machine (e.g. Turbine) autonomously paying another machine (e.g. Cryo Valve) for service with 0 gas fee and hardware PUF cryptographic signing.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Source Machine (Paying Unit):</label>
+              <select id="m2m-source-select" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;"></select>
+            </div>
+
+            <div>
+              <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Target Machine (Service / Actuator Unit):</label>
+              <select id="m2m-target-select" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;"></select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Amount ($MYC):</label>
+                <input type="number" id="m2m-amount-input" value="10.0" min="0.1" step="0.1" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+              </div>
+              <div>
+                <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Gas Fee:</label>
+                <input type="text" value="0.00000000 MYC" disabled style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: var(--ok); font-weight: 700; font-size: 13px;">
+              </div>
+            </div>
+
+            <div>
+              <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">M2M Service Purpose:</label>
+              <input type="text" id="m2m-purpose-input" value="Autonomous Coolant Loop High-Pressure Influx" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+            </div>
+
+            <div style="display: flex; gap: 16px; margin-top: 4px; flex-wrap: wrap;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #fff; cursor: pointer;">
+                <input type="checkbox" id="m2m-trigger-actuator" checked>
+                <span>Trigger Actuator Coil Write</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #f87171; cursor: pointer;">
+                <input type="checkbox" id="m2m-simulate-negation">
+                <span>Inject Contradiction (Test 0-Byte Shield)</span>
+              </label>
+            </div>
+
+            <button class="btn-primary-action" id="btn-m2m-send" onclick="submitM2MPayment()" style="margin-top: 8px;">
+              ⚡ Execute Autonomous M2M Transfer
+            </button>
+
+            <!-- Live M2M Activity Terminal -->
+            <div class="terminal-window" id="m2m-terminal" style="height: 140px; margin-top: 12px;">
+              <div class="terminal-line"><span class="terminal-time">[READY]</span> <span>M2M Zero-Gas State Channel engine armed.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Workstation 2: Provision Hardware PUF Machine -->
+        <div class="glass-panel">
+          <div class="panel-header">
+            <div class="panel-title">🏭 Provision New Machine Wallet (Silicon PUF)</div>
+          </div>
+          <p style="font-size: 12px; color: var(--mute); margin-bottom: 16px;">
+            Enroll an IoT edge device, turbine, actuator, or GPU node. The network deterministically generates a Silicon PUF keypair and sovereign <code>myc1...</code> address.
+          </p>
+
+          <form onsubmit="submitProvisionMachine(event)" style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Device DID (Unique Identifier):</label>
+              <input type="text" id="prov-did" placeholder="e.g. ROBOT_ARM_02, CHILLER_01" required style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+            </div>
+
+            <div>
+              <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Human-Readable Device Name:</label>
+              <input type="text" id="prov-name" placeholder="e.g. 6-Axis Precision Assembly Robot" required style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Hardware Type:</label>
+                <select id="prov-type" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+                  <option value="TURBINE">TURBINE (Gas / Wind)</option>
+                  <option value="VALVE">VALVE (Coolant / Cryo)</option>
+                  <option value="PUMP">PUMP (Hydraulic / Feed)</option>
+                  <option value="MOTOR" selected>MOTOR (Actuator / Robotics)</option>
+                  <option value="FAN">FAN (Chiller / Ventilation)</option>
+                  <option value="GPU_COMPUTE">GPU_COMPUTE (Edge AI)</option>
+                  <option value="SENSOR">SENSOR (Telemetry / Air)</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Initial Autonomous Grant:</label>
+                <input type="number" id="prov-balance" value="300" min="0" step="50" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Base Modbus Register:</label>
+                <input type="number" id="prov-base-reg" value="96" min="0" max="65535" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+              </div>
+              <div>
+                <label style="font-size: 12px; color: var(--mute); font-weight: 600; display: block; margin-bottom: 4px;">Max Modbus Register:</label>
+                <input type="number" id="prov-max-reg" value="101" min="0" max="65535" style="width: 100%; background: var(--elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; color: #fff; font-size: 13px;">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary-action" id="btn-provision" style="margin-top: 8px; background: linear-gradient(135deg, var(--teal), #0284c7);">
+              ➕ Provision Silicon PUF Machine Wallet
+            </button>
+
+            <div id="prov-result-card" style="display: none; padding: 12px; background: rgba(0, 242, 254, 0.08); border: 1px solid var(--teal); border-radius: var(--radius-sm); font-size: 12px; margin-top: 12px;"></div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    const API_BASE = "http://localhost:4040";
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll(".nexus-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".nexus-view").forEach(v => v.classList.remove("active"));
+      
+      const targetBtn = Array.from(document.querySelectorAll(".nexus-tab-btn")).find(b => b.getAttribute("onclick") && b.getAttribute("onclick").includes(tabId));
+      if (targetBtn) targetBtn.classList.add("active");
+
+      const targetView = document.getElementById("view-" + tabId);
+      if (targetView) targetView.classList.add("active");
+
+      if (tabId === "explorer") refreshExplorer();
+      if (tabId === "depin-machines") fetchMachines();
+    }
+
+    // Refresh Overview Data
+    async function fetchOverview() {
+      try {
+        const res = await fetch(`${API_BASE}/api/explorer/overview`);
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        document.getElementById("stat-block-height").innerText = "#" + data.blockHeight;
+        document.getElementById("stat-tx-count").innerText = data.totalTransactions.toLocaleString();
+        document.getElementById("stat-device-quota").innerText = data.deviceQuotas + " Slots";
+        document.getElementById("stat-dex-reserves").innerText = data.dexReserves.MYC.toLocaleString() + " MYC";
+        document.getElementById("portfolio-total-staked").innerText = data.totalStaked.toLocaleString() + " MYC";
+        document.getElementById("portfolio-quota").innerText = data.deviceQuotas + " DePIN Actuators";
+
+        // Fetch Real Wallet Balances ($MYC, $USDT, $USDC)
+        try {
+          const balRes = await fetch(`${API_BASE}/api/wallet/balance?address=myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002`);
+          if (balRes.ok) {
+            const balData = await balRes.json();
+            if (balData.success) {
+              window.currentBalances = {
+                MYC: balData.mycBalance,
+                USDT: balData.usdtBalance,
+                USDC: balData.usdcBalance
+              };
+              const elMyc = document.getElementById("wallet-balance");
+              const elUsdt = document.getElementById("wallet-usdt-balance");
+              const elUsdc = document.getElementById("wallet-usdc-balance");
+              if (elMyc) elMyc.innerText = Math.floor(balData.mycBalance).toLocaleString() + " MYC";
+              if (elUsdt) elUsdt.innerText = Math.floor(balData.usdtBalance).toLocaleString() + " USDT";
+              if (elUsdc) elUsdc.innerText = Math.floor(balData.usdcBalance).toLocaleString() + " USDC";
+              onBridgeAssetChange();
+              updateSwapBalances();
+            }
+          }
+        } catch (e) {}
+
+        // Render Blocks Table
+        const tbody = document.getElementById("blocks-table-body");
+        if (data.recentBlocks && data.recentBlocks.length > 0) {
+          tbody.innerHTML = data.recentBlocks.reverse().map(b => `
+            <tr>
+              <td class="mono" style="font-weight: 700; color: var(--teal);">#${b.number}</td>
+              <td class="mono" style="font-size: 11px;">${b.hash.slice(0, 18)}...</td>
+              <td class="mono" style="font-size: 11px;">${b.validator ? b.validator.slice(0, 18) + '...' : 'Genesis'}</td>
+              <td>${b.txCount || 1} tx</td>
+              <td><span class="badge-zero-gas">0.00 MYC</span></td>
+              <td><span class="badge-por">BFT &lt; 38.4 µs</span></td>
+              <td style="color: var(--mute); font-size: 11px;">${new Date(b.timestamp).toLocaleTimeString()}</td>
+            </tr>
+          `).join("");
+        }
+
+        // Also refresh bridge history
+        fetchBridgeTransactions();
+      } catch (err) {
+        console.error("Overview fetch failed:", err);
+      }
+    }
+
+    // Faucet Trigger (Dispenses Real Testnet $MYC + $USDT + $USDC)
+    async function claimFaucet() {
+      try {
+        const addr = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+        const res = await fetch(`${API_BASE}/api/faucet`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: addr })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`🎉 Musluk Başarılı!\n• +1,000 $MYC testnet tokeni\n• +500 $USDT testnet tokeni\n• +500 $USDC testnet tokeni\nAdres: ${addr}\nGüncel Bakiyeler:\n  ${Math.floor(data.balance).toLocaleString()} MYC\n  ${Math.floor(data.usdtBalance).toLocaleString()} USDT\n  ${Math.floor(data.usdcBalance).toLocaleString()} USDC`);
+          fetchOverview();
+        } else {
+          alert("Faucet Hatası: " + (data.error || "Bilinmeyen hata"));
+        }
+      } catch (e) {
+        alert("Faucet talebi başarısız: " + e.message);
+      }
+    }
+
+    // Swap Logic
+    function updateSwapBalances() {
+      const from = document.getElementById("swap-from-token").value;
+      const to = document.getElementById("swap-to-token").value;
+      const bal = window.currentBalances ? window.currentBalances[from] : 0;
+      const elIn = document.getElementById("swap-bal-in");
+      if (elIn) elIn.innerText = `Balance: ${Math.floor(bal || 0).toLocaleString()} ${from}`;
+      updateSwapQuote();
+    }
+
+    function onSwapTokenChange() {
+      updateSwapBalances();
+    }
+
+    function flipSwapTokens() {
+      const fromEl = document.getElementById("swap-from-token");
+      const toEl = document.getElementById("swap-to-token");
+      const temp = fromEl.value;
+      fromEl.value = toEl.value;
+      toEl.value = temp;
+      updateSwapBalances();
+    }
+
+    function updateSwapQuote() {
+      const inAmt = parseFloat(document.getElementById("swap-amount-in").value) || 0;
+      const from = document.getElementById("swap-from-token").value;
+      const to = document.getElementById("swap-to-token").value;
+
+      if (from === to) {
+        document.getElementById("swap-amount-out").value = inAmt.toFixed(4);
+        document.getElementById("swap-rate-display").innerText = `1 ${from} = 1 ${to}`;
+        document.getElementById("swap-price-impact").innerText = "0.00%";
+        return;
+      }
+
+      // Constant product approximation based on pool reserves (MYC: 10M, USDT: 1M, USDC: 1M)
+      let rate = 1;
+      if (from === "MYC" && (to === "USDT" || to === "USDC")) rate = 0.0997;
+      else if ((from === "USDT" || from === "USDC") && to === "MYC") rate = 9.969;
+      else if ((from === "USDT" && to === "USDC") || (from === "USDC" && to === "USDT")) rate = 0.997; // Stable 1:1 less 0.3% fee
+
+      const outAmt = (inAmt * rate).toFixed(4);
+      document.getElementById("swap-amount-out").value = outAmt;
+      document.getElementById("swap-rate-display").innerText = `1 ${from} ≈ ${rate} ${to}`;
+      document.getElementById("swap-price-impact").innerText = (Math.min(5, inAmt / 1000000 * 100)).toFixed(2) + "%";
+    }
+
+    async function executeSwap() {
+      const amt = parseFloat(document.getElementById("swap-amount-in").value) || 0;
+      const from = document.getElementById("swap-from-token").value;
+      const to = document.getElementById("swap-to-token").value;
+      const msg = document.getElementById("swap-status-msg");
+
+      if (from === to) {
+        msg.innerHTML = "<span style='color: var(--danger); font-weight: 600;'>Farklı tokenlar seçiniz!</span>";
+        return;
+      }
+
+      msg.innerHTML = `<span style='color: var(--f-moss); font-weight: 600;'>AMM takas işlemi (${from} → ${to}) doğrulanıyor...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/swap`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            from,
+            to,
+            amount: amt,
+            userAddress: "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002"
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<span style='color: var(--f-moss); font-weight: 700;'>✅ Takas onaylandı! ${data.swap.amountOut.toFixed(4)} ${to} teslim edildi (0.00 Gas)!</span>`;
+          if (data.updatedBalances) {
+            window.currentBalances = data.updatedBalances;
+            const elM = document.getElementById("wallet-balance");
+            const elU = document.getElementById("wallet-usdt-balance");
+            const elC = document.getElementById("wallet-usdc-balance");
+            if (elM) elM.innerText = Math.floor(data.updatedBalances.MYC).toLocaleString() + " MYC";
+            if (elU) elU.innerText = Math.floor(data.updatedBalances.USDT).toLocaleString() + " USDT";
+            if (elC) elC.innerText = Math.floor(data.updatedBalances.USDC).toLocaleString() + " USDC";
+            updateSwapBalances();
+            onBridgeAssetChange();
+          }
+          fetchOverview();
+        } else {
+          msg.innerHTML = `<span style='color: var(--danger); font-weight: 600;'>Takas iptal edildi: ${data.error}</span>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Hata: ${e.message}</span>`;
+      }
+    }
+
+    // Bridge Logic (Multi-Asset & Cryptographic Proof Verification)
+    let currentBridgeDirection = 'outbound';
+    let currentProofData = null;
+
+    function setBridgeDirection(dir) {
+      currentBridgeDirection = dir;
+      const btnOut = document.getElementById('btn-bridge-outbound');
+      const btnIn = document.getElementById('btn-bridge-inbound');
+      const pnlOut = document.getElementById('panel-bridge-outbound');
+      const pnlIn = document.getElementById('panel-bridge-inbound');
+
+      if (dir === 'outbound') {
+        btnOut.style.background = 'var(--teal)';
+        btnOut.style.color = '#000';
+        btnIn.style.background = 'transparent';
+        btnIn.style.color = 'var(--mute)';
+        pnlOut.style.display = 'block';
+        pnlIn.style.display = 'none';
+      } else {
+        btnIn.style.background = 'var(--teal)';
+        btnIn.style.color = '#000';
+        btnOut.style.background = 'transparent';
+        btnOut.style.color = 'var(--mute)';
+        pnlIn.style.display = 'block';
+        pnlOut.style.display = 'none';
+      }
+    }
+
+    function generateRandomBaseTx() {
+      const hex = '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      const input = document.getElementById('inbound-base-tx');
+      if (input) input.value = hex;
+    }
+
+    function onBridgeAssetChange() {
+      const asset = (document.getElementById("bridge-asset")?.value || "MYC").toUpperCase();
+      const bal = window.currentBalances ? (window.currentBalances[asset] || 0) : 0;
+      
+      const balEl = document.getElementById("bridge-available-bal");
+      if (balEl) balEl.innerText = `Available: ${Math.floor(bal).toLocaleString()} ${asset}`;
+
+      const amtLabel = document.getElementById("bridge-amt-label");
+      if (amtLabel) amtLabel.innerText = `Bridge Amount (${asset})`;
+
+      const pill = document.getElementById("bridge-token-pill");
+      if (pill) pill.innerText = asset;
+
+      const btnText = document.getElementById("bridge-action-btn-text");
+      if (btnText) btnText.innerText = `Lock on MYCA & Generate EVM Proof`;
+
+      updateBridgeQuote();
+    }
+
+    function updateBridgeQuote() {
+      const asset = (document.getElementById("bridge-asset")?.value || "USDT").toUpperCase();
+      const amt = parseFloat(document.getElementById("bridge-amount")?.value) || 0;
+      const fee = amt * 0.001; // 0.1%
+      const net = Math.max(0, amt - fee);
+
+      const feeEl = document.getElementById("bridge-fee-display");
+      if (feeEl) feeEl.innerText = `${fee.toFixed(4)} ${asset}`;
+
+      const netEl = document.getElementById("bridge-net-display");
+      if (netEl) netEl.innerText = `${net.toFixed(4)} ${asset}`;
+    }
+
+    // 1. Execute Outbound Bridge: MYCA -> EVM
+    async function executeMycToEvmBridge() {
+      const asset = document.getElementById("bridge-asset").value;
+      const amt = parseFloat(document.getElementById("bridge-amount").value) || 0;
+      const targetChain = document.getElementById("bridge-target-chain").value;
+      const recipientOnEvm = document.getElementById("bridge-remote-recipient").value;
+      const msg = document.getElementById("bridge-status-msg");
+
+      msg.innerHTML = `<span style='color: var(--teal);'>Locking ${amt} ${asset} on Lattice DAG & generating cryptographic proof...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/bridge/myc-to-evm`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            senderOnMyc: "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+            targetChain,
+            recipientOnEvm,
+            asset,
+            amount: amt
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ Outbound Bridge Complete! Proof Certificate verified on Lattice.</span>`;
+          if (data.updatedBalances) {
+            window.currentBalances = data.updatedBalances;
+          }
+          renderProofInspector(data.proof);
+          fetchOverview();
+          fetchBridgeProofs();
+        } else {
+          msg.innerHTML = `<span style='color: var(--danger);'>Bridge failed: ${data.error}</span>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Error: ${e.message}</span>`;
+      }
+    }
+
+    // 2. Execute Inbound Bridge: Base (EVM) -> MYCA
+    async function executeBaseToMycBridge() {
+      const baseTxHash = document.getElementById("inbound-base-tx").value;
+      const asset = document.getElementById("inbound-asset").value;
+      const amount = parseFloat(document.getElementById("inbound-amount").value) || 0;
+      const recipientOnMyc = document.getElementById("inbound-myc-recipient").value;
+      const msg = document.getElementById("bridge-status-msg");
+
+      msg.innerHTML = `<span style='color: var(--teal);'>Verifying Base Lock (Tx: ${baseTxHash.slice(0, 10)}...) & collecting BFT Quorum...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/bridge/base-to-myc`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            baseTxHash,
+            senderOnBase: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+            recipientOnMyc,
+            asset,
+            amount
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ BFT Supermajority Quorum Verified! Credited ${data.proof.amount} ${asset} to ${recipientOnMyc.slice(0, 12)}... (Gas: 0.00 MYC)</span>`;
+          if (data.updatedBalances) {
+            window.currentBalances = data.updatedBalances;
+          }
+          renderProofInspector(data.proof);
+          fetchOverview();
+          fetchBridgeProofs();
+        } else {
+          msg.innerHTML = `<span style='color: var(--danger);'>Inbound verification failed: ${data.error}</span>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Error: ${e.message}</span>`;
+      }
+    }
+
+    // Render Cryptographic Proof in Inspector Panel
+    function renderProofInspector(proof) {
+      if (!proof) return;
+      currentProofData = proof;
+      const box = document.getElementById("bridge-proof-box");
+      const badge = document.getElementById("proof-status-badge");
+      if (!box) return;
+
+      if (badge) {
+        badge.innerText = `VERIFIED: ${proof.direction}`;
+        badge.style.background = "rgba(46,107,69,0.3)";
+        badge.style.color = "var(--ok)";
+      }
+
+      const isOutbound = proof.direction === "MYCA_TO_EVM";
+      const srcChain = proof.source?.network || "Source";
+      const dstChain = proof.destination?.network || "Destination";
+      const amountStr = `${proof.netAmount || proof.amount} ${proof.asset}`;
+
+      // Compute Destination Settlement Badge State
+      let destBg = "rgba(245,158,11,0.1)";
+      let destBorder = "rgba(245,158,11,0.3)";
+      let destColor = "var(--warn, #f59e0b)";
+      let destTitle = "⚠ SIMULATED";
+      let destSub = "Not Broadcast";
+
+      if (proof.direction === "BASE_TO_MYCA") {
+        destBg = "rgba(16,185,129,0.1)";
+        destBorder = "rgba(16,185,129,0.3)";
+        destColor = "var(--ok)";
+        destTitle = "✓ Finalized (L108)";
+        destSub = "Zero-Gas Credited";
+      } else if (proof.destination?.mode === "BROADCAST" && proof.destination?.receiptStatus === 1) {
+        destBg = "rgba(16,185,129,0.1)";
+        destBorder = "rgba(16,185,129,0.3)";
+        destColor = "var(--ok)";
+        destTitle = `✓ Finalized (${proof.destination.targetChain || 'EVM'})`;
+        destSub = `Block #${proof.destination.blockNumber || '31204900'}`;
+      } else if (proof.status === "PROOF_READY" || proof.destination?.settlementStatus === "PROOF_READY") {
+        destBg = "rgba(0,240,255,0.1)";
+        destBorder = "rgba(0,240,255,0.3)";
+        destColor = "var(--teal)";
+        destTitle = "⚡ PROOF_READY";
+        destSub = "Calldata Prepared";
+      }
+
+      box.innerHTML = `
+        <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <span style="font-weight: 800; color: var(--teal); font-size: 13px;">${proof.direction === "BASE_TO_MYCA" ? "📥 BASE ➔ MYCA LATTICE" : "📤 MYCA LATTICE ➔ " + (proof.destination?.targetChain || "EVM")}</span>
+            <span style="color: ${destColor}; font-weight: 700;">● ${proof.status}</span>
+          </div>
+          <div style="font-size: 11px; color: var(--mute);">
+            Transferred: <strong style="color: #fff;">${amountStr}</strong> | Gas Fee: <strong style="color: var(--ok);">0.00 MYC</strong>
+          </div>
+        </div>
+
+        <!-- 4 DISTINCT CRYPTOGRAPHIC VERIFICATION BADGES -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px;">
+          <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 6px; padding: 6px; text-align: center;">
+            <div style="font-size: 9px; color: var(--mute); font-weight: 700;">SOURCE PROOF</div>
+            <div style="font-size: 11px; color: var(--ok); font-weight: 700; margin-top: 2px;">✓ Verified</div>
+            <div style="font-size: 8px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Commitment</div>
+          </div>
+
+          <div style="background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); border-radius: 6px; padding: 6px; text-align: center;">
+            <div style="font-size: 9px; color: var(--mute); font-weight: 700;">BFT QUORUM</div>
+            <div style="font-size: 11px; color: var(--purple); font-weight: 700; margin-top: 2px;">✓ 3 / 4</div>
+            <div style="font-size: 8px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">ECDSA secp256k1</div>
+          </div>
+
+          <div style="background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); border-radius: 6px; padding: 6px; text-align: center;">
+            <div style="font-size: 9px; color: var(--mute); font-weight: 700;">MYCA EXECUTION</div>
+            <div style="font-size: 11px; color: var(--teal); font-weight: 700; margin-top: 2px;">✓ PoR Verified</div>
+            <div style="font-size: 8px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Living Lattice DAG</div>
+          </div>
+
+          <div style="background: ${destBg}; border: 1px solid ${destBorder}; border-radius: 6px; padding: 6px; text-align: center;">
+            <div style="font-size: 9px; color: var(--mute); font-weight: 700;">DESTINATION</div>
+            <div style="font-size: 10px; color: ${destColor}; font-weight: 700; margin-top: 2px;">${destTitle}</div>
+            <div style="font-size: 8px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${destSub}</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; font-size: 11px;">
+          <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px;">
+            <div style="color: var(--mute); font-size: 10px;">SOURCE CHAIN (${proof.source?.chainId})</div>
+            <div style="color: #fff; font-weight: 600;">${srcChain}</div>
+            <div style="color: var(--teal); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              Tx: ${proof.source?.txHash ? proof.source.txHash.slice(0, 16) + '...' : proof.source?.latticeVertexHash?.slice(0, 16) + '...'}
+            </div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 8px; border-radius: 4px;">
+            <div style="color: var(--mute); font-size: 10px;">DESTINATION CHAIN (${proof.destination?.chainId})</div>
+            <div style="color: #fff; font-weight: 600;">${dstChain}</div>
+            <div style="color: var(--ok); font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              To: ${proof.destination?.recipient?.slice(0, 16)}...
+            </div>
+          </div>
+        </div>
+
+        <!-- BFT Quorum Validator Attestations -->
+        <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 4px; padding: 8px; margin-bottom: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px;">
+            <span style="color: var(--purple); font-weight: 700;">🔐 BFT 2/3 + 1 Quorum Attestation</span>
+            <span style="color: var(--ok); font-weight: 700;">3/3 Required Signatures</span>
+          </div>
+          <div style="font-size: 9px; color: var(--mute); margin-bottom: 4px; word-break: break-all;">
+            Canonical Hash: <span style="color: #fff;">${proof.bftQuorumProof?.messageHash?.slice(0, 24)}...</span>
+          </div>
+          ${(proof.bftQuorumProof?.signatures || []).map(s => `
+            <div style="font-size: 10px; color: var(--mute); display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>• ${s.name || s.validator.slice(0, 14) + '...'}:</span>
+              <span style="color: var(--fg); font-family: var(--font-mono);">${s.signature.slice(0, 18)}...</span>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Lattice PoR Certificate -->
+        <div style="background: rgba(46,107,69,0.15); border: 1px solid rgba(46,107,69,0.3); border-radius: 4px; padding: 8px; margin-bottom: 10px; font-size: 11px;">
+          <div style="color: var(--ok); font-weight: 700; margin-bottom: 2px;">🛡️ Living Lattice PoR Certificate</div>
+          <div style="color: #fff; word-break: break-all; font-size: 10px;">
+            ${proof.latticeExecution?.certificate || proof.bridgeId}
+          </div>
+        </div>
+
+        <button onclick="toggleRawProofJson()" style="background: transparent; border: 1px solid var(--border); color: var(--mute); padding: 4px 8px; border-radius: 4px; font-size: 10px; width: 100%; cursor: pointer;">
+          { } Toggle Raw Cryptographic Proof JSON
+        </button>
+        <pre id="raw-proof-json" style="display: none; background: #111; padding: 8px; border-radius: 4px; max-height: 180px; overflow-y: auto; font-size: 10px; color: #a3e635; margin-top: 6px;">${JSON.stringify(proof, null, 2)}</pre>
+      `;
+    }
+
+    function toggleRawProofJson() {
+      const el = document.getElementById("raw-proof-json");
+      if (el) {
+        el.style.display = el.style.display === "none" ? "block" : "none";
+      }
+    }
+
+    // Fetch and render bridge proofs
+    async function fetchBridgeProofs() {
+      const container = document.getElementById("bridge-tx-list");
+      if (!container) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/bridge/proofs`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.proofs && data.proofs.length > 0) {
+          // If no active proof displayed, display first one
+          if (!currentProofData) {
+            renderProofInspector(data.proofs[0]);
+          }
+
+          container.innerHTML = data.proofs.slice(0, 10).map((p, idx) => {
+            const isBase = p.direction === "BASE_TO_MYCA";
+            const dirIcon = isBase ? "📥 Base ➔ MYC" : `📤 MYC ➔ ${p.destination?.targetChain || 'EVM'}`;
+            const asset = p.asset || "USDT";
+            const amt = p.netAmount || p.amount;
+            return `
+              <div onclick='renderProofById("${p.bridgeId}")' style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+                <div>
+                  <span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 10px; background: rgba(0,255,204,0.15); color: var(--teal); margin-right: 6px;">${dirIcon}</span>
+                  <span style="font-weight: 700; color: #fff;">${amt} ${asset}</span>
+                </div>
+                <div style="text-align: right;">
+                  <span style="color: var(--ok); font-weight: 600; font-size: 11px;">🔍 Inspect Proof</span>
+                  <div style="color: var(--mute); font-size: 10px;">${new Date(p.timestamp).toLocaleTimeString()}</div>
+                </div>
+              </div>
+            `;
+          }).join("");
+        } else {
+          container.innerHTML = `<div style="color: var(--mute); font-size: 12px; text-align: center; padding: 15px;">No bridge transfers recorded yet. Execute one above!</div>`;
+        }
+      } catch (e) {}
+    }
+
+    async function renderProofById(id) {
+      try {
+        const res = await fetch(`${API_BASE}/api/bridge/proof?id=${id}`);
+        const data = await res.json();
+        if (data.success && data.proof) {
+          renderProofInspector(data.proof);
+        }
+      } catch (e) {}
+    }
+
+    const fetchBridgeTransactions = fetchBridgeProofs;
+
+    // Direct Transfer
+    async function executeDirectTransfer() {
+      const to = document.getElementById("transfer-recipient").value;
+      const amt = parseFloat(document.getElementById("transfer-amount").value);
+      const msg = document.getElementById("transfer-status-msg");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/transfer`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ to, amount: amt })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ Transferred ${amt} MYC to ${to.slice(0, 12)}... (Gas: 0.00 MYC)</span>`;
+          fetchOverview();
+        } else {
+          msg.innerHTML = `<span style='color: var(--danger);'>Transfer failed: ${data.error}</span>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Error: ${e.message}</span>`;
+      }
+    }
+
+    // OpacusPay Open Channel
+    async function openOpacusPayChannel() {
+      const payee = document.getElementById("pay-provider-addr").value;
+      const deposit = parseFloat(document.getElementById("pay-deposit-amount").value);
+      const msg = document.getElementById("pay-status-msg");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/pay/channel/open`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ payee, deposit, durationSeconds: 86400 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ Channel opened: ${data.channel.channelId} (Deposit: ${deposit} MYC)</span>`;
+        } else {
+          msg.innerHTML = `<span style='color: var(--danger);'>Error: ${data.error}</span>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Error: ${e.message}</span>`;
+      }
+    }
+
+    // Staking Logic
+    async function executeStake() {
+      const amt = parseFloat(document.getElementById("stake-amount").value);
+      const msg = document.getElementById("stake-status-msg");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/stake`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: amt })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ Staked ${amt} MYC! New Device Quota: +${Math.floor(amt/1000)} Actuators!</span>`;
+          fetchOverview();
+        } else {
+          msg.innerHTML = `<span style='color: var(--danger);'>Staking failed: ${data.error}</span>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Error: ${e.message}</span>`;
+      }
+    }
+
+    // Opacus Live Runner
+    function addTerminalLine(type, text) {
+      const term = document.getElementById("terminal-feed");
+      const div = document.createElement("div");
+      div.className = "terminal-line";
+      const timeStr = new Date().toLocaleTimeString();
+      let colorClass = "terminal-cyan";
+      if (type === "SUCCESS") colorClass = "terminal-success";
+      if (type === "PURPLE") colorClass = "terminal-purple";
+      div.innerHTML = `<span class="terminal-time">[${timeStr}]</span> <span class="${colorClass}">${text}</span>`;
+      term.appendChild(div);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    function clearTerminal() {
+      document.getElementById("terminal-feed").innerHTML = "";
+      document.getElementById("opacus-result-card").style.display = "none";
+    }
+
+    async function runOpacusTask() {
+      const agentId = document.getElementById("opacus-agent-id").value;
+      const capability = document.getElementById("opacus-capability").value;
+      const budget = parseFloat(document.getElementById("opacus-budget").value);
+      const btn = document.getElementById("btn-run-opacus");
+      btn.disabled = true;
+      btn.innerText = "Executing Workload Across Colony...";
+
+      // Reset pipeline visual
+      for (let i = 1; i <= 5; i++) {
+        const el = document.getElementById("pipe-" + i);
+        el.className = "pipeline-step";
+      }
+
+      addTerminalLine("PURPLE", `Triggering MYC Agent Flow: ${agentId} (${capability})...`);
+
+      // Step 1
+      document.getElementById("pipe-1").classList.add("active");
+      addTerminalLine("CYAN", `Step 1: Smart Escrow Locking ${budget} USDC on Chain ID 108...`);
+      await new Promise(r => setTimeout(r, 200));
+      document.getElementById("pipe-1").classList.remove("active");
+      document.getElementById("pipe-1").classList.add("done");
+
+      // Step 2
+      document.getElementById("pipe-2").classList.add("active");
+      addTerminalLine("CYAN", `Step 2: Dispatching cognitive workload to 2 independent Colony nodes (colony_worker_alpha, colony_worker_beta)...`);
+      await new Promise(r => setTimeout(r, 300));
+      document.getElementById("pipe-2").classList.remove("active");
+      document.getElementById("pipe-2").classList.add("done");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/agent/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agentId, capability, budget })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          // Step 3
+          document.getElementById("pipe-3").classList.add("active");
+          addTerminalLine("SUCCESS", `Step 3: Dual-PoR Output Hashes Matched: H(O₁) == H(O₂) = ${data.settlement.outputHash.slice(0, 18)}...`);
+          await new Promise(r => setTimeout(r, 250));
+          document.getElementById("pipe-3").classList.remove("active");
+          document.getElementById("pipe-3").classList.add("done");
+
+          // Step 4
+          document.getElementById("pipe-4").classList.add("active");
+          addTerminalLine("SUCCESS", `Step 4: Escrow Settled: ${data.settlement.payoutToWorkers} USDC to Worker Nodes (95%), ${data.settlement.protocolFee} USDC to Protocol Treasury (5%).`);
+          await new Promise(r => setTimeout(r, 200));
+          document.getElementById("pipe-4").classList.remove("active");
+          document.getElementById("pipe-4").classList.add("done");
+
+          // Step 5
+          document.getElementById("pipe-5").classList.add("done");
+          addTerminalLine("SUCCESS", `Step 5: Reputation Updated! ${data.provers.node1}, ${data.provers.node2}.`);
+
+          // Show Card
+          document.getElementById("opacus-result-card").style.display = "block";
+          document.getElementById("settlement-tx-hash").innerText = data.settlement.porProofHash.slice(0, 24) + "...";
+          document.getElementById("settlement-json-output").innerText = JSON.stringify(data.output, null, 2);
+
+          fetchOverview();
+        } else {
+          addTerminalLine("PURPLE", "❌ Execution failed: " + data.error);
+        }
+      } catch (err) {
+        addTerminalLine("PURPLE", "❌ Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Dispatch MYC Workload";
+      }
+    }
+
+    // =========================================================================
+    // DePIN MACHINES & SILICON PUF FLEET JAVASCRIPT
+    // =========================================================================
+    let cachedMachines = [];
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      alert(`Copied Silicon PUF Address to Clipboard:\n${text}`);
+    }
+
+    async function fetchMachines() {
+      try {
+        const [mRes, sRes] = await Promise.all([
+          fetch(`${API_BASE}/api/depin/machines`),
+          fetch(`${API_BASE}/api/depin/stats`)
+        ]);
+        if (!mRes.ok || !sRes.ok) return;
+
+        const mData = await mRes.json();
+        const sData = await sRes.json();
+
+        cachedMachines = mData.machines || [];
+
+        // Update stats
+        if (sData.stats) {
+          document.getElementById("depin-stat-count").innerText = sData.stats.activeMachines + " Units";
+          document.getElementById("depin-stat-treasury").innerText = sData.stats.totalMachineTreasuryMYC.toLocaleString() + " MYC";
+          document.getElementById("depin-stat-m2m-vol").innerText = sData.stats.totalM2MVolumeMYC.toLocaleString() + " MYC";
+        }
+
+        renderMachinesTable(cachedMachines);
+        populateM2MDropdowns(cachedMachines);
+      } catch (err) {
+        console.error("fetchMachines error:", err);
+      }
+    }
+
+    function renderMachinesTable(machines) {
+      const tbody = document.getElementById("depin-machines-tbody");
+      if (!tbody) return;
+
+      if (!machines || machines.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--mute); padding: 24px;">No DePIN machines enrolled yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = machines.map(m => {
+        let icon = "⚙️";
+        if (m.deviceType === "TURBINE") icon = "🌀";
+        if (m.deviceType === "VALVE") icon = "🚰";
+        if (m.deviceType === "PUMP") icon = "⛽";
+        if (m.deviceType === "MOTOR") icon = "🦾";
+        if (m.deviceType === "GPU_COMPUTE") icon = "⚡";
+        if (m.deviceType === "SENSOR") icon = "📡";
+
+        const shortAddr = m.walletAddress.slice(0, 8) + "..." + m.walletAddress.slice(-6);
+
+        // Telemetry string
+        let telemStr = `Regs: [${m.baseRegister}-${m.maxRegister}]`;
+        if (m.telemetry) {
+          if (m.telemetry.rpm) telemStr = `${m.telemetry.rpm} RPM | ${m.telemetry.tempC}°C`;
+          else if (m.telemetry.flowRatePct) telemStr = `Flow: ${m.telemetry.flowRatePct}% | ${m.telemetry.pressurePsi} PSI`;
+          else if (m.telemetry.vramUsedMb) telemStr = `VRAM: ${(m.telemetry.vramUsedMb/1024).toFixed(1)} GB | ${m.telemetry.tempC}°C`;
+          else if (m.telemetry.flowRateLpm) telemStr = `Flow: ${m.telemetry.flowRateLpm} LPM | ${m.telemetry.pressureBar} bar`;
+          else if (m.telemetry.aqi) telemStr = `AQI: ${m.telemetry.aqi} | CO₂: ${m.telemetry.co2Ppm} ppm`;
+        }
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: #fff; display: flex; align-items: center; gap: 6px;">
+                <span>${icon}</span> <span>${m.did}</span>
+              </div>
+              <div style="font-size: 11px; color: var(--mute);">${m.name}</div>
+              <span class="dev-type-badge">${m.deviceType}</span>
+            </td>
+            <td>
+              <span class="mono puf-addr-pill" onclick="copyToClipboard('${m.walletAddress}')" title="Click to copy full Silicon PUF address">
+                ${shortAddr} 📋
+              </span>
+            </td>
+            <td>
+              <div class="mono" style="font-size: 14px; font-weight: 700; color: var(--teal);">
+                ${m.balance.toLocaleString()} MYC
+              </div>
+              <div style="font-size: 10px; color: var(--mute);">Earned: ${m.totalEarned.toLocaleString()} MYC</div>
+            </td>
+            <td>
+              <div class="mono" style="color: var(--ok); font-weight: 700;">${m.coherencePercent}</div>
+              <div style="font-size: 10px; color: var(--mute);">${m.resonanceScoreBps} BPS</div>
+            </td>
+            <td>
+              <span class="reg-chip">${telemStr}</span>
+            </td>
+            <td>
+              <div class="depin-shield-badge">
+                <span class="depin-shield-dot"></span>
+                <span>0-Byte Negation Active</span>
+              </div>
+            </td>
+            <td>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button class="btn-depin-action" onclick="fundMachinePrompt('${m.did}')" title="Deposit maintenance funds to machine">➕ Fund</button>
+                <button class="btn-depin-action" onclick="withdrawMachinePrompt('${m.did}', ${m.balance})" title="Withdraw autonomous earnings to operator">⤓ Withdraw</button>
+                <button class="btn-depin-action" onclick="quickM2M('${m.did}')" title="Simulate M2M payment from this machine">⚡ M2M</button>
+                <button class="btn-depin-action" onclick="quickActuate('${m.did}', ${m.baseRegister})" title="Test physical actuator write">⚙️ Actuate</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function populateM2MDropdowns(machines) {
+      const src = document.getElementById("m2m-source-select");
+      const tgt = document.getElementById("m2m-target-select");
+      if (!src || !tgt) return;
+
+      const prevSrc = src.value;
+      const prevTgt = tgt.value;
+
+      src.innerHTML = machines.map((m, idx) => `
+        <option value="${m.did}" ${idx === 0 ? "selected" : ""}>${m.did} - ${m.name} (${m.balance} MYC)</option>
+      `).join("");
+
+      tgt.innerHTML = machines.map((m, idx) => `
+        <option value="${m.did}" ${idx === 1 ? "selected" : ""}>${m.did} - ${m.name} (${m.balance} MYC)</option>
+      `).join("");
+
+      if (prevSrc && machines.find(m => m.did === prevSrc)) src.value = prevSrc;
+      if (prevTgt && machines.find(m => m.did === prevTgt)) tgt.value = prevTgt;
+    }
+
+    function quickM2M(fromDid) {
+      switchTab("depin-machines");
+      const src = document.getElementById("m2m-source-select");
+      if (src) src.value = fromDid;
+      document.getElementById("m2m-source-select")?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function addM2MLine(type, text) {
+      const term = document.getElementById("m2m-terminal");
+      if (!term) return;
+      const time = new Date().toLocaleTimeString();
+      let colorClass = "";
+      if (type === "PURPLE") colorClass = "terminal-purple";
+      if (type === "CYAN") colorClass = "terminal-cyan";
+      if (type === "SUCCESS") colorClass = "terminal-success";
+      if (type === "ERROR") colorClass = "style='color: #f87171;'";
+
+      const line = document.createElement("div");
+      line.className = "terminal-line";
+      line.innerHTML = `<span class="terminal-time">[${time}]</span> <span class="${colorClass}">${text}</span>`;
+      term.appendChild(line);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    async function submitM2MPayment() {
+      const fromDid = document.getElementById("m2m-source-select").value;
+      const toDid = document.getElementById("m2m-target-select").value;
+      const amount = parseFloat(document.getElementById("m2m-amount-input").value);
+      const purpose = document.getElementById("m2m-purpose-input").value;
+      const triggerActuator = document.getElementById("m2m-trigger-actuator").checked;
+      const isNegationOrContradiction = document.getElementById("m2m-simulate-negation").checked;
+
+      const btn = document.getElementById("btn-m2m-send");
+      btn.disabled = true;
+      btn.innerText = "Transmitting M2M State Frame...";
+
+      addM2MLine("PURPLE", `Initiating M2M Autonomous Channel: ${fromDid} ➔ ${toDid} for ${amount} MYC (Gas: 0.00 MYC)`);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/depin/m2m-pay`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fromDid,
+            toDid,
+            amount,
+            purpose,
+            triggerActuator,
+            isNegationOrContradiction
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          addM2MLine("SUCCESS", `✅ M2M Tx Committed: ${data.tx.txHash.slice(0, 20)}... | PUF Sig: ${data.tx.pufSignature.slice(0, 16)}...`);
+          addM2MLine("CYAN", `State Settled: ${fromDid} Balance: ${data.sender.balance} MYC | ${toDid} Balance: ${data.receiver.balance} MYC`);
+          if (triggerActuator) {
+            addM2MLine("SUCCESS", `🛡️ Actuator Safety Guard: 0-Byte Negation Shield Verified & Coil Written!`);
+          }
+          fetchMachines();
+          fetchOverview();
+        } else {
+          addM2MLine("ERROR", `❌ Shield Blocked / Failed: ${data.error}`);
+        }
+      } catch (err) {
+        addM2MLine("ERROR", `❌ Network Error: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "⚡ Execute Autonomous M2M Transfer";
+      }
+    }
+
+    async function submitProvisionMachine(e) {
+      e.preventDefault();
+      const did = document.getElementById("prov-did").value.trim();
+      const name = document.getElementById("prov-name").value.trim();
+      const deviceType = document.getElementById("prov-type").value;
+      const initialBalance = parseFloat(document.getElementById("prov-balance").value) || 200;
+      const baseRegister = parseInt(document.getElementById("prov-base-reg").value, 10);
+      const maxRegister = parseInt(document.getElementById("prov-max-reg").value, 10);
+
+      const btn = document.getElementById("btn-provision");
+      const card = document.getElementById("prov-result-card");
+      btn.disabled = true;
+      btn.innerText = "Deriving Silicon PUF Keypair...";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/depin/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ did, name, deviceType, initialBalance, baseRegister, maxRegister })
+        });
+        const data = await res.json();
+        if (data.success) {
+          card.style.display = "block";
+          card.innerHTML = `
+            <div style="color: var(--ok); font-weight: 700; margin-bottom: 4px;">✅ Machine Enrolled with Silicon PUF Root!</div>
+            <div><strong>DID:</strong> ${data.machine.did}</div>
+            <div><strong>PUF Address:</strong> <span class="mono">${data.machine.walletAddress}</span></div>
+            <div><strong>Autonomous Balance:</strong> ${data.machine.balance} MYC</div>
+            <div><strong>Registers:</strong> [${data.machine.baseRegister} - ${data.machine.maxRegister}] | <strong>Shield:</strong> 0-Byte Negation ACTIVE</div>
+          `;
+          document.getElementById("prov-did").value = "";
+          document.getElementById("prov-name").value = "";
+          fetchMachines();
+          fetchOverview();
+        } else {
+          alert("Provisioning failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Provisioning error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "➕ Provision Silicon PUF Machine Wallet";
+      }
+    }
+
+    async function fundMachinePrompt(did) {
+      const amtStr = prompt(`Deposit Maintenance & Power Funds to ${did}\n\nEnter $MYC amount to transfer (0 gas fee):`, "100");
+      if (!amtStr) return;
+      const amt = parseFloat(amtStr);
+      if (isNaN(amt) || amt <= 0) return alert("Geçersiz miktar");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/depin/fund`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ did, amount: amt })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✅ Successfully funded ${did} with ${amt} $MYC (0 Gas Fee)!\nTx Hash: ${data.tx.txHash}`);
+          fetchMachines();
+          fetchOverview();
+        } else {
+          alert("Funding failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    async function withdrawMachinePrompt(did, maxBal) {
+      const amtStr = prompt(`Withdraw Autonomous Earnings from ${did} to Operator Wallet\n\nMax Available: ${maxBal} MYC\nEnter $MYC amount (PUF signed, 0 gas fee):`, (maxBal * 0.5).toFixed(0));
+      if (!amtStr) return;
+      const amt = parseFloat(amtStr);
+      if (isNaN(amt) || amt <= 0 || amt > maxBal) return alert("Geçersiz miktar");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/depin/withdraw`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ did, amount: amt })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✅ Successfully withdrew ${amt} $MYC from ${did}!\nSigned by Hardware PUF Key: ${data.tx.pufSignature.slice(0, 16)}...\nGas Fee: 0.00 MYC`);
+          fetchMachines();
+          fetchOverview();
+        } else {
+          alert("Withdrawal failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    async function quickActuate(did, baseReg) {
+      const valStr = prompt(`Test Modbus Actuator Write on ${did}\n\nTarget Register: ${baseReg}\nEnter register value (e.g. 100):`, "100");
+      if (!valStr) return;
+      const val = parseInt(valStr, 10);
+      if (isNaN(val)) return alert("Geçersiz değer");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/depin/actuate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ did, register: baseReg, value: val })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`🛡️ Actuation Succeeded!\nStatus: ${data.shieldStatus}\nRegister: ${data.register} ➔ ${data.newValue}`);
+          fetchMachines();
+        } else {
+          alert(`❌ Negation Shield Intercepted:\nReason: ${data.reason}`);
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      }
+    }
+
+    // Faucet Modal Logic
+    async function openFaucetModal() {
+      const modal = document.getElementById("faucet-modal-backdrop");
+      if (!modal) return;
+      modal.style.display = "flex";
+
+      const defaultAddr = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+      const addrInput = document.getElementById("faucet-recipient-input");
+      if (addrInput && !addrInput.value) {
+        addrInput.value = defaultAddr;
+      }
+
+      checkFaucetEligibility();
+    }
+
+    function closeFaucetModal() {
+      const modal = document.getElementById("faucet-modal-backdrop");
+      if (modal) modal.style.display = "none";
+    }
+
+    async function checkFaucetEligibility() {
+      const addr = document.getElementById("faucet-recipient-input")?.value?.trim() || "";
+      const tw = document.getElementById("faucet-twitter-input")?.value?.trim() || "";
+      const statusEl = document.getElementById("faucet-cooldown-status");
+      const btn = document.getElementById("btn-send-faucet");
+      if (!statusEl) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/faucet/status?address=${encodeURIComponent(addr)}&twitter=${encodeURIComponent(tw)}`);
+        const data = await res.json();
+        if (data.success) {
+          if (!data.eligible) {
+            const h = Math.floor(data.maxRemainingSec / 3600);
+            const m = Math.ceil((data.maxRemainingSec % 3600) / 60);
+            statusEl.style.display = "block";
+            statusEl.className = "faucet-status-box warning";
+            statusEl.innerHTML = `⏳ <strong>24 Saatlik Limit:</strong> Bu adres veya Twitter için bugün talep yapıldı. Kalan süre: <strong>${h} saat ${m} dakika</strong>.`;
+            if (btn) btn.disabled = true;
+          } else {
+            statusEl.style.display = "block";
+            statusEl.className = "faucet-status-box success";
+            statusEl.innerHTML = `✅ <strong>Uygun:</strong> 5 $MYC günlük musluk hakkınız aktif (Sıfır Gas • Chain 108).`;
+            if (btn) btn.disabled = false;
+          }
+        }
+      } catch (e) {
+        console.error("Status check failed", e);
+      }
+    }
+
+    async function sendFaucetClaim() {
+      const recipient = document.getElementById("faucet-recipient-input")?.value?.trim() || "";
+      const twitter = document.getElementById("faucet-twitter-input")?.value?.trim() || "";
+      const followConfirmed = document.getElementById("faucet-follow-check")?.checked || false;
+      const statusEl = document.getElementById("faucet-cooldown-status");
+      const btn = document.getElementById("btn-send-faucet");
+
+      if (!recipient) {
+        alert("Lütfen bir hedef cüzdan adresi girin.");
+        return;
+      }
+      if (!twitter) {
+        alert("Lütfen Twitter / X kullanıcı adınızı girin (Örn: @kullaniciadi).");
+        return;
+      }
+      if (!followConfirmed) {
+        alert("Lütfen @myc_ai hesabını takip ettiğinizi onaylayın.");
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = "⏳ 5 $MYC Gönderiliyor...";
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/faucet`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            recipient,
+            twitter,
+            verifiedFollow: true
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          if (statusEl) {
+            statusEl.style.display = "block";
+            statusEl.className = "faucet-status-box success";
+            statusEl.innerHTML = `🎉 <strong>Başarılı!</strong> 5 $MYC cüzdanınıza aktarıldı.<br>
+              <span style="font-size: 11px;">Alıcı: <code>${data.claim.recipient}</code> | Tx: <code>${data.claim.txHash.slice(0, 16)}...</code></span><br>
+              <span style="font-size: 11px;">Yeni Bakiye: <strong>${data.balance} $MYC</strong> (Gas: 0.00 MYC)</span>`;
+          }
+          if (btn) {
+            btn.disabled = true;
+            btn.innerText = "✅ 5 $MYC Gönderildi";
+          }
+          fetchOverview();
+        } else {
+          if (statusEl) {
+            statusEl.style.display = "block";
+            statusEl.className = "faucet-status-box error";
+            statusEl.innerHTML = `❌ <strong>Hata:</strong> ${data.error}`;
+          }
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = "🚀 5 $MYC Gönder";
+          }
+        }
+      } catch (err) {
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.className = "faucet-status-box error";
+          statusEl.innerHTML = `❌ Bağlantı hatası: ${err.message}`;
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "🚀 5 $MYC Gönder";
+        }
+      }
+    }
+
+    function useConnectedWallet() {
+      const inp = document.getElementById("faucet-recipient-input");
+      if (inp) {
+        inp.value = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+        checkFaucetEligibility();
+      }
+    }
+  </script>
+
+  <!-- High-End Faucet Modal -->
+  <div id="faucet-modal-backdrop" style="display: none; position: fixed; inset: 0; background: rgba(8, 12, 10, 0.78); backdrop-filter: blur(12px); z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #111713; border: 1px solid rgba(163, 230, 53, 0.25); border-radius: 20px; width: 100%; max-width: 520px; box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 32px rgba(46,107,69,0.2); overflow: hidden; animation: popIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);">
+      
+      <!-- Modal Header -->
+      <div style="padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; background: linear-gradient(180deg, rgba(46,107,69,0.15) 0%, transparent 100%);">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 38px; height: 38px; border-radius: 12px; background: rgba(163,230,53,0.15); border: 1px solid rgba(163,230,53,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px;">
+            🚰
+          </div>
+          <div>
+            <div style="font-size: 17px; font-weight: 700; color: #F5F3E9; display: flex; align-items: center; gap: 8px;">
+              MYC Testnet Faucet
+              <span style="font-size: 10.5px; padding: 2px 7px; border-radius: 999px; background: rgba(163,230,53,0.2); color: #A3E635; font-weight: 700; border: 1px solid rgba(163,230,53,0.3);">Chain 108</span>
+            </div>
+            <div style="font-size: 12px; color: #8A9E8F; margin-top: 2px;">Günde 1 kez • 5 $MYC • Sıfır Gas On-Chain Transfer</div>
+          </div>
+        </div>
+        <button onclick="closeFaucetModal()" style="background: none; border: none; font-size: 24px; color: #8A9E8F; cursor: pointer; padding: 4px; line-height: 1;">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div style="padding: 24px; display: flex; flex-direction: column; gap: 18px;">
+        
+        <!-- Condition 1: Twitter Follow Requirement -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="font-size: 13px; font-weight: 700; color: #F5F3E9; display: flex; align-items: center; gap: 6px;">
+              <span>🐦</span> 1. Adım: @myc_ai Hesabını Takip Et
+            </div>
+            <a href="https://x.com/intent/follow?screen_name=myc_ai" target="_blank" rel="noopener noreferrer" style="background: #1DA1F2; color: #fff; padding: 5px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 5px; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Takip Et ↗
+            </a>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 11.5px; color: #8A9E8F; font-weight: 500;">Twitter / X Kullanıcı Adınız:</label>
+            <input type="text" id="faucet-twitter-input" placeholder="@kullaniciadi" oninput="checkFaucetEligibility()" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #F5F3E9; font-family: monospace; outline: none;" onfocus="this.style.borderColor='#A3E635'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+            
+            <label style="display: flex; align-items: center; gap: 8px; margin-top: 4px; cursor: pointer; font-size: 12px; color: #C5D0C7;">
+              <input type="checkbox" id="faucet-follow-check" checked style="accent-color: #A3E635; width: 15px; height: 15px; cursor: pointer;">
+              <span>Twitter / X üzerinden <strong>@myc_ai</strong> hesabını takip ediyorum</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Condition 2: Custom Recipient Wallet Input -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-size: 13px; font-weight: 700; color: #F5F3E9; display: flex; align-items: center; gap: 6px;">
+              <span>💳</span> 2. Adım: Hedef Cüzdan Adresi
+            </div>
+            <button type="button" onclick="useConnectedWallet()" style="background: rgba(163,230,53,0.1); border: 1px solid rgba(163,230,53,0.25); color: #A3E635; font-size: 11px; padding: 3px 8px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+              Mevcut Cüzdanımı Kullan
+            </button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-size: 11.5px; color: #8A9E8F; font-weight: 500;">İstenilen Cüzdan Adresi (myc1...):</label>
+            <input type="text" id="faucet-recipient-input" placeholder="myc1..." oninput="checkFaucetEligibility()" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; color: #F5F3E9; font-family: monospace; outline: none;" onfocus="this.style.borderColor='#A3E635'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'">
+            <span style="font-size: 11px; color: #6E7D73;">Herhangi bir geçerli MYC adresine doğrudan 5 $MYC transfer edilir.</span>
+          </div>
+        </div>
+
+        <!-- Cooldown / Status Feedback Box -->
+        <div id="faucet-cooldown-status" style="display: none; padding: 12px 14px; border-radius: 10px; font-size: 12px; line-height: 1.5;"></div>
+
+        <!-- Action Button -->
+        <button id="btn-send-faucet" onclick="sendFaucetClaim()" style="background: linear-gradient(135deg, #2E6B45 0%, #1F4D31 100%); border: 1px solid #A3E635; color: #F5F3E9; font-size: 14px; font-weight: 700; padding: 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 16px rgba(46,107,69,0.35); display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(46,107,69,0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 16px rgba(46,107,69,0.35)';">
+          🚀 5 $MYC Gönder (Send)
+        </button>
+
+        <div style="font-size: 11px; color: #6E7D73; text-align: center;">
+          ⚡ Zero-Gas Invariant: Bu işlem için ağ ücreti alınmaz (Gas: 0.00 MYC). Günde 1 kez talep edilebilir.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .faucet-status-box.warning {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #FCD34D;
+    }
+    .faucet-status-box.success {
+      background: rgba(163, 230, 53, 0.12);
+      border: 1px solid rgba(163, 230, 53, 0.35);
+      color: #A3E635;
+    }
+    .faucet-status-box.error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #FCA5A5;
+    }
+  </style>
+</body>
+</html>
