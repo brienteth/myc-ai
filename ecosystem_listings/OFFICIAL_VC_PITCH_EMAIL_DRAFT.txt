@@ -1,0 +1,49 @@
+To: depin@borderlesscapital.io, hello@multicoin.capital, pitch@ev3.company, pitch@panteracapital.com, deals@coinfund.io, basecamp@outlierventures.io, investment@animocabrands.com, grants@base.org, accelerator@iotex.io
+Subject: MYCA Network (Chain ID 108) | Institutional Pitch & $2M Seed Round Dossier (Zero-Gas Post-Quantum DePIN)
+
+Dear Investment Partners & Ecosystem Leads,
+
+We are submitting the Seed / Strategic Investment Application for MYCA Network (Chain ID 108) — the world's first Zero-Gas, Silicon PUF DePIN & Autonomous Machine Substrate.
+
+---
+
+### Executive Highlights
+- Project: MYCA Network (Mycelial Cognitive Architecture)
+- Network Status: Public Testnet Live (Chain ID 108) with 10,000 Node License Capacity Model.
+- Zero-Gas Invariant: Strict 0.00000000 MYC gas fee across all edge telemetry and micro-DAG transactions.
+- Throughput: 15,147+ Verified TPS (20,449 Peak Burst TPS, 9.79 ms Finality).
+- Hardware Airbag: 4.95 µs Safe-Sign C99 bare-metal circuit breaker preventing AI actuator hallucinations.
+- Hardware Root of Trust: Silicon PUF (Physical Unclonable Function) W3C DIDs (did:myc:puf:...).
+- Offline Resilience: 100% Air-Gapped Delay-Tolerant Networking (DTN) mesh operation over RS-485 Modbus / LoRaWAN with automatic zero-loss WAN reconciliation.
+- Post-Quantum Defense: 10-Pillar armor including NIST ML-DSA-65 (Dilithium3), ML-KEM-1024, and BLAKE3-512.
+- Tokenomics: 100,000,000 MYC Cap; Fixed 100,000 MYC Daily PoQR Emission; 10,000 Node Hardcap Model ($6.965M max capacity).
+- Cross-Chain: Bidirectional BFT Quorum Cryptographic Bridge to Base (Chain 8453), Arbitrum, and Ethereum.
+
+---
+
+### Round & Capital Allocation Details
+- Target Round: $2,000,000 Seed / Strategic SAFT + Token Warrant
+- Valuation: $20,000,000 Post-Money ($0.20 per MYC)
+- Primary Use of Proceeds:
+  * 40% Core Engineering & Embedded Hardware SDKs (STM32H7 / ESP32-S3 / RISC-V ports).
+  * 25% DePIN Fleet Subsidies & Industrial Pilot Deployments (Solar micro-grids, agriculture, marine).
+  * 20% Security Audits (Tier-1 Formal Verification of C99 kernel and smart contracts).
+  * 15% Global Listing Liquidity & Ecosystem Expansion.
+
+---
+
+### Key Links & Live Artifacts
+- Website & Live Nexus: https://mycai.pro
+- Live Block & DePIN Explorer: https://mycai.pro/depin/explorer
+- Verified Dune Analytics Dashboard: https://dune.com/queries/8625163
+- GitBook Comprehensive Docs: https://mycai.pro/depin/docs
+- Developer SDK & RPC Guide: https://mycai.pro/depin/dev-docs
+- GitHub Organization: https://github.com/brienteth/myc-ai
+- Pitch Deck: docs/PITCH_DECK.md
+- Full Technical Whitepaper: docs/WHITEPAPER_COMPREHENSIVE.md
+- Contact & Telegram: @myc_ai / team@mycai.pro
+
+We welcome an introductory technical call with your DePIN / Infrastructure investment team.
+
+Warm regards,
+MYCA Core Engineering & Foundation Team
