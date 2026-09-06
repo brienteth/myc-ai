@@ -7,14 +7,29 @@ We are officially submitting the Seed / Strategic Investment Dossier for MYCA Ne
 Attached to this application is our verified, reproducible test suite archive (`MYCA_NETWORK_TEST_RESULTS_AND_AUDIT.zip`), covering real Hardware-in-the-Loop (HIL) physical stress tests, Post-Quantum lattice verifications, and 100% offline Air-Gapped M2M edge executions.
 
 ================================================================================
-1. EXECUTIVE THESIS & PROBLEM STATEMENT
+1. CORE USE CASES & REAL-WORLD PROBLEMS WE SOLVE
 ================================================================================
-Existing Layer-1 and Layer-2 blockchains (Ethereum, Solana, Peaq, IoTeX) were built for human speculative transactions. When deployed in real-world industrial IoT, robotics, and high-frequency edge environments, they suffer from four structural barriers:
+MYCA is built specifically for autonomous machines, robotics, and industrial edge devices where human intervention is impossible and standard crypto fails:
 
-1. Volatile Gas Fees ($0.001 - $25/tx): High-frequency telemetry (100+ events/sec per turbine) makes traditional networks economically unviable. MYCA enforces an uncompromising 0.00000000 MYC Gas Invariant.
-2. Private Key Physical Theft: Private keys stored in microcontroller flash/EEPROM are easily extracted via side-channel or physical theft. MYCA derives dynamic keys from Silicon PUF (microscopic SRAM crystal jitter) — keys vanish upon power-down.
-3. AI Actuator Overload & Hallucinations: Malicious prompt injections or edge model hallucinations can over-torque physical industrial valves or turbines. MYCA intercepts commands with a deterministic 4.95 µs Safe-Sign C99 bare-metal airbag (240-byte RAM, zero malloc) that zeroes registers before current passes relays.
-4. Total WAN/Internet Dependence: Mining facilities, maritime vessels, and remote micro-grids frequently lose internet. Traditional blockchains immediately stall. MYCA operates 100% offline over physical RS-485 Modbus / LoRaWAN meshes, sealing zero-gas micro-DAG vertices and reconciling seamlessly via Delay-Tolerant Networking (DTN).
+1. Clean Energy Microgrids & Autonomous M2M Trading:
+   - Problem: Solar inverters, wind turbines, and EV chargers generate hundreds of micro-transactions per minute. On Ethereum or Solana, volatile gas fees destroy micro-trade margins.
+   - Solution: Zero-Gas Machine-to-Machine (M2M) settlements allowing devices to sell excess kilowatt-hours directly to neighboring pumps or batteries at strict $0.00 gas.
+
+2. Heavy Industry, Mining & Remote Agriculture (100% Air-Gapped):
+   - Problem: Subterranean mines, offshore vessels, and agricultural sensor meshes frequently operate with zero cellular/WAN connectivity. Traditional chains freeze.
+   - Solution: Delay-Tolerant Networking (DTN) over physical RS-485 Modbus and LoRaWAN meshes. Nodes seal state locally and reconcile seamlessly to Chain 108 upon reconnection without double-spending.
+
+3. Physical Hardware Anti-Theft & Tamper Resistance:
+   - Problem: Edge hardware deployed in public or remote fields is physically vulnerable; extracting flash memory exposes private keys.
+   - Solution: W3C Silicon PUF DIDs derived on-the-fly from microscopic SRAM crystal manufacturing variations. Keys exist only in active volatile memory and vanish upon power-down.
+
+4. AI Actuator Safety & Hallucination Prevention:
+   - Problem: AI agent prompt-injections or LLM hallucinations can physically over-torque industrial valves, turbines, or robotic arms.
+   - Solution: A bare-metal C99 4.95 µs Safe-Sign circuit breaker (240 bytes RAM, zero malloc) that intercepts invalid commands and clamps registers to safe 0x0000 before electric current passes physical relays.
+
+5. Autonomous Worlds & High-Frequency Gaming (ERC-721R Living Assets):
+   - Problem: Web3 games fail because players must pay gas fees for every movement, tick, or NPC interaction.
+   - Solution: 60+ moves/sec at 0.00000000 MYC gas with persistent on-device holographic memory (FHRR) for sovereign NPCs without cloud LLM API costs.
 
 ================================================================================
 2. TECHNICAL ARCHITECTURE & KEY BENCHMARKS
@@ -40,9 +55,9 @@ Existing Layer-1 and Layer-2 blockchains (Ethereum, Solana, Peaq, IoTeX) were bu
 - Real-Yield Distribution: 40% Treasury Reserve, 25% Hardware/Grid Subsidies, 20% Liquidity Pools, 15% Core Protocol Foundation
 
 ================================================================================
-4. VERIFIED TEST AUDIT SUITE (INCLUDED IN ZIP ARCHIVE)
+4. VERIFIED TEST AUDIT SUITE (INCLUDED IN ATTACHED ZIP ARCHIVE)
 ================================================================================
-Every test in the attached archive has been executed with 100% Pass (0 Fails):
+Every test in the attached archive (`MYCA_NETWORK_TEST_RESULTS_AND_AUDIT.zip`) has been executed with 100% Pass (0 Fails):
 - 01_master_adversarial_penetration.log: 11/11 Gates (Bybit, KelpDAO, Shor/Grover models)
 - 02_offline_real_capabilities_demo.log: 100% Offline M2M settlements & 0.38µs emergency brake
 - 03_offline_airgap_dtn_resilience.log: 5/5 Air-gapped mesh stages reconciled to block #21199801
