@@ -641,7 +641,7 @@
           },
           {
             title: '🛑 İnternetsiz Mesh Eşitlemesi (Air-Gapped)',
-            sub: 'WAN Yokken Yerel DAG'da Takas Yap',
+            sub: "WAN Yokken Yerel DAG'da Takas Yap",
             fn: () => triggerOfflineMesh()
           },
           {
@@ -681,7 +681,7 @@
             fn: () => triggerTurbineStop()
           },
           {
-            title: '📊 Canlı Rotor Telemetrisi DAG'a Mühürle',
+            title: "📊 Canlı Rotor Telemetrisi DAG'a Mühürle",
             sub: '15,147 TPS Lattice Grafiğine Yaz',
             fn: () => triggerTurbineTelemetry()
           },
@@ -696,7 +696,7 @@
 
     let currentSc = 'tupras';
 
-    function switchScenario(scKey) {
+    window.switchScenario = function(scKey) {
       currentSc = scKey;
       document.querySelectorAll('.sc-tab-btn').forEach(b => b.classList.remove('active'));
       if (scKey === 'tupras') document.getElementById('btnSc1').classList.add('active');
@@ -738,7 +738,7 @@
       addLog(`Cihaz ve profil değiştirildi: ${data.name}`, '01 08 00 00 [SWITCH_PROFILE]');
     }
 
-    function resetLocks() {
+    window.resetLocks = function() {
       for (let i = 1; i <= 6; i++) {
         const it = document.getElementById(`lock${i}`);
         const st = document.getElementById(`stLock${i}`);
@@ -750,7 +750,7 @@
       }
     }
 
-    function addLog(msg, hex, isHalted = false) {
+    window.addLog = function(msg, hex, isHalted = false) {
       const stream = document.getElementById('busStream');
       const time = new Date().toLocaleTimeString();
       const div = document.createElement('div');
@@ -767,7 +767,7 @@
     }
 
     // Interactive Triggers
-    function triggerPressureSpike() {
+    window.triggerPressureSpike = function() {
       resetLocks();
       document.getElementById('metric1Val').textContent = '144.2 PSI';
       document.getElementById('metric1Val').classList.add('alert');
@@ -786,7 +786,7 @@
       recordTx('VALVE_PRESSURE_ISOLATION', '0 MYC');
     }
 
-    function triggerNegationAttack() {
+    window.triggerNegationAttack = function() {
       resetLocks();
       const l5 = document.getElementById('lock5');
       const st5 = document.getElementById('stLock5');
@@ -807,7 +807,7 @@
       );
     }
 
-    function triggerRoutineModbus() {
+    window.triggerRoutineModbus = function() {
       resetLocks();
       document.getElementById('metric1Val').textContent = '94.8 PSI';
       document.getElementById('metric1Val').classList.remove('alert');
@@ -820,7 +820,7 @@
       recordTx('MODBUS_TELEMETRY_SYNC', '0 MYC');
     }
 
-    function triggerPufAttest() {
+    window.triggerPufAttest = function() {
       resetLocks();
       addLog(
         '🛡️ <strong>Silicon PUF Attestation:</strong> RP2350 SRAM hücre başlangıç entropisi (32 bayt) okundu. Klonlanamaz W3C DID did:myc:puf:0x4c2a... başarıyla doğrulandı. Flash diskte anahtar tutulmaz.',
@@ -829,7 +829,7 @@
       recordTx('SILICON_PUF_ATTEST', '0 MYC');
     }
 
-    function triggerDroneCharge() {
+    window.triggerDroneCharge = function() {
       resetLocks();
       document.getElementById('metric1Val').textContent = '34.8 kWh';
       addLog(
@@ -839,7 +839,7 @@
       recordTx('DRONE_M2M_SETTLEMENT', '10 MYC');
     }
 
-    function triggerOfflineMesh() {
+    window.triggerOfflineMesh = function() {
       resetLocks();
       addLog(
         '📡 <strong>Air-Gapped Mesh Senkronizasyonu:</strong> WAN internet omurgası yokken baz istasyonu ve batarya LoRa/RS-485 üzerinden takası yerel DAG defterinde doğruladı. İnternet gelene kadar veri kaybı $0.00.',
@@ -848,7 +848,7 @@
       recordTx('AIRGAP_MESH_SYNC', '0 MYC');
     }
 
-    function triggerOvercurrent() {
+    window.triggerOvercurrent = function() {
       resetLocks();
       const l3 = document.getElementById('lock3');
       const st3 = document.getElementById('stLock3');
@@ -863,7 +863,7 @@
       );
     }
 
-    function triggerEnergySurplus() {
+    window.triggerEnergySurplus = function() {
       resetLocks();
       addLog(
         '🔋 Jeneratör fazla enerjiyi yerel ağa ilan etti: 25 kWh batarya depolama teklifi yayınlandı.',
@@ -872,7 +872,7 @@
       recordTx('ENERGY_SURPLUS_AUCTION', '25 MYC');
     }
 
-    function triggerTurbineStart() {
+    window.triggerTurbineStart = function() {
       resetLocks();
       document.getElementById('metric1Val').textContent = '1,495 RPM';
       document.getElementById('metric2Val').textContent = '2.48 MW';
@@ -883,7 +883,7 @@
       recordTx('TURBINE_START_ACTUATION', '0 MYC');
     }
 
-    function triggerTurbineStop() {
+    window.triggerTurbineStop = function() {
       resetLocks();
       document.getElementById('metric1Val').textContent = '0 RPM';
       document.getElementById('metric2Val').textContent = '0.00 MW';
@@ -894,7 +894,7 @@
       recordTx('TURBINE_EMERGENCY_STOP', '0 MYC');
     }
 
-    function triggerTurbineTelemetry() {
+    window.triggerTurbineTelemetry = function() {
       resetLocks();
       addLog(
         '📊 15,147 TPS Rezonans: Canlı rotor titreşim ve sıcaklık telemetrisi DAG grafiğine işlendi.',
@@ -903,7 +903,7 @@
       recordTx('TURBINE_TELEMETRY_BATCH', '0 MYC');
     }
 
-    function triggerFaultDiagnosis() {
+    window.triggerFaultDiagnosis = function() {
       resetLocks();
       addLog(
         '🔧 <strong>Yerel FHRR Arıza Teşhisi:</strong> E-402 kodu için holografik vektör bellek taraması yapıldı (0.2 ms). Teşhis: Pitch kontrolör basınç valfi bypass edilmeli.',
@@ -911,7 +911,7 @@
       );
     }
 
-    function recordTx(type, amount) {
+    window.recordTx = function(type, amount) {
       try {
         const rand = Math.random().toString(16).slice(2, 10);
         const txItem = {
