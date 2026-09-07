@@ -692,7 +692,35 @@
         <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
         <a href="/build" class="myca-nav-link">🛠️ Build</a>
         <a href="/marketplace" class="myca-nav-link active">🏪 Market</a>
-        <a href="/docs" class="myca-nav-link">📚 Docs</a>
+        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
+          <a href="/docs" class="myca-nav-link " style="display: flex; align-items: center; gap: 4px;">
+            <span>📚 Docs</span>
+            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </a>
+          <div class="myca-dropdown-panel" style="min-width: 290px; padding: 6px; top: 100%;">
+            <a href="/docs#myca-os" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🖥️</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;">Myca OS Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">Local AI runtime, desktop app & device mesh</div>
+              </div>
+            </a>
+            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🤖</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00e87a;">DePIN Network Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">Proof-of-Resonance (PoR) & Lattice DAG</div>
+              </div>
+            </a>
+            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🧬</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">C99 Core Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">240B kernel, 6-Lock Safe-Sign & Modbus SDK</div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- Right: Actions & Live State -->

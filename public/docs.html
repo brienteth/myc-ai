@@ -453,19 +453,26 @@
             <span>📚 Docs</span>
             <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
           </a>
-          <div class="myca-dropdown-panel" style="min-width: 260px; padding: 6px; top: 100%;">
-            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">📖</div>
+          <div class="myca-dropdown-panel" style="min-width: 290px; padding: 6px; top: 100%;">
+            <a href="/docs#myca-os" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;" onclick="if(window.navigateChapter) navigateChapter('myca-os');">
+              <div style="font-size: 16px;">🖥️</div>
               <div>
-                <div style="font-size: 13px; font-weight: 700; color: #fff;">Network Whitepaper</div>
-                <div style="font-size: 11px; color: #94a3b8;">GitBook specs, PoR & Tokenomics</div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;">Myca OS Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">Local AI runtime, desktop app & device mesh</div>
+              </div>
+            </a>
+            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;" onclick="if(window.navigateChapter) navigateChapter('whitepaper');">
+              <div style="font-size: 16px;">🤖</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00e87a;">DePIN Network Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">Proof-of-Resonance (PoR) & Lattice DAG</div>
               </div>
             </a>
             <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🛠️</div>
+              <div style="font-size: 16px;">🧬</div>
               <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">Developer Docs & RPC</div>
-                <div style="font-size: 11px; color: #94a3b8;">JSON-RPC, SDKs & APIs</div>
+                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">C99 Core Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">240B kernel, 6-Lock Safe-Sign & Modbus SDK</div>
               </div>
             </a>
           </div>
@@ -499,6 +506,18 @@
       <div class="sidebar-search-box">
         <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input type="text" id="docFilterInput" class="sidebar-search-input" placeholder="Quick search docs... (Ctrl+K)" onkeyup="filterDocsNav()">
+      </div>
+
+      <!-- Chapter: Myca OS -->
+      <div class="sidebar-group">
+        <div class="sidebar-group-title">
+          <span>Operating System</span>
+          <span class="badge" style="background:rgba(46,107,69,0.15); color:var(--f-moss);">DESKTOP</span>
+        </div>
+        <a href="#myca-os" class="sidebar-item" onclick="navigateChapter('myca-os')">
+          <span class="item-icon">🖥️</span>
+          <span class="item-text">Myca OS Architecture & Runtime</span>
+        </a>
       </div>
 
       <!-- Chapter 1: Core Architecture -->
@@ -649,6 +668,51 @@
           silicon PUF hardware identities, and living machine NFTs.
         </p>
       </div>
+
+      <!-- SECTION: MYCA OS -->
+      <section id="myca-os" class="gb-section">
+        <h2><span>🖥️</span> Myca OS — Sovereign Edge Desktop Runtime</h2>
+        <p>
+          <strong>Myca OS</strong> is an autonomous, local-first machine intelligence operating system designed for edge devices, 
+          laptops, workstations, and sovereign enterprise nodes. It completely replaces fragile cloud API pipelines with 
+          biomimetic linguistic parsing, holographic vector memory, and private peer-to-peer device mesh networking.
+        </p>
+
+        <div class="tier-spec-grid">
+          <div class="tier-spec-card">
+            <div class="tsc-title">Local Silicon Privacy</div>
+            <div class="tsc-price" style="color:var(--f-moss);">100% Air-Gapped</div>
+            <div class="tsc-row"><span class="tsc-label">Cloud VPS Cost</span><span class="tsc-val">Strictly zsh.00</span></div>
+            <div class="tsc-row"><span class="tsc-label">Telemetry</span><span class="tsc-val">Zero Outbound</span></div>
+          </div>
+          <div class="tier-spec-card">
+            <div class="tsc-title">Device Mesh Transport</div>
+            <div class="tsc-price" style="color:#0284c7;">QUIC &amp; HTTP/3</div>
+            <div class="tsc-row"><span class="tsc-label">Peer Discovery</span><span class="tsc-val">P2P mDNS</span></div>
+            <div class="tsc-row"><span class="tsc-label">Offload Latency</span><span class="tsc-val">&lt; 2.4 ms</span></div>
+          </div>
+          <div class="tier-spec-card">
+            <div class="tsc-title">Compiler Verification</div>
+            <div class="tsc-price" style="color:#7c3aed;">Planner v3</div>
+            <div class="tsc-row"><span class="tsc-label">Supervisors</span><span class="tsc-val">9 Specialized Agents</span></div>
+            <div class="tsc-row"><span class="tsc-label">Score Hurdle</span><span class="tsc-val">&ge; 96/100 Formally Proved</span></div>
+          </div>
+        </div>
+
+        <h3 class="gb-h3">Core Architecture Layers</h3>
+        <ul class="gb-ul">
+          <li><strong>Need Engine:</strong> Interprets high-level human or machine intent without vendor lock-in. Deconstructs goals into abstract capability graphs (e.g. <code>Communication.Send</code>, <code>Data.Query</code>).</li>
+          <li><strong>Planner v3 Multi-Agent Mesh:</strong> 9 autonomous supervisor agents critique candidate execution graphs, run dry-run mock simulations, and bind cryptographic credentials from OS Keychain / Secrets Vault.</li>
+          <li><strong>Hyperdimensional Resonance Core:</strong> Fast morphological parsing and frequency-domain associative lookup running directly on raw CPU/NPU hardware in microseconds.</li>
+          <li><strong>PyO3 C-Extension Rust Bridge:</strong> High-performance FFI boundary connecting the Python user runtime to the 12-crate safe Rust execution kernel.</li>
+        </ul>
+
+        <div class="gb-callout info">
+          <strong>Download &amp; Installation:</strong>
+          Myca OS is available as standalone native binaries for macOS (Universal DMG / ZIP), Windows 11 (EXE / ZIP), and Linux. 
+          Zero accounts required. Releases can be downloaded directly from <a href="https://github.com/brienteth/myc-ai/releases" target="_blank">GitHub Releases</a>.
+        </div>
+      </section>
 
       <!-- SECTION 1: PROOF-OF-RESONANCE -->
       <section id="whitepaper" class="gb-section">
@@ -1071,6 +1135,7 @@ Liquidity Provider Fee: 0.30% allocated directly to LPs
     <!-- 3. RIGHT SIDEBAR ("ON THIS PAGE" OUTLINE) -->
     <aside class="gitbook-toc">
       <div class="toc-header">On this page</div>
+      <a href="#myca-os" class="toc-link" onclick="navigateChapter('myca-os')">Myca OS Runtime</a>
       <a href="#whitepaper" class="toc-link active" onclick="navigateChapter('whitepaper')">Proof-of-Resonance</a>
       <a href="#dag" class="toc-link" onclick="navigateChapter('dag')">Living Lattice DAG</a>
       <a href="#tier-mint" class="toc-link" onclick="navigateChapter('tier-mint')">3-Tier Living Mint</a>
@@ -1090,6 +1155,7 @@ Liquidity Provider Fee: 0.30% allocated directly to LPs
 
   <script>
         const chapters = [
+      { id: 'myca-os', category: 'Desktop & OS Runtime', title: 'Myca OS Architecture & Runtime' },
       { id: 'whitepaper', category: 'Executive & Overview', title: 'Network Whitepaper' },
       { id: 'dag', category: 'Architecture & Consensus', title: 'Living Lattice DAG Architecture' },
       { id: 'market-benchmarks', category: 'Architecture & Consensus', title: 'Market Size & Benchmarks' },
@@ -1170,6 +1236,14 @@ Liquidity Provider Fee: 0.30% allocated directly to LPs
       document.getElementById('btnTr').style.background = lang === 'tr' ? 'var(--f-moss)' : 'var(--f-cream)';
       document.getElementById('btnTr').style.color = lang === 'tr' ? '#fff' : 'var(--f-humus)';
     }
+
+    // Listen for hash changes
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && chapters.some(c => c.id === hash)) {
+        navigateChapter(hash);
+      }
+    });
 
     // Handle initial load with hash
     window.addEventListener('DOMContentLoaded', () => {

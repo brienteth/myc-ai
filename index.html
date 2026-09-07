@@ -306,19 +306,26 @@ footer {
         <span>📚 Docs</span>
         <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
-      <div class="nav-dropdown-menu" style="min-width:240px;">
-        <a href="/docs" class="dropdown-item">
-          <div class="dropdown-icon">📖</div>
+      <div class="nav-dropdown-menu" style="min-width:290px;">
+        <a href="/docs#myca-os" class="dropdown-item">
+          <div class="dropdown-icon">🖥️</div>
           <div class="dropdown-text">
-            <span class="dropdown-title">Network Whitepaper</span>
-            <span class="dropdown-desc">GitBook specifications & PoR</span>
+            <span class="dropdown-title">Myca OS Docs</span>
+            <span class="dropdown-desc">Local AI runtime, desktop app & device mesh</span>
+          </div>
+        </a>
+        <a href="/docs" class="dropdown-item">
+          <div class="dropdown-icon">🤖</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">DePIN Network Docs</span>
+            <span class="dropdown-desc">Proof-of-Resonance (PoR), Lattice DAG & tokenomics</span>
           </div>
         </a>
         <a href="/dev-docs" class="dropdown-item">
-          <div class="dropdown-icon">🛠️</div>
+          <div class="dropdown-icon">🧬</div>
           <div class="dropdown-text">
-            <span class="dropdown-title">Developer Docs & RPC</span>
-            <span class="dropdown-desc">Endpoints, SDKs & APIs</span>
+            <span class="dropdown-title">C99 Core Docs</span>
+            <span class="dropdown-desc">240B micro-kernel, 6-Lock Safe-Sign & Modbus SDK</span>
           </div>
         </a>
       </div>
@@ -416,6 +423,51 @@ footer {
       <a href="/depin" style="font-family:var(--f-mono); font-size:12px; color:#00E87A; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:6px;">
         <span>Launch Workbench</span> <span>→</span>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- MYCA OS SECTION -->
+<section class="section-pad" id="myca-os" style="scroll-margin-top: 80px; background: var(--f-parchment); border-top: 1px solid var(--f-bark);">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="section-label" style="text-align: center; color: var(--f-spore); letter-spacing: 2px;" id="t-os-sec-lbl">SOVEREIGN EDGE DESKTOP RUNTIME</div>
+    <h2 class="section-title f-serif-italic" style="text-align: center; margin-bottom: 20px; color: var(--f-deep);" id="t-os-sec-title">
+      Myca OS — The Sovereign AI Operating System
+    </h2>
+    <p class="hero-sub" style="margin: 0 auto 56px auto; text-align: center; max-width: 760px; color: var(--f-soil);" id="t-os-sec-sub">
+      Instead of juggling dozens of disconnected SaaS subscriptions, simply state your intent. Myca runs 100% locally on your machine silicon, organizing skills, managing autonomous agent graphs, and routing work across your private hardware mesh.
+    </p>
+
+    <!-- OS Core Pillars Grid -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px;">
+      <div class="card">
+        <div class="card-tag">01 • PRIVATE SILICON RUNTIME</div>
+        <div class="card-title">100% Offline & Private</div>
+        <div class="card-body">Your data never leaves your hardware. Local linguistic morphology, FHRR holographic vector memory, and zero cloud API subscriptions.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">02 • P2P DEVICE MESH</div>
+        <div class="card-title">Living Colony Mesh</div>
+        <div class="card-body">Discovers nearby Mac, Windows, Linux, and edge controllers over QUIC & mDNS. Offloads model compute to the fastest available node.</div>
+      </div>
+      <div class="card accent">
+        <div class="card-tag">03 • DETERMINISTIC AGENTS</div>
+        <div class="card-title f-serif-italic">Zero-Hallucination Execution</div>
+        <div class="card-body">9 specialized supervisor agents formally prove and critique execution graphs before any action or transaction executes.</div>
+      </div>
+    </div>
+
+    <!-- Quick Action & Download Bar -->
+    <div style="background: var(--f-cream); border: 1.5px solid var(--f-bark); border-radius: 16px; padding: 28px 36px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; box-shadow: var(--f-shadow-sm);">
+      <div>
+        <div style="font-size: 18px; font-weight: 700; color: var(--f-deep); margin-bottom: 4px;">Ready to Deploy Your Living Colony?</div>
+        <div style="font-size: 13px; color: var(--f-soil);">Native standalone application for macOS (Apple Silicon & Intel), Windows 11, and Linux.</div>
+      </div>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+        <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="btn-primary" style="padding: 10px 22px; font-size: 13.5px; text-decoration: none;">Download for macOS (DMG)</a>
+        <a href="/docs#myca-os" class="btn-secondary" style="padding: 10px 18px; font-size: 13.5px; text-decoration: none;">Read OS Docs ↗</a>
+        <a href="#download" class="btn-secondary" style="padding: 10px 18px; font-size: 13.5px; text-decoration: none;">All Platforms ↓</a>
+      </div>
     </div>
   </div>
 </section>
