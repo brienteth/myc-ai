@@ -3,6 +3,30 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/mindcast-node",
+      "destination": "/mindcast-node.html"
+    },
+    {
+      "source": "/mindcast-node.html",
+      "destination": "/mindcast-node.html"
+    },
+    {
+      "source": "/mindcast-portal",
+      "destination": "/mindcast-node.html"
+    },
+    {
+      "source": "/mindcast",
+      "destination": "/mindcast-node.html"
+    },
+    {
+      "source": "/depin/mindcast-node",
+      "destination": "/depin/mindcast-node.html"
+    },
+    {
+      "source": "/depin/mindcast-node.html",
+      "destination": "/depin/mindcast-node.html"
+    },
+    {
       "source": "/dist/:match*",
       "destination": "/downloads/:match*"
     },
