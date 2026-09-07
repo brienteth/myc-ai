@@ -7,7 +7,7 @@
       nav_depin: "🤖 DePIN",
       nav_agent: "🧠 AI Colony",
       nav_build: "🛠️ Build",
-      nav_market: "🏪 Market",
+      
       nav_docs: "📚 Docs",
       nav_faucet: "🎁 Faucet",
 
@@ -47,7 +47,7 @@
       nav_depin: "🤖 DePIN",
       nav_agent: "🧠 AI Kolonisi",
       nav_build: "🛠️ İnşa",
-      nav_market: "🏪 Pazar",
+      
       nav_docs: "📚 Doküman",
       nav_faucet: "🎁 Musluk",
 
