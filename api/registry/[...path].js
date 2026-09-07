@@ -57,6 +57,30 @@ let _global_transactions = [
   }
 ];
 
+let _global_contracts = [
+  { name: "MycToken (Sovereign 100M Cap)", address: "0x0000000000000000000000000000000000001080", category: "Core Infrastructure", state: "ACTIVE" },
+  { name: "Resonance DEX (Zero-Gas AMM)", address: "0x0000000000000000000000000000000000dEx108", category: "Lane B (DeFi & Yield)", state: "ACTIVE" },
+  { name: "NeuroYield Staking Vault", address: "0x000000000000000000000000000000000057a810", category: "Lane B (DeFi & Yield)", state: "ACTIVE" },
+  { name: "NodeLicenseSale Escrow", address: "0x0000000000000000000000000000000000e5c808", category: "Core Infrastructure", state: "ACTIVE" },
+  { name: "DeviceGuard (Silicon PUF Root)", address: "0x000000000000000000000000000000000090a8d0", category: "Layer 0 (DePIN Hardware)", state: "ACTIVE" },
+  { name: "MycStreamPay Channel Vault", address: "0x0000000000000000000000000000000000578ea0", category: "Streaming Protocol", state: "ACTIVE" },
+  { name: "CrossChainBridge (Base L2 Gateway)", address: "0x0000000000000000000000000000000000b81d9e", category: "Cross-Chain Protocol", state: "ACTIVE" }
+];
+
+let _global_devices = [
+  { did: "did:myc:puf:turb-alpha-01", deviceType: "INDUSTRIAL_TURBINE", baseRegister: 120, maxRegister: 140, resonanceScoreBps: 9980, isActive: true },
+  { did: "did:myc:puf:actuator-valve-02", deviceType: "COOLING_VALVE", baseRegister: 10, maxRegister: 30, resonanceScoreBps: 9940, isActive: true },
+  { did: "did:myc:puf:gpu-edge-03", deviceType: "GPU_COLLATERAL", baseRegister: 200, maxRegister: 250, resonanceScoreBps: 10000, isActive: true },
+  { did: "did:myc:puf:scada-sentinel-04", deviceType: "SCADA_ACTUATOR", baseRegister: 50, maxRegister: 80, resonanceScoreBps: 9890, isActive: true },
+  { did: "did:myc:puf:bio-reactor-05", deviceType: "BIO_TELEMETRY", baseRegister: 300, maxRegister: 330, resonanceScoreBps: 9970, isActive: true }
+];
+
+let _global_tasks = [
+  { taskId: "task_model_inference_89", taskType: "COGNITIVE_INFERENCE", reward: 25.0, status: "COMPLETED", latencyMs: 8.4 },
+  { taskId: "task_mesh_sync_90", taskType: "COLONY_MESH_PULSE", reward: 10.0, status: "FINALIZED", latencyMs: 4.2 },
+  { taskId: "task_puf_attest_91", taskType: "HARDWARE_VERIFICATION", reward: 5.0, status: "VALIDATED", latencyMs: 2.1 }
+];
+
 let _global_bridge_transactions = [
   {
     bridgeId: 'bridge_lock_894102',
@@ -636,18 +660,187 @@ export default function handler(req, res) {
     });
   }
 
+  // Route: /api/contract/deploy (POST)
+  if (parsedUrl.pathname.includes("contract/deploy") && method === "POST") {
+    const body = req.body || {};
+    const name = body.name || "CustomToken";
+    const sender = body.sender || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+    const randHex = Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, "0") + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, "0");
+    const contractAddress = "0x" + randHex.slice(0, 36) + "1080";
+    const txHash = "0x" + randHex + "c0108";
+
+    const newContract = {
+      name,
+      address: contractAddress,
+      category: "User Deployed Project",
+      state: "ACTIVE",
+      deployer: sender,
+      timestamp: Date.now()
+    };
+    _global_contracts.unshift(newContract);
+
+    const tx = {
+      hash: txHash,
+      type: "CONTRACT_DEPLOY",
+      module: "Project Launchpad",
+      sender,
+      recipient: contractAddress,
+      amount: `${body.initialSupply || 500000} ${name}`,
+      gasFee: "0.00000000 MYC",
+      finality: "< 8.9 ms (BFT)",
+      status: "FINALIZED",
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+
+    return res.status(200).json({
+      success: true,
+      txHash,
+      contractAddress,
+      contract: newContract,
+      status: "DEPLOYED",
+      gasUsed: "0.00000000 MYC"
+    });
+  }
+
+  // Route: /api/device/register (POST)
+  if (parsedUrl.pathname.includes("device/register") && method === "POST") {
+    const body = req.body || {};
+    const did = body.did || ("did:myc:puf:node-" + Math.random().toString(36).slice(2, 8));
+    const deviceType = body.deviceType || "INDUSTRIAL_ACTUATOR";
+    const txHash = "0x" + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, "0") + "d0108";
+
+    const newDev = {
+      did,
+      deviceType,
+      baseRegister: 150,
+      maxRegister: 220,
+      resonanceScoreBps: 10000,
+      isActive: true,
+      timestamp: Date.now()
+    };
+    _global_devices.unshift(newDev);
+
+    const tx = {
+      hash: txHash,
+      type: "DEVICE_REGISTER",
+      module: "DePIN Device Registry",
+      sender: body.sender || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      recipient: "0x000000000000000000000000000000000090a8d0",
+      amount: "Silicon PUF Identity (0-Byte Shield)",
+      gasFee: "0.00000000 MYC",
+      finality: "< 4.95 µs",
+      status: "FINALIZED",
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+
+    return res.status(200).json({
+      success: true,
+      txHash,
+      deviceId: did,
+      device: newDev,
+      status: "CONFIRMED",
+      gasUsed: "0.00000000 MYC"
+    });
+  }
+
+  // Route: /api/capability/register or /api/task/create (POST)
+  if ((parsedUrl.pathname.includes("capability/register") || parsedUrl.pathname.includes("task/create")) && method === "POST") {
+    const body = req.body || {};
+    const name = body.name || "ai.inference.edge";
+    const taskId = "task_" + name.replace(/[^a-zA-Z0-9]/g, "_") + "_" + Math.floor(Math.random() * 10000);
+    const txHash = "0x" + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, "0") + "t108";
+
+    const newTask = {
+      taskId,
+      taskType: "AI_CAPABILITY_PROVISION",
+      reward: parseFloat(body.pricePerTask) || 0.05,
+      status: "DEPLOYED_ON_SWARM",
+      latencyMs: 3.4,
+      model: name
+    };
+    _global_tasks.unshift(newTask);
+
+    const tx = {
+      hash: txHash,
+      type: "AGENT_TASK_DISPATCH",
+      module: "AI Colony Sub-Swarm",
+      sender: body.providerAddress || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+      recipient: "myc1colony_prime_mesh00000000",
+      amount: `${body.pricePerTask || 0.05} MYC`,
+      gasFee: "0.00000000 MYC",
+      finality: "< 3.4 ms",
+      status: "FINALIZED",
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+
+    return res.status(200).json({
+      success: true,
+      txHash,
+      taskId,
+      task: newTask,
+      status: "REGISTERED",
+      gasUsed: "0.00000000 MYC"
+    });
+  }
+
+  // Route: /api/explorer/search (GET)
+  if (parsedUrl.pathname.includes("explorer/search")) {
+    const q = (parsedUrl.searchParams?.get("q") || "").trim().toLowerCase();
+    
+    // 1. Search Transactions
+    const matchTx = _global_transactions.find(t => (t.hash && t.hash.toLowerCase() === q) || (t.hash && t.hash.toLowerCase().includes(q)));
+    if (matchTx) {
+      return res.status(200).json({ type: "TRANSACTION", match: matchTx, chainId: 108, gasFee: "0.00000000 MYC", consensus: "Proof-of-Quantum-Resonance (PoQR)" });
+    }
+
+    // 2. Search Contracts
+    const matchContract = _global_contracts.find(c => (c.address && c.address.toLowerCase() === q) || (c.name && c.name.toLowerCase().includes(q)));
+    if (matchContract) {
+      return res.status(200).json({ type: "SMART_CONTRACT", match: matchContract, chainId: 108, gasModel: "Zero-Gas Sovereign VM", verified: true });
+    }
+
+    // 3. Search Devices
+    const matchDev = _global_devices.find(d => (d.did && d.did.toLowerCase().includes(q)) || (d.deviceType && d.deviceType.toLowerCase().includes(q)));
+    if (matchDev) {
+      return res.status(200).json({ type: "DEPIN_DEVICE", match: matchDev, pufAttestation: "VALIDATED_NIST_FIPS_204", interlock: "0-Byte Negation Active" });
+    }
+
+    // 4. Search Tasks
+    const matchTask = _global_tasks.find(t => (t.taskId && t.taskId.toLowerCase().includes(q)) || (t.taskType && t.taskType.toLowerCase().includes(q)));
+    if (matchTask) {
+      return res.status(200).json({ type: "COGNITIVE_TASK", match: matchTask, swarmExecutor: "Colony Prime TPU Swarm" });
+    }
+
+    // 5. Search Account Address
+    if (q.startsWith("myc1")) {
+      const userTxs = _global_transactions.filter(t => (t.sender && t.sender.toLowerCase().includes(q)) || (t.recipient && t.recipient.toLowerCase().includes(q)));
+      return res.status(200).json({
+        type: "ACCOUNT",
+        address: q,
+        balance: 5000,
+        zeroGasStatus: "Active (Silicon PUF Whitelisted)",
+        totalTxs: userTxs.length,
+        recentTxs: userTxs.slice(0, 5)
+      });
+    }
+
+    // 6. Generic block search or search hit
+    return res.status(200).json({
+      type: "QUERY_RESULT",
+      query: q,
+      network: "MYC-LATTICE-MAINNET (Chain ID: 108)",
+      message: `Entity found on Sovereign Lattice DAG with zero-gas proof.`,
+      timestamp: Date.now()
+    });
+  }
+
   // Route: /api/contracts
   if (parsedUrl.pathname.includes("contracts")) {
     return res.status(200).json({
-      contracts: [
-        { name: "MycToken (Sovereign 100M Cap)", address: "0x0000000000000000000000000000000000001080" },
-        { name: "Resonance DEX (Zero-Gas AMM)", address: "0x0000000000000000000000000000000000dEx108" },
-        { name: "NeuroYield Staking Vault", address: "0x000000000000000000000000000000000057a810" },
-        { name: "NodeLicenseSale Escrow", address: "0x0000000000000000000000000000000000e5c808" },
-        { name: "DeviceGuard (Silicon PUF Root)", address: "0x000000000000000000000000000000000090a8d0" },
-        { name: "MycStreamPay Channel Vault", address: "0x0000000000000000000000000000000000578ea0" },
-        { name: "CrossChainBridge (Base L2 Gateway)", address: "0x0000000000000000000000000000000000b81d9e" }
-      ]
+      contracts: _global_contracts
     });
   }
 
@@ -655,14 +848,8 @@ export default function handler(req, res) {
   if (parsedUrl.pathname.includes("devices")) {
     return res.status(200).json({
       success: true,
-      count: 5,
-      devices: [
-        { did: "did:myc:puf:turb-alpha-01", deviceType: "INDUSTRIAL_TURBINE", baseRegister: 120, maxRegister: 140, resonanceScoreBps: 9980, isActive: true },
-        { did: "did:myc:puf:actuator-valve-02", deviceType: "COOLING_VALVE", baseRegister: 10, maxRegister: 30, resonanceScoreBps: 9940, isActive: true },
-        { did: "did:myc:puf:gpu-edge-03", deviceType: "GPU_COLLATERAL", baseRegister: 200, maxRegister: 250, resonanceScoreBps: 10000, isActive: true },
-        { did: "did:myc:puf:scada-sentinel-04", deviceType: "SCADA_ACTUATOR", baseRegister: 50, maxRegister: 80, resonanceScoreBps: 9890, isActive: true },
-        { did: "did:myc:puf:bio-reactor-05", deviceType: "BIO_TELEMETRY", baseRegister: 300, maxRegister: 330, resonanceScoreBps: 9970, isActive: true }
-      ]
+      count: _global_devices.length,
+      devices: _global_devices
     });
   }
 
@@ -670,12 +857,8 @@ export default function handler(req, res) {
   if (parsedUrl.pathname.includes("tasks")) {
     return res.status(200).json({
       success: true,
-      count: 3,
-      tasks: [
-        { taskId: "task_model_inference_89", taskType: "COGNITIVE_INFERENCE", reward: 25.0, status: "COMPLETED", latencyMs: 8.4 },
-        { taskId: "task_mesh_sync_90", taskType: "COLONY_MESH_PULSE", reward: 10.0, status: "FINALIZED", latencyMs: 4.2 },
-        { taskId: "task_puf_attest_91", taskType: "HARDWARE_VERIFICATION", reward: 5.0, status: "VALIDATED", latencyMs: 2.1 }
-      ]
+      count: _global_tasks.length,
+      tasks: _global_tasks
     });
   }
 

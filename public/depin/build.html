@@ -1120,22 +1120,80 @@
             body: JSON.stringify({
               sender: currentWallet,
               name: p1,
-              args: [p1, parseFloat(p2) || 1000]
+              initialSupply: parseFloat(p2) || 500000
             })
           });
           result = await res.json();
+          if (result.success) {
+            try {
+              let contracts = JSON.parse(localStorage.getItem('myca_contract_history') || '[]');
+              contracts.unshift({
+                name: p1,
+                address: result.contractAddress,
+                category: 'User Deployed Project',
+                gasFee: '0.00 MYC',
+                timestamp: Date.now()
+              });
+              localStorage.setItem('myca_contract_history', JSON.stringify(contracts));
+
+              let txs = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+              txs.unshift({
+                hash: result.txHash,
+                type: 'CONTRACT_DEPLOY',
+                module: 'Project Launchpad',
+                sender: currentWallet,
+                recipient: result.contractAddress,
+                amount: `${p2 || 500000} ${p1}`,
+                gasFee: '0.00000000 MYC',
+                finality: '< 8.9 ms (BFT)',
+                status: 'FINALIZED',
+                timestamp: Date.now()
+              });
+              localStorage.setItem('myca_tx_history', JSON.stringify(txs));
+            } catch(e) {}
+          }
         } else if (method === 'registerDevice') {
-          result = {
-            success: true,
-            status: 'CONFIRMED',
-            deviceId: p1,
-            walletAddress: 'myc1dev' + Math.random().toString(16).slice(2, 28),
-            negationShield: 'ACTIVE (0-BYTE INTERLOCK)',
-            gasUsed: '0.00000000 MYC',
-            finality: '38.4 µs',
-            consensus: 'Proof-of-Resonance (PoR)',
-            timestamp: new Date().toISOString()
-          };
+          var res = await fetch(API_BASE + '/api/device/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              did: 'did:myc:puf:' + p1,
+              deviceType: 'INDUSTRIAL_ACTUATOR',
+              pufChallenge: p2,
+              sender: currentWallet
+            })
+          });
+          result = await res.json();
+          if (result.success) {
+            try {
+              let devs = JSON.parse(localStorage.getItem('myca_device_history') || '[]');
+              devs.unshift({
+                did: result.deviceId || ('did:myc:puf:' + p1),
+                deviceType: 'INDUSTRIAL_ACTUATOR',
+                baseRegister: 150,
+                maxRegister: 220,
+                resonanceScoreBps: 10000,
+                isActive: true,
+                timestamp: Date.now()
+              });
+              localStorage.setItem('myca_device_history', JSON.stringify(devs));
+
+              let txs = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+              txs.unshift({
+                hash: result.txHash || ('0x' + Math.random().toString(16).slice(2) + 'd0108'),
+                type: 'DEVICE_REGISTER',
+                module: 'DePIN Device Registry',
+                sender: currentWallet,
+                recipient: '0x000000000000000000000000000000000090a8d0',
+                amount: 'Silicon PUF Identity (0-Byte Shield)',
+                gasFee: '0.00000000 MYC',
+                finality: '< 4.95 µs',
+                status: 'FINALIZED',
+                timestamp: Date.now()
+              });
+              localStorage.setItem('myca_tx_history', JSON.stringify(txs));
+            } catch(e) {}
+          }
         } else if (method === 'registerCapability') {
           var res = await fetch(API_BASE + '/api/capability/register', {
             method: 'POST',
@@ -1149,6 +1207,35 @@
             })
           });
           result = await res.json();
+          if (result.success) {
+            try {
+              let tasks = JSON.parse(localStorage.getItem('myca_task_history') || '[]');
+              tasks.unshift({
+                taskId: result.taskId || ('task_' + p1.replace(/[^a-zA-Z0-9]/g, '_')),
+                taskType: 'AI_CAPABILITY_PROVISION',
+                reward: parseFloat(p2) || 0.05,
+                status: 'DEPLOYED_ON_SWARM',
+                latencyMs: 3.4,
+                model: p1
+              });
+              localStorage.setItem('myca_task_history', JSON.stringify(tasks));
+
+              let txs = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+              txs.unshift({
+                hash: result.txHash || ('0x' + Math.random().toString(16).slice(2) + 't108'),
+                type: 'AGENT_TASK_DISPATCH',
+                module: 'AI Colony Sub-Swarm',
+                sender: currentWallet,
+                recipient: 'myc1colony_prime_mesh00000000',
+                amount: `${p2 || 0.05} MYC`,
+                gasFee: '0.00000000 MYC',
+                finality: '< 3.4 ms',
+                status: 'FINALIZED',
+                timestamp: Date.now()
+              });
+              localStorage.setItem('myca_tx_history', JSON.stringify(txs));
+            } catch(e) {}
+          }
         } else if (method === 'bridgeOutbound') {
           var res = await fetch(API_BASE + '/api/bridge/myc-to-evm', {
             method: 'POST',

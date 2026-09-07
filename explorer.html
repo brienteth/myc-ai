@@ -1091,25 +1091,55 @@
 
     async function fetchContracts() {
       try {
-        const res = await fetch("/api/contracts");
-        if (!res.ok) return;
-        const data = await res.json();
+        let localContracts = [];
+        try {
+          localContracts = JSON.parse(localStorage.getItem('myca_contract_history') || '[]');
+        } catch (e) {}
+
+        let apiContracts = [];
+        try {
+          const res = await fetch("/api/contracts");
+          if (res.ok) {
+            const data = await res.json();
+            apiContracts = data.contracts || [];
+          }
+        } catch (e) {}
+
         const tbody = document.getElementById("tbody-contracts");
-        if (!tbody || !data.contracts) return;
+        if (!tbody) return;
+
+        const combined = [];
+        const seenAddrs = new Set();
+        localContracts.forEach(c => {
+          if (c && c.address && !seenAddrs.has(c.address.toLowerCase())) {
+            seenAddrs.add(c.address.toLowerCase());
+            combined.push({ ...c, isUserDeployed: true });
+          }
+        });
+        apiContracts.forEach(c => {
+          if (c && c.address && !seenAddrs.has(c.address.toLowerCase())) {
+            seenAddrs.add(c.address.toLowerCase());
+            combined.push(c);
+          }
+        });
 
         tbody.innerHTML = "";
-        data.contracts.forEach(c => {
-          let cat = "Core Infrastructure";
-          if (c.name.includes("DEX") || c.name.includes("Staking") || c.name.includes("Token")) cat = "Lane B (DeFi & Yield)";
-          if (c.name.includes("Device") || c.name.includes("Guard")) cat = "Layer 0 (DePIN Hardware)";
-          if (c.name.includes("Agent") || c.name.includes("Task") || c.name.includes("Opacus")) cat = "Layer 3 (Agent Economy)";
-          if (c.name.includes("Bridge")) cat = "Cross-Chain Protocol";
+        combined.forEach(c => {
+          let cat = c.category || "Core Infrastructure";
+          if (c.isUserDeployed) cat = "⭐ User Deployed Project";
+          else if (c.name.includes("DEX") || c.name.includes("Staking") || c.name.includes("Token")) cat = "Lane B (DeFi & Yield)";
+          else if (c.name.includes("Device") || c.name.includes("Guard")) cat = "Layer 0 (DePIN Hardware)";
+          else if (c.name.includes("Agent") || c.name.includes("Task") || c.name.includes("Opacus")) cat = "Layer 3 (Agent Economy)";
+          else if (c.name.includes("Bridge")) cat = "Cross-Chain Protocol";
 
           const tr = document.createElement("tr");
+          if (c.isUserDeployed) {
+            tr.style.background = "rgba(16, 185, 129, 0.08)";
+          }
           tr.innerHTML = `
-            <td style="font-weight: 700; color: #fff;">${c.name}</td>
+            <td style="font-weight: 700; color: #fff;">${c.isUserDeployed ? '⭐ ' : ''}${c.name}</td>
             <td class="hash-cell" onclick="openModal('Contract: ${c.name}', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${c.address}</td>
-            <td><span class="badge-purple">${cat}</span></td>
+            <td><span class="${c.isUserDeployed ? 'badge-ok' : 'badge-purple'}">${cat}</span></td>
             <td><span class="badge-zero-gas">0.00 MYC (PoR Sovereign)</span></td>
             <td><button class="search-btn" style="padding: 4px 10px; font-size: 11px;" onclick="inspectContract('${c.name}', '${c.address}')">Inspect</button></td>
           `;
@@ -1120,32 +1150,52 @@
 
     async function fetchDevices() {
       try {
-        const res = await fetch("/api/explorer/devices");
-        if (!res.ok) return;
-        const data = await res.json();
-        const tbody = document.getElementById("tbody-devices");
-        if (!tbody || !data.devices) return;
+        let localDevices = [];
+        try {
+          localDevices = JSON.parse(localStorage.getItem('myca_device_history') || '[]');
+        } catch (e) {}
 
-        document.getElementById("count-devices").textContent = data.devices.length;
-        document.getElementById("kpi-device-count").textContent = `${data.devices.length} Units`;
+        let apiDevices = [];
+        try {
+          const res = await fetch("/api/explorer/devices");
+          if (res.ok) {
+            const data = await res.json();
+            apiDevices = data.devices || [];
+          }
+        } catch (e) {}
+
+        const tbody = document.getElementById("tbody-devices");
+        if (!tbody) return;
+
+        const combined = [];
+        const seenDids = new Set();
+        localDevices.forEach(d => {
+          if (d && d.did && !seenDids.has(d.did.toLowerCase())) {
+            seenDids.add(d.did.toLowerCase());
+            combined.push({ ...d, isUserRegistered: true });
+          }
+        });
+        apiDevices.forEach(d => {
+          if (d && d.did && !seenDids.has(d.did.toLowerCase())) {
+            seenDids.add(d.did.toLowerCase());
+            combined.push(d);
+          }
+        });
+
+        document.getElementById("count-devices").textContent = combined.length;
+        document.getElementById("kpi-device-count").textContent = `${combined.length} Units`;
         tbody.innerHTML = "";
 
-        if (data.devices.length === 0) {
-          // Provide fallback seed devices
-          data.devices.push(
-            { did: "dev-turbine-01", deviceType: "INDUSTRIAL_TURBINE", baseRegister: 120, maxRegister: 140, resonanceScoreBps: 10000, isActive: true },
-            { did: "dev-actuator-02", deviceType: "COOLING_VALVE", baseRegister: 10, maxRegister: 30, resonanceScoreBps: 9980, isActive: true },
-            { did: "dev-compute-03", deviceType: "GPU_COLLATERAL", baseRegister: 200, maxRegister: 250, resonanceScoreBps: 10000, isActive: true }
-          );
-        }
-
-        data.devices.forEach(d => {
+        combined.forEach(d => {
           const tr = document.createElement("tr");
+          if (d.isUserRegistered) {
+            tr.style.background = "rgba(16, 185, 129, 0.08)";
+          }
           tr.innerHTML = `
-            <td style="font-weight: 700; color: var(--primary); font-family: var(--font-mono);">${d.did}</td>
+            <td style="font-weight: 700; color: var(--primary); font-family: var(--font-mono);">${d.isUserRegistered ? '⭐ ' : ''}${d.did}</td>
             <td><span class="badge-purple">${d.deviceType || "ACTUATOR"}</span></td>
-            <td style="font-family: var(--font-mono);">Coil #${d.baseRegister} - #${d.maxRegister}</td>
-            <td><span class="badge-ok">${(d.resonanceScoreBps / 100).toFixed(1)}% Coherence</span></td>
+            <td style="font-family: var(--font-mono);">Coil #${d.baseRegister || 150} - #${d.maxRegister || 220}</td>
+            <td><span class="badge-ok">${((d.resonanceScoreBps || 10000) / 100).toFixed(1)}% Coherence</span></td>
             <td><span class="badge-ok">Modbus Negation Guard Active</span></td>
             <td><span class="badge-ok">ONLINE</span></td>
           `;
