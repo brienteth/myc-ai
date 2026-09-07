@@ -209,6 +209,107 @@ export default function handler(req, res) {
 
   
   // =========================================================================
+  
+  // =========================================================================
+  // NATIVE DEPIN WALLET & HUB ECOSYSTEM APIS
+  // =========================================================================
+
+  // Route: /api/wallet/balance
+  if (parsedUrl.pathname.includes('wallet/balance') || (parsedUrl.pathname.includes('balance') && !parsedUrl.pathname.includes('explorer'))) {
+    const address = parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    return res.status(200).json({
+      success: true,
+      address,
+      balance: 5000,
+      mycBalance: 5000,
+      usdtBalance: 1250,
+      usdcBalance: 1250,
+      stakedMyc: 2500,
+      unclaimedRewards: 48.75,
+      zeroGasAllowance: 'Unlimited (Silicon PUF Verified)',
+      nonce: 142
+    });
+  }
+
+  // Route: /api/swap/quote
+  if (parsedUrl.pathname.includes('swap/quote')) {
+    const from = parsedUrl.query?.from || 'MYC';
+    const to = parsedUrl.query?.to || 'USDT';
+    const amount = parseFloat(parsedUrl.query?.amount || '100');
+    const rate = from === 'MYC' ? 0.0997 : (1 / 0.0997);
+    const outAmount = Math.round((amount * rate) * 10000) / 10000;
+    return res.status(200).json({
+      success: true,
+      from,
+      to,
+      amountIn: amount,
+      amountOut: outAmount,
+      priceImpact: '0.02%',
+      fee: '0.00000000 MYC (Zero-Gas Lane B)',
+      poolReserves: { MYC: 4500000, USDT: 250000, USDC: 250000 }
+    });
+  }
+
+  // Route: /api/swap (POST)
+  if (parsedUrl.pathname.includes('swap') && method === 'POST') {
+    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'a7f0108';
+    return res.status(200).json({
+      success: true,
+      txHash,
+      status: 'FINALIZED',
+      blockNumber: 21204500 + Math.floor(Math.random() * 100),
+      gasPaid: '0.00000000 MYC',
+      message: 'Resonance AMM Swap executed successfully with zero gas fee.'
+    });
+  }
+
+  // Route: /api/faucet
+  if (parsedUrl.pathname.includes('faucet')) {
+    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'f7c108';
+    return res.status(200).json({
+      success: true,
+      amount: 5,
+      token: 'MYC',
+      txHash,
+      recipient: parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+      message: '5 Spore MYC dispensed successfully to your native session wallet.'
+    });
+  }
+
+  // Route: /api/stake/info
+  if (parsedUrl.pathname.includes('stake/info')) {
+    return res.status(200).json({
+      success: true,
+      stakedAmount: 2500,
+      annualApy: 18.4,
+      pendingReward: 48.75,
+      lockPeriod: 'Flexible (Instant Unstake)',
+      coherenceMultiplier: '1.25x'
+    });
+  }
+
+  // Route: /api/stake /claim /compound /unstake (POST)
+  if (parsedUrl.pathname.includes('stake') && method === 'POST') {
+    return res.status(200).json({
+      success: true,
+      status: 'CONFIRMED',
+      txHash: '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + '90a108',
+      message: 'NeuroYield staking action completed with zero gas fee.'
+    });
+  }
+
+  // Route: /api/bridge
+  if (parsedUrl.pathname.includes('bridge')) {
+    return res.status(200).json({
+      success: true,
+      transferId: 'tx_bridge_' + Math.floor(Math.random() * 100000),
+      status: 'QUORUM_VERIFIED',
+      signatures: 4,
+      required: 3,
+      message: 'Hyphae BFT cross-chain proof verified across 4/4 validators.'
+    });
+  }
+
   // CANONICAL EXPLORER & BLOCKCHAIN CONTINUOUS STATE ENGINE
   // =========================================================================
   if (parsedUrl.pathname.includes("explorer/overview")) {

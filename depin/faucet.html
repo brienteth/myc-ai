@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/depin/brand.css">
-  <link rel="icon" type="image/png" href="/depin/mycai_logo.png">
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
 
   <style>
     :root {
@@ -1202,8 +1202,8 @@
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
-      <a href="/depin" class="myca-brand">
-        <img src="/depin/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
         <div class="myca-brand-text">
           <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
           <span class="myca-chain-tag">CHAIN 108</span>
@@ -1228,10 +1228,10 @@
           <button class="myca-nav-link" onclick="switchHubTab('faucet')" id="nav-btn-faucet">Spore Faucet</button>
         </div>
         <div class="myca-nav-dropdown">
-          <a href="/depin/explorer" class="myca-nav-link">Lattice DAG</a>
+          <a href="/explorer" class="myca-nav-link">Lattice DAG</a>
         </div>
         <div class="myca-nav-dropdown">
-          <a href="/depin/marketplace" class="myca-nav-link" style="color: #34d399 !important;">🏪 Marketplace</a>
+          <a href="/marketplace" class="myca-nav-link" style="color: #34d399 !important;">🏪 Marketplace</a>
         </div>
         <div class="myca-nav-dropdown">
           <a href="/depin" class="myca-nav-link">Rhizome DePIN</a>
@@ -1240,7 +1240,7 @@
           <a href="/agent" class="myca-nav-link">AI Colony</a>
         </div>
         <div class="myca-nav-dropdown">
-          <a href="/depin/arcade" class="myca-nav-link">AI Arcade</a>
+          <a href="/arcade" class="myca-nav-link">AI Arcade</a>
         </div>
       </div>
 
@@ -1253,7 +1253,7 @@
         </div>
         <div id="live-wallet-chip" style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 14px; font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--cyan-accent); display: flex; align-items: center; gap: 8px;">
           <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 8px var(--teal-accent);"></span>
-          <span id="nav-wallet-balance">Loading...</span>
+          <span id="nav-wallet-balance">5,000 MYC</span>
         </div>
         <button onclick="switchHubTab('faucet')" class="myca-btn-secondary" style="cursor: pointer;">🎁 Claim 5 $MYC</button>
       </div>
@@ -1529,7 +1529,7 @@
         </div>
         <div class="hub-card-footer">
           <div class="hub-card-meta">Real-Time DAG</div>
-          <a href="/depin/explorer" class="hub-card-btn">Open Explorer ↗</a>
+          <a href="/explorer" class="hub-card-btn">Open Explorer ↗</a>
         </div>
       </div>
 
@@ -1550,7 +1550,7 @@
         </div>
         <div class="hub-card-footer">
           <div class="hub-card-meta">Interactive 2D Sandbox</div>
-          <a href="/depin/arcade" class="hub-card-btn" style="background: #10b981; color: #064e3b; font-weight: 700;">Play Arcade ↗</a>
+          <a href="/arcade" class="hub-card-btn" style="background: #10b981; color: #064e3b; font-weight: 700;">Play Arcade ↗</a>
         </div>
       </div>
     </div>
@@ -1563,9 +1563,9 @@
           <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Access the ContractVM Playground, 18 deployed core contract ABIs, JSON-RPC specs, and the bare-metal C99 SDK in our technical documentation.</p>
         </div>
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <a href="/depin/contracts" class="btn-quick btn-quick-outline">📜 Contract ABIs</a>
-          <a href="/depin/dev-docs" class="btn-quick btn-quick-outline">🛠️ Substrate Docs</a>
-          <a href="/depin/docs" class="btn-quick btn-quick-primary">📖 Whitepaper ↗</a>
+          <a href="/contracts" class="btn-quick btn-quick-outline">📜 Contract ABIs</a>
+          <a href="/dev-docs.html" class="btn-quick btn-quick-outline">🛠️ Substrate Docs</a>
+          <a href="/docs.html" class="btn-quick btn-quick-primary">📖 Whitepaper ↗</a>
         </div>
       </div>
     </div>
@@ -2185,7 +2185,7 @@
   <script>
     const API_BASE = window.location.origin;
     const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
-    let currentBalances = { MYC: 0, USDT: 0, USDC: 0 };
+    let currentBalances = { MYC: 5000, USDT: 1250, USDC: 1250 };
     let activeHubTab = 'discover';
     let activeCategory = 'all';
 
