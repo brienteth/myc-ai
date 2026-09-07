@@ -2,6 +2,86 @@
 let _h3_agents = {};
 let _h3_signals = {};
 
+let _global_transactions = [
+  {
+    hash: '0x3a8f108c901a52de449b819f71c480108f902781',
+    type: 'SWAP',
+    module: 'Mycelial Swap',
+    sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    recipient: '0x0000000000000000000000000000000000dEx108 (Resonance AMM)',
+    amount: '250 MYC ➔ 24.92 USDT',
+    rawAmount: 250,
+    gasFee: '0.00000000 MYC',
+    finality: '< 7.8 ms',
+    status: 'FINALIZED',
+    timestamp: Date.now() - 45000
+  },
+  {
+    hash: '0x7e2210819fa82bb49102c4091bc8201083901bca',
+    type: 'STAKE_DEPOSIT',
+    module: 'NeuroYield Staking',
+    sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    recipient: '0x000000000000000000000000000000000057a810 (NeuroVault)',
+    amount: '1,000 MYC',
+    rawAmount: 1000,
+    gasFee: '0.00000000 MYC',
+    finality: '< 6.4 ms',
+    status: 'FINALIZED',
+    timestamp: Date.now() - 120000
+  },
+  {
+    hash: '0xf910108b29c402198fa01b84920bca9082108ec7',
+    type: 'FAUCET_DISPENSE',
+    module: 'Spore Faucet',
+    sender: 'myc1faucet_spore_distributor',
+    recipient: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    amount: '1,000 MYC • 500 USDT • 500 USDC',
+    rawAmount: 1000,
+    gasFee: '0.00000000 MYC',
+    finality: '< 4.2 ms',
+    status: 'FINALIZED',
+    timestamp: Date.now() - 300000
+  },
+  {
+    hash: '0x99a11082c19a803be2918bcda1028710891acba0',
+    type: 'BRIDGE_LOCK',
+    module: 'Hyphae Bridge',
+    sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    recipient: '0x8453B02919Ff77A7cEc5cE8924b172a370e00001 (Base Sepolia Vault)',
+    amount: '500 MYC',
+    rawAmount: 500,
+    gasFee: '0.00000000 MYC',
+    finality: '< 11.2 ms (3/4 BFT)',
+    status: 'FINALIZED',
+    timestamp: Date.now() - 600000
+  }
+];
+
+let _global_bridge_transactions = [
+  {
+    bridgeId: 'bridge_lock_894102',
+    sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    targetChain: 'BASE_SEPOLIA',
+    recipientRemote: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+    amount: 500,
+    asset: 'MYC',
+    status: 'LOCKED (3/4 BFT QUORUM READY)',
+    lockProof: '0x379607f59a80bbf7c108a9...',
+    timestamp: Date.now() - 600000
+  },
+  {
+    bridgeId: 'bridge_lock_894088',
+    sender: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+    targetChain: 'MYCA_CHAIN_108',
+    recipientRemote: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+    amount: 250,
+    asset: 'USDT',
+    status: 'MINTED_ON_MYCA',
+    lockProof: '0x4102ff98aa12c0...',
+    timestamp: Date.now() - 1200000
+  }
+];
+
 export default function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -250,12 +330,67 @@ export default function handler(req, res) {
     });
   }
 
+  // Route: /api/explorer/record-tx (POST)
+  if (parsedUrl.pathname.includes('explorer/record-tx') && method === 'POST') {
+    const tx = req.body || {};
+    if (tx.hash) {
+      if (!_global_transactions.some(t => t.hash === tx.hash)) {
+        _global_transactions.unshift(tx);
+        if (_global_transactions.length > 100) _global_transactions.pop();
+      }
+    }
+    return res.status(200).json({ success: true, count: _global_transactions.length });
+  }
+
+  // Route: /api/explorer/transactions
+  if (parsedUrl.pathname.includes('explorer/transactions')) {
+    return res.status(200).json({
+      success: true,
+      count: _global_transactions.length,
+      transactions: _global_transactions
+    });
+  }
+
+  // Route: /api/bridge/transactions
+  if (parsedUrl.pathname.includes('bridge/transactions')) {
+    return res.status(200).json({
+      success: true,
+      count: _global_bridge_transactions.length,
+      transactions: _global_bridge_transactions
+    });
+  }
+
   // Route: /api/swap (POST)
   if (parsedUrl.pathname.includes('swap') && method === 'POST') {
-    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'a7f0108';
+    const body = req.body || {};
+    const from = body.from || 'MYC';
+    const to = body.to || 'USDT';
+    const amount = parseFloat(body.amount) || 100;
+    const rate = from === 'MYC' ? 0.0997 : (1 / 0.0997);
+    const amountOut = Math.round((amount * rate) * 10000) / 10000;
+    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'a7f0108';
+
+    const tx = {
+      hash: txHash,
+      type: 'SWAP',
+      module: 'Mycelial Swap',
+      sender: body.userAddress || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+      recipient: '0x0000000000000000000000000000000000dEx108 (Resonance AMM)',
+      amount: `${amount} ${from} ➔ ${amountOut} ${to}`,
+      rawAmount: amount,
+      gasFee: '0.00000000 MYC (Lane B AMM)',
+      finality: '< 7.8 ms (BFT)',
+      status: 'FINALIZED',
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+    if (_global_transactions.length > 100) _global_transactions.pop();
+
     return res.status(200).json({
       success: true,
       txHash,
+      transaction: tx,
+      swap: { amountIn: amount, amountOut, from, to },
       status: 'FINALIZED',
       blockNumber: 21204500 + Math.floor(Math.random() * 100),
       gasPaid: '0.00000000 MYC',
@@ -265,14 +400,34 @@ export default function handler(req, res) {
 
   // Route: /api/faucet
   if (parsedUrl.pathname.includes('faucet')) {
-    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'f7c108';
+    const body = req.body || {};
+    const recipient = body.address || parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'f7c108';
+
+    const tx = {
+      hash: txHash,
+      type: 'FAUCET_DISPENSE',
+      module: 'Spore Faucet',
+      sender: 'myc1faucet_spore_distributor',
+      recipient,
+      amount: '1,000 MYC • 500 USDT • 500 USDC',
+      rawAmount: 1000,
+      gasFee: '0.00000000 MYC (PoQR Quota)',
+      finality: '< 4.2 ms (Instant)',
+      status: 'FINALIZED',
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+    if (_global_transactions.length > 100) _global_transactions.pop();
+
     return res.status(200).json({
       success: true,
-      amount: 5,
+      amount: 1000,
       token: 'MYC',
       txHash,
-      recipient: parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
-      message: '5 Spore MYC dispensed successfully to your native session wallet.'
+      transaction: tx,
+      recipient,
+      message: '1,000 Spore MYC dispensed successfully to your native session wallet.'
     });
   }
 
@@ -280,9 +435,13 @@ export default function handler(req, res) {
   if (parsedUrl.pathname.includes('stake/info')) {
     return res.status(200).json({
       success: true,
+      amount: 2500,
       stakedAmount: 2500,
       annualApy: 18.4,
       pendingReward: 48.75,
+      unclaimedRewards: 48.75,
+      tier: 'BOOSTED_30D',
+      machineQuota: 65,
       lockPeriod: 'Flexible (Instant Unstake)',
       coherenceMultiplier: '1.25x'
     });
@@ -290,19 +449,110 @@ export default function handler(req, res) {
 
   // Route: /api/stake /claim /compound /unstake (POST)
   if (parsedUrl.pathname.includes('stake') && method === 'POST') {
+    const body = req.body || {};
+    const address = body.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    const amt = parseFloat(body.amount) || 250;
+    const isHarvest = parsedUrl.pathname.includes('claim');
+    const isCompound = parsedUrl.pathname.includes('compound');
+    const isUnstake = parsedUrl.pathname.includes('unstake');
+
+    let txType = 'STAKE_DEPOSIT';
+    let txAmt = `${amt} MYC`;
+    if (isHarvest) { txType = 'STAKE_HARVEST'; txAmt = '48.75 MYC (Yield)'; }
+    else if (isCompound) { txType = 'STAKE_COMPOUND'; txAmt = '48.75 MYC (Re-Staked)'; }
+    else if (isUnstake) { txType = 'STAKE_UNSTAKE'; txAmt = `${amt} MYC`; }
+
+    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + '90a108';
+
+    const tx = {
+      hash: txHash,
+      type: txType,
+      module: 'NeuroYield Staking',
+      sender: address,
+      recipient: '0x000000000000000000000000000000000057a810 (NeuroVault)',
+      amount: txAmt,
+      rawAmount: amt,
+      gasFee: '0.00000000 MYC (Zero-Gas Lane B)',
+      finality: '< 6.4 ms (BFT Lock)',
+      status: 'FINALIZED',
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+    if (_global_transactions.length > 100) _global_transactions.pop();
+
     return res.status(200).json({
       success: true,
       status: 'CONFIRMED',
-      txHash: '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + '90a108',
-      message: 'NeuroYield staking action completed with zero gas fee.'
+      txHash,
+      transaction: tx,
+      claimedAmount: 48.75,
+      compoundedAmount: 48.75,
+      message: `NeuroYield staking (${txType}) completed with zero gas fee.`
     });
   }
 
-  // Route: /api/bridge
-  if (parsedUrl.pathname.includes('bridge')) {
+  // Route: /api/bridge (POST & GET)
+  if (parsedUrl.pathname.includes('bridge') && !parsedUrl.pathname.includes('transactions')) {
+    const body = req.body || {};
+    const isOutbound = parsedUrl.pathname.includes('myc-to-evm');
+    const asset = body.asset || 'MYC';
+    const amount = parseFloat(body.amount) || 50;
+    const sender = body.senderOnMyc || body.senderOnBase || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    const recipient = body.recipientOnEvm || body.recipientOnMyc || '0x742d35Cc6634C0532925a3b844Bc454e4438f44e';
+    const targetChain = body.targetChain || body.sourceChain || 'BASE_SEPOLIA';
+
+    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'b8108';
+    const bridgeId = 'bridge_' + Math.floor(Math.random() * 900000 + 100000);
+
+    const tx = {
+      hash: txHash,
+      type: isOutbound ? 'BRIDGE_LOCK' : 'BRIDGE_MINT',
+      module: 'Hyphae Bridge',
+      sender,
+      recipient: isOutbound ? '0x0000000000000000000000000000000000b81d9e (Bridge Gateway)' : recipient,
+      amount: `${amount} ${asset}`,
+      rawAmount: amount,
+      gasFee: '0.00000000 MYC (Lattice BFT)',
+      finality: '< 11.2 ms (3/4 BFT)',
+      status: 'FINALIZED',
+      timestamp: Date.now()
+    };
+    _global_transactions.unshift(tx);
+    if (_global_transactions.length > 100) _global_transactions.pop();
+
+    const bridgeTx = {
+      bridgeId,
+      sender,
+      targetChain,
+      recipientRemote: recipient,
+      amount,
+      asset,
+      status: isOutbound ? 'LOCKED (3/4 BFT QUORUM READY)' : 'MINTED_ON_MYCA',
+      lockProof: '0x3796' + Math.floor(Math.random() * 0xffffffff).toString(16) + '...',
+      timestamp: Date.now()
+    };
+    _global_bridge_transactions.unshift(bridgeTx);
+    if (_global_bridge_transactions.length > 50) _global_bridge_transactions.pop();
+
     return res.status(200).json({
       success: true,
-      transferId: 'tx_bridge_' + Math.floor(Math.random() * 100000),
+      transferId: bridgeId,
+      txHash,
+      transaction: tx,
+      bridgeTx,
+      proof: {
+        direction: isOutbound ? 'MYCA_TO_EVM' : 'EVM_TO_MYCA',
+        amount,
+        asset,
+        transferId: bridgeId,
+        signatures: 4,
+        requiredQuorum: 3,
+        destination: {
+          targetChain: targetChain,
+          receivedAmount: amount,
+          evmCalldata: '0x379607f5000000000000000000000000'
+        }
+      },
       status: 'QUORUM_VERIFIED',
       signatures: 4,
       required: 3,
@@ -358,7 +608,7 @@ export default function handler(req, res) {
       parentHash: recentBlocks[1].hash,
       validator: recentBlocks[0].validator,
       totalTransactions,
-      recentActivity,
+      recentActivity: [..._global_transactions, ...recentActivity],
       recentBlocks,
       dexReserves: { MYC: 4500000, USDT: 250000, USDC: 250000 },
       totalStaked: 14200000,

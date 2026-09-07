@@ -479,6 +479,34 @@
       if (indicator) indicator.remove();
 
       document.getElementById("memCount").textContent = `${agent.memory.length} Nodes`;
+      if (res.dagVertex) {
+        try {
+          let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+          const isTransfer = (res.prompt || '').includes('10');
+          const txItem = {
+            hash: res.dagVertex,
+            type: isTransfer ? 'M2M_AGENT_TRANSFER' : 'AI_COLONY_ACTION',
+            module: 'AI Colony',
+            sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+            recipient: isTransfer ? 'myc1drone_autonomous_fleet' : 'myc1colony_prime_mesh00000000',
+            amount: isTransfer ? '10 MYC' : '0 MYC',
+            gasFee: '0.00000000 MYC',
+            finality: `${res.latency_us} µs`,
+            status: 'FINALIZED',
+            timestamp: Date.now()
+          };
+          if (!history.some(t => t.hash === txItem.hash)) {
+            history.unshift(txItem);
+            if (history.length > 100) history = history.slice(0, 100);
+            localStorage.setItem('myca_tx_history', JSON.stringify(history));
+          }
+          fetch('/api/explorer/record-tx', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(txItem)
+          }).catch(() => {});
+        } catch(e) {}
+      }
 
       if (res.status === "REJECTED_BY_SAFE_SIGN") {
         updateVoltageDisplay("0.00 V", true);
@@ -594,6 +622,7 @@
         appendMessage("agent", `
           <div class="tool-badge">⚡ ARAÇ İCRASI: ${res.toolCalled}</div>
           <div>${res.prompt} ➔ <strong>Başarıyla Tamamlandı (%100 Çevrimdışı).</strong></div>
+          <div style="font-size:11px; color:var(--teal); font-family:var(--font-mono); margin-top:4px;">⚡ Lattice DAG Vertex Tx: ${res.dagVertex.slice(0, 18)}... (Zero-Gas)</div>
           ${details}
           <div style="margin-top:6px; font-family:var(--font-mono); font-size:10px; color:var(--faint);">
             İcra Gecikmesi: ${res.latency_us} µs | Gaz: ${res.gasFee} | DAG: ${res.dagVertex.slice(0, 20)}...
@@ -639,6 +668,34 @@
 
     // Initial load
     document.getElementById("memCount").textContent = `${agent.memory.length} Nodes`;
+      if (res.dagVertex) {
+        try {
+          let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+          const isTransfer = (res.prompt || '').includes('10');
+          const txItem = {
+            hash: res.dagVertex,
+            type: isTransfer ? 'M2M_AGENT_TRANSFER' : 'AI_COLONY_ACTION',
+            module: 'AI Colony',
+            sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+            recipient: isTransfer ? 'myc1drone_autonomous_fleet' : 'myc1colony_prime_mesh00000000',
+            amount: isTransfer ? '10 MYC' : '0 MYC',
+            gasFee: '0.00000000 MYC',
+            finality: `${res.latency_us} µs`,
+            status: 'FINALIZED',
+            timestamp: Date.now()
+          };
+          if (!history.some(t => t.hash === txItem.hash)) {
+            history.unshift(txItem);
+            if (history.length > 100) history = history.slice(0, 100);
+            localStorage.setItem('myca_tx_history', JSON.stringify(history));
+          }
+          fetch('/api/explorer/record-tx', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(txItem)
+          }).catch(() => {});
+        } catch(e) {}
+      }
   </script>
 </body>
 </html>

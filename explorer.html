@@ -1019,25 +1019,70 @@
           });
         }
 
-        // Render Transactions
+        // Render Transactions (Merged Local Storage + Sovereign Ledger)
         const tbodyTxs = document.getElementById("tbody-txs");
-        if (tbodyTxs && data.recentActivity && data.recentActivity.length > 0) {
-          document.getElementById("count-txs").textContent = data.recentActivity.length;
-          tbodyTxs.innerHTML = "";
-          data.recentActivity.slice(0, 15).forEach(tx => {
-            const tr = document.createElement("tr");
-            tr.innerHTML = `
-              <td class="hash-cell" onclick="openModal('Transaction ${tx.hash}', ${JSON.stringify(tx).replace(/"/g, '&quot;')})">${(tx.hash || "0x").slice(0, 14)}...</td>
-              <td><span class="badge-purple">${tx.type || "TRANSFER"}</span></td>
-              <td style="font-family: var(--font-mono); color: var(--text-dim);">${(tx.sender || "Genesis").slice(0, 12)}...</td>
-              <td style="font-family: var(--font-mono); color: var(--text-dim);">${(tx.recipient || "Protocol").slice(0, 12)}...</td>
-              <td style="font-weight: 700; color: #fff;">${tx.amount ? tx.amount.toLocaleString() + " MYC" : "—"}</td>
-              <td><span class="badge-zero-gas">0.00000000 MYC</span></td>
-              <td style="color: var(--primary); font-family: var(--font-mono);">${tx.finality || "< 38.4 µs"}</td>
-              <td><span class="badge-ok">FINALIZED</span></td>
-            `;
-            tbodyTxs.appendChild(tr);
+        if (tbodyTxs) {
+          let localTxs = [];
+          try {
+            localTxs = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+          } catch (e) {}
+
+          const apiTxs = (data && data.recentActivity) ? data.recentActivity : [];
+          const combined = [];
+          const seenHashes = new Set();
+
+          localTxs.forEach(tx => {
+            if (tx && tx.hash && !seenHashes.has(tx.hash)) {
+              seenHashes.add(tx.hash);
+              combined.push({ ...tx, isUserTx: true });
+            }
           });
+
+          apiTxs.forEach(tx => {
+            if (tx && tx.hash && !seenHashes.has(tx.hash)) {
+              seenHashes.add(tx.hash);
+              combined.push(tx);
+            }
+          });
+
+          if (combined.length > 0) {
+            document.getElementById("count-txs").textContent = combined.length;
+            tbodyTxs.innerHTML = "";
+            combined.slice(0, 40).forEach(tx => {
+              const tr = document.createElement("tr");
+              if (tx.isUserTx) {
+                tr.style.background = "rgba(16, 185, 129, 0.08)";
+              }
+
+              let badgeClass = "badge-purple";
+              let typeLabel = tx.type || "TRANSFER";
+              if (typeLabel.includes("SWAP")) badgeClass = "badge-ok";
+              else if (typeLabel.includes("BRIDGE")) badgeClass = "badge-purple";
+              else if (typeLabel.includes("STAKE")) badgeClass = "badge-ok";
+              else if (typeLabel.includes("FAUCET")) badgeClass = "badge-zero-gas";
+
+              const senderDisplay = (tx.sender || "Genesis").slice(0, 14) + "...";
+              const recipientDisplay = (tx.recipient || "Protocol").slice(0, 14) + "...";
+              const amountDisplay = tx.amount ? (typeof tx.amount === "number" ? tx.amount.toLocaleString() + " MYC" : tx.amount) : "—";
+              const statusBadge = tx.isUserTx
+                ? `<span class="badge-ok" style="background: rgba(16, 185, 129, 0.25); border: 1px solid var(--primary);">FINALIZED ⚡</span>`
+                : `<span class="badge-ok">FINALIZED</span>`;
+
+              tr.innerHTML = `
+                <td class="hash-cell" onclick="openModal('Transaction ${tx.hash}', ${JSON.stringify(tx).replace(/"/g, '&quot;')})">
+                  ${tx.isUserTx ? '⭐ ' : ''}${(tx.hash || "0x").slice(0, 14)}...
+                </td>
+                <td><span class="${badgeClass}">${typeLabel}</span></td>
+                <td style="font-family: var(--font-mono); color: var(--text-dim);" title="${tx.sender || ''}">${senderDisplay}</td>
+                <td style="font-family: var(--font-mono); color: var(--text-dim);" title="${tx.recipient || ''}">${recipientDisplay}</td>
+                <td style="font-weight: 700; color: #fff;">${amountDisplay}</td>
+                <td><span class="badge-zero-gas">0.00000000 MYC</span></td>
+                <td style="color: var(--primary); font-family: var(--font-mono);">${tx.finality || "< 7.8 ms"}</td>
+                <td>${statusBadge}</td>
+              `;
+              tbodyTxs.appendChild(tr);
+            });
+          }
         }
       } catch (e) {
         console.warn("fetchOverview error:", e);
@@ -1144,35 +1189,68 @@
 
     async function fetchBridgeTxs() {
       try {
-        const res = await fetch("/api/bridge/transactions");
-        if (!res.ok) return;
-        const data = await res.json();
         const tbody = document.getElementById("tbody-bridge");
-        if (!tbody || !data.transactions) return;
+        if (!tbody) return;
 
-        document.getElementById("count-bridge").textContent = data.transactions.length;
-        tbody.innerHTML = "";
+        let localBridges = [];
+        try {
+          localBridges = JSON.parse(localStorage.getItem('myca_bridge_history') || '[]');
+        } catch (e) {}
 
-        if (data.transactions.length === 0) {
-          data.transactions.push(
-            { bridgeId: "bridge_canonical_01", sender: "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002", targetChain: "BASE_SEPOLIA", recipientRemote: "0x742d...f44e", amount: 500, status: "LOCKED", lockProof: "LATTICE_PROOF_01" }
+        let apiBridges = [];
+        try {
+          const res = await fetch("/api/bridge/transactions");
+          if (res.ok) {
+            const data = await res.json();
+            apiBridges = data.transactions || [];
+          }
+        } catch (e) {}
+
+        const combined = [];
+        const seenIds = new Set();
+        localBridges.forEach(b => {
+          const key = b.bridgeId || b.hash;
+          if (key && !seenIds.has(key)) {
+            seenIds.add(key);
+            combined.push({ ...b, isUserTx: true });
+          }
+        });
+        apiBridges.forEach(b => {
+          const key = b.bridgeId || b.hash;
+          if (key && !seenIds.has(key)) {
+            seenIds.add(key);
+            combined.push(b);
+          }
+        });
+
+        if (combined.length === 0) {
+          combined.push(
+            { bridgeId: "bridge_canonical_01", sender: "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002", targetChain: "BASE_SEPOLIA", recipientRemote: "0x742d...f44e", amount: 500, status: "LOCKED (3/4 BFT QUORUM READY)", lockProof: "LATTICE_PROOF_01" }
           );
         }
 
-        data.transactions.forEach(b => {
+        document.getElementById("count-bridge").textContent = combined.length;
+        tbody.innerHTML = "";
+
+        combined.forEach(b => {
           const tr = document.createElement("tr");
+          if (b.isUserTx) {
+            tr.style.background = "rgba(16, 185, 129, 0.08)";
+          }
           tr.innerHTML = `
-            <td style="font-weight: 700; color: var(--primary); font-family: var(--font-mono);">${b.bridgeId.slice(0, 16)}...</td>
-            <td style="font-family: var(--font-mono); color: var(--text-dim);">${(b.sender || "myc1...").slice(0, 12)}...</td>
-            <td><span class="badge-purple">${b.targetChain || "BASE"}</span></td>
+            <td style="font-weight: 700; color: var(--primary); font-family: var(--font-mono);">${(b.bridgeId || "bridge_id").slice(0, 16)}...</td>
+            <td style="font-family: var(--font-mono); color: var(--text-dim);">${(b.sender || "myc1...").slice(0, 14)}...</td>
+            <td><span class="badge-purple">${b.targetChain || "BASE_SEPOLIA"}</span></td>
             <td style="font-family: var(--font-mono); color: var(--text-dim);">${(b.recipientRemote || "0x...").slice(0, 14)}...</td>
-            <td style="font-weight: 700; color: #fff;">${b.amount} MYC</td>
+            <td style="font-weight: 700; color: #fff;">${b.amount} ${b.asset || 'MYC'}</td>
             <td><span class="badge-ok">2/3+1 QUORUM READY</span></td>
-            <td style="font-family: var(--font-mono); color: var(--text-mute);">${b.lockProof || "PROOF_OK"}</td>
+            <td style="font-family: var(--font-mono); color: var(--text-mute);">${(b.lockProof || "PROOF_OK").slice(0, 16)}...</td>
           `;
           tbody.appendChild(tr);
         });
-      } catch (e) {}
+      } catch (e) {
+        console.warn("fetchBridgeTxs error:", e);
+      }
     }
 
     async function fetchChannels() {
