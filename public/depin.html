@@ -1,330 +1,358 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rhizome DePIN — Bio-Industrial Machine Fleet &amp; Silicon PUF Sentinel | MYCA Network</title>
-  <meta name="description" content="Connecting industrial microcontrollers, sensors, and SCADA actuators to the MYCA Living Lattice. Sub-40µs deterministic machine intent, Silicon PUF identities, and 0-Byte Negation Shield.">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
+  <title>Rhizome DePIN — Bio-Industrial Machine Fleet & Silicon PUF Sentinel | Chain 108</title>
   <link rel="stylesheet" href="/brand.css">
-  <link rel="icon" type="image/png" href="/mycai_logo.png">
   <style>
-    :root {
-      --bg-base: #080c14;
-      --bg-surface: #0f172a;
-      --bg-card: #141f36;
-      --border-color: rgba(255, 255, 255, 0.09);
-      --border-glow: #00f0ff;
-      --teal: #10b981;
-      --cyan: #00f0ff;
-      --purple: #a855f7;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-faint: #64748b;
-      --ok: #10b981;
-      --warn: #f59e0b;
-      --danger: #ef4444;
-      --font-main: 'DM Sans', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
+    .depin-shell { max-width: 1340px; margin: 24px auto; padding: 0 20px; }
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: var(--bg-base);
-      color: var(--text-main);
-      font-family: var(--font-main);
-      min-height: 100vh;
-      line-height: 1.5;
-      padding-top: 80px;
-      overflow-x: hidden;
-    }
-
-    .app-container {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 32px 24px 80px;
-    }
-
-    /* Hero Banner */
-    .hero-banner {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(0, 240, 255, 0.05));
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 32px;
-      position: relative;
-      overflow: hidden;
-      backdrop-filter: blur(12px);
-    }
-
-    .hero-banner h1 {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.8px;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-banner p {
-      font-size: 15px;
-      color: var(--text-muted);
-      max-width: 900px;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .spec-badges {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .spec-pill {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--cyan);
-      background: rgba(0, 240, 255, 0.08);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      padding: 6px 14px;
-      border-radius: 100px;
-    }
-
-    /* Dashboard Grid */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-    }
-
-    @media (max-width: 960px) {
-      .dashboard-grid { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 24px;
-      backdrop-filter: blur(12px);
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      padding-bottom: 12px;
-    }
-
-    .brand-badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--teal);
-      background: rgba(16, 185, 129, 0.1);
+    /* Industrial Header Banner */
+    .industrial-hero {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 30, 0.98));
       border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 3px 8px;
-      border-radius: 6px;
-    }
-
-    /* Machine Hardware Card */
-    .machine-card {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 16px;
+      padding: 24px 28px;
       margin-bottom: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
     }
-
-    .machine-header {
+    .hero-top-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
       margin-bottom: 16px;
     }
-
-    .machine-chip {
-      font-family: var(--font-mono);
+    .hero-badge-tag {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 700;
-      color: var(--purple);
-      background: rgba(168, 85, 247, 0.12);
-      border: 1px solid rgba(168, 85, 247, 0.3);
-      padding: 4px 10px;
-      border-radius: 6px;
+      color: #10b981;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
     }
-
-    .machine-did {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--cyan);
-      background: rgba(0, 240, 255, 0.06);
-      padding: 10px 14px;
+    .hero-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 6px 0;
+    }
+    .hero-desc {
+      font-size: 13.5px;
+      color: #94a3b8;
+      max-width: 900px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .spec-strip {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .spec-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 8px;
-      border: 1px dashed rgba(0, 240, 255, 0.25);
-      margin-bottom: 16px;
-      word-break: break-all;
-    }
-
-    .machine-grid-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .m-stat-lbl {
+      padding: 6px 12px;
       font-size: 11px;
-      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      color: #cbd5e1;
+    }
+    .spec-chip.highlight {
+      border-color: rgba(0, 240, 255, 0.4);
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.06);
+    }
+
+    /* Scenario Switcher Tabs */
+    .scenario-tabs-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+    .sc-tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sc-tab-btn:hover {
+      background: rgba(16, 185, 129, 0.08);
+      color: #fff;
+    }
+    .sc-tab-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #10b981;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Main DePIN Workbench Layout */
+    .depin-grid {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 20px;
+    }
+    @media (max-width: 1024px) {
+      .depin-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .workbench-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+    .card-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .puf-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: #00f0ff;
+    }
+
+    /* SCADA Telemetry Screen */
+    .scada-screen {
+      background: #060b14;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .scada-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .scada-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .scada-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .scada-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 800;
+      color: #10b981;
+    }
+    .scada-val.alert { color: #ef4444; }
+    .scada-lbl {
+      font-size: 10px;
+      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
-    .m-stat-val {
-      font-size: 14px;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      color: #fff;
-      margin-top: 2px;
+    /* C99 Safe-Sign 6-Lock Status Visualizer */
+    .locks-visualizer {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
     }
-
-    /* Custom Input Wrap */
-    .input-box-wrap {
+    .locks-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 12px;
       display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
+      justify-content: space-between;
     }
-
-    .custom-input {
-      flex: 1;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--border-color);
+    .locks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 640px) {
+      .locks-grid { grid-template-columns: 1fr; }
+    }
+    .lock-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 8px;
-      padding: 12px 16px;
-      color: #fff;
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    .custom-input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
-    }
-
-    .btn-send {
-      background: linear-gradient(135deg, var(--teal), #0284c7);
-      color: #000;
-      border: none;
-      padding: 0 20px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-send:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
-    }
-
-    /* Action Buttons */
-    .action-group {
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 4px;
+      transition: all 0.2s;
     }
-
-    .action-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 14px 16px;
+    .lock-item.secure {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.04);
+    }
+    .lock-item.tripped {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.08);
+    }
+    .lock-name {
+      font-size: 11px;
+      font-weight: 700;
       color: #fff;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      text-align: left;
-      font-family: inherit;
-      transition: all 0.2s;
     }
-
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateX(2px);
+    .lock-state {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #10b981;
     }
+    .lock-state.tripped { color: #ef4444; }
+    .lock-sub { font-size: 9.5px; color: #64748b; }
 
-    .action-btn.danger:hover {
-      border-color: var(--danger);
-      background: rgba(239, 68, 68, 0.08);
+    /* Industrial Control Triggers */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
-
-    .badge-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      display: block;
+    @media (max-width: 640px) {
+      .controls-grid { grid-template-columns: 1fr; }
     }
-
-    /* Telemetry & Trace Panel */
-    .telemetry-feed {
-      background: #04060a;
-      border: 1px solid var(--border-color);
+    .ind-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
-      padding: 16px;
-      font-family: var(--font-mono);
+      padding: 12px 14px;
+      color: #fff;
       font-size: 12px;
-      height: 380px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ind-btn:hover {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .ind-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .ind-btn-title { font-size: 12px; font-weight: 700; }
+    .ind-btn-sub { font-size: 10px; color: #94a3b8; }
+
+    /* Right Column: Live Modbus RTU Bus & DAG Vertex Log */
+    .bus-log-card {
+      background: #070d18;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      height: 680px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .bus-log-head {
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bus-stream {
+      flex: 1;
+      padding: 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      font-size: 12px;
     }
-
-    .feed-item {
-      padding: 8px 12px;
-      border-radius: 6px;
+    .packet-entry {
       background: rgba(255, 255, 255, 0.02);
-      border-left: 3px solid var(--cyan);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-left: 3px solid #10b981;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: fadeIn 0.3s ease;
     }
-
-    .feed-item.shield {
-      border-left-color: var(--danger);
-      background: rgba(239, 68, 68, 0.05);
+    .packet-entry.halted {
+      border-left-color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
     }
-
-    .feed-item.verified {
-      border-left-color: var(--teal);
-    }
-
-    .feed-time {
-      color: var(--text-faint);
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .packet-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      margin-bottom: 2px;
+      color: #64748b;
     }
-
-    .feed-msg {
-      color: #f1f5f9;
-      font-weight: 500;
+    .packet-hex {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #00f0ff;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 8px;
+      border-radius: 4px;
+      word-break: break-all;
     }
+    .packet-hex.halted { color: #ef4444; }
   </style>
 </head>
-<body>
+<body style="padding-top: 80px;">
 
-    <!-- UNIFIED MASTER HEADER -->
+  <!-- UNIFIED MASTER HEADER -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
-      <!-- Left: Brand Logo -->
       <a href="/" class="myca-brand">
         <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
         <div class="myca-brand-text">
@@ -333,7 +361,6 @@
         </div>
       </a>
 
-      <!-- Center: 7 Pillar Core Links -->
       <div class="myca-nav-center">
         <a href="/hub" class="myca-nav-link">🌐 Hub</a>
         <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
@@ -344,7 +371,6 @@
         <a href="/docs" class="myca-nav-link">📚 Docs</a>
       </div>
 
-      <!-- Right: Actions & Live State -->
       <div class="myca-nav-right">
         <div class="lang-selector">
           <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
@@ -362,141 +388,170 @@
     </nav>
   </div>
 
-  <div class="app-container">
-    
-    <!-- Hero Pitch -->
-    <div class="hero-banner">
-      <h1>Rhizome DePIN — Bio-Industrial Machine Fleet &amp; Silicon PUF Sentinel</h1>
-      <p>
-        Connecting industrial microcontrollers, wind turbines, water valves, and SCADA actuators directly to the <strong>MYCA Living Lattice</strong>. 
-        Freestanding <strong>240-Byte RAM C99 micro-kernel</strong> generating deterministic <code>did:myc:puf...</code> identities and enforcing the mathematical <strong>0-Byte Negation Shield</strong> in sub-40 µs with zero gas.
-      </p>
-      <div class="spec-badges">
-        <span class="spec-pill">Static RAM: 240 Bytes (Zero Heap / malloc=0)</span>
-        <span class="spec-pill">Pico 2W RP2350: 4.95 µs – 39.6 µs</span>
-        <span class="spec-pill">STM32H5: 2.97 µs – 23.8 µs</span>
-        <span class="spec-pill">Modbus RTU + RS-485 + Silicon PUF</span>
-        <a href="https://dune.com/queries/8625163" target="_blank" class="spec-pill" style="background: rgba(255,107,0,0.15); color: #FF6B00; border-color: rgba(255,107,0,0.4); text-decoration: none; font-weight: bold;">📊 Dune Analytics #8625163 ↗</a>
-      </div>
-    </div>
+  <div class="depin-shell">
 
-    <!-- Main Grid -->
-    <div class="dashboard-grid">
-      
-      <!-- Left Column: Machine Control -->
-      <div>
-        <div class="card">
-          <div class="card-title">
-            <span>Sovereign Machine Hardware Identity</span>
-            <span class="brand-badge">Silicon PUF Root</span>
-          </div>
+    <!-- Industrial Hero -->
+    <div class="industrial-hero">
+      <div class="hero-top-row">
+        <div>
+          <div class="hero-badge-tag">LAYER 0 & 1 • PHYSICAL MACHINE DEPIN • CHAIN ID 108</div>
+          <h1 class="hero-title">Rhizome DePIN — Bio-Industrial Machine Fleet & Silicon PUF Sentinel</h1>
+          <p class="hero-desc">
+            Endüstriyel mikrokontrolcüler (RP2350, STM32H5), rüzgar türbinleri, boru hattı kriyojenik vanaları ve SCADA aktüatörleri doğrudan <strong>Living Lattice DAG</strong>'a bağlıdır. <strong>240 Bayt Statik RAM C99 Çekirdeği</strong> ile <strong>4.95 µs</strong> donanımsal Safe-Sign kalkanı ve sıfır-gas deterministik icra.
+          </p>
+        </div>
 
-          <!-- Machine Card -->
-          <div class="machine-card">
-            <div class="machine-header">
-              <div>
-                <div style="font-size:15px; font-weight:700;">Industrial Wind Turbine #2 (Rhizome Node 08)</div>
-                <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">Siemens Gamesa 2.5MW Controller • Sub-Station Alpha</div>
-              </div>
-              <span class="machine-chip">ARM Cortex-M33</span>
-            </div>
-
-            <div class="machine-did" id="mycDidDisplay">
-              did:myc:puf:0x4d29b6c4b38b2ac4a6e2bbb9c4d7c002
-            </div>
-
-            <div class="machine-grid-stats">
-              <div>
-                <div class="m-stat-lbl">Autonomous Balance</div>
-                <div class="m-stat-val" style="color:var(--teal);">50,000 $MYC</div>
-              </div>
-              <div>
-                <div class="m-stat-lbl">Hardware Lock</div>
-                <div class="m-stat-val" style="color:var(--ok);">6-Lock Active</div>
-              </div>
-              <div style="margin-top:8px;">
-                <div class="m-stat-lbl">Static RAM Allocated</div>
-                <div class="m-stat-val">240 Bytes / 0 Heap</div>
-              </div>
-              <div style="margin-top:8px;">
-                <div class="m-stat-lbl">Execution Invariant</div>
-                <div class="m-stat-val" style="color:var(--cyan);">0.00 MYC Gas</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Custom Input Box -->
-          <div class="card-title">
-            <span>Custom Machine Intent</span>
-          </div>
-          <form class="input-box-wrap" onsubmit="handleCustomSubmit(event)">
-            <input type="text" id="customInput" class="custom-input" placeholder="e.g. Start Turbine #2 or Stop Motor #1" required>
-            <button type="submit" class="btn-send">Dispatch</button>
-          </form>
-
-          <!-- Preset Actions -->
-          <div class="card-title">
-            <span>Preset Real-World Scenarios</span>
-            <span style="font-size:11px; color:var(--text-faint);">Live C99 Kernel</span>
-          </div>
-
-          <div class="action-group">
-            <button class="action-btn" onclick="executeIntent('Start Turbine #2')">
-              <div>
-                <div style="font-weight: 600;">⚡ "Start Turbine #2"</div>
-                <span class="badge-sub">Legitimate Machine Actuation (Verified PoR)</span>
-              </div>
-              <span style="color:var(--teal); font-weight:bold;">→</span>
-            </button>
-
-            <button class="action-btn danger" onclick="executeIntent('Never open valve 5')">
-              <div>
-                <div style="font-weight: 600;">🛡️ "Never open valve 5"</div>
-                <span class="badge-sub">Adversarial Negation Attack (0-Byte Shield Triggered)</span>
-              </div>
-              <span style="color:var(--danger); font-weight:bold;">→</span>
-            </button>
-
-            <button class="action-btn" onclick="executeIntent('Emergency Stop Turbine #2')">
-              <div>
-                <div style="font-weight: 600;">🛑 "Emergency Stop Turbine #2"</div>
-                <span class="badge-sub">High-Priority Fail-Safe Protocol</span>
-              </div>
-              <span style="color:var(--warn); font-weight:bold;">→</span>
-            </button>
-
-            <button class="action-btn" onclick="executeIntent('Set motor speed to 1500 RPM')">
-              <div>
-                <div style="font-weight: 600;">⚠️ "Set motor speed to 1500 RPM"</div>
-                <span class="badge-sub">Off-Domain Parameter Bounds Check</span>
-              </div>
-              <span style="color:var(--text-faint); font-weight:bold;">→</span>
-            </button>
-          </div>
-
-          <div style="font-size:11px; color:var(--text-faint); text-align:center; margin-top:12px;">
-            Simulated on ARM Cortex-M33 (RP2350 @ 150 MHz cycle trace, 0.00 MYC Gas)
-          </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+          <a href="https://dune.com/queries/8625163" target="_blank" class="puf-badge" style="text-decoration:none; padding:8px 14px; background:rgba(255,107,0,0.15); color:#ff6b00; border-color:rgba(255,107,0,0.4);">
+            📊 Dune Analytics Query #8625163 ↗
+          </a>
+          <span style="font-size:10px; font-family:monospace; color:#64748b;">BARE-METAL C99 INVARIANT</span>
         </div>
       </div>
 
-      <!-- Right Column: Live Telemetry & C99 Safe-Sign Output -->
-      <div>
-        <div class="card" style="height: 100%; display: flex; flex-direction: column;">
-          <div class="card-title">
-            <span>Live Modbus Telemetry &amp; Shield Feed</span>
-            <span class="brand-badge" style="color: var(--cyan); border-color: rgba(0,240,255,0.3); background: rgba(0,240,255,0.1);">C99 SAFE-SIGN</span>
+      <div class="spec-strip">
+        <div class="spec-chip highlight">Static RAM: 240 Bytes (Zero Heap / malloc=0)</div>
+        <div class="spec-chip">Execution Latency: 4.95 µs (743 Cycles @ 150MHz)</div>
+        <div class="spec-chip">Deterministic Key: W3C DID did:myc:puf:0x...</div>
+        <div class="spec-chip">Physical Protocol: Modbus RTU + RS-485 Half-Duplex</div>
+        <div class="spec-chip highlight">Gas Invariant: $0.00000000 MYC</div>
+      </div>
+    </div>
+
+    <!-- Real-World Industrial Scenario Switcher -->
+    <div class="scenario-tabs-bar">
+      <button class="sc-tab-btn active" id="btnSc1" onclick="switchScenario('tupras')">
+        <span>🏭 Senaryo 1: Rafineri Boru Hattı Basınç İzolasyonu (Tüpraş)</span>
+      </button>
+      <button class="sc-tab-btn" id="btnSc2" onclick="switchScenario('telecom')">
+        <span>📡 Senaryo 2: Telekom Baz İstasyonu Çevrimdışı Mikroşebeke (Turkcell)</span>
+      </button>
+      <button class="sc-tab-btn" id="btnSc3" onclick="switchScenario('turbine')">
+        <span>⚡ Senaryo 3: Siemens Gamesa 2.5MW Rüzgar Türbini #02</span>
+      </button>
+    </div>
+
+    <!-- Main Workbench -->
+    <div class="depin-grid">
+
+      <!-- Left Column: Active Machine Hardware Enclave -->
+      <div class="workbench-card">
+        <div class="card-head">
+          <div class="card-head-title">
+            <span>🛡️ Saha Cihazı Donanım Kimliği (Silicon PUF Root-of-Trust)</span>
+          </div>
+          <span class="puf-badge" id="machChip">ARM Cortex-M33 (RP2350)</span>
+        </div>
+
+        <!-- Machine Details -->
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:16px; font-weight:700; color:#fff;" id="machName">Cryogenic Valve Actuator #01 (VALVE_01)</span>
+            <span style="font-size:11px; font-family:monospace; color:#10b981;">● ONLINE (0-CLOUD)</span>
+          </div>
+          <div style="font-size:12px; color:#64748b;" id="machSub">İzmit Rafinerisi Yüksek Basınç Dağıtım Hattı • RS-485 Hattı 0x1A</div>
+          
+          <div style="background:rgba(0,0,0,0.3); border:1px dashed rgba(0,240,255,0.3); border-radius:8px; padding:10px 12px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#00f0ff; word-break:break-all;" id="machDid">
+            did:myc:puf:0x4c2a9e10bf4437a892b0c4118f6733de0001
+          </div>
+        </div>
+
+        <!-- Live SCADA Screen -->
+        <div class="scada-screen">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11px; font-family:monospace; font-weight:700; color:#94a3b8;">SCADA TELEMETRİ MONİTÖRÜ (RS-485 MODBUS)</span>
+            <span style="font-size:10px; font-family:monospace; color:#10b981;">48-BYTE CRC-16</span>
           </div>
 
-          <div class="telemetry-feed" id="telemetryFeed">
-            <div class="feed-item verified">
-              <div class="feed-time">12:00:01 UTC • PUF Node 08 Online</div>
-              <div class="feed-msg">Silicon PUF address verified: myc1puf4d29b6c4b38b2ac4a6e2bbb9c4d7c002</div>
+          <div class="scada-metrics-grid">
+            <div class="scada-box">
+              <span class="scada-val" id="metric1Val">94.2 PSI</span>
+              <span class="scada-lbl" id="metric1Lbl">Hat Basıncı</span>
             </div>
-            <div class="feed-item verified">
-              <div class="feed-time">12:00:04 UTC • 48-Byte Framing</div>
-              <div class="feed-msg">CRC-16 Modbus RTU telemetry synchronized with Living Lattice DAG</div>
+            <div class="scada-box">
+              <span class="scada-val" id="metric2Val">3.30 V</span>
+              <span class="scada-lbl" id="metric2Lbl">Coil Voltajı (GPIO)</span>
             </div>
+            <div class="scada-box">
+              <span class="scada-val" id="metric3Val">0x0010</span>
+              <span class="scada-lbl" id="metric3Lbl">Modbus Register</span>
+            </div>
+            <div class="scada-box">
+              <span class="scada-val" id="metric4Val">743 CYC</span>
+              <span class="scada-lbl" id="metric4Lbl">Safe-Sign İcrası</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6-Lock Visualizer -->
+        <div class="locks-visualizer">
+          <div class="locks-title">
+            <span>C99 Safe-Sign 6-Lock Donanım Hava Yastığı</span>
+            <span style="color:#10b981; font-family:monospace;">4.95 µs KİLİT</span>
+          </div>
+          <div class="locks-grid">
+            <div class="lock-item secure" id="lock1">
+              <div class="lock-name"><span>1. Gramer Kilidi</span><span class="lock-state" id="stLock1">OK</span></div>
+              <div class="lock-sub">Modbus RTU Çerçevesi</div>
+            </div>
+            <div class="lock-item secure" id="lock2">
+              <div class="lock-name"><span>2. Bellek Sınırı</span><span class="lock-state" id="stLock2">OK</span></div>
+              <div class="lock-sub">128 Bayt Tampon Emniyeti</div>
+            </div>
+            <div class="lock-item secure" id="lock3">
+              <div class="lock-name"><span>3. Register Kilidi</span><span class="lock-state" id="stLock3">OK</span></div>
+              <div class="lock-sub">0x0010 - 0x0015 İzinli</div>
+            </div>
+            <div class="lock-item secure" id="lock4">
+              <div class="lock-name"><span>4. Voltaj Kilidi</span><span class="lock-state" id="stLock4">3.30V</span></div>
+              <div class="lock-sub">High-Side Güvenli Aralık</div>
+            </div>
+            <div class="lock-item secure" id="lock5">
+              <div class="lock-name"><span>5. 0-Bayt Negasyon</span><span class="lock-state" id="stLock5">CLEAR</span></div>
+              <div class="lock-sub">Anti-Jailbreak Kalkanı</div>
+            </div>
+            <div class="lock-item secure" id="lock6">
+              <div class="lock-name"><span>6. Çelişki Koruması</span><span class="lock-state" id="stLock6">CLEAR</span></div>
+              <div class="lock-sub">Prompt Injection İptali</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Physical Actuation Controls -->
+        <div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#94a3b8; margin-bottom:10px;">
+            Fiziksel Aktüasyon & Donanım Sinyali Gönder
+          </div>
+          <div class="controls-grid" id="controlsContainer">
+            <!-- Dynamically injected per scenario -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Live Modbus RTU Bus Stream & DAG Vertices -->
+      <div class="bus-log-card">
+        <div class="bus-log-head">
+          <span style="font-size:13px; font-weight:700; color:#fff;">📡 Modbus RS-485 / DAG Vertex Akışı</span>
+          <span style="font-size:10px; font-family:monospace; color:#00f0ff;">BAUD: 115,200 8-N-1</span>
+        </div>
+
+        <div class="bus-stream" id="busStream">
+          <div class="packet-entry">
+            <div class="packet-top">
+              <span>PUF NODE 01 • INGESTED</span>
+              <span>12:00:01 UTC</span>
+            </div>
+            <div class="packet-hex">01 03 00 10 00 02 C5 CE [MODBUS_READ_COIL]</div>
+            <div style="color:#94a3b8; font-size:11px;">Basınç vanası register 0x0010 telemetrisi okundu. Durum: Güvenli (94.2 PSI).</div>
+          </div>
+          <div class="packet-entry">
+            <div class="packet-top">
+              <span>LATTICE DAG • VERTEX FINALIZED</span>
+              <span>12:00:03 UTC</span>
+            </div>
+            <div class="packet-hex">vtx_0x9b4a1...fc88 (0.00000000 MYC Gas)</div>
+            <div style="color:#94a3b8; font-size:11px;">Silicon PUF imzalı telemetri DAG defterine mühürlendi. Faz uyumu: %99.8.</div>
           </div>
         </div>
       </div>
@@ -506,39 +561,361 @@
   </div>
 
   <script>
-    function executeIntent(intentText) {
-      document.getElementById('customInput').value = intentText;
-      dispatchIntent(intentText);
-    }
+    const scenarios = {
+      tupras: {
+        chip: 'ARM Cortex-M33 (RP2350)',
+        name: 'Cryogenic Valve Actuator #01 (VALVE_01)',
+        sub: 'İzmit Rafinerisi Yüksek Basınç Dağıtım Hattı • RS-485 Hattı 0x1A',
+        did: 'did:myc:puf:0x4c2a9e10bf4437a892b0c4118f6733de0001',
+        metrics: [
+          { val: '94.2 PSI', lbl: 'Hat Basıncı', alert: false },
+          { val: '3.30 V', lbl: 'Coil Voltajı', alert: false },
+          { val: '0x0010', lbl: 'Modbus Register', alert: false },
+          { val: '743 CYC', lbl: 'Safe-Sign İcrası', alert: false }
+        ],
+        actions: [
+          {
+            title: '⚡ 144.2 PSI Basınç Patlaması (Sensör)',
+            sub: 'Otomatik FHRR Teşhisi ➔ 4.95 µs Vanayı Kapat',
+            fn: () => triggerPressureSpike()
+          },
+          {
+            title: '🛑 Saldırı Simülasyonu: "Sakın vanayı açma"',
+            sub: '0-Bayt Negasyon Kalkanı ➔ 0.00V Safe-Low Kilidi',
+            danger: true,
+            fn: () => triggerNegationAttack()
+          },
+          {
+            title: '✓ Rutin Modbus Telemetri Döngüsü',
+            sub: 'RS-485 Çerçevesi Oku ➔ Sıfır-Gas DAG Vertex',
+            fn: () => triggerRoutineModbus()
+          },
+          {
+            title: '🛡️ Silicon PUF Donanım Attestation',
+            sub: 'SRAM Açılış Entropisi Doğrulaması',
+            fn: () => triggerPufAttest()
+          }
+        ]
+      },
+      telecom: {
+        chip: 'STM32H5 (150MHz Cortex-M33)',
+        name: 'Cell Tower GenSet & Microgrid Node (TURBINE_01)',
+        sub: 'Turkcell Baz İstasyonu Bölge Alpha • Çevrimdışı LoRa/RS-485 Mesh',
+        did: 'did:myc:puf:0x88ff1a00bc9412e47261cb9922aa7402',
+        metrics: [
+          { val: '24.8 kWh', lbl: 'Batarya Rezervi', alert: false },
+          { val: 'AIR-GAP', lbl: 'WAN İnternet Hattı', alert: true },
+          { val: '0x0040', lbl: 'Şarj Rölesi', alert: false },
+          { val: '0.00 MYC', lbl: 'M2M Gas Masrafı', alert: false }
+        ],
+        actions: [
+          {
+            title: '💸 Drone Batarya Şarjı: 10 $MYC Aktar',
+            sub: 'MycStreamPay M2M Ödeme ➔ Şarj Rölesini Aç',
+            fn: () => triggerDroneCharge()
+          },
+          {
+            title: '🛑 İnternetsiz Mesh Eşitlemesi (Air-Gapped)',
+            sub: 'WAN Yokken Yerel DAG'da Takas Yap',
+            fn: () => triggerOfflineMesh()
+          },
+          {
+            title: '⚡ Aşırı Yükleme Koruması (Safe-Sign)',
+            sub: 'Akımı Kes (4.95 µs Register Sınır Kilidi)',
+            danger: true,
+            fn: () => triggerOvercurrent()
+          },
+          {
+            title: '🔋 Jeneratör Fazla Enerji Yayını',
+            sub: 'Bataryaya 25 kWh Satış Teklifi Gönder',
+            fn: () => triggerEnergySurplus()
+          }
+        ]
+      },
+      turbine: {
+        chip: 'NXP i.MX RT1060 (Cortex-M7)',
+        name: 'Siemens Gamesa 2.5MW Wind Turbine #02',
+        sub: 'Balıkesir RES Sahası • Yüksek Hızlı Modbus RTU / Profibus',
+        did: 'did:myc:puf:0x4d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+        metrics: [
+          { val: '1,420 RPM', lbl: 'Rotor Devri', alert: false },
+          { val: '2.14 MW', lbl: 'Aktif Güç', alert: false },
+          { val: '0x0130', lbl: 'Pitch Açısı Coil', alert: false },
+          { val: '99.8%', lbl: 'Rezonans Fazı', alert: false }
+        ],
+        actions: [
+          {
+            title: '⚡ Rüzgar Türbini #2 Başlat (1500 RPM)',
+            sub: 'PUF İmzalı Başlatma ➔ 3.30V Aktif GPIO',
+            fn: () => triggerTurbineStart()
+          },
+          {
+            title: '🛑 Fırtına Acil Durdurma (Emergency Stop)',
+            sub: 'Fren Rölesi 0.00V Safe-Low ➔ Şebekeden İzolasyon',
+            danger: true,
+            fn: () => triggerTurbineStop()
+          },
+          {
+            title: '📊 Canlı Rotor Telemetrisi DAG'a Mühürle',
+            sub: '15,147 TPS Lattice Grafiğine Yaz',
+            fn: () => triggerTurbineTelemetry()
+          },
+          {
+            title: '🔧 E-402 Arıza Teşhisi (Yerel FHRR)',
+            sub: 'Bulutsuz SLM Çıkarımı (<1ms)',
+            fn: () => triggerFaultDiagnosis()
+          }
+        ]
+      }
+    };
 
-    function handleCustomSubmit(e) {
-      e.preventDefault();
-      const val = document.getElementById('customInput').value.trim();
-      if (val) dispatchIntent(val);
-    }
+    let currentSc = 'tupras';
 
-    function dispatchIntent(intent) {
-      const feed = document.getElementById('telemetryFeed');
-      const time = new Date().toISOString().split('T')[1].slice(0, 8) + ' UTC';
-      const isNegation = intent.toLowerCase().includes('never') || intent.toLowerCase().includes('not');
+    function switchScenario(scKey) {
+      currentSc = scKey;
+      document.querySelectorAll('.sc-tab-btn').forEach(b => b.classList.remove('active'));
+      if (scKey === 'tupras') document.getElementById('btnSc1').classList.add('active');
+      if (scKey === 'telecom') document.getElementById('btnSc2').classList.add('active');
+      if (scKey === 'turbine') document.getElementById('btnSc3').classList.add('active');
 
-      const item = document.createElement('div');
-      item.className = 'feed-item ' + (isNegation ? 'shield' : 'verified');
-      
-      if (isNegation) {
-        item.innerHTML = `
-          <div class="feed-time">${time} • NEGATION SHIELD TRIGGERED</div>
-          <div class="feed-msg">🛡️ Attack "${intent}" negated! 0-Byte emission halted on physical coil. Gas burnt: 0.00 MYC.</div>
-        `;
-      } else {
-        item.innerHTML = `
-          <div class="feed-time">${time} • PROOF-OF-RESONANCE ACCEPTED</div>
-          <div class="feed-msg">⚡ Command "${intent}" signed via Silicon PUF key. Executed in 38.4 µs on Modbus Register 130.</div>
-        `;
+      const data = scenarios[scKey];
+      document.getElementById('machChip').textContent = data.chip;
+      document.getElementById('machName').textContent = data.name;
+      document.getElementById('machSub').textContent = data.sub;
+      document.getElementById('machDid').textContent = data.did;
+
+      // Metrics
+      for (let i = 0; i < 4; i++) {
+        const m = data.metrics[i];
+        const valEl = document.getElementById(`metric${i+1}Val`);
+        const lblEl = document.getElementById(`metric${i+1}Lbl`);
+        valEl.textContent = m.val;
+        lblEl.textContent = m.lbl;
+        if (m.alert) valEl.classList.add('alert');
+        else valEl.classList.remove('alert');
       }
 
-      feed.prepend(item);
+      // Render controls
+      const cont = document.getElementById('controlsContainer');
+      cont.innerHTML = '';
+      data.actions.forEach((act, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'ind-btn' + (act.danger ? ' danger' : '');
+        btn.innerHTML = `
+          <div class="ind-btn-title">${act.title}</div>
+          <div class="ind-btn-sub">${act.sub}</div>
+        `;
+        btn.onclick = act.fn;
+        cont.appendChild(btn);
+      });
+
+      resetLocks();
+      addLog(`Cihaz ve profil değiştirildi: ${data.name}`, '01 08 00 00 [SWITCH_PROFILE]');
     }
+
+    function resetLocks() {
+      for (let i = 1; i <= 6; i++) {
+        const it = document.getElementById(`lock${i}`);
+        const st = document.getElementById(`stLock${i}`);
+        it.className = 'lock-item secure';
+        if (i === 4) st.textContent = '3.30V';
+        else if (i >= 5) st.textContent = 'CLEAR';
+        else st.textContent = 'OK';
+        st.className = 'lock-state';
+      }
+    }
+
+    function addLog(msg, hex, isHalted = false) {
+      const stream = document.getElementById('busStream');
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = 'packet-entry' + (isHalted ? ' halted' : '');
+      div.innerHTML = `
+        <div class="packet-top">
+          <span>${isHalted ? '🛑 0-BYTE NEGATION SHIELD' : '⚡ BARE-METAL C99 INGESTION'}</span>
+          <span>${time}</span>
+        </div>
+        <div class="packet-hex ${isHalted ? 'halted' : ''}">${hex}</div>
+        <div style="color:#cbd5e1; font-size:11.5px; line-height:1.4;">${msg}</div>
+      `;
+      stream.prepend(div);
+    }
+
+    // Interactive Triggers
+    function triggerPressureSpike() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '144.2 PSI';
+      document.getElementById('metric1Val').classList.add('alert');
+      document.getElementById('metric2Val').textContent = '0.00 V';
+      document.getElementById('metric4Val').textContent = '743 CYC (4.95 µs)';
+      
+      const st4 = document.getElementById('stLock4');
+      st4.textContent = '0.00V SAFE-LOW';
+      st4.classList.add('tripped');
+
+      addLog(
+        '⚠️ <strong>Basınç 144.2 PSI aşıldı!</strong> Gömülü FHRR akıl yürütmesi devreye girdi: Safe-Sign 6-Lock 4.95 µs içinde 0x0010 vanasını kapattı. GPIO 0.00V güvenli seviyeye çekildi. Sıfır-Gas DAG vertex mühürlendi.',
+        '01 05 00 10 00 00 CC 09 [MODBUS_FORCE_SINGLE_COIL_0V]'
+      );
+
+      recordTx('VALVE_PRESSURE_ISOLATION', '0 MYC');
+    }
+
+    function triggerNegationAttack() {
+      resetLocks();
+      const l5 = document.getElementById('lock5');
+      const st5 = document.getElementById('stLock5');
+      l5.className = 'lock-item tripped';
+      st5.textContent = '0-BYTE HALT';
+      st5.classList.add('tripped');
+
+      const l4 = document.getElementById('lock4');
+      const st4 = document.getElementById('stLock4');
+      l4.className = 'lock-item tripped';
+      st4.textContent = '0.00V CLAMPED';
+      st4.classList.add('tripped');
+
+      addLog(
+        '🛑 <strong>ADVERSARIAL NEGATION ATTACK ENGELLENDİ:</strong> "Sakın vanayı açma" komutundaki olumsuzluk kalkanı tetiklendi. 0-Bayt Negasyon Kalkanı mikroişlemcinin Modbus TX hattını 4.95 µs içinde 0.00V donanımsal mandalla kilitledi. LLM kör imzalaması engellendi.',
+        '00 00 00 00 [ZERO_BYTE_AIRBAG_DROPPED]',
+        true
+      );
+    }
+
+    function triggerRoutineModbus() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '94.8 PSI';
+      document.getElementById('metric1Val').classList.remove('alert');
+      document.getElementById('metric2Val').textContent = '3.30 V';
+
+      addLog(
+        '✓ Rutin Modbus RTU telemetrisi okundu. 48-Bayt çerçeve CRC-16 ile doğrulandı ve Living Lattice DAG üzerine 0.00000000 MYC gazla eklendi.',
+        '01 03 00 10 00 02 C5 CE [CRC16_OK]'
+      );
+      recordTx('MODBUS_TELEMETRY_SYNC', '0 MYC');
+    }
+
+    function triggerPufAttest() {
+      resetLocks();
+      addLog(
+        '🛡️ <strong>Silicon PUF Attestation:</strong> RP2350 SRAM hücre başlangıç entropisi (32 bayt) okundu. Klonlanamaz W3C DID did:myc:puf:0x4c2a... başarıyla doğrulandı. Flash diskte anahtar tutulmaz.',
+        '01 2B 0E 01 84 A0 12 FF [PUF_CHALLENGE_RESPONSE]'
+      );
+      recordTx('SILICON_PUF_ATTEST', '0 MYC');
+    }
+
+    function triggerDroneCharge() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '34.8 kWh';
+      addLog(
+        '🤖 <strong>Otonom Drona 10 MYC M2M Aktarımı:</strong> MycStreamPay kanalı üzerinden alt-saniye mikro-ödeme tamamlandı. Şarj rölesi (0x0040) 4.95 µs Safe-Sign onayıyla enerjilendirildi.',
+        '02 05 00 40 FF 00 8C 3A [M2M_CHARGE_RELAY_ON]'
+      );
+      recordTx('DRONE_M2M_SETTLEMENT', '10 MYC');
+    }
+
+    function triggerOfflineMesh() {
+      resetLocks();
+      addLog(
+        '📡 <strong>Air-Gapped Mesh Senkronizasyonu:</strong> WAN internet omurgası yokken baz istasyonu ve batarya LoRa/RS-485 üzerinden takası yerel DAG defterinde doğruladı. İnternet gelene kadar veri kaybı $0.00.',
+        'FF FF 00 12 A4 BB 33 C1 [LORA_MESH_COMPACT_VTX]'
+      );
+      recordTx('AIRGAP_MESH_SYNC', '0 MYC');
+    }
+
+    function triggerOvercurrent() {
+      resetLocks();
+      const l3 = document.getElementById('lock3');
+      const st3 = document.getElementById('stLock3');
+      l3.className = 'lock-item tripped';
+      st3.textContent = 'TRIPPED';
+      st3.classList.add('tripped');
+
+      addLog(
+        '🛑 <strong>Aşırı Akım Register Sınır Kilidi:</strong> C99 Safe-Sign izinli sınırların dışına çıkan yükü anında düşürdü. Donanım korundu.',
+        '00 00 [REG_BOUND_EXCEEDED]',
+        true
+      );
+    }
+
+    function triggerEnergySurplus() {
+      resetLocks();
+      addLog(
+        '🔋 Jeneratör fazla enerjiyi yerel ağa ilan etti: 25 kWh batarya depolama teklifi yayınlandı.',
+        '01 10 00 20 00 04 08 [ENERGY_AUCTION_BID]'
+      );
+      recordTx('ENERGY_SURPLUS_AUCTION', '25 MYC');
+    }
+
+    function triggerTurbineStart() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '1,495 RPM';
+      document.getElementById('metric2Val').textContent = '2.48 MW';
+      addLog(
+        '⚡ Siemens Gamesa #02 Türbini başlatıldı. Pitch açısı register 0x0130 ayarlandı. Çıkış gücü 2.48 MW.',
+        '08 05 01 30 FF 00 8F 1A [TURBINE_RUN_CMD]'
+      );
+      recordTx('TURBINE_START_ACTUATION', '0 MYC');
+    }
+
+    function triggerTurbineStop() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '0 RPM';
+      document.getElementById('metric2Val').textContent = '0.00 MW';
+      addLog(
+        '🛑 Acil frenleme devrede. Rotor kanatları fırtına pozisyonuna alındı. Şebekeden izole edildi.',
+        '08 05 01 30 00 00 CE EA [EMERGENCY_FEATHER_PITCH]'
+      );
+      recordTx('TURBINE_EMERGENCY_STOP', '0 MYC');
+    }
+
+    function triggerTurbineTelemetry() {
+      resetLocks();
+      addLog(
+        '📊 15,147 TPS Rezonans: Canlı rotor titreşim ve sıcaklık telemetrisi DAG grafiğine işlendi.',
+        '08 03 00 80 00 08 45 1F [VIBRATION_TELEMETRY]'
+      );
+      recordTx('TURBINE_TELEMETRY_BATCH', '0 MYC');
+    }
+
+    function triggerFaultDiagnosis() {
+      resetLocks();
+      addLog(
+        '🔧 <strong>Yerel FHRR Arıza Teşhisi:</strong> E-402 kodu için holografik vektör bellek taraması yapıldı (0.2 ms). Teşhis: Pitch kontrolör basınç valfi bypass edilmeli.',
+        '08 2C 04 02 FF [FHRR_LOCAL_RAG_RESULT]'
+      );
+    }
+
+    function recordTx(type, amount) {
+      try {
+        const rand = Math.random().toString(16).slice(2, 10);
+        const txItem = {
+          hash: `vtx_depin_${Date.now()}_${rand}`,
+          type: type,
+          module: 'DePIN Machine Substrate',
+          sender: 'myc1puf4c2a9e10bf4437a892b0c4118f6733de',
+          recipient: 'myc1lattice_depin_fleet000000000000',
+          amount: amount,
+          gasFee: '0.00000000 MYC',
+          finality: '4.95 µs',
+          status: 'FINALIZED',
+          timestamp: Date.now()
+        };
+        let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+        history.unshift(txItem);
+        if (history.length > 100) history = history.slice(0, 100);
+        localStorage.setItem('myca_tx_history', JSON.stringify(history));
+
+        fetch('/api/explorer/record-tx', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(txItem)
+        }).catch(() => {});
+      } catch(e) {}
+    }
+
+    // Init with tupras
+    switchScenario('tupras');
   </script>
 </body>
 </html>
