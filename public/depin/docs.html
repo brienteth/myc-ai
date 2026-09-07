@@ -427,7 +427,7 @@
 </head>
 <body>
 
-      <!-- UNIFIED MASTER HEADER -->
+        <!-- UNIFIED MASTER HEADER WITH DOCS DROPDOWN -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
@@ -439,14 +439,37 @@
         </div>
       </a>
 
-      <!-- Center: 6 Core Infrastructure Pillars (Clean & Focused) -->
+      <!-- Center: 6 Core Infrastructure Pillars with Docs Dropdown -->
       <div class="myca-nav-center">
         <a href="/hub" class="myca-nav-link">🌐 Hub</a>
         <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
         <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
         <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
         <a href="/build" class="myca-nav-link">🛠️ Build</a>
-        <a href="/docs" class="myca-nav-link active">📚 Docs</a>
+        
+        <!-- Docs Dropdown on Hover -->
+        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
+          <a href="/docs" class="myca-nav-link active" style="display: flex; align-items: center; gap: 4px;">
+            <span>📚 Docs</span>
+            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </a>
+          <div class="myca-dropdown-panel" style="min-width: 260px; padding: 6px; top: 100%;">
+            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">📖</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;">Network Whitepaper</div>
+                <div style="font-size: 11px; color: #94a3b8;">GitBook specs, PoR & Tokenomics</div>
+              </div>
+            </a>
+            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🛠️</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">Developer Docs & RPC</div>
+                <div style="font-size: 11px; color: #94a3b8;">JSON-RPC, SDKs & APIs</div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- Right: Actions & Live State -->
@@ -983,7 +1006,67 @@ W3C_DID = "did:myc:puf:0x" || SHA256(Address || PublicKey)[0..32]
         </a>
       </div>
 
-    </main>
+    
+    <!-- BRIDGE VAULT SPECIFICATION -->
+    <section id="bridge-vault" class="gb-section">
+      <div class="gb-badge">INTEROPERABILITY • HYPHAE BFT BRIDGE</div>
+      <h2 class="gb-h2">Hyphae Cross-Chain Bridge & 3/4 BFT Vaults</h2>
+      <p class="gb-p">
+        The <strong>Hyphae Cross-Chain Bridge</strong> enables bi-directional asset transfers between Ethereum, Base L2, Arbitrum, and the <strong>MYCA Living Lattice DAG (Chain ID 108)</strong>. 
+        Unlike multisig or single-oracle bridges vulnerable to validator collusion, Hyphae enforces a <strong>3/4 BFT supermajority threshold</strong> coupled with cryptographic Proof-of-Resonance verification.
+      </p>
+
+      <div class="gb-callout">
+        <strong>🔒 Strict Cryptographic Invariant:</strong> Bridge minting on Chain ID 108 is mathematically locked until 3 out of 4 independent hardware PUF-verified validator nodes post matching state proofs. Gas fees for all native settlements remain <strong>0.00000000 MYC</strong>.
+      </div>
+
+      <h3 class="gb-h3">Vault Architecture & Flow</h3>
+      <ul class="gb-ul">
+        <li><strong>Base Vault (Locking Contract):</strong> <code>0x4b12...BaseVault</code> locks incoming $USDC, $USDT, or $ETH and emits an attested <code>DepositEvent</code>.</li>
+        <li><strong>Living Lattice Mint:</strong> Chain ID 108 issues wrapped synthetic assets (e.g. $bUSDC, $bETH) with zero latency.</li>
+        <li><strong>Redemption Slashing:</strong> Malicious or out-of-order mint attempts trigger immediate slashing of validator stakes.</li>
+      </ul>
+    </section>
+
+    <!-- SWAP AMM SPECIFICATION -->
+    <section id="swap-amm" class="gb-section">
+      <div class="gb-badge">LIQUIDITY • MYCELIAL ZERO-GAS AMM</div>
+      <h2 class="gb-h2">Mycelial Nutrient Swap (Zero-Gas AMM)</h2>
+      <p class="gb-p">
+        Mycelial Swap operates an on-chain automated market maker utilizing the constant-product formula:
+      </p>
+      
+      <pre style="background:#0a0f1d; color:#00f0ff; padding:14px; border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:13px; margin:16px 0;">
+k = x · y  (Invariant Constant-Product DEX)
+Gas Fee per Trade: strictly 0.00000000 MYC
+Liquidity Provider Fee: 0.30% allocated directly to LPs
+      </pre>
+
+      <p class="gb-p">
+        Because transactions confirm asynchronously as DAG vertices rather than waiting for global blocks, trades execute with sub-second finality and zero miner extractable value (MEV) front-running.
+      </p>
+    </section>
+
+    <!-- ZERO-GAS INVARIANT PROOF -->
+    <section id="zero-gas" class="gb-section">
+      <div class="gb-badge">MATHEMATICAL PROOF • ZERO-GAS INVARIANT</div>
+      <h2 class="gb-h2">Zero-Gas Invariant ($0.00000000 MYC Guarantee)</h2>
+      <p class="gb-p">
+        Traditional blockchains introduce gas fees as an anti-spam economic mechanism. However, for industrial IoT and DePIN machinery with microsecond actuation cycles, unpredictable gas pricing is catastrophic.
+      </p>
+
+      <div class="gb-callout">
+        <strong>Theorem (Static RAM & Negation Shield Containment):</strong> A machine transaction is bounded within a 128-byte frame and processed in 743 clock cycles on a 240-byte static RAM envelope. Spam is eliminated mathematically via Proof-of-Resonance harmonic thresholding (Cosine Coherence ≥ 0.65) rather than economic friction.
+      </div>
+
+      <h3 class="gb-h3">Anti-Spam Without Gas Fees</h3>
+      <ul class="gb-ul">
+        <li><strong>Proof-of-Resonance Filter:</strong> Transactions must carry valid sensor telemetry or silicon PUF entropy. Random noise or spam vertices fail harmonic phase alignment and are rejected in under 38.4 µs.</li>
+        <li><strong>Deterministic Key Derivation:</strong> W3C DIDs (<code>did:myc:puf:0x...</code>) eliminate unauthorized address spoofing.</li>
+        <li><strong>No Mempool Queues:</strong> Every machine operates its own local vertex chain, preventing network congestion.</li>
+      </ul>
+    </section>
+</main>
 
     <!-- 3. RIGHT SIDEBAR ("ON THIS PAGE" OUTLINE) -->
     <aside class="gitbook-toc">
@@ -1006,23 +1089,23 @@ W3C_DID = "did:myc:puf:0x" || SHA256(Address || PublicKey)[0..32]
   </div>
 
   <script>
-    const chapters = [
-      { id: 'whitepaper', category: 'Architecture & Consensus', title: 'Proof-of-Resonance (PoR)' },
-      { id: 'dag', category: 'Architecture & Consensus', title: 'Living Lattice DAG' },
-      { id: 'tier-mint', category: 'Living Machine Economy', title: '3-Tier Living Colony Mint' },
-      { id: 'marketplace-spec', category: 'Living Machine Economy', title: 'Living Secondary Market' },
-      { id: 'resonance-assets', category: 'Living Machine Economy', title: 'The 4 Theoretical Pillars' },
-      { id: 'base-onboarding', category: 'Cross-Chain & Liquidity', title: 'Base Direct Onboarding' },
-      { id: 'bridge-vault', category: 'Cross-Chain & Liquidity', title: 'BFT Cross-Chain Bridge' },
-      { id: 'swap-amm', category: 'Cross-Chain & Liquidity', title: 'Resonance AMM DEX' },
-      { id: 'tokenomics', category: 'Living Machine Economy', title: 'Tokenomics & Real-Yield' },
-      { id: 'zero-gas', category: 'Hardware & DePIN', title: 'Zero-Gas Invariant ($0.00)' },
+        const chapters = [
+      { id: 'whitepaper', category: 'Executive & Overview', title: 'Network Whitepaper' },
+      { id: 'dag', category: 'Architecture & Consensus', title: 'Living Lattice DAG Architecture' },
+      { id: 'market-benchmarks', category: 'Architecture & Consensus', title: 'Market Size & Benchmarks' },
+      { id: 'tier-mint', category: 'Node Infrastructure', title: 'Validator Node Tiers' },
+      { id: 'marketplace-spec', category: 'Node Infrastructure', title: 'Machine Node Specifications' },
+      { id: 'resonance-assets', category: 'Node Infrastructure', title: 'Living Resonance Assets (ERC-721R)' },
+      { id: 'tokenomics', category: 'Tokenomics & Economics', title: 'Tokenomics & Genesis Supply' },
+      { id: 'base-onboarding', category: 'Ecosystem & Bridging', title: 'Base L2 Integration Guide' },
+      { id: 'bridge-vault', category: 'Ecosystem & Bridging', title: 'Hyphae Cross-Chain Bridge & 3/4 BFT' },
+      { id: 'swap-amm', category: 'Ecosystem & Bridging', title: 'Mycelial Nutrient Swap (Zero-Gas AMM)' },
+      { id: 'zero-gas', category: 'Hardware & DePIN', title: 'Zero-Gas Invariant Mathematical Proof' },
       { id: 'security', category: 'Hardware & DePIN', title: '4.95 µs Safe-Sign C99 Airbag' },
       { id: 'did-attestation', category: 'Hardware & DePIN', title: 'Silicon PUF Machine DIDs' },
       { id: 'quantum-armor', category: 'Security & Post-Quantum', title: '10-Pillar Post-Quantum Armor' },
       { id: 'offline-airgap', category: 'Security & Post-Quantum', title: 'Offline Air-Gap & DTN Protocol' },
-      { id: 'autonomous-gaming', category: 'Autonomous Gaming', title: 'Living NPCs & 0-Gas Ticks' },
-      { id: 'market-benchmarks', category: 'Architecture & Consensus', title: 'Market Size & Benchmarks' }
+      { id: 'autonomous-gaming', category: 'Autonomous Gaming', title: 'Living NPCs & 0-Gas Ticks' }
     ];
 
     function navigateChapter(targetId) {

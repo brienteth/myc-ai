@@ -243,45 +243,66 @@ footer {
     <span class="nav-logo f-serif-italic" style="margin-right:0; font-size:22px; font-weight:700; color:var(--f-deep);">myca os</span>
   </a>
 
-  <div class="nav-links" style="margin: 0 auto; display:flex; align-items:center; gap:20px;">
+    <div class="nav-links" style="margin: 0 auto; display:flex; align-items:center; gap:20px;">
     <a href="/hub" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🌐 Hub</a>
     <a href="/explorer" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🧭 Explorer</a>
     <a href="/depin" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🤖 DePIN</a>
     <a href="/agent" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🧠 AI Colony</a>
     <a href="/build" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🛠️ Build</a>
-    <a href="/docs" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">📚 Docs</a>
+    <div class="nav-dropdown" id="navDocsDropdown" style="position:relative; display:inline-flex; align-items:center;">
+      <a href="/docs" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+        <span>📚 Docs</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <div class="nav-dropdown-menu" style="min-width:240px;">
+        <a href="/docs" class="dropdown-item">
+          <div class="dropdown-icon">📖</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Network Whitepaper</span>
+            <span class="dropdown-desc">GitBook specifications & PoR</span>
+          </div>
+        </a>
+        <a href="/dev-docs" class="dropdown-item">
+          <div class="dropdown-icon">🛠️</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Developer Docs & RPC</span>
+            <span class="dropdown-desc">Endpoints, SDKs & APIs</span>
+          </div>
+        </a>
+      </div>
+    </div>
   </div>
 
   <div style="display:flex; align-items:center; gap:20px; flex-shrink:0;">
     <button class="lang-switch" id="langSwitchBtn" onclick="toggleLang()">EN / TR</button>
-    <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="nav-download" id="t-nav-dl">Hemen İndir</a>
+    <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="nav-download" id="t-nav-dl">Download</a>
   </div>
 </nav>
 
 <section class="hero" style="position:relative; overflow:hidden;">
   <canvas id="heroCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
   <div class="hero-content" style="position:relative; z-index:1;">
-    <h1 class="f-serif-italic" id="t-hero-title">Tüm Cihazlarınız ve İşleriniz İçin Tek Bir Canlı İşletim Sistemi.</h1>
+    <h1 class="f-serif-italic" id="t-hero-title">A Single Living Operating System for All Your Devices & Work.</h1>
     <p class="hero-sub" id="t-hero-sub">
       Onlarca farklı uygulama ve bulut aboneliğiyle uğraşmak yerine sadece niyetinizi söyleyin. Myca, biyomimetik yerel zekası ve dağıtık cihaz ağıyla gereken planı kurar; verinizi dışarı sızdırmadan cihazlarınızda ve tüm sistemlerinizde güvenle yürütür.
     </p>
     <div class="hero-actions">
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="btn-primary" id="t-hero-dl">macOS (DMG) İndir</a>
+      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="btn-primary" id="t-hero-dl">Download for macOS (DMG)</a>
       <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip" class="btn-secondary" id="t-hero-dl-zip">macOS (ZIP)</a>
-      <a href="https://github.com/brienteth/myc-ai" class="btn-secondary" id="t-hero-gh">GitHub'da İncele</a>
+      <a href="https://github.com/brienteth/myc-ai" class="btn-secondary" id="t-hero-gh">View on GitHub</a>
     </div>
     <div class="hero-stats">
       <div class="stat-item">
         <div class="stat-val">100%</div>
-        <div class="stat-lbl" id="t-stat-1">Yerel</div>
+        <div class="stat-lbl" id="t-stat-1">Local</div>
       </div>
       <div class="stat-item">
         <div class="stat-val">MIT</div>
-        <div class="stat-lbl" id="t-stat-2">Açık Kaynak</div>
+        <div class="stat-lbl" id="t-stat-2">Open Source</div>
       </div>
       <div class="stat-item">
         <div class="stat-val">∞</div>
-        <div class="stat-lbl" id="t-stat-3">Çevrimdışı</div>
+        <div class="stat-lbl" id="t-stat-3">Offline</div>
       </div>
     </div>
     </div>
@@ -291,7 +312,7 @@ footer {
 <!-- PLAYGROUND SECTION: CANLI AKIŞ SİMÜLASYONU -->
 <section class="section-pad" id="playground" style="background: var(--f-cream); border-top: 1px solid var(--f-bark);">
   <div class="section-label" style="text-align:center;">PLAYGROUND</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;">Canlı Akış Simülasyonu</h2>
+  <h2 class="section-title f-serif-italic" style="text-align:center;">Interactive Workflow Studio</h2>
   <p class="hero-sub" style="margin: 0 auto 56px auto; text-align:center; max-width:720px;">
     Myca'nın <strong>Agent → Graph → Verify → Loop</strong> mimarisini 3 gerçek kurumsal akış üzerinde canlı deneyimleyin. Her çerçeve bağımsız planlama, onay ve doğrulama süreçlerini simüle eder.
   </p>
@@ -447,14 +468,14 @@ footer {
       <div class="flow-frame-header">
         <div class="flow-frame-title">
           <span class="pulse-dot"></span>
-          Çerçeve 1: İletişim Akışı
+          Flow 1: Communication Pipeline
         </div>
         <span style="font-family:var(--f-mono); font-size:10px; color:#00e87a;">LOCAL RUNTIME</span>
       </div>
       <div class="flow-frame-body">
         <div class="flow-prompt-box">
           <div class="flow-prompt-label">Prompt / Niyet</div>
-          "Müşteriye Telegram üzerinden haftalık rapor özeti gönder"
+          "Send customer weekly executive summary via Telegram"
         </div>
         <div class="flow-steps-list" id="flow1-steps">
           <div class="flow-step-item">
@@ -477,7 +498,7 @@ footer {
       </div>
       <div class="flow-frame-footer">
         <span style="color:#889988;">Score: 98/100 • $0.00</span>
-        <button class="flow-btn-run" onclick="runSimulatedFlow(1)">▶ Akışı Çalıştır</button>
+        <button class="flow-btn-run" onclick="runSimulatedFlow(1)">▶ Execute Workflow</button>
       </div>
     </div>
 
@@ -486,14 +507,14 @@ footer {
       <div class="flow-frame-header">
         <div class="flow-frame-title">
           <span class="pulse-dot"></span>
-          Çerçeve 2: Paralel Araştırma
+          Flow 2: Parallel Research Graph
         </div>
         <span style="font-family:var(--f-mono); font-size:10px; color:#00e87a;">PARALLEL DAG</span>
       </div>
       <div class="flow-frame-body">
         <div class="flow-prompt-box">
           <div class="flow-prompt-label">Prompt / Niyet</div>
-          "En büyük 3 rakibin fiyatlarını tara, doğrula ve rapor oluştur"
+          "Scrape top 3 competitors, verify pricing and generate report"
         </div>
         <div class="flow-steps-list" id="flow2-steps">
           <div class="flow-step-item">
@@ -516,7 +537,7 @@ footer {
       </div>
       <div class="flow-frame-footer">
         <span style="color:#889988;">Score: 99/100 • Savings: $14.50</span>
-        <button class="flow-btn-run" onclick="runSimulatedFlow(2)">▶ Akışı Çalıştır</button>
+        <button class="flow-btn-run" onclick="runSimulatedFlow(2)">▶ Execute Workflow</button>
       </div>
     </div>
 
@@ -525,14 +546,14 @@ footer {
       <div class="flow-frame-header">
         <div class="flow-frame-title">
           <span class="pulse-dot amber"></span>
-          Çerçeve 3: Kurumsal ERP & Onay
+          Flow 3: Enterprise ERP & Multi-Sig
         </div>
         <span style="font-family:var(--f-mono); font-size:10px; color:#d4a373;">PASSKEY GATEWAY</span>
       </div>
       <div class="flow-frame-body">
         <div class="flow-prompt-box">
           <div class="flow-prompt-label">Prompt / Niyet</div>
-          "SAP ERP üzerinden $75,000 ödeme talimatını işleme al"
+          "Process $75,000 corporate settlement instruction via SAP ERP"
         </div>
         <div class="flow-steps-list" id="flow3-steps">
           <div class="flow-step-item">
@@ -578,23 +599,23 @@ footer {
     });
   }
 </script>
-  <div class="section-label" style="text-align:center;" id="t-prob-lbl">SORUN</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-prob-title">Veriniz nereye gidiyor?</h2>
+  <div class="section-label" style="text-align:center;" id="t-prob-lbl">THE PROBLEM</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-prob-title">Where does your data go?</h2>
   <div class="comparison-grid">
     <div class="card">
       <div class="card-tag">ChatGPT</div>
-      <div class="card-title" id="t-prob-title-1">Her mesajın OpenAI'a gidiyor</div>
-      <div class="card-body" id="t-prob-1">Saklı. Analiz ediliyor. Ticari modelleri eğitmek için kullanılıyor. İnternet olmadan çalışmaz.</div>
+      <div class="card-title" id="t-prob-title-1">Every message goes to OpenAI</div>
+      <div class="card-body" id="t-prob-1">Stored. Analyzed. Used to train commercial models. Doesn't work without internet.</div>
     </div>
     <div class="card">
       <div class="card-tag">Gemini</div>
-      <div class="card-title" id="t-prob-title-2">Her belgen Google'a gidiyor</div>
-      <div class="card-body" id="t-prob-2">Başka bir şirket. Aynı hikaye. Verin senin cihazında değil, onların sunucularında yaşar.</div>
+      <div class="card-title" id="t-prob-title-2">Every document goes to Google</div>
+      <div class="card-body" id="t-prob-2">Another company. Same story. Your data lives on their servers, not your device.</div>
     </div>
     <div class="card accent">
       <div class="card-tag">myc</div>
-      <div class="card-title f-serif-italic" id="t-prob-title-3">Her şey cihazında kalır.</div>
-      <div class="card-body" id="t-prob-3">Her zaman. Yaşayan kolonin sadece senin yerel ağında çalışır. Verin hiçbir zaman internete çıkmaz.</div>
+      <div class="card-title f-serif-italic" id="t-prob-title-3">Everything stays on your device.</div>
+      <div class="card-body" id="t-prob-3">Always. Your living colony only runs on your local network. Your data never sees the internet.</div>
     </div>
   </div>
 </section>
@@ -602,7 +623,7 @@ footer {
 <!-- DEPIN & AI AGENT SOLUTIONS SECTION -->
 <section class="section-pad bg-parchment" id="depin-solutions" style="border-top:1px solid var(--f-bark); border-bottom:1px solid var(--f-bark);">
   <div style="max-width:1200px; margin:0 auto;">
-    <div class="section-label" style="text-align:center;" id="t-depin-lbl">FİZİKSEL DÜNYA & BLOKZİNCİR ÇÖZÜMLERİ</div>
+    <div class="section-label" style="text-align:center;" id="t-depin-lbl">PHYSICAL INFRASTRUCTURE & DEPIN MATRIX</div>
     <h2 class="section-title f-serif-italic" style="text-align:center; margin-bottom:20px;" id="t-depin-title">
       DePIN & Otonom AI Agent Altyapısı
     </h2>
@@ -617,18 +638,18 @@ footer {
         <div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <span style="font-family:var(--f-mono); font-size:11px; background:var(--f-parchment); color:var(--f-moss); padding:4px 8px; border-radius:6px; font-weight:700;">
-              ⚡ 40B+ MİKRODENETLEYİCİ
+              ⚡ 40B+ MICROCONTROLLERS
             </span>
             <span style="font-family:var(--f-mono); font-size:11px; color:var(--f-soil);">240B RAM • malloc=0</span>
           </div>
           <h3 class="f-serif-italic" style="font-size:28px; color:var(--f-deep); margin-bottom:14px;">
-            DePIN & Bare-Metal Silikon Katmanı
+            DePIN & Bare-Metal Silicon Substrate
           </h3>
           <p style="font-size:14px; color:var(--f-soil); line-height:1.6; margin-bottom:20px;">
             ARM Cortex-M, ESP32 ve RP2350 çipleri doğrudan <strong>0G, peaq, IoTeX ve Ethereum L2</strong> ağlarına bağlanır. Fabrika PLC'leri, SCADA ve enerji şebekeleri için mikrosaniyelik deterministik Modbus RTU yürütmesi sunar.
           </p>
           <ul style="font-size:13px; color:var(--f-humus); line-height:1.8; margin-bottom:24px; padding-left:18px;">
-            <li><strong>Sıfır Dinamik Bellek:</strong> 240 Bayt yığın, sıfır heap ile bellek sızıntısı imkansız.</li>
+            <li><strong>Zero Dynamic Heap:</strong> Strictly 240 bytes static RAM budget; zero heap allocations.</li>
             <li><strong>Çoklu-Zincir Doğrulama:</strong> 0G Storage/AI, peaq did:peaq ve IoTeX ioID.</li>
             <li><strong>Endüstriyel Modbus RTU:</strong> Donanım seviyesinde CRC-16 doğrulaması.</li>
           </ul>
@@ -695,33 +716,33 @@ footer {
 </section>
 
 <section class="section-pad" id="how">
-  <div class="section-label" style="text-align:center;" id="t-how-lbl">SİSTEM</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-how-title">Yaşayan Koloni Nasıl Çalışır?</h2>
+  <div class="section-label" style="text-align:center;" id="t-how-lbl">THE SYSTEM</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-how-title">How the Living Colony Coordinates</h2>
   <div class="how-grid">
     <div class="how-step">
       <div class="how-num f-serif-italic">01</div>
-      <div class="how-title" id="t-h1-t">İhtiyaç</div>
-      <div class="how-body" id="t-h1-b">Ne yapmak istediğini söylersin. Myc sadece chat yapmaz, işi anlar.</div>
+      <div class="how-title" id="t-h1-t">Intent</div>
+      <div class="how-body" id="t-h1-b">You declare your objective. Myc decomposes and understands actionable machine work.</div>
     </div>
     <div class="how-step">
       <div class="how-num f-serif-italic">02</div>
-      <div class="how-title" id="t-h2-t">Planlayıcı</div>
-      <div class="how-body" id="t-h2-b">Görevi parçalara böler ve bir yürütme planı çıkarır.</div>
+      <div class="how-title" id="t-h2-t">Planner</div>
+      <div class="how-body" id="t-h2-b">Deconstructs complex goals into verifiable DAG execution branches.</div>
     </div>
     <div class="how-step">
       <div class="how-num f-serif-italic">03</div>
-      <div class="how-title" id="t-h3-t">Yürütme</div>
-      <div class="how-body" id="t-h3-b">Gereken becerileri (skills) ve araçları hazırlar.</div>
+      <div class="how-title" id="t-h3-t">Execution</div>
+      <div class="how-body" id="t-h3-b">Dynamically binds deterministic skills, registers, and Modbus payloads.</div>
     </div>
     <div class="how-step">
       <div class="how-num f-serif-italic">04</div>
-      <div class="how-title" id="t-h4-t">Koloni</div>
-      <div class="how-body" id="t-h4-b">İşi en uygun cihaza gönderir. (Örn: Model laptopta çalışır, sonuç telefona gelir).</div>
+      <div class="how-title" id="t-h4-t">Colony Swarm</div>
+      <div class="how-body" id="t-h4-b">Dispatches tasks to the optimal hardware node (edge TPU, MCU, or local host).</div>
     </div>
     <div class="how-step">
       <div class="how-num f-serif-italic">05</div>
-      <div class="how-title" id="t-h5-t">Sonuç</div>
-      <div class="how-body" id="t-h5-b">İşlem tamamlanır, öğrenilir ve gelecekteki hız için önbelleğe alınır.</div>
+      <div class="how-title" id="t-h5-t">Finality</div>
+      <div class="how-body" id="t-h5-b">Task finalizes in sub-5 µs, verified by Proof-of-Resonance and cached locally.</div>
     </div>
   </div>
 </section>
@@ -729,8 +750,8 @@ footer {
 <section class="section-pad bg-parchment" id="compute">
   <div class="compute-layout">
     <div>
-      <div class="section-label" id="t-comp-lbl">HESAPLAMADAN KAÇINMA</div>
-      <h2 class="section-title f-serif-italic" id="t-comp-title">GPU son çaredir.</h2>
+      <div class="section-label" id="t-comp-lbl">COMPUTE AVOIDANCE</div>
+      <h2 class="section-title f-serif-italic" id="t-comp-title">The GPU is the last resort.</h2>
       <p class="hero-sub" id="t-comp-sub">
         Herkes daha büyük GPU'lar inşa etmeye çalışıyor. Myc ise hesaplamayı sıfıra indirmeyi hedefler.
         Sorgular her zaman en ucuz ve en hızlı katmanda çözülür.
@@ -767,37 +788,37 @@ footer {
 
 <!-- REZONANS ZEKA ÇEKİRDEĞİ -->
 <section class="section-pad" id="resonance">
-  <div class="section-label" style="text-align:center;" id="t-res-lbl">REZONANS ÇEKİRDEĞİ</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-res-title">Biyomimetik Yerel Zeka Katmanı</h2>
+  <div class="section-label" style="text-align:center;" id="t-res-lbl">RESONANCE CORE</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-res-title">Biomimetic Living Cognitive Architecture</h2>
   <p class="hero-sub" style="text-align:center; margin: -40px auto 56px; max-width: 720px;" id="t-res-sub">
-    Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hiperboyutlu Rezonans Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.
+    Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hyperdimensional Resonance Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.
   </p>
 
   <div class="comparison-grid" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px;">
     <div class="card">
       <div class="card-tag">01 · DİL ANLAMA</div>
-      <div class="card-title" style="font-size:20px;" id="t-res-c1-t">Morfogenetik Dil Motoru</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c1-t">Morphogenetic Language Engine</div>
       <div class="card-body" id="t-res-c1-b">
         Türkçe ek ve kök yapılarını doğal kurallarıyla donanım üzerinde anında ayrıştıran yüksek hızlı yerel dil çekirdeği.
       </div>
     </div>
     <div class="card">
       <div class="card-tag">02 · YAŞAYAN HAFIZA</div>
-      <div class="card-title" style="font-size:20px;" id="t-res-c2-t">Holografik Yaşayan Bellek</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c2-t">Holographic Living Memory</div>
       <div class="card-body" id="t-res-c2-b">
         Biyolojik nöral kurallarla çalışan, kullanılan bilgileri pekiştiren ve zamanla esneyen akıllı yerel bellek.
       </div>
     </div>
     <div class="card">
       <div class="card-tag">03 · VEKTÖR &amp; EŞLEŞTİRME</div>
-      <div class="card-title" style="font-size:20px;" id="t-res-c3-t">Hiperboyutlu Rezonans</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c3-t">Hyperdimensional Resonance</div>
       <div class="card-body" id="t-res-c3-b">
         GPU yükü oluşturmadan mikrosaniyeler içinde yüksek boyutlu semantik eşleştirme sağlayan frekans mimarisi.
       </div>
     </div>
     <div class="card">
       <div class="card-tag">04 · GÜVENLİK &amp; YÜRÜTME</div>
-      <div class="card-title" style="font-size:20px;" id="t-res-c4-t">Doğrulanmış Karar Motoru</div>
+      <div class="card-title" style="font-size:20px;" id="t-res-c4-t">Deterministic Decision Engine</div>
       <div class="card-body" id="t-res-c4-b">
         Mantık ve hesaplama sorgularını deterministik olarak sıfır halüsinasyonla çözen otonom karar katmanı.
       </div>
@@ -993,32 +1014,32 @@ footer {
 </section>
 
 <section class="section-pad bg-parchment">
-  <div class="section-label" style="text-align:center;" id="t-os-lbl">KAYNAKLAR</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-os-title">Açık Kaynak</h2>
+  <div class="section-label" style="text-align:center;" id="t-os-lbl">RESOURCES</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-os-title">Open Source</h2>
   <div class="os-grid">
     <a href="https://github.com/brienteth/myc-ai" class="os-card">
       <div class="os-title" id="t-os-card-1-t">GitHub</div>
-      <div class="os-desc" id="t-os-card-1-d">Kodları incele, fork et, katkıda bulun.</div>
+      <div class="os-desc" id="t-os-card-1-d">Review core crates, fork, and contribute.</div>
     </a>
     <a href="/docs" class="os-card">
       <div class="os-title" id="t-os-card-2-t">Whitepaper</div>
-      <div class="os-desc" id="t-os-card-2-d">Yaşayan işletim sistemi vizyonunu oku.</div>
+      <div class="os-desc" id="t-os-card-2-d">Read the comprehensive Living Lattice whitepaper.</div>
     </a>
     <a href="/docs#workflows" class="os-card">
-      <div class="os-title" id="t-os-card-3-t">Dokümantasyon</div>
-      <div class="os-desc" id="t-os-card-3-d">Dağıtık yürütme ağının teknik detayları.</div>
+      <div class="os-title" id="t-os-card-3-t">Documentation</div>
+      <div class="os-desc" id="t-os-card-3-d">Technical architecture and RPC reference.</div>
     </a>
     <a href="LICENSE" class="os-card">
       <div class="os-title" id="t-os-card-4-t">MIT Lisansı</div>
-      <div class="os-desc" id="t-os-card-4-d">Özgür, şeffaf ve kısıtlamasız.</div>
+      <div class="os-desc" id="t-os-card-4-d">Sovereign, permissionless, and non-restrictive.</div>
     </a>
   </div>
 </section>
 
 <section class="section-pad" id="download">
   <div class="download-sec">
-    <h2 class="section-title f-serif-italic" id="t-dl-title">Bugün kolonini kur.</h2>
-    <p class="hero-sub" style="margin:0 auto;" id="t-dl-sub">Hesap yok. İnternet yok. Sadece donanımın ve sen.</p>
+    <h2 class="section-title f-serif-italic" id="t-dl-title">Deploy your colony today.</h2>
+    <p class="hero-sub" style="margin:0 auto;" id="t-dl-sub">No accounts. Zero cloud dependencies. Just your silicon and you.</p>
     <div class="dl-buttons">
       <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="btn-primary" id="dl-mac">macOS (DMG)</a>
       <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip" class="btn-secondary" id="dl-mac-zip">macOS (ZIP)</a>
@@ -1062,7 +1083,7 @@ footer {
     </svg>
     <div>
       <div class="footer-logo f-serif-italic">myc</div>
-      <div id="t-foot-slogan">Verini sen kontrol et.</div>
+      <div id="t-foot-slogan">Sovereign machine autonomy./div>
     </div>
   </div>
   <div class="footer-links">
@@ -1142,14 +1163,14 @@ footer {
       f6: "Cloud (Bulut)",
       res_lbl: "REZONANS ÇEKİRDEĞİ",
       res_title: "Biyomimetik Yerel Zeka Katmanı",
-      res_sub: "Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hiperboyutlu Rezonans Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.",
-      res_c1_t: "Morfogenetik Dil Motoru",
+      res_sub: "Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hyperdimensional Resonance Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.",
+      res_c1_t: "Morphogenetic Language Engine",
       res_c1_b: "Türkçe ek ve kök yapılarını doğal kurallarıyla donanım üzerinde anında ayrıştıran yüksek hızlı yerel dil çekirdeği.",
-      res_c2_t: "Holografik Yaşayan Bellek",
+      res_c2_t: "Holographic Living Memory",
       res_c2_b: "Biyolojik nöral kurallarla çalışan, kullanılan bilgileri pekiştiren ve zamanla esneyen akıllı yerel bellek.",
-      res_c3_t: "Hiperboyutlu Rezonans",
+      res_c3_t: "Hyperdimensional Resonance",
       res_c3_b: "GPU yükü oluşturmadan mikrosaniyeler içinde yüksek boyutlu semantik eşleştirme sağlayan frekans mimarisi.",
-      res_c4_t: "Doğrulanmış Karar Motoru",
+      res_c4_t: "Deterministic Decision Engine",
       res_c4_b: "Mantık ve hesaplama sorgularını deterministik olarak sıfır halüsinasyonla çözen otonom karar katmanı.",
       depin_lbl: "FİZİKSEL DÜNYA & BLOKZİNCİR ÇÖZÜMLERİ",
       depin_title: "DePIN & Otonom AI Agent Altyapısı",
@@ -1246,7 +1267,7 @@ footer {
     else el.innerText = text;
   }
 
-  let currentLang = localStorage.getItem('myca_lang') || 'tr';
+  let currentLang = localStorage.getItem('myca_lang') || 'en';
 
   function applyLanguage(l) {
     currentLang = l;

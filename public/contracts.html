@@ -131,7 +131,7 @@
 </head>
 <body>
 
-      <!-- UNIFIED MASTER HEADER -->
+        <!-- UNIFIED MASTER HEADER WITH DOCS DROPDOWN -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
@@ -143,14 +143,37 @@
         </div>
       </a>
 
-      <!-- Center: 6 Core Infrastructure Pillars (Clean & Focused) -->
+      <!-- Center: 6 Core Infrastructure Pillars with Docs Dropdown -->
       <div class="myca-nav-center">
         <a href="/hub" class="myca-nav-link">🌐 Hub</a>
         <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
         <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
         <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
         <a href="/build" class="myca-nav-link active">🛠️ Build</a>
-        <a href="/docs" class="myca-nav-link">📚 Docs</a>
+        
+        <!-- Docs Dropdown on Hover -->
+        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
+          <a href="/docs" class="myca-nav-link " style="display: flex; align-items: center; gap: 4px;">
+            <span>📚 Docs</span>
+            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </a>
+          <div class="myca-dropdown-panel" style="min-width: 260px; padding: 6px; top: 100%;">
+            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">📖</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;">Network Whitepaper</div>
+                <div style="font-size: 11px; color: #94a3b8;">GitBook specs, PoR & Tokenomics</div>
+              </div>
+            </a>
+            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🛠️</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">Developer Docs & RPC</div>
+                <div style="font-size: 11px; color: #94a3b8;">JSON-RPC, SDKs & APIs</div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
 
       <!-- Right: Actions & Live State -->
