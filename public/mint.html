@@ -942,32 +942,46 @@
 </head>
 <body>
 
-  <!-- Top Navbar -->
-  <header class="myca-navbar">
-    <a href="/depin" class="nav-brand">
-      <img src="/depin/mycai_logo.png" alt="MYC Logo">
-      <span class="nav-brand-text">MYC NETWORK</span>
-      <span class="nav-brand-badge">Base L2</span>
-    </a>
-    <nav class="nav-links">
-      <a href="/depin" class="nav-link" id="navOverview">Overview</a>
-      <a href="/depin/docs" class="nav-link" id="navDocs">GitBook Docs</a>
-      <a href="/depin/dev-docs" class="nav-link" id="navDevDocs">Developer Docs</a>
-      <a href="/depin/mint" class="nav-link active" id="navNodeSale">Node Sale</a>
-      <a href="/depin/hub" class="nav-link" id="navHub">Ecosystem Hub</a>
-      <a href="/depin/x-card" class="nav-link" id="navXStudio">X Studio</a>
-    </nav>
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <div class="lang-selector">
-        <button class="lang-btn active" id="langBtnEn" onclick="setLanguage('en')">EN</button>
-        <span class="lang-divider">/</span>
-        <button class="lang-btn" id="langBtnTr" onclick="setLanguage('tr')">TR</button>
+    <!-- UNIFIED MASTER HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: 7 Pillar Core Links -->
+      <div class="myca-nav-center">
+        <a href="/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
+        <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
+        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
+        <a href="/build" class="myca-nav-link">🛠️ Build</a>
+        <a href="/marketplace" class="myca-nav-link active">🏪 Market</a>
+        <a href="/docs" class="myca-nav-link">📚 Docs</a>
       </div>
-      <button id="btnWallet" class="tab-btn active" style="padding: 6px 16px; font-size: 12px;" onclick="connectWallet()">
-        Connect Base Wallet
-      </button>
-    </div>
-  </header>
+
+      <!-- Right: Actions & Live State -->
+      <div class="myca-nav-right">
+        <div class="lang-selector">
+          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
+          <span class="lang-divider">/</span>
+          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
+        </div>
+        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+          <span>5,000 MYC</span>
+        </div>
+        <a href="/hub#faucet" class="myca-btn-primary">
+          <span>🎁 Faucet</span>
+        </a>
+      </div>
+    </nav>
+  </div>
 
   <main class="container">
 

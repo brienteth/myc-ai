@@ -321,7 +321,7 @@
 </head>
 <body>
 
-  <!-- UNIFIED MYCELIUM HEADER -->
+    <!-- UNIFIED MASTER HEADER -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
@@ -333,30 +333,30 @@
         </div>
       </a>
 
-      <!-- Center: Navigation Menus -->
+      <!-- Center: 7 Pillar Core Links -->
       <div class="myca-nav-center">
-        <div class="myca-nav-dropdown">
-          <a href="/hub" class="myca-nav-link" style="color: var(--cyan); font-weight: 700;">Discover Hub</a>
-        </div>
-        <div class="myca-nav-dropdown">
-          <a href="/hub#swap" class="myca-nav-link">Swap (AMM)</a>
-        </div>
-        <div class="myca-nav-dropdown">
-          <a href="/hub#bridge" class="myca-nav-link">Hyphae Bridge</a>
-        </div>
-        <div class="myca-nav-dropdown">
-          <a href="/explorer" class="myca-nav-link">Lattice Explorer</a>
-        </div>
-        <div class="myca-nav-dropdown">
-          <a href="/agent" class="myca-nav-link">AI Colony</a>
-        </div>
+        <a href="/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
+        <a href="/depin" class="myca-nav-link active">🤖 DePIN</a>
+        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
+        <a href="/build" class="myca-nav-link">🛠️ Build</a>
+        <a href="/marketplace" class="myca-nav-link">🏪 Market</a>
+        <a href="/docs" class="myca-nav-link">📚 Docs</a>
       </div>
 
-      <!-- Right: Action Buttons -->
+      <!-- Right: Actions & Live State -->
       <div class="myca-nav-right">
-        <a href="/hub" class="myca-btn-primary">
-          <span>Enter Discover Hub</span>
-          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="lang-selector">
+          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
+          <span class="lang-divider">/</span>
+          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
+        </div>
+        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+          <span>5,000 MYC</span>
+        </div>
+        <a href="/hub#faucet" class="myca-btn-primary">
+          <span>🎁 Faucet</span>
         </a>
       </div>
     </nav>

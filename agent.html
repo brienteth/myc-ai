@@ -3,81 +3,316 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mycelial AI Colony — DePIN Autonomous Machine & Agent Swarm | Chain 108</title>
+  <title>Mycelial AI Colony — DePIN Autonomous Agent Swarm | Chain 108</title>
   <link rel="stylesheet" href="/brand.css">
   <style>
-    .agent-shell { max-width: 1280px; margin: 40px auto; padding: 0 24px; }
-    .agent-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+    .colony-shell { max-width: 1320px; margin: 30px auto; padding: 0 20px; }
     
-    .status-badge-airgap {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 6px 14px; border-radius: 100px;
-      background: rgba(0, 232, 122, 0.12); border: 1px solid rgba(0, 232, 122, 0.35);
-      color: #00e87a; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+    /* Top Swarm Telemetry Bar */
+    .swarm-telemetry-banner {
+      background: linear-gradient(135deg, rgba(16, 24, 39, 0.95), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .swarm-title-area h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .swarm-title-area p {
+      margin: 0;
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .swarm-metrics-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .swarm-metric-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .swarm-metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: #00f0ff;
+    }
+    .swarm-metric-lbl {
+      font-size: 10px;
+      color: #94a3b8;
+      text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .pulse-dot {
-      width: 8px; height: 8px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a; animation: pGlow 1.5s infinite;
-    }
-    @keyframes pGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    .tabs-bar { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
-    .tab-btn { background: none; border: none; color: var(--mute); padding: 8px 16px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: all .2s; }
-    .tab-btn.active { background: rgba(126,200,196,0.15); color: var(--teal); }
+    /* Topology Swarm Grid */
+    .nodes-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1024px) {
+      .nodes-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .nodes-grid { grid-template-columns: 1fr; }
+    }
+    .node-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .node-card:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.1);
+    }
+    .node-card.active-work {
+      border-color: rgba(0, 232, 122, 0.5);
+      background: rgba(0, 232, 122, 0.04);
+    }
+    .node-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .node-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .node-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #00e87a;
+      box-shadow: 0 0 8px #00e87a;
+    }
+    .node-meta {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+    .node-task-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .node-task-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00e87a, #00f0ff);
+      width: 75%;
+      border-radius: 2px;
+      animation: pulseBar 2s infinite ease-in-out;
+    }
+    @keyframes pulseBar {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
 
-    .engine-bar {
-      display: flex; gap: 12px; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid var(--border);
-      border-radius: 10px; padding: 10px 16px; margin-bottom: 20px; flex-wrap: wrap;
+    /* Main Dual Workstation */
+    .colony-workstation {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 20px;
     }
-    .engine-label { font-size: 12px; font-weight: 700; color: var(--paper); font-family: var(--font-mono); }
-    .engine-select {
-      background: var(--ink); border: 1px solid var(--border); border-radius: 6px; color: var(--teal);
-      padding: 6px 12px; font-family: inherit; font-size: 12px; font-weight: 600; outline: none; cursor: pointer;
+    @media (max-width: 960px) {
+      .colony-workstation { grid-template-columns: 1fr; }
     }
-    .serial-btn {
-      margin-left: auto; background: rgba(126,200,196,0.1); border: 1px solid var(--teal); color: var(--teal);
-      padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
-    }
-    .serial-btn:hover { background: var(--teal); color: var(--teal-ink); }
 
-    .agent-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
-    .chat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; height: 620px; overflow: hidden; }
-    .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; font-size: 13px; }
-    .msg-user { align-self: flex-end; background: rgba(126,200,196,0.15); border: 1px solid rgba(126,200,196,0.3); color: var(--paper); padding: 10px 14px; border-radius: 10px 10px 0 10px; max-width: 80%; }
-    .msg-agent { align-self: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--paper); padding: 14px 16px; border-radius: 10px 10px 10px 0; max-width: 90%; }
-    .tool-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(126,200,196,0.1); border: 1px solid var(--teal); color: var(--teal); font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; }
-    .chat-input-bar { display: flex; border-top: 1px solid var(--border); padding: 12px; gap: 10px; background: rgba(0,0,0,0.2); }
-    .chat-input { flex: 1; background: var(--ink); border: 1px solid var(--border); border-radius: 8px; color: var(--paper); padding: 10px 14px; font-family: inherit; font-size: 13px; outline: none; }
-    .chat-input:focus { border-color: var(--teal); }
-    .btn-send { background: var(--teal); color: var(--teal-ink); border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    /* Left: Swarm Dispatcher & Live Log */
+    .swarm-panel {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 640px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .panel-header {
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .log-stream {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 12.5px;
+    }
+    .log-entry {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+    .log-entry.user {
+      align-self: flex-end;
+      background: rgba(0, 240, 255, 0.08);
+      border-color: rgba(0, 240, 255, 0.25);
+      max-width: 80%;
+    }
+    .log-entry.swarm {
+      align-self: flex-start;
+      border-left: 3px solid #00f0ff;
+      max-width: 95%;
+    }
+    .entry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: #00f0ff;
+      margin-bottom: 4px;
+    }
+
+    /* Bottom Input Bar */
+    .dispatch-bar {
+      padding: 14px;
+      background: rgba(0, 0, 0, 0.3);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      gap: 10px;
+    }
+    .dispatch-input {
+      flex: 1;
+      background: rgba(10, 15, 26, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13px;
+      outline: none;
+    }
+    .dispatch-input:focus { border-color: #00f0ff; }
+    .btn-dispatch {
+      background: linear-gradient(135deg, #00f0ff, #00e87a);
+      border: none;
+      color: #041017;
+      font-weight: 700;
+      padding: 0 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .btn-dispatch:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 240, 255, 0.3); }
+
+    /* Right: Swarm Commands & Hardware Enclave */
+    .controls-panel {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      max-height: 640px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .section-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preset-cmd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cmd-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #f1f5f9;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cmd-chip:hover {
+      background: rgba(0, 240, 255, 0.08);
+      border-color: rgba(0, 240, 255, 0.3);
+      color: #00f0ff;
+    }
+    .cmd-chip.danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
     
-    .side-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; font-size: 12px; display: flex; flex-direction: column; gap: 18px; }
-    .voltage-gauge {
-      background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center;
+    .status-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .voltage-val { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: #00e87a; }
-    .voltage-val.clamped { color: #ff5a5a; }
-
-    .preset-btn-list { display: flex; flex-direction: column; gap: 6px; }
-    .preset-btn {
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 8px 10px; border-radius: 6px;
-      color: var(--paper); font-size: 11px; text-align: left; cursor: pointer; transition: all .15s;
-    }
-    .preset-btn:hover { background: rgba(126,200,196,0.1); border-color: var(--teal); color: var(--teal); }
-    .preset-btn.warn:hover { border-color: #ff5a5a; color: #ff5a5a; }
-
-    /* Memory Tab */
-    .mem-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-    .mem-panel.active { display: block; }
-    .mem-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 16px; max-height: 480px; overflow-y: auto; }
-    .mem-item { background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 12px; }
-    .mem-key { font-family: var(--font-mono); color: var(--teal); font-weight: 700; margin-bottom: 4px; }
-    .mem-content { color: var(--paper); line-height: 1.4; }
   </style>
 </head>
 <body style="padding-top: 80px;">
 
-  <!-- UNIFIED 0G-STYLE HEADER -->
+    <!-- UNIFIED MASTER HEADER -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
@@ -89,371 +324,224 @@
         </div>
       </a>
 
-      <!-- Center: Navigation Menus -->
+      <!-- Center: 7 Pillar Core Links -->
       <div class="myca-nav-center">
-        <!-- Ecosystem Dropdown -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger active" type="button">
-            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/hub" class="myca-dropdown-card">
-                <div class="myca-dd-icon">⚡</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
-                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
-                </div>
-              </a>
-              <a href="/explorer" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🧭</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Lattice DAG Explorer</div>
-                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & DAG vertices</div>
-                </div>
-              </a>
-              <a href="/depin" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🤖</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
-                  <div class="myca-dd-sub">Silicon PUF identity, turbines & actuator nodes</div>
-                </div>
-              </a>
-              <a href="/agent" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🧠</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial AI Colony</div>
-                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
-                </div>
-              </a>
-              <a href="/contracts" class="myca-dropdown-card">
-                <div class="myca-dd-icon">📜</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial Contracts Studio</div>
-                  <div class="myca-dd-sub">Verified contracts, bytecode runner & ABIs</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Build Dropdown (Developer Focus) -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/build" class="myca-dropdown-card">
-                <div class="myca-dd-icon">⚡</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">0→1 Quickstart Studio <span class="myca-dd-badge">STUDIO</span></div>
-                  <div class="myca-dd-sub">Proje tipi seç, otomatik faucet al, canlı playground'da çalıştır</div>
-                </div>
-              </a>
-              <a href="/dev-docs.html" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🛠️</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Developer Docs <span class="myca-dd-badge">DEV</span></div>
-                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples & quickstart</div>
-                </div>
-              </a>
-              <a href="/contracts" class="myca-dropdown-card">
-                <div class="myca-dd-info">📋</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Smart Contract ABIs</div>
-                  <div class="myca-dd-sub">Chain ID 108 tokenomics, bridge & escrow interfaces</div>
-                </div>
-              </a>
-              <a href="/agent#hardware" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔌</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Hardware & Modbus SDK</div>
-                  <div class="myca-dd-sub">WebSerial PUF keyrings & 0-Byte Negation Shield</div>
-                </div>
-              </a>
-              <a href="https://github.com/bl10buer/myc-network" target="_blank" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🐙</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">GitHub Repositories ↗</div>
-                  <div class="myca-dd-sub">Open-source core crates, consensus & test suites</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Docs Dropdown (Architecture & Whitepaper) -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/docs.html" class="myca-dropdown-card">
-                <div class="myca-dd-icon">📖</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Network Whitepaper</div>
-                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
-                </div>
-              </a>
-              <a href="/docs.html#tokenomics" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🪙</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Tokenomics Specs</div>
-                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
-                </div>
-              </a>
-              <a href="/docs.html#zero-gas" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🛡️</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Zero-Gas Invariant</div>
-                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
-                </div>
-              </a>
-              <a href="/docs.html#security" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔒</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Security & BFT Quorum</div>
-                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
+        <a href="/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
+        <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
+        <a href="/agent" class="myca-nav-link active">🧠 AI Colony</a>
+        <a href="/build" class="myca-nav-link">🛠️ Build</a>
+        <a href="/marketplace" class="myca-nav-link">🏪 Market</a>
+        <a href="/docs" class="myca-nav-link">📚 Docs</a>
       </div>
 
-      <!-- Right: Action Buttons & Live App Launch -->
+      <!-- Right: Actions & Live State -->
       <div class="myca-nav-right">
-        <a href="/build" class="myca-btn-secondary">Build</a>
-        <a href="/hub" class="myca-btn-primary">
-          <span>Launch NEXUS</span>
-          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="lang-selector">
+          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
+          <span class="lang-divider">/</span>
+          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
+        </div>
+        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+          <span>5,000 MYC</span>
+        </div>
+        <a href="/hub#faucet" class="myca-btn-primary">
+          <span>🎁 Faucet</span>
         </a>
       </div>
     </nav>
   </div>
 
-  <div class="agent-shell">
+  <div class="colony-shell">
     
-    <!-- Top Header -->
-    <div class="agent-header">
-      <div>
-        <div style="font-family:var(--font-mono); font-size:11px; color:var(--teal); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px;">
-          DEPIN AUTONOMOUS MACHINE SUBSTRATE • CHAIN ID 108
-        </div>
-        <h1 style="font-size:26px; margin:0 0 6px 0;">Mycelial AI Colony (Autonomous Agent Swarm)</h1>
-        <p style="color:var(--mute); margin:0; font-size:13px;">
-          Bulut API yok, harici sunucu yok ($0.00). Uçak modunda veya internetsiz yerel donanımda tam bağımsız çalışır.
+    <!-- Swarm Telemetry Banner -->
+    <div class="swarm-telemetry-banner">
+      <div class="swarm-title-area">
+        <h1>
+          <span>🧠 Mycelial AI Colony (Autonomous Agent Swarm)</span>
+        </h1>
+        <p>
+          DePIN Autonomous Machine Substrate (Chain ID 108). 5 distributed peer agents collaborating peer-to-peer with zero-gas M2M settlements, silicon PUF attestation, and local neural inference.
         </p>
       </div>
 
-      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
-        <div class="status-badge-airgap">
-          <span class="pulse-dot"></span>
-          <span>AIR-GAPPED OFFLINE (0-CLOUD)</span>
+      <div class="swarm-metrics-row">
+        <div class="swarm-metric-chip">
+          <span class="swarm-metric-val">5 / 5 ACTIVE</span>
+          <span class="swarm-metric-lbl">Swarm Nodes</span>
         </div>
-        <span style="font-size:11px; color:var(--faint); font-family:var(--font-mono);">LOCAL HARDWARE ENCLAVE</span>
+        <div class="swarm-metric-chip">
+          <span class="swarm-metric-val">15,147 TPS</span>
+          <span class="swarm-metric-lbl">Coherence Speed</span>
+        </div>
+        <div class="swarm-metric-chip">
+          <span class="swarm-metric-val">$0.00000000</span>
+          <span class="swarm-metric-lbl">M2M Gas Overhead</span>
+        </div>
+        <div class="swarm-metric-chip">
+          <span class="swarm-metric-val">99.8%</span>
+          <span class="swarm-metric-lbl">Consensus Coherence</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Swarm Topology Nodes -->
+    <div class="nodes-grid">
+      <div class="node-card active-work" id="nodeSentinel">
+        <div class="node-header">
+          <span class="node-id">🛡️ Sentinel-01</span>
+          <span class="node-status-dot"></span>
+        </div>
+        <div class="node-meta">Hardware PUF & Anti-Tamper Attestation</div>
+        <div class="node-task-bar"><div class="node-task-fill" style="width: 90%;"></div></div>
+        <div style="font-size: 10px; font-family: monospace; color: #00e87a;">RP2350 Enclave • 4.95 µs</div>
+      </div>
+
+      <div class="node-card" id="nodeTPU">
+        <div class="node-header">
+          <span class="node-id">⚡ TPU-Inference-02</span>
+          <span class="node-status-dot"></span>
+        </div>
+        <div class="node-meta">Distributed Edge SLM / Metal Neural Weights</div>
+        <div class="node-task-bar"><div class="node-task-fill" style="width: 65%;"></div></div>
+        <div style="font-size: 10px; font-family: monospace; color: #00f0ff;">Perplexity MoE • 0.8ms</div>
+      </div>
+
+      <div class="node-card" id="nodeActuator">
+        <div class="node-header">
+          <span class="node-id">🤖 Actuator-Robot-03</span>
+          <span class="node-status-dot"></span>
+        </div>
+        <div class="node-meta">Modbus RS-485 Turbines & Physical SCADA</div>
+        <div class="node-task-bar"><div class="node-task-fill" style="width: 40%;"></div></div>
+        <div style="font-size: 10px; font-family: monospace; color: #38bdf8;">PLC Bridge • 3.30V Active</div>
+      </div>
+
+      <div class="node-card" id="nodeSettler">
+        <div class="node-header">
+          <span class="node-id">💸 Stream-Settler-04</span>
+          <span class="node-status-dot"></span>
+        </div>
+        <div class="node-meta">Sub-Second M2M Micro-Payment Streams</div>
+        <div class="node-task-bar"><div class="node-task-fill" style="width: 80%;"></div></div>
+        <div style="font-size: 10px; font-family: monospace; color: #a78bfa;">DAG Vertex • 0-Gas</div>
+      </div>
+
+      <div class="node-card" id="nodeMesh">
+        <div class="node-header">
+          <span class="node-id">🌐 Mesh-Pulse-05</span>
+          <span class="node-status-dot"></span>
+        </div>
+        <div class="node-meta">Living Lattice PoR Resonance Synchronizer</div>
+        <div class="node-task-bar"><div class="node-task-fill" style="width: 95%;"></div></div>
+        <div style="font-size: 10px; font-family: monospace; color: #f43f5e;">Phase Lock: 99.8%</div>
       </div>
     </div>
 
-    <!-- Engine & Hardware Bar -->
-    <div class="engine-bar">
-      <span class="engine-label">🧠 ÇEVRİMDIŞI ÇIKARIM MOTORU:</span>
-      <select id="modelSelector" class="engine-select" onchange="onModelChange()">
-        <option value="lily-metal-moe">⚡ Perplexity Lily Metal MoE (Qwen 35B/3B, Apple Silicon Metal, $0.00)</option>
-        <option value="mycai-local">🌿 Myca Embedded Spectral Engine (< 1ms, $0.00, %100 Çevrimdışı)</option>
-        <option value="ollama-hermes">💻 Yerel Ollama Hermes-3 (localhost:11434, $0.00)</option>
-        <option value="webgpu-slm">⚡ In-Browser WebGPU / Wasm Engine (Client-Side GPU)</option>
-      </select>
+    <!-- Main Dual Workstation -->
+    <div class="colony-workstation">
+      
+      <!-- Left: Swarm Log Stream & Dispatcher -->
+      <div class="swarm-panel">
+        <div class="panel-header">
+          <span class="panel-title">📡 Swarm Inter-Agent Task Feed</span>
+          <span style="font-size: 11px; font-family: monospace; color: #00e87a;">● 5 NODES SYNCED</span>
+        </div>
 
-      <button class="serial-btn" onclick="connectHardwareSerial()" id="serialBtn">
-        🔌 USB / RS-485 Modbus PLC'ye Bağlan (Web Serial)
-      </button>
-    </div>
-
-    <!-- Tabs -->
-    <div class="tabs-bar">
-      <button class="tab-btn active" onclick="switchTab('chatTab', this)">💬 Otonom Komut & Hermes Safe-Sign</button>
-      <button class="tab-btn" onclick="switchTab('memTab', this)">🧠 Yerel FHRR Holografik Bellek (IndexedDB)</button>
-    </div>
-
-    <!-- TAB 1: Chat & Terminal -->
-    <div id="chatTab" class="agent-grid">
-      <div class="chat-card">
-        <div class="chat-messages" id="chatBox">
-          <div class="msg-agent">
-            <div class="tool-badge">🤖 SOVEREIGN HERMES MOTORU DEVREDE (OFFLINE)</div>
-            <div>Merhaba! Ben MYCA DePIN Ağı (Chain ID 108) üzerinde çalışan, Silicon PUF doğrulamalı otonom makine ve koloni ajanıyım. Sıfır-gas transferleri, donanım kontrolünü ve uç yapay zeka çıkarımını yönetiyorum.</div>
-            <div style="margin-top:8px; color:var(--mute); font-size:12px;">Aşağıdaki hazır komutlara tıklayabilir veya doğrudan serbest metin yazabilirsiniz:</div>
+        <div class="log-stream" id="chatBox">
+          <div class="log-entry swarm">
+            <div class="entry-badge">🧠 COLONY PRIME MESH • INGESTED</div>
+            <div>Autonomous Swarm Intelligence active on Chain ID 108. The 5 peer nodes are running local inference and continuous hardware attestation. Enter any swarm task below or trigger one from the Swarm Operations panel.</div>
           </div>
         </div>
 
-        <div class="chat-input-bar">
-          <input type="text" id="userInput" class="chat-input" placeholder="Ajan için serbest dilde niyet yazın (Örn: 2 numaralı türbini çalıştır)..." onkeypress="if(event.key==='Enter') executeUserPrompt()">
-          <button class="btn-send" onclick="executeUserPrompt()">Çalıştır ⚡</button>
+        <div class="dispatch-bar">
+          <input type="text" id="userInput" class="dispatch-input" placeholder="Koloniye görev ata (Örn: Robot drone'a 10 MYC aktar veya PUF kimliğini doğrula)..." onkeypress="if(event.key==='Enter') executeUserPrompt()">
+          <button class="btn-dispatch" onclick="executeUserPrompt()">Gönder ⚡</button>
         </div>
       </div>
 
-      <!-- Right Control & Telemetry Panel -->
-      <div class="side-card">
+      <!-- Right: Operations Panel -->
+      <div class="controls-panel">
+        
         <div>
-          <div style="font-weight:700; margin-bottom:6px; color:var(--paper);">Ajan Çalışma Durumu</div>
-          <span style="display:inline-block; padding:3px 8px; border-radius:4px; font-size:10px; font-family:var(--font-mono); background:rgba(0,232,122,0.1); color:#00e87a;">
-            ● AIR-GAPPED HARDWARE AIRBAG ACTIVE
-          </span>
-        </div>
-
-        <!-- Hardware Pin Voltmeter -->
-        <div class="voltage-gauge">
-          <div style="font-size:10px; font-family:var(--font-mono); color:var(--mute); text-transform:uppercase; margin-bottom:4px;">
-            FİZİKSEL PİN VOLTAJI (GPIO / PLC)
+          <div class="section-lbl">
+            <span>⚡ Hızlı Koloni Görevleri</span>
+            <span style="color: #00f0ff; font-family: monospace;">Chain 108</span>
           </div>
-          <div class="voltage-val" id="voltageDisplay">3.30 V</div>
-          <div style="font-size:11px; color:var(--faint); margin-top:4px;" id="voltageStatus">Normal Aktif Durum</div>
-        </div>
-
-        <div>
-          <div style="font-weight:700; margin-bottom:4px;">Sunucu Maliyeti (Cloud VPS)</div>
-          <div style="color:var(--teal); font-family:var(--font-mono); font-size:18px; font-weight:700;">$0.00 / SIFIR</div>
-          <div style="color:var(--faint); font-size:11px;">Hafıza ve çıkarım doğrudan istemcinin RAM'inde döner.</div>
-        </div>
-
-        <div>
-          <div style="font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-            <span>🍄 Otonom DePIN Kolonisi</span>
-            <span style="font-size:10px; color:var(--teal); font-family:var(--font-mono);">0-Gas Chain 108</span>
-          </div>
-          <div class="preset-btn-list" style="margin-bottom:14px;">
-            <button class="preset-btn" onclick="runPreset('Otonom drone filosu için 10  M2M ödeme aktarımı yap')">
-              🤖 Otonom Robota 10  Aktar (0-Gas)
+          <div class="preset-cmd-list" style="margin-top: 8px;">
+            <button class="cmd-chip" onclick="runPreset('Otonom drone filosu için 10 MYC M2M ödeme aktarımı yap')">
+              🤖 Otonom Robota 10 $MYC Aktar (0-Gas)
             </button>
-            <button class="preset-btn" onclick="runPreset('Silicon PUF donanım kimliğini doğrula ve attest et')">
+            <button class="cmd-chip" onclick="runPreset('Silicon PUF donanım kimliğini doğrula ve attest et')">
               🛡️ Silicon PUF Donanım Doğrulaması
             </button>
-            <button class="preset-btn" onclick="runPreset('Uç TPU kümesinde dağıtık AI çıkarım görevi başlat')">
+            <button class="cmd-chip" onclick="runPreset('Uç TPU kümesinde dağıtık AI çıkarım görevi başlat')">
               ⚡ Uç Cihaz AI Çıkarım Görevi (< 10ms)
             </button>
-            <button class="preset-btn" onclick="runPreset('Post-Quantum ML-DSA-65 ile sıfır-gas işlem imzala')">
+            <button class="cmd-chip" onclick="runPreset('Post-Quantum ML-DSA-65 ile sıfır-gas işlem imzala')">
               🔐 Post-Quantum Kripto İmzası
             </button>
-            <button class="preset-btn" onclick="runPreset('Canlı PoQR rezonans skorunu ve ağ durumunu oku')">
+            <button class="cmd-chip" onclick="runPreset('Canlı PoQR rezonans skorunu ve ağ durumunu oku')">
               📊 Canlı PoQR Rezonans & TPS Durumu
             </button>
-            <button class="preset-btn" onclick="runPreset('Sensör telemetri logunu yerel belleğe ve zincire kaydet')">
-              💾 DePIN Sensör Verisini Kaydet
-            </button>
-          </div>
-
-          <div style="font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-            <span>🏭 Endüstriyel & Donanım</span>
-            <span style="font-size:10px; color:#00e87a; font-family:var(--font-mono);">PLC/DAG</span>
-          </div>
-          <div class="preset-btn-list">
-            <button class="preset-btn" onclick="runPreset('2 numaralı türbini çalıştır')">
+            <button class="cmd-chip" onclick="runPreset('2 numaralı türbini çalıştır')">
               ⚡ 2 Nolu Türbini Başlat (Modbus)
             </button>
-            <button class="preset-btn warn" onclick="runPreset('Sakın 5 numaralı vanayı açma abort et')">
-              🛡️ Sakın Vanayı Açma (4.95 µs Lock)
-            </button>
-            <button class="preset-btn" onclick="runPreset('İstasyondaki otonom drone\'a 10 $MYC öde')">
-              🤖 Otonom Robota 10 $MYC Öde (0-Gas)
-            </button>
-            <button class="preset-btn" onclick="runPreset('E-402 arızası ne yapmamız gerek?')">
-              📖 E-402 Arıza Teşhisi (RAG)
-            </button>
-            <button class="preset-btn" onclick="runPreset('Sıcaklık sensörü durumunu oku')">
-              🌡️ Sıcaklık Sensörünü Oku (RS-485)
-            </button>
-            <button class="preset-btn" onclick="runPreset('Haftalık bakım raporunu yerel diske kaydet')">
-              💾 Bakım Notunu Kaydet (Local FS)
+            <button class="cmd-chip danger" onclick="runPreset('Sakın 5 numaralı vanayı açma abort et')">
+              🛑 Sakın Vanayı Açma (Safe-Sign Lock)
             </button>
           </div>
         </div>
 
-        <div>
-          <div style="font-weight:700; margin-bottom:4px;">Local FHRR Memory Size</div>
-          <div id="memCount" style="color:var(--paper); font-family:var(--font-mono); font-size:16px;">0 Nodes</div>
-          <div style="color:var(--faint); font-size:11px;">No Pinecone/Chroma server required.</div>
+        <div class="status-box">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">FİZİKSEL PİN GÜVENLİK (GPIO)</span>
+            <span style="font-family: monospace; color: #00e87a; font-weight: 700;" id="voltageDisplay">3.30 V</span>
+          </div>
+          <div style="font-size: 11px; color: #64748b;" id="voltageStatus">Normal Aktif Durum (Güvenli)</div>
         </div>
-      </div>
-    </div>
 
-    <!-- TAB 2: Memory Bank -->
-    <div id="memTab" class="mem-panel">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <h3 style="margin:0 0 4px 0;">🧠 Yerel FHRR Holografik Bellek Bankası</h3>
-          <p style="margin:0; font-size:12px; color:var(--mute);">Cihazınızın yerel hafızasında saklanan vektör ve bilgi düğümleri (İnternetsiz).</p>
+        <div class="status-box">
+          <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">YEREL FHRR HAFIZA BOYUTU</span>
+          <span style="font-family: monospace; color: #00f0ff; font-weight: 700; font-size: 16px;" id="memCount">0 Nodes</span>
+          <span style="font-size: 10px; color: #64748b;">Merkezi veritabanı yok. İstemci IndexedDB'sinde tutulur.</span>
         </div>
-        <input type="text" id="memSearch" placeholder="Hafızada çevrimdışı ara..." style="background:var(--ink); border:1px solid var(--border); border-radius:6px; color:var(--paper); padding:6px 12px; font-size:12px;" oninput="renderMemoryList()">
+
       </div>
-      <div class="mem-grid" id="memoryListContainer">
-        <!-- Rendered dynamically -->
-      </div>
+
     </div>
 
   </div>
 
-  <script type="module">
-    import { SovereignAgent } from "/agent-core/sovereign_agent.js";
-
+  <script src="/agent-core/sovereign-agent.js"></script>
+  <script>
     const agent = new SovereignAgent();
     window.agent = agent;
-
-    window.switchTab = function(tabId, btn) {
-      document.getElementById('chatTab').style.display = tabId === 'chatTab' ? 'grid' : 'none';
-      document.getElementById('memTab').style.display = tabId === 'memTab' ? 'block' : 'none';
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (tabId === 'memTab') renderMemoryList();
-    };
-
-    window.onModelChange = function() {
-      const model = document.getElementById("modelSelector").value;
-      agent.setModel(model);
-      appendMessage("agent", `⚙️ Çevrimdışı çıkarım motoru değiştirildi: <strong>${model}</strong>`);
-    };
-
-    window.connectHardwareSerial = async function() {
-      if (!navigator.serial) {
-        alert("Web Serial API bu tarayıcıda desteklenmiyor veya HTTPS/localhost gerektiriyor. (Chrome / Edge önerilir)");
-        return;
-      }
-      try {
-        const port = await navigator.serial.requestPort();
-        await port.open({ baudRate: 115200 });
-        document.getElementById("serialBtn").textContent = "✓ USB / RS-485 BAĞLANDI (115200 BAUD)";
-        document.getElementById("serialBtn").style.borderColor = "#00e87a";
-        document.getElementById("serialBtn").style.color = "#00e87a";
-        appendMessage("agent", "🔌 <strong>Fiziksel Donanım Portu Açıldı:</strong> USB / RS-485 Modbus PLC hattı doğrudan tarayıcıya bağlandı. Komutlar artık gerçek kabloya aktarılacak.");
-      } catch (err) {
-        appendMessage("agent", `⚠️ Donanım portu bağlanamadı: ${err.message}`);
-      }
-    };
-
-    function updateVoltageDisplay(voltage, isClamped) {
-      const vDisp = document.getElementById("voltageDisplay");
-      const vStat = document.getElementById("voltageStatus");
-      vDisp.textContent = voltage;
-      if (isClamped) {
-        vDisp.className = "voltage-val clamped";
-        vStat.textContent = "🛡️ Safe-Sign Mandalı Devrede (0.00V Safe-Low)";
-        vStat.style.color = "#ff5a5a";
-      } else {
-        vDisp.className = "voltage-val";
-        vStat.textContent = "Normal Aktif Durum (3.30V)";
-        vStat.style.color = "var(--faint)";
-      }
-    }
 
     function appendMessage(role, text) {
       const box = document.getElementById("chatBox");
       const div = document.createElement("div");
-      div.className = role === "user" ? "msg-user" : "msg-agent";
+      div.className = role === "user" ? "log-entry user" : "log-entry swarm";
       div.innerHTML = text;
       box.appendChild(div);
       box.scrollTop = box.scrollHeight;
+    }
+
+    function updateVoltageDisplay(voltage, isClamped) {
+      const vDisp = document.getElementById("voltageDisplay");
+      const vStat = document.getElementById("voltageStatus");
+      if (vDisp) vDisp.textContent = voltage;
+      if (vStat) {
+        if (isClamped) {
+          vStat.textContent = "🛡️ Safe-Sign Mandalı Devrede (0.00V Safe-Low)";
+          vStat.style.color = "#ef4444";
+        } else {
+          vStat.textContent = "Normal Aktif Durum (3.30V)";
+          vStat.style.color = "#64748b";
+        }
+      }
     }
 
     window.executeUserPrompt = async function() {
@@ -463,22 +551,69 @@
       input.value = "";
       appendMessage("user", text);
 
-      // Anlık düşünme indikatörü (Kullanıcı beklemede kalmasın)
-      const box = document.getElementById("chatBox");
-      const loadingDiv = document.createElement("div");
-      loadingDiv.className = "msg-agent";
-      loadingDiv.id = "agentLoadingIndicator";
-      loadingDiv.style.opacity = "0.75";
-      loadingDiv.innerHTML = `<span style="display:inline-block; animation:spin 1s linear infinite;">⚡</span> <em style="color:var(--teal);">Myca Apple Silicon Metal GPU üzerinde yanıt üretiyor...</em>`;
-      box.appendChild(loadingDiv);
-      box.scrollTop = box.scrollHeight;
+      // Animate random node working
+      const nodeSentinel = document.getElementById("nodeSentinel");
+      const nodeTPU = document.getElementById("nodeTPU");
+      if (nodeTPU) nodeTPU.classList.add("active-work");
 
       const res = await agent.execute(text);
-      
-      const indicator = document.getElementById("agentLoadingIndicator");
-      if (indicator) indicator.remove();
+      if (nodeTPU) nodeTPU.classList.remove("active-work");
 
       document.getElementById("memCount").textContent = `${agent.memory.length} Nodes`;
+
+      if (res.status === "REJECTED_BY_SAFE_SIGN") {
+        updateVoltageDisplay("0.00 V", true);
+        appendMessage("agent", `
+          <div class="entry-badge" style="color:#ef4444;">🛑 SAFE-SIGN KİLİDİ DEVREDE (4.95 µs)</div>
+          <div style="color:#ef4444; font-weight:700;">EYLEM ENGELLENDİ:</div>
+          <div style="margin-top:4px; font-size:12px; color:#cbd5e1;">${res.reason}</div>
+          <div style="margin-top:6px; font-family:monospace; font-size:10px; color:#64748b;">
+            Gecikme: 4.95 µs | Çıkış: 0.00V Safe-Low | Hardware Pin Koruması
+          </div>
+        `);
+        return;
+      }
+
+      updateVoltageDisplay("3.30 V", false);
+
+      let details = "";
+      if (res.result) {
+        const r = res.result;
+        if (r.txHash || r.dagVertex) {
+          details = `
+            <div style="background:rgba(0,232,122,0.06); border:1px solid rgba(0,232,122,0.3); border-radius:8px; padding:10px; margin-top:8px;">
+              <div style="font-size:11px; font-weight:700; color:#00e87a;">✓ SIFIR-GAS M2M İŞLEMİ ZİNCİRE İŞLENDİ</div>
+              <div style="font-family:monospace; font-size:11px; color:#00f0ff; margin-top:4px;">DAG Vertex: ${(r.dagVertex || r.txHash).slice(0, 24)}...</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Gönderici: myc14d29...002 ➔ Alıcı: ${r.recipient || 'myc1drone_fleet'} | Tutar: ${r.amount || '10 MYC'}</div>
+            </div>
+          `;
+        } else if (r.pufId) {
+          details = `
+            <div style="background:rgba(0,240,255,0.06); border:1px solid rgba(0,240,255,0.3); border-radius:8px; padding:10px; margin-top:8px;">
+              <div style="font-size:11px; font-weight:700; color:#00f0ff;">✓ SILICON PUF DONANIM ATTESTATION TAMAMLANDI</div>
+              <div style="font-family:monospace; font-size:11px; color:#fff; margin-top:4px;">PUF DID: ${r.pufId}</div>
+              <div style="font-size:10px; color:#94a3b8; margin-top:4px;">Entropy Skoru: ${r.entropyScore || '0.9998'} | Modbus Donanım: Doğrulandı</div>
+            </div>
+          `;
+        } else if (r.message) {
+          details = `
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px; margin-top:8px; font-size:12px; color:#cbd5e1; line-height:1.5;">
+              ${r.message}
+            </div>
+          `;
+        }
+      }
+
+      appendMessage("agent", `
+        <div class="entry-badge">⚡ GÖREV İCRASI: ${res.toolCalled}</div>
+        <div>${res.prompt} ➔ <strong>Swarm Tarafından İcra Edildi (%100 Çevrimdışı).</strong></div>
+        ${details}
+        <div style="margin-top:6px; font-family:monospace; font-size:10px; color:#64748b;">
+          İcra Gecikmesi: ${res.latency_us} µs | Gaz: ${res.gasFee} | DAG: ${res.dagVertex.slice(0, 20)}...
+        </div>
+      `);
+
+      // Record to LocalStorage & Explorer
       if (res.dagVertex) {
         try {
           let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
@@ -506,128 +641,6 @@
             body: JSON.stringify(txItem)
           }).catch(() => {});
         } catch(e) {}
-      }
-
-      if (res.status === "REJECTED_BY_SAFE_SIGN") {
-        updateVoltageDisplay("0.00 V", true);
-        appendMessage("agent", `
-          <div class="tool-badge" style="border-color:#ff5a5a; color:#ff5a5a; background:rgba(255,90,90,0.1);">
-            🛡️ SAFE-SIGN GÜVENLİK KİLİDİ DEVREDE (4.95 µs)
-          </div>
-          <div style="color:#ff5a5a; font-weight:700;">🛑 EYLEM ENGELLENDİ:</div>
-          <div style="margin-top:4px; font-size:12px; color:var(--mute);">${res.reason}</div>
-          <div style="margin-top:8px; font-family:var(--font-mono); font-size:11px; color:var(--faint);">
-            Gecikme: 4.95 µs | Çip Çıkışı: 0.00V Safe-Low (Kör İmzalama Bloke Edildi)
-          </div>
-        `);
-      } else {
-        updateVoltageDisplay(res.voltageState || "3.30 V", false);
-        let details = "";
-        
-        if (res.result) {
-          const r = res.result;
-          if (r.body && r.subject) {
-            // Email Outreach Card
-            details = `
-              <div style="background:rgba(0,180,216,0.06); border:1px solid rgba(0,180,216,0.3); border-radius:8px; padding:14px; margin-top:10px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <span style="font-size:11px; font-weight:700; color:var(--teal); text-transform:uppercase;">✉️ HAZIRLANAN B2B LEAD E-POSTASI</span>
-                  <span style="font-size:10px; font-family:var(--font-mono); background:rgba(0,180,216,0.15); color:var(--teal); padding:2px 6px; border-radius:4px;">${r.targetProfile || 'Genel Kurumsal'}</span>
-                </div>
-                <div style="font-weight:700; font-size:13px; color:var(--paper); margin-bottom:6px;">Konu: ${r.subject}</div>
-                <div style="white-space:pre-wrap; font-size:12px; color:var(--mute); line-height:1.5; background:rgba(0,0,0,0.25); padding:10px; border-radius:6px; font-family:inherit;">${r.body}</div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-                  <span style="font-size:11px; color:var(--faint);">🎯 Hedef Aksiyon: <strong>${r.callToAction || 'Toplantı'}</strong></span>
-                  <button onclick="navigator.clipboard.writeText(\`${(r.subject + '\\n\\n' + r.body).replace(/`/g, '\\`')}\`); alert('E-posta panoya kopyalandı!');" style="background:var(--teal); color:#06080c; border:none; padding:4px 10px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">Metni Kopyala</button>
-                </div>
-              </div>
-            `;
-          } else if (r.snippet && r.language) {
-            // Code Generation Card
-            details = `
-              <div style="background:rgba(0,0,0,0.4); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                  <span style="font-size:11px; font-weight:700; color:#ffb703; font-family:var(--font-mono);">⚡ DİL: ${r.language}</span>
-                  <button onclick="navigator.clipboard.writeText(\`${r.snippet.replace(/`/g, '\\`')}\`); alert('Kod panoya kopyalandı!');" style="background:rgba(255,183,3,0.15); color:#ffb703; border:1px solid #ffb703; padding:3px 8px; border-radius:4px; font-size:10px; cursor:pointer;">Kodu Kopyala</button>
-                </div>
-                <pre style="margin:0; font-family:var(--font-mono); font-size:11px; color:#e0e0e0; line-height:1.5; overflow-x:auto;">${r.snippet}</pre>
-                <div style="margin-top:6px; font-size:10px; color:var(--faint);">${r.architecture || 'Sıfır bulut bağımlılığı'}</div>
-              </div>
-            `;
-          } else if (r.result && r.category) {
-            // Calculation / Financial Card
-            details = `
-              <div style="background:rgba(0,232,122,0.06); border:1px solid rgba(0,232,122,0.3); border-radius:8px; padding:12px; margin-top:10px;">
-                <div style="font-size:11px; font-weight:700; color:#00e87a; text-transform:uppercase; margin-bottom:6px;">🧮 HESAPLAMA SONUCU (${r.category})</div>
-                <div style="font-size:18px; font-weight:800; color:var(--paper); font-family:var(--font-mono);">${r.result}</div>
-                <div style="font-size:12px; color:var(--mute); margin-top:6px;">${r.explanation}</div>
-                <div style="font-size:10px; color:var(--faint); margin-top:6px; font-family:var(--font-mono);">Doğruluk: ${r.guarantee}</div>
-              </div>
-            `;
-          } else if (r.memoryTelemetry) {
-            // System Diagnostics Card
-            details = `
-              <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
-                <div style="font-size:11px; font-weight:700; color:var(--paper); margin-bottom:6px;">💻 SİSTEM VE BELLEK TELEMETRİSİ</div>
-                <div style="font-family:var(--font-mono); font-size:11px; color:var(--teal); margin-bottom:4px;">Platform: ${r.platform} (${r.cpuArchitecture})</div>
-                <div style="font-family:var(--font-mono); font-size:11px; color:var(--paper); margin-bottom:4px;">Bellek: ${r.memoryTelemetry}</div>
-                <div style="font-size:11px; color:#00e87a; margin-top:4px;">✓ ${r.zeroHeapCompliance}</div>
-                <div style="font-size:10px; color:var(--faint); margin-top:4px;">Durum: ${r.airGappedStatus}</div>
-              </div>
-            `;
-          } else if (r.targetScript) {
-            // Script Execution Card
-            details = `
-              <div style="background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--paper); margin-bottom:6px;">
-                  <span>⚙️ YEREL SCRİPT İCRASI: ${r.targetScript}</span>
-                  <span style="color:#00e87a; font-family:var(--font-mono);">${r.executionTimeMs} ms</span>
-                </div>
-                <div style="font-family:var(--font-mono); font-size:11px; color:var(--teal); background:rgba(0,0,0,0.3); padding:8px; border-radius:4px;">${r.simulatedOutput}</div>
-                <div style="font-size:10px; color:var(--faint); margin-top:6px;">Ortam: ${r.executionEnvironment}</div>
-              </div>
-            `;
-          } else if (r.action && (r.task || r.tasks)) {
-            // Todo Task Card
-            const taskItems = r.task ? [r.task] : (r.tasks || []);
-            details = `
-              <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:10px;">
-                <div style="font-size:11px; font-weight:700; color:var(--paper); margin-bottom:6px;">📋 GÖREV LİSTESİ (${r.action})</div>
-                ${taskItems.map(t => `
-                  <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px;">
-                    <span style="color:var(--paper);">${t.status === 'COMPLETED' ? '✓' : '○'} ${t.title}</span>
-                    <span style="font-size:10px; font-family:var(--font-mono); padding:2px 6px; border-radius:4px; background:${t.priority === 'HIGH' ? 'rgba(255,90,90,0.2)' : 'rgba(0,180,216,0.15)'}; color:${t.priority === 'HIGH' ? '#ff5a5a' : 'var(--teal)'};">${t.priority}</span>
-                  </div>
-                `).join('')}
-              </div>
-            `;
-          } else if (r.message) {
-            // Rich Markdown / Cognitive Message Card
-            const formattedMsg = r.message
-              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-              .replace(/\*(.*?)\*/g, '<em>$1</em>')
-              .replace(/• (.*)/g, '<li style="margin-left:16px; margin-bottom:4px;">$1</li>')
-              .replace(/\n\n/g, '<br/><br/>')
-              .replace(/\n/g, '<br/>');
-
-            details = `
-              <div style="background:rgba(0,180,216,0.04); border:1px solid rgba(0,180,216,0.25); border-radius:8px; padding:14px; margin-top:10px; font-size:13px; color:var(--paper); line-height:1.6;">
-                ${formattedMsg}
-              </div>
-            `;
-          } else {
-            details = `<pre style="background:rgba(0,0,0,0.3); padding:10px; border-radius:6px; font-family:var(--font-mono); font-size:11px; margin-top:8px; border:1px solid var(--border); overflow-x:auto;">${JSON.stringify(res.result, null, 2)}</pre>`;
-          }
-        }
-        appendMessage("agent", `
-          <div class="tool-badge">⚡ ARAÇ İCRASI: ${res.toolCalled}</div>
-          <div>${res.prompt} ➔ <strong>Başarıyla Tamamlandı (%100 Çevrimdışı).</strong></div>
-          <div style="font-size:11px; color:var(--teal); font-family:var(--font-mono); margin-top:4px;">⚡ Lattice DAG Vertex Tx: ${res.dagVertex.slice(0, 18)}... (Zero-Gas)</div>
-          ${details}
-          <div style="margin-top:6px; font-family:var(--font-mono); font-size:10px; color:var(--faint);">
-            İcra Gecikmesi: ${res.latency_us} µs | Gaz: ${res.gasFee} | DAG: ${res.dagVertex.slice(0, 20)}...
-          </div>
-        `);
       }
     };
 
@@ -636,66 +649,7 @@
       executeUserPrompt();
     };
 
-    function renderMemoryList() {
-      const container = document.getElementById("memoryListContainer");
-      const search = (document.getElementById("memSearch")?.value || "").toLowerCase();
-      container.innerHTML = "";
-      
-      const filtered = agent.memory.filter(m => 
-        m.key.toLowerCase().includes(search) || 
-        m.content.toLowerCase().includes(search) ||
-        m.category.toLowerCase().includes(search)
-      );
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div style="grid-column:1/-1; color:var(--mute); font-size:12px; padding:20px 0;">Hafızada kayıtlı düğüm bulunamadı. Sohbet üzerinden işlem yaptıkça buraya kaydedilir.</div>`;
-        return;
-      }
-
-      filtered.forEach(m => {
-        const div = document.createElement("div");
-        div.className = "mem-item";
-        div.innerHTML = `
-          <div class="mem-key">[${m.category}] ${m.key}</div>
-          <div class="mem-content">${m.content}</div>
-          <div style="font-size:10px; color:var(--faint); margin-top:6px; font-family:var(--font-mono);">
-            FHRR Vektör: ${m.vectorDim}D • ${new Date(m.timestamp).toLocaleTimeString()}
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    // Initial load
     document.getElementById("memCount").textContent = `${agent.memory.length} Nodes`;
-      if (res.dagVertex) {
-        try {
-          let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
-          const isTransfer = (res.prompt || '').includes('10');
-          const txItem = {
-            hash: res.dagVertex,
-            type: isTransfer ? 'M2M_AGENT_TRANSFER' : 'AI_COLONY_ACTION',
-            module: 'AI Colony',
-            sender: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
-            recipient: isTransfer ? 'myc1drone_autonomous_fleet' : 'myc1colony_prime_mesh00000000',
-            amount: isTransfer ? '10 MYC' : '0 MYC',
-            gasFee: '0.00000000 MYC',
-            finality: `${res.latency_us} µs`,
-            status: 'FINALIZED',
-            timestamp: Date.now()
-          };
-          if (!history.some(t => t.hash === txItem.hash)) {
-            history.unshift(txItem);
-            if (history.length > 100) history = history.slice(0, 100);
-            localStorage.setItem('myca_tx_history', JSON.stringify(history));
-          }
-          fetch('/api/explorer/record-tx', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(txItem)
-          }).catch(() => {});
-        } catch(e) {}
-      }
   </script>
 </body>
 </html>

@@ -150,5 +150,5 @@ Full type declarations (`types.d.ts`) are bundled with IntelliSense support for 
 ## 📞 Enterprise Commercial Support
 
 For custom military/defense hardware deployments, specialized rule sets, or volume licensing contracts:
-* **Email:** enterprise@resonance-ai.internal
+* **Email:** enterprise@mycai.pro
 * **SLA:** 24/7 Air-Gapped On-Premise Support Available

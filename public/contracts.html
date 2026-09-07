@@ -131,161 +131,42 @@
 </head>
 <body>
 
-  <!-- UNIFIED 0G-STYLE HEADER -->
+    <!-- UNIFIED MASTER HEADER -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
-      <a href="/depin" class="myca-brand">
-        <img src="/depin/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
         <div class="myca-brand-text">
           <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
           <span class="myca-chain-tag">CHAIN 108</span>
         </div>
       </a>
 
-      <!-- Center: Navigation Menus -->
+      <!-- Center: 7 Pillar Core Links -->
       <div class="myca-nav-center">
-        <!-- Ecosystem Dropdown -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger active" type="button">
-            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/depin/hub" class="myca-dropdown-card">
-                <div class="myca-dd-icon">⚡</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
-                  <div class="myca-dd-sub">Unified command center for everything $MYC</div>
-                </div>
-              </a>
-              <a href="/depin/explorer" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🧭</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Lattice DAG Explorer</div>
-                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & DAG vertices</div>
-                </div>
-              </a>
-              <a href="/depin" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🤖</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
-                  <div class="myca-dd-sub">Silicon PUF identity, turbines & actuator nodes</div>
-                </div>
-              </a>
-              <a href="/agent" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🧠</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial AI Colony</div>
-                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
-                </div>
-              </a>
-              <a href="/depin/contracts" class="myca-dropdown-card">
-                <div class="myca-dd-icon">📜</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial Contracts Studio</div>
-                  <div class="myca-dd-sub">Verified contracts, bytecode runner & ABIs</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Build Dropdown (Developer Focus) -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/depin/build" class="myca-dropdown-card">
-                <div class="myca-dd-icon">⚡</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">0→1 Quickstart Studio <span class="myca-dd-badge">STUDIO</span></div>
-                  <div class="myca-dd-sub">Proje tipi seç, otomatik faucet al, canlı playground'da çalıştır</div>
-                </div>
-              </a>
-              <a href="/depin/dev-docs" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🛠️</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Developer Docs <span class="myca-dd-badge">DEV</span></div>
-                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples & quickstart</div>
-                </div>
-              </a>
-              <a href="/depin/contracts" class="myca-dropdown-card">
-                <div class="myca-dd-info">📋</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Smart Contract ABIs</div>
-                  <div class="myca-dd-sub">Chain ID 108 tokenomics, bridge & escrow interfaces</div>
-                </div>
-              </a>
-              <a href="/agent#hardware" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔌</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Hardware & Modbus SDK</div>
-                  <div class="myca-dd-sub">WebSerial PUF keyrings & 0-Byte Negation Shield</div>
-                </div>
-              </a>
-              <a href="https://github.com/bl10buer/myc-network" target="_blank" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🐙</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">GitHub Repositories ↗</div>
-                  <div class="myca-dd-sub">Open-source core crates, consensus & test suites</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Docs Dropdown (Architecture & Whitepaper) -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/depin/docs" class="myca-dropdown-card">
-                <div class="myca-dd-icon">📖</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Network Whitepaper</div>
-                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
-                </div>
-              </a>
-              <a href="/depin/docs#tokenomics" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🪙</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Tokenomics Specs</div>
-                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
-                </div>
-              </a>
-              <a href="/depin/docs#zero-gas" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🛡️</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Zero-Gas Invariant</div>
-                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
-                </div>
-              </a>
-              <a href="/depin/docs#security" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔒</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Security & BFT Quorum</div>
-                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
+        <a href="/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
+        <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
+        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
+        <a href="/build" class="myca-nav-link active">🛠️ Build</a>
+        <a href="/marketplace" class="myca-nav-link">🏪 Market</a>
+        <a href="/docs" class="myca-nav-link">📚 Docs</a>
       </div>
 
-      <!-- Right: Action Buttons & Live App Launch -->
+      <!-- Right: Actions & Live State -->
       <div class="myca-nav-right">
-        <div id="live-block-badge" class="mono" style="font-size: 11.5px; color: var(--f-moss); font-weight: 600; padding: 4px 10px; background: var(--f-glow); border-radius: 999px;">
-          ● Block #0 Finalized
+        <div class="lang-selector">
+          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
+          <span class="lang-divider">/</span>
+          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
         </div>
-        <a href="/depin/build" class="myca-btn-secondary">Build</a>
-        <a href="/depin/hub" class="myca-btn-primary">
-          <span>Launch NEXUS</span>
-          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+          <span>5,000 MYC</span>
+        </div>
+        <a href="/hub#faucet" class="myca-btn-primary">
+          <span>🎁 Faucet</span>
         </a>
       </div>
     </nav>
