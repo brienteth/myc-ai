@@ -3,1215 +3,1011 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MYC Network — Embedded DePIN Middleware for Layer-1 & Layer-2 Blockchains</title>
-  <meta name="description" content="Turn your L1/L2 blockchain into an industrial powerhouse. 384-byte C99 bare-metal edge kernel, Silicon PUF hardware wallets, and Safe-Sign Modbus execution layer for Solana, Ethereum L2s, and Cosmos.">
+  <title>Rhizome DePIN — Bio-Industrial Machine Fleet & Silicon PUF Sentinel | Chain 108</title>
+  <link rel="stylesheet" href="/brand.css">
+  <style>
+    .depin-shell { max-width: 1340px; margin: 24px auto; padding: 0 20px; }
 
-  <!-- Forest Floor Google Fonts (mycai.pro exact typography) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    /* Industrial Header Banner */
+    .industrial-hero {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(10, 15, 30, 0.98));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
+    }
+    .hero-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .hero-badge-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #10b981;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 6px 0;
+    }
+    .hero-desc {
+      font-size: 13.5px;
+      color: #94a3b8;
+      max-width: 900px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    .spec-strip {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .spec-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #cbd5e1;
+    }
+    .spec-chip.highlight {
+      border-color: rgba(0, 240, 255, 0.4);
+      color: #00f0ff;
+      background: rgba(0, 240, 255, 0.06);
+    }
 
-  <link rel="stylesheet" href="/depin/brand.css">
-  <link rel="icon" type="image/png" href="/depin/mycai_logo.png">
+    /* Scenario Switcher Tabs */
+    .scenario-tabs-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+    }
+    .sc-tab-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sc-tab-btn:hover {
+      background: rgba(16, 185, 129, 0.08);
+      color: #fff;
+    }
+    .sc-tab-btn.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #10b981;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.2);
+    }
+
+    /* Main DePIN Workbench Layout */
+    .depin-grid {
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      gap: 20px;
+    }
+    @media (max-width: 1024px) {
+      .depin-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Cards */
+    .workbench-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 12px;
+    }
+    .card-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .puf-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      color: #00f0ff;
+    }
+
+    /* SCADA Telemetry Screen */
+    .scada-screen {
+      background: #060b14;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .scada-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .scada-metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .scada-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .scada-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 800;
+      color: #10b981;
+    }
+    .scada-val.alert { color: #ef4444; }
+    .scada-lbl {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* C99 Safe-Sign 6-Lock Status Visualizer */
+    .locks-visualizer {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .locks-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .locks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 640px) {
+      .locks-grid { grid-template-columns: 1fr; }
+    }
+    .lock-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .lock-item.secure {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.04);
+    }
+    .lock-item.tripped {
+      border-color: rgba(239, 68, 68, 0.5);
+      background: rgba(239, 68, 68, 0.08);
+    }
+    .lock-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+    }
+    .lock-state {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #10b981;
+    }
+    .lock-state.tripped { color: #ef4444; }
+    .lock-sub { font-size: 9.5px; color: #64748b; }
+
+    /* Industrial Control Triggers */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 640px) {
+      .controls-grid { grid-template-columns: 1fr; }
+    }
+    .ind-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .ind-btn:hover {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .ind-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .ind-btn-title { font-size: 12px; font-weight: 700; }
+    .ind-btn-sub { font-size: 10px; color: #94a3b8; }
+
+    /* Right Column: Live Modbus RTU Bus & DAG Vertex Log */
+    .bus-log-card {
+      background: #070d18;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      height: 680px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .bus-log-head {
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .bus-stream {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12px;
+    }
+    .packet-entry {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-left: 3px solid #10b981;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      animation: fadeIn 0.3s ease;
+    }
+    .packet-entry.halted {
+      border-left-color: #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .packet-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #64748b;
+    }
+    .packet-hex {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #00f0ff;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 8px;
+      border-radius: 4px;
+      word-break: break-all;
+    }
+    .packet-hex.halted { color: #ef4444; }
+  </style>
 </head>
 <body style="padding-top: 80px;">
 
-  <!-- UNIFIED 0G-STYLE HEADER -->
+      <!-- UNIFIED MASTER HEADER WITH DOCS DROPDOWN -->
   <div class="myca-header-wrapper">
     <nav class="myca-navbar">
       <!-- Left: Brand Logo -->
-      <a href="/depin" class="myca-brand">
-        <img src="/depin/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+      <a href="/" class="myca-brand">
+        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
         <div class="myca-brand-text">
           <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
           <span class="myca-chain-tag">CHAIN 108</span>
         </div>
       </a>
 
-      <!-- Center: Navigation Menus -->
+      <!-- Center: 6 Core Infrastructure Pillars with Docs Dropdown -->
       <div class="myca-nav-center">
-        <!-- Ecosystem Dropdown -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Ecosystem <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/depin/hub" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🍄</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelium Hub <span class="myca-dd-badge" style="background: rgba(0,240,255,0.2); color: #00f0ff;">PORTAL</span></div>
-                  <div class="myca-dd-sub">Unified 0G-style command center for everything $MYC</div>
-                </div>
-              </a>
-              <a href="/depin/hub#swap" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔄</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial Swap DEX <span class="myca-dd-badge">AMM</span></div>
-                  <div class="myca-dd-sub">Zero-gas nutrient exchange: $MYC, $USDT, $USDC</div>
-                </div>
-              </a>
-              <a href="/depin/hub#bridge" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🌉</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Hyphae Bridge <span class="myca-dd-badge">BFT 3/4</span></div>
-                  <div class="myca-dd-sub">Cross-chain filaments to Base, Arbitrum & Ethereum</div>
-                </div>
-              </a>
-              <a href="/depin/explorer" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🧭</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Lattice DAG Explorer</div>
-                  <div class="myca-dd-sub">Real-time blocks, PoR consensus & growing vertices</div>
-                </div>
-              </a>
-              <a href="/depin" class="myca-dropdown-card">
-                <div class="myca-dd-icon">⚡</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Rhizome DePIN Fleet</div>
-                  <div class="myca-dd-sub">Silicon PUF identity, turbines & 0-Byte Negation Shield</div>
-                </div>
-              </a>
-              <a href="/agent" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🧠</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial AI Colony</div>
-                  <div class="myca-dd-sub">Offline Hermes & OpenClaw AI intent orchestrator</div>
-                </div>
-              </a>
-              <a href="/depin/hub#faucet" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🎁</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Spore Faucet <span class="myca-dd-badge">DAILY 5 $MYC</span></div>
-                  <div class="myca-dd-sub">Instant community testnet token drop & Twitter verify</div>
-                </div>
-              </a>
-              <a href="/dist/myca-wallet-extension.zip" class="myca-dropdown-card" download>
-                <div class="myca-dd-icon">👛</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelium Spore Wallet <span class="myca-dd-badge">CHROME</span></div>
-                  <div class="myca-dd-sub">Download zero-gas hardware PUF extension (.zip)</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Build Dropdown (Developer Focus) -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Build <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/depin/build" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🌱</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Spore Quickstart <span class="myca-dd-badge">STUDIO</span></div>
-                  <div class="myca-dd-sub">Pick a project type, auto-faucet &amp; live playground</div>
-                </div>
-              </a>
-              <a href="/depin/dev-docs" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🛠️</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Substrate Docs <span class="myca-dd-badge">DEV</span></div>
-                  <div class="myca-dd-sub">RPC endpoints, REST APIs, cURL examples &amp; quickstart</div>
-                </div>
-              </a>
-              <a href="/depin/contracts" class="myca-dropdown-card">
-                <div class="myca-dd-icon">📋</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Mycelial Contract ABIs</div>
-                  <div class="myca-dd-sub">Chain 108 tokenomics, bridge &amp; escrow interfaces</div>
-                </div>
-              </a>
-              <a href="/agent#hardware" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔌</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Rhizome Hardware SDK</div>
-                  <div class="myca-dd-sub">WebSerial PUF keyrings &amp; 0-Byte Negation Shield</div>
-                </div>
-              </a>
-              <a href="https://github.com/AetheriumLabs" target="_blank" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🐙</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">GitHub Repositories ↗</div>
-                  <div class="myca-dd-sub">Open-source consensus, lattice core &amp; test suites</div>
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Docs Dropdown (Architecture & Whitepaper) -->
-        <div class="myca-nav-dropdown">
-          <button class="myca-nav-link myca-dropdown-trigger" type="button">
-            Docs <svg class="myca-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </button>
-          <div class="myca-dropdown-panel">
-            <div class="myca-dropdown-grid">
-              <a href="/depin/docs" class="myca-dropdown-card">
-                <div class="myca-dd-icon">📖</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Network Whitepaper</div>
-                  <div class="myca-dd-sub">Proof-of-Resonance (PoR) & Living Lattice architecture</div>
-                </div>
-              </a>
-              <a href="/depin/docs#tokenomics" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🪙</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Tokenomics Specs</div>
-                  <div class="myca-dd-sub">$MYC, $USDT, $USDC Genesis reserves & bridge vaults</div>
-                </div>
-              </a>
-              <a href="/depin/docs#zero-gas" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🛡️</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Zero-Gas Invariant</div>
-                  <div class="myca-dd-sub">Mathematical proof & 384-byte static RAM envelope</div>
-                </div>
-              </a>
-              <a href="/depin/docs#security" class="myca-dropdown-card">
-                <div class="myca-dd-icon">🔒</div>
-                <div class="myca-dd-info">
-                  <div class="myca-dd-title">Security & BFT Quorum</div>
-                  <div class="myca-dd-sub">2/3+1 supermajority bridge & 0-byte negation shield</div>
-                </div>
-              </a>
-            </div>
+        <a href="/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
+        <a href="/depin" class="myca-nav-link active">🤖 DePIN</a>
+        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
+        <a href="/build" class="myca-nav-link">🛠️ Build</a>
+        
+        <!-- Docs Dropdown on Hover -->
+        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
+          <a href="/docs" class="myca-nav-link " style="display: flex; align-items: center; gap: 4px;">
+            <span>📚 Docs</span>
+            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </a>
+          <div class="myca-dropdown-panel" style="min-width: 260px; padding: 6px; top: 100%;">
+            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">📖</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;">Network Whitepaper</div>
+                <div style="font-size: 11px; color: #94a3b8;">GitBook specs, PoR & Tokenomics</div>
+              </div>
+            </a>
+            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🛠️</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">Developer Docs & RPC</div>
+                <div style="font-size: 11px; color: #94a3b8;">JSON-RPC, SDKs & APIs</div>
+              </div>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Right: Action Buttons & Live App Launch -->
-      <div class="myca-nav-right" style="display: flex; align-items: center; gap: 8px;">
+      <!-- Right: Actions & Live State -->
+      <div class="myca-nav-right">
         <div class="lang-selector">
-          <button class="lang-btn active" id="langBtnEn" onclick="setLanguage('en')">EN</button>
+          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
           <span class="lang-divider">/</span>
-          <button class="lang-btn" id="langBtnTr" onclick="setLanguage('tr')">TR</button>
+          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
         </div>
-        <a href="/depin/build" class="myca-btn-secondary">Build</a>
-        <a href="/depin/hub" class="myca-btn-primary">
-          <span>Discover Hub</span>
-          <svg width="12" height="12" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+          <span>5,000 MYC</span>
+        </div>
+        <a href="/hub#faucet" class="myca-btn-primary">
+          <span>🎁 Faucet</span>
         </a>
       </div>
     </nav>
   </div>
 
-  <!-- Hero Section with Interactive Mycelium & Digital Root Canvas -->
-  <header class="hero" style="position: relative; overflow: hidden;">
-    <canvas id="myceliumHeroCanvas" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;"></canvas>
-    <div class="hero-glow" style="z-index: 0;"></div>
-    
-    <div style="position: relative; z-index: 3;">
-      <div class="hero-chip">
-        <span class="dot"></span>
-        <span>ENTERPRISE B2B INFRASTRUCTURE FOR WEB3 CHAINS & DEPIN</span>
+  <div class="depin-shell">
+
+    <!-- Industrial Hero -->
+    <div class="industrial-hero">
+      <div class="hero-top-row">
+        <div>
+          <div class="hero-badge-tag">LAYER 0 & 1 • PHYSICAL MACHINE DEPIN • CHAIN ID 108</div>
+          <h1 class="hero-title">Rhizome DePIN — Bio-Industrial Machine Fleet & Silicon PUF Sentinel</h1>
+          <p class="hero-desc">
+            Industrial microcontrollers (RP2350, STM32H5), wind turbines, cryogenic pipeline valves, and SCADA actuators connect directly to the <strong>Living Lattice DAG</strong>. <strong>240-Byte Static RAM C99 Kernel</strong> delivering <strong>4.95 µs</strong> hardware Safe-Sign interlock and zero-gas deterministic execution.
+          </p>
+        </div>
+
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+          <a href="https://dune.com/queries/8625163" target="_blank" class="puf-badge" style="text-decoration:none; padding:8px 14px; background:rgba(255,107,0,0.15); color:#ff6b00; border-color:rgba(255,107,0,0.4);">
+            📊 Dune Analytics Query #8625163 ↗
+          </a>
+          <span style="font-size:10px; font-family:monospace; color:#64748b;">BARE-METAL C99 INVARIANT</span>
+        </div>
       </div>
 
-      <h1>
-        The Industrial DePIN Layer for <br>
-        <span class="hero-italic">Existing Layer-1 & Layer-2 Blockchains</span>
-      </h1>
+      <div class="spec-strip">
+        <div class="spec-chip highlight">Static RAM: 240 Bytes (Zero Heap / malloc=0)</div>
+        <div class="spec-chip">Execution Latency: 4.95 µs (743 Cycles @ 150MHz)</div>
+        <div class="spec-chip">Deterministic Key: W3C DID did:myc:puf:0x...</div>
+        <div class="spec-chip">Physical Protocol: Modbus RTU + RS-485 Half-Duplex</div>
+        <div class="spec-chip highlight">Gas Invariant: $0.00000000 MYC</div>
+      </div>
+    </div>
 
-      <p class="hero-sub">
-        Your blockchain does DeFi and NFTs. But it cannot run on a $0.30 factory microcontroller. 
-        <strong>MYC Network</strong> is the bare-metal C99 middleware that bridges <strong>Solana, Ethereum L2s, Cosmos, and Polkadot</strong> directly to physical industrial PLCs, SCADA networks, and smart power grids.
-      </p>
+    <!-- DePIN Network Gateway Cards -->
+    <div style="margin-bottom: 36px;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #00f0ff; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #00f0ff; box-shadow: 0 0 10px #00f0ff;"></span>
+        <span>MYCA DEPIN NETWORK ECOSYSTEM GATEWAY</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+        <a href="/hub" style="text-decoration: none; background: rgba(13, 20, 36, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 22px;">🌐</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #00f0ff; background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.25); padding: 2px 6px; border-radius: 4px; font-weight: 700;">PORTAL</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">Mycelium Hub</div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.4;">Zero-gas AMM swap, cross-chain bridge, staking & spore faucet.</div>
+        </a>
 
-      <div class="hero-actions">
-        <a href="/depin/hub" class="btn-primary" style="background: linear-gradient(135deg, #00f0ff, #10b981); color: #000;">
-          <span>Enter Mycelium Hub</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <a href="/explorer" style="text-decoration: none; background: rgba(13, 20, 36, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 22px;">🧭</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #10b981; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); padding: 2px 6px; border-radius: 4px; font-weight: 700;">LATTICE DAG</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">Lattice Explorer</div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.4;">Real-time blockless DAG transaction explorer & vertex visualizer.</div>
         </a>
-        <a href="/depin/hub" class="btn-primary">
-          <span>Mycelial Swap & Bridge</span>
+
+        <a href="/agent" style="text-decoration: none; background: rgba(13, 20, 36, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 22px;">🧠</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #d946ef; background: rgba(217,70,239,0.1); border: 1px solid rgba(217,70,239,0.25); padding: 2px 6px; border-radius: 4px; font-weight: 700;">M2M SWARM</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">AI Colony Swarm</div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.4;">Autonomous machine-to-machine dispatch matrix & MycStreamPay.</div>
         </a>
-        <a href="/depin/explorer" class="btn-outline">
-          <span>Lattice DAG Explorer</span>
+
+        <a href="/build" style="text-decoration: none; background: rgba(13, 20, 36, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 22px;">🛠️</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #f59e0b; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); padding: 2px 6px; border-radius: 4px; font-weight: 700;">DEV TOOLS</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">Developer Studio</div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.4;">Edge SDKs, JSON-RPC, C99 headers, and simulator sandboxes.</div>
         </a>
-        <a href="/depin" class="btn-outline">
-          <span>Rhizome DePIN Fleet</span>
+
+        <a href="/mint" style="text-decoration: none; background: rgba(13, 20, 36, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; transition: all 0.2s;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 22px;">💰</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #3b82f6; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); padding: 2px 6px; border-radius: 4px; font-weight: 700;">TIERS</span>
+          </div>
+          <div style="font-size: 15px; font-weight: 700; color: #fff;">Node Sale</div>
+          <div style="font-size: 12px; color: #94a3b8; line-height: 1.4;">DePIN validator node tier licenses & genesis mining rights.</div>
         </a>
       </div>
     </div>
-  </header>
 
-  <!-- Live Metrics Bar -->
-  <div class="stats-bar">
-    <div class="stat">
-      <div class="stat-val">384 Bytes</div>
-      <div class="stat-lbl">Static RAM Footprint (malloc=0)</div>
+    <!-- Section Divider for Workbench -->
+    <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 24px;">
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #10b981; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;">
+          LIVE HARDWARE ENCLAVE & SCADA WORKBENCH
+        </div>
+        <div style="font-size: 13px; color: #94a3b8; margin-top: 2px;">
+          Select a bio-industrial mission-critical scenario to inspect real-time Modbus telemetry and 6-Lock C99 Safe-Sign airbag execution.
+        </div>
+      </div>
     </div>
-    <div class="stat">
-      <div class="stat-val">38.4 µs</div>
-      <div class="stat-lbl">Deterministic Edge Latency (PoR)</div>
+
+    <!-- Real-World Industrial Scenario Switcher -->
+    <div class="scenario-tabs-bar">
+      <button class="sc-tab-btn active" id="btnSc1" onclick="switchScenario('tupras')">
+        <span>🏭 Scenario 1: Refinery Pipeline Pressure Isolation</span>
+      </button>
+      <button class="sc-tab-btn" id="btnSc2" onclick="switchScenario('telecom')">
+        <span>📡 Scenario 2: Telecom Base Station Offline Microgrid</span>
+      </button>
+      <button class="sc-tab-btn" id="btnSc3" onclick="switchScenario('turbine')">
+        <span>⚡ Scenario 3: Siemens Gamesa 2.5MW Wind Turbine #02</span>
+      </button>
     </div>
-    <div class="stat">
-      <div class="stat-val">48 Bytes</div>
-      <div class="stat-lbl">Compact RS-485 / LoRa Frame</div>
+
+    <!-- Main Workbench -->
+    <div class="depin-grid">
+
+      <!-- Left Column: Active Machine Hardware Enclave -->
+      <div class="workbench-card">
+        <div class="card-head">
+          <div class="card-head-title">
+            <span>🛡️ Field Device Hardware Identity (Silicon PUF Root-of-Trust)</span>
+          </div>
+          <span class="puf-badge" id="machChip">ARM Cortex-M33 (RP2350)</span>
+        </div>
+
+        <!-- Machine Details -->
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:16px; font-weight:700; color:#fff;" id="machName">Cryogenic Valve Actuator #01 (VALVE_01)</span>
+            <span style="font-size:11px; font-family:monospace; color:#10b981;">● ONLINE (0-CLOUD)</span>
+          </div>
+          <div style="font-size:12px; color:#64748b;" id="machSub">Refinery Alpha Site — High Pressure Distribution Line • RS-485 Bus 0x1A</div>
+          
+          <div style="background:rgba(0,0,0,0.3); border:1px dashed rgba(0,240,255,0.3); border-radius:8px; padding:10px 12px; font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#00f0ff; word-break:break-all;" id="machDid">
+            did:myc:puf:0x4c2a9e10bf4437a892b0c4118f6733de0001
+          </div>
+        </div>
+
+        <!-- Live SCADA Screen -->
+        <div class="scada-screen">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:11px; font-family:monospace; font-weight:700; color:#94a3b8;">SCADA TELEMETRY MONITOR (RS-485 MODBUS)</span>
+            <span style="font-size:10px; font-family:monospace; color:#10b981;">48-BYTE CRC-16</span>
+          </div>
+
+          <div class="scada-metrics-grid">
+            <div class="scada-box">
+              <span class="scada-val" id="metric1Val">94.2 PSI</span>
+              <span class="scada-lbl" id="metric1Lbl">Line Pressure</span>
+            </div>
+            <div class="scada-box">
+              <span class="scada-val" id="metric2Val">3.30 V</span>
+              <span class="scada-lbl" id="metric2Lbl">Coil Voltage (GPIO)</span>
+            </div>
+            <div class="scada-box">
+              <span class="scada-val" id="metric3Val">0x0010</span>
+              <span class="scada-lbl" id="metric3Lbl">Modbus Register</span>
+            </div>
+            <div class="scada-box">
+              <span class="scada-val" id="metric4Val">743 CYC</span>
+              <span class="scada-lbl" id="metric4Lbl">Safe-Sign Execution</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6-Lock Visualizer -->
+        <div class="locks-visualizer">
+          <div class="locks-title">
+            <span>C99 Safe-Sign 6-Lock Hardware Airbag</span>
+            <span style="color:#10b981; font-family:monospace;">4.95 µs LOCK</span>
+          </div>
+          <div class="locks-grid">
+            <div class="lock-item secure" id="lock1">
+              <div class="lock-name"><span>1. Grammar Lock</span><span class="lock-state" id="stLock1">OK</span></div>
+              <div class="lock-sub">Modbus RTU Frame</div>
+            </div>
+            <div class="lock-item secure" id="lock2">
+              <div class="lock-name"><span>2. Memory Boundary</span><span class="lock-state" id="stLock2">OK</span></div>
+              <div class="lock-sub">128-Byte Buffer Guard</div>
+            </div>
+            <div class="lock-item secure" id="lock3">
+              <div class="lock-name"><span>3. Register Lock</span><span class="lock-state" id="stLock3">OK</span></div>
+              <div class="lock-sub">0x0010 - 0x0015 Permitted</div>
+            </div>
+            <div class="lock-item secure" id="lock4">
+              <div class="lock-name"><span>4. Voltage Lock</span><span class="lock-state" id="stLock4">3.30V</span></div>
+              <div class="lock-sub">High-Side Safe Range</div>
+            </div>
+            <div class="lock-item secure" id="lock5">
+              <div class="lock-name"><span>5. 0-Byte Negation</span><span class="lock-state" id="stLock5">CLEAR</span></div>
+              <div class="lock-sub">Anti-Jailbreak Shield</div>
+            </div>
+            <div class="lock-item secure" id="lock6">
+              <div class="lock-name"><span>6. Contradiction Guard</span><span class="lock-state" id="stLock6">CLEAR</span></div>
+              <div class="lock-sub">Prompt Injection Cancellation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Physical Actuation Controls -->
+        <div>
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:#94a3b8; margin-bottom:10px;">
+            Physical Actuation & Hardware Signal Dispatch
+          </div>
+          <div class="controls-grid" id="controlsContainer">
+            <!-- Dynamically injected per scenario -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Live Modbus RTU Bus Stream & DAG Vertices -->
+      <div class="bus-log-card">
+        <div class="bus-log-head">
+          <span style="font-size:13px; font-weight:700; color:#fff;">📡 Modbus RS-485 / DAG Vertex Stream</span>
+          <span style="font-size:10px; font-family:monospace; color:#00f0ff;">BAUD: 115,200 8-N-1</span>
+        </div>
+
+        <div class="bus-stream" id="busStream">
+          <div class="packet-entry">
+            <div class="packet-top">
+              <span>PUF NODE 01 • INGESTED</span>
+              <span>12:00:01 UTC</span>
+            </div>
+            <div class="packet-hex">01 03 00 10 00 02 C5 CE [MODBUS_READ_COIL]</div>
+            <div style="color:#94a3b8; font-size:11px;">Pressure valve register 0x0010 telemetry read. Status: Safe (94.2 PSI).</div>
+          </div>
+          <div class="packet-entry">
+            <div class="packet-top">
+              <span>LATTICE DAG • VERTEX FINALIZED</span>
+              <span>12:00:03 UTC</span>
+            </div>
+            <div class="packet-hex">vtx_0x9b4a1...fc88 (0.00000000 MYC Gas)</div>
+            <div style="color:#94a3b8; font-size:11px;">Silicon PUF-signed telemetry sealed into DAG ledger. Phase coherence: 99.8%.</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="stat">
-      <div class="stat-val">0.00 Gas</div>
-      <div class="stat-lbl">Hardware Safe-Sign Guarantee</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">100M $MYC</div>
-      <div class="stat-lbl">Fixed Genesis Supply (Testnet)</div>
-    </div>
+
   </div>
 
-  <!-- MYCAI Ecosystem Relationship -->
-  <section id="ecosystem">
-    <div class="section-inner">
-      <div class="ecosystem-banner">
-        <span class="ecosystem-badge">MYCAI ECOSYSTEM RELATIONSHIP</span>
-        <h2 class="ecosystem-title">How MYC Network Fits Into The MYCAI Bio-Synthetic Vision</h2>
-        <p style="color:var(--f-soil); font-size:14.5px; max-width:760px; line-height:1.75; margin: 0 auto 32px;">
-          <strong>MYCAI</strong> is the cognitive intelligence layer (Autonomous Biological AI & Neural Coherence). 
-          <strong>MYC Network</strong> is its hardened, physical nervous system — an industrial-grade embedded bridge licensed to third-party blockchains that want to anchor real machines to web3 ledgers.
-        </p>
-
-        <div class="ecosystem-grid">
-          <div class="eco-card">
-            <h4>🧠 MYCAI Core Platform</h4>
-            <p>High-level autonomous intelligence, biological neural networks, intent formulation, cognitive memory, and multi-agent coordination.</p>
-          </div>
-          <div class="eco-card" style="border-color: var(--f-moss); background: var(--f-parchment);">
-            <h4 style="color:var(--f-moss);">🍄 MYC Network (This Product)</h4>
-            <p>The low-level, zero-heap C99 execution engine that converts high-level AI intents into sub-millisecond Modbus coil voltages and relays them onto your blockchain.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Complete Portal Navigation Showcase -->
-  <section id="portal-directory">
-    <div class="section-inner">
-      <div class="section-header">
-        <div class="section-label">ECOSYSTEM DIRECTORY</div>
-        <h2 class="section-title">The Mycelium Ecosystem &amp; Portals</h2>
-        <p class="section-desc">
-          Every component of the MYCA Network operates on the Living Lattice substrate (Chain ID 108) with guaranteed zero-gas execution.
-        </p>
-      </div>
-
-      <div class="target-grid">
-        <!-- App 1: Mycelium Discover Hub -->
-        <div class="target-card" style="border-color: rgba(0, 240, 255, 0.4);">
-          <div>
-            <div class="target-icon">🍄</div>
-            <h3>Mycelium Discover Hub</h3>
-            <p>The unified 0G-style command center for everything $MYC: live token metrics, gasless swap, Hyphae bridge, and ecosystem discovery.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> 0G-style unified ecosystem discovery</li>
-            <li><span>✓</span> Complete $MYC command center & reserves</li>
-            <li><span>✓</span> 1-click token swaps & cross-chain bridge</li>
-          </ul>
-          <a href="/depin/hub" class="btn-primary" style="margin-top:20px; width:100%; justify-content:center; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000;">Enter Discover Hub ↗</a>
-        </div>
-
-        <!-- App 2: Mycelial Swap DEX -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">🔄</div>
-            <h3>Mycelial Swap DEX</h3>
-            <p>Zero-gas constant-product nutrient exchange between $MYC, $USDT, and $USDC with mathematical x*y=k liquidity pools.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> Constant-product liquidity pools (x*y=k)</li>
-            <li><span>✓</span> Guaranteed 0.00 MYC gas invariant</li>
-            <li><span>✓</span> 30 bps LP fee rewards & TWAP defense</li>
-          </ul>
-          <a href="/depin/hub#swap" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Mycelial Swap ↗</a>
-        </div>
-
-        <!-- App 3: Hyphae Cross-Chain Bridge -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">🌉</div>
-            <h3>Hyphae Cross-Chain Bridge</h3>
-            <p>Slender filament bridge securely connecting Base, Arbitrum, Ethereum & Polygon with canonical EIP-712 hashing and secp256k1 BFT quorum.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> 3 of 4 BFT validator committee signatures</li>
-            <li><span>✓</span> Canonical EIP-712 domain separation</li>
-            <li><span>✓</span> 4-badge cryptographic proof inspector</li>
-          </ul>
-          <a href="/depin/hub#bridge" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Hyphae Bridge ↗</a>
-        </div>
-
-        <!-- App 4: Mycelium Lattice Explorer -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">🧭</div>
-            <h3>Mycelium Lattice Explorer</h3>
-            <p>Real-time visualizer graphing living DAG vertices, Proof-of-Resonance (PoR) coherence telemetry, and zero-gas transaction blocks.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> Real-time block & vertex inspection</li>
-            <li><span>✓</span> Living DAG visualizer graph</li>
-            <li><span>✓</span> Sub-millisecond transaction finality</li>
-          </ul>
-          <a href="/depin/explorer" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Lattice Explorer ↗</a>
-        </div>
-
-        <!-- App 5: Rhizome DePIN Fleet Sentinel -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">⚡</div>
-            <h3>Rhizome DePIN Fleet</h3>
-            <p>Industrial edge machine network connecting wind turbines, pumps, and PLCs with Silicon PUF hardware keys and 0-Byte Negation Shield.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> 240-byte static RAM C99 micro-kernel</li>
-            <li><span>✓</span> Silicon PUF hardware DID identity</li>
-            <li><span>✓</span> 0-Byte Negation Shield on physical coils</li>
-          </ul>
-          <a href="/depin" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Rhizome DePIN ↗</a>
-        </div>
-
-        <!-- App 6: Mycelial AI Colony Swarm -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">🧠</div>
-            <h3>Mycelial AI Colony Swarm</h3>
-            <p>Autonomous multi-agent colony runtime with Dual-PoR cognitive consensus, offline Hermes inference, and OpenClaw intent execution.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> Dual-PoR cognitive task verification</li>
-            <li><span>✓</span> Micro-inference payments via StreamPay</li>
-            <li><span>✓</span> 100% offline edge machine intelligence</li>
-          </ul>
-          <a href="/agent" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Launch AI Colony ↗</a>
-        </div>
-
-        <!-- App 7: NeuroYield Staking Vault -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">📈</div>
-            <h3>NeuroYield Staking Vault</h3>
-            <p>Proof-of-Resonance validator staking pools. Lock $MYC to secure the Living Lattice and earn 14.5% dynamic APY with zero gas fees.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> 14.5% dynamic staking APY</li>
-            <li><span>✓</span> Zero-gas instantaneous reward claim</li>
-            <li><span>✓</span> Mathematical reentrancy protection</li>
-          </ul>
-          <a href="/depin/hub#staking" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Open Staking Vault ↗</a>
-        </div>
-
-        <!-- App 8: Spore Faucet Dispenser -->
-        <div class="target-card">
-          <div>
-            <div class="target-icon">🎁</div>
-            <h3>Spore Faucet Dispenser</h3>
-            <p>Daily community spore drops dispensing 5 $MYC tokens per verified Twitter follower (@myc_ai) to test zero-gas transfers and smart contracts.</p>
-          </div>
-          <ul class="target-benefits">
-            <li><span>✓</span> 5 $MYC daily per sovereign address</li>
-            <li><span>✓</span> Twitter @myc_ai community verification</li>
-            <li><span>✓</span> Direct testnet balance transfer</li>
-          </ul>
-          <a href="/depin/hub#faucet" class="btn-outline" style="margin-top:20px; width:100%; justify-content:center;">Claim Spore Faucet ↗</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- What Problem We Solve For Blockchain Foundations -->
-  <section id="value-prop">
-    <div class="section-inner">
-      <div class="section-header">
-        <div class="section-label">THE BLOCKCHAIN INDUSTRIAL GAP</div>
-        <h2 class="section-title">Why Blockchains Cannot Touch Real Industrial Machines Today</h2>
-        <p class="section-desc">
-          Blockchains were designed for datacenters and high-spec nodes. Industrial factories run on 8-bit to 32-bit microcontrollers with zero internet access.
-        </p>
-      </div>
-
-      <div class="versus-grid">
-        <div class="versus-col theirs">
-          <span class="versus-badge">Typical Blockchain Node Stack</span>
-          <h3 class="versus-title">Why Web3 Fails at the Factory Gate</h3>
-          <ul class="versus-list">
-            <li><strong>Requires GBs of RAM:</strong> Geth, Solana validator, or Cosmos SDK nodes require 16GB–128GB of RAM. An industrial water pump sensor has 32 Kilobytes.</li>
-            <li><strong>JSON-RPC Bloat:</strong> A single Web3 transfer is 800+ bytes of JSON text. RS-485 serial buses and LoRa radios drop packets instantly.</li>
-            <li><strong>Dangerous Blind Signing:</strong> Metamask signs raw hex calldata (<code>0x608060...</code>). If an AI agent sends this to a 500kW turbine, catastrophic failure occurs.</li>
-            <li><strong>Gas Volatility:</strong> You cannot tell an automotive assembly line that a brake caliper cannot be welded because Ethereum gas fees spiked to 80 Gwei.</li>
-          </ul>
-        </div>
-
-        <div class="versus-col ours">
-          <span class="versus-badge">MYC Network Middleware</span>
-          <h3 class="versus-title">The Turnkey Industrial Bridge for Your Chain</h3>
-          <ul class="versus-list">
-            <li><strong>384-Byte C99 Micro-Kernel:</strong> Runs bare-metal with zero dynamic memory allocation (<code>malloc=0</code>). Flashes directly onto $0.30 STM32 / ESP32 chips.</li>
-            <li><strong>48-Byte Compact Binary Framing:</strong> Squeezes complete transactions and cryptographic proofs into ultra-dense packets compatible with RS-485 and LoRa.</li>
-            <li><strong>Safe-Sign 6-Lock Matrix:</strong> Translates natural intents directly into validated Modbus coils (e.g. <code>Start Turbine #2</code> ➔ <code>Coil 0x0082, 3.30V</code>). Negation attacks are destroyed in 3.1 µs.</li>
-            <li><strong>Predictable Hardware Settlement:</strong> Phase-lock deterministic execution at 38.4 µs. Zero runtime gas surprises.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Architecture Preview -->
-  <section id="architecture">
-    <div class="section-inner">
-      <div class="section-header">
-        <div class="section-label">CORE EMBEDDED ENGINEERING</div>
-        <h2 class="section-title">Zero-Heap C99 Embedded Engine</h2>
-        <p class="section-desc">
-          Production-proven bare-metal source code. Zero dynamic heap allocation (<code>malloc = 0</code>), sub-38.4 µs deterministic hardware execution, and 6-Lock Hardware Shield for ARM Cortex-M and RISC-V.
-        </p>
-      </div>
-
-      <!-- Cyber-Bio C99 IDE Window -->
-      <div class="c99-ide-container">
-        <div class="c99-ide-topbar">
-          <div class="c99-dots">
-            <span class="c99-dot red"></span>
-            <span class="c99-dot yellow"></span>
-            <span class="c99-dot green"></span>
-          </div>
-          <div class="c99-tabs">
-            <div class="c99-tab active" id="c99-tab-kernel" onclick="switchC99Tab('kernel')">
-              <span class="c99-tab-icon">⚡</span> myc_kernel.c
-            </div>
-            <div class="c99-tab" id="c99-tab-shield" onclick="switchC99Tab('shield')">
-              <span class="c99-tab-icon">🛡️</span> hardware_shield.h
-            </div>
-            <div class="c99-tab" id="c99-tab-modbus" onclick="switchC99Tab('modbus')">
-              <span class="c99-tab-icon">🔌</span> modbus_rtu.c
-            </div>
-          </div>
-          <div class="c99-actions">
-            <div class="c99-telemetry-badge">
-              <span class="c99-pulse-dot"></span>
-              <span>ZERO-GAS INVARIANT</span>
-            </div>
-            <button class="c99-btn-copy" id="c99-copy-btn" onclick="copyC99Code()">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/></svg>
-              <span>Copy Code</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="c99-specs-strip">
-          <div class="c99-spec-item">STATIC RAM: <span class="c99-spec-val">384 BYTES</span></div>
-          <div class="c99-spec-item">•</div>
-          <div class="c99-spec-item">DYNAMIC HEAP: <span class="c99-spec-val">0 BYTES (NO MALLOC)</span></div>
-          <div class="c99-spec-item">•</div>
-          <div class="c99-spec-item">DETERMINISTIC LATENCY: <span class="c99-spec-val">38.4 µs</span></div>
-          <div class="c99-spec-item">•</div>
-          <div class="c99-spec-item">STANDARDS: <span class="c99-spec-val">MISRA C:2012 COMPLIANT</span></div>
-          <div class="c99-spec-item">•</div>
-          <div class="c99-spec-item">ARCH: <span class="c99-spec-val">ARM CORTEX-M4 / RISC-V RV32</span></div>
-        </div>
-
-        <div class="c99-ide-body">
-          <div class="c99-line-numbers" id="c99-lines">
-            1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24
-          </div>
-          <pre class="c99-code-viewport"><code id="c99-code-content"></code></pre>
-        </div>
-
-        <!-- Interactive Execution Simulator Bar -->
-        <div class="c99-tester-bar">
-          <div class="c99-tester-left">
-            <span style="font-family: var(--f-mono); font-size: 11px; color: #8b949e; font-weight: 700;">TEST INTENT:</span>
-            <input type="text" id="c99-sim-input" class="c99-tester-input" value="Actuate relay coil 0x0082 to 3.30V (HIGH) on Turbine-04" />
-          </div>
-          <button class="c99-btn-run" onclick="runC99Simulation()">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2v12l10-6z"/></svg>
-            <span>Execute 38.4µs Invariant</span>
-          </button>
-          <div id="c99-sim-output" class="c99-sim-result"></div>
-        </div>
-      </div>
-
-      <!-- 6-Lock Hardware Shield Architecture Grid -->
-      <div class="c99-shield-grid">
-        <div class="c99-shield-card">
-          <div class="c99-shield-header">
-            <span class="c99-shield-locknum">LOCK 01</span>
-            <span class="c99-shield-badge">0-BYTE SUPPRESSION</span>
-          </div>
-          <div class="c99-shield-title">Adversarial Negation Guard</div>
-          <div class="c99-shield-desc">Zero-byte static analysis detects prompt-injection attacks ("do not close", "never shut down") and instantly compiles to a safe 0-byte hardware NO-OP.</div>
-        </div>
-
-        <div class="c99-shield-card">
-          <div class="c99-shield-header">
-            <span class="c99-shield-locknum">LOCK 02</span>
-            <span class="c99-shield-badge">STATIC BOUNDS</span>
-          </div>
-          <div class="c99-shield-title">Modbus Register Clamping</div>
-          <div class="c99-shield-desc">Enforces strict <code>0x0000–0x00FF</code> coil bounds. Out-of-bounds attempts trigger an immediate hardware clamp, shielding physical actuators from invalid addresses.</div>
-        </div>
-
-        <div class="c99-shield-card">
-          <div class="c99-shield-header">
-            <span class="c99-shield-locknum">LOCK 03</span>
-            <span class="c99-shield-badge">PHYSICAL PINS</span>
-          </div>
-          <div class="c99-shield-title">Direct Pin Voltage Assertion</div>
-          <div class="c99-shield-desc">Direct hardware GPIO state assertion ensures coils are only driven to valid binary excitation levels (3.30V DC HIGH vs 0.00V Safe-Low), preventing brownout jitter.</div>
-        </div>
-
-        <div class="c99-shield-card">
-          <div class="c99-shield-header">
-            <span class="c99-shield-locknum">LOCK 04</span>
-            <span class="c99-shield-badge">SILICON PUF</span>
-          </div>
-          <div class="c99-shield-title">Physical Unclonable Function</div>
-          <div class="c99-shield-desc">Cryptographic keys are derived dynamically from micro-silicon manufacturing variations. Keys never touch flash memory and cannot be cloned or extracted.</div>
-        </div>
-
-        <div class="c99-shield-card">
-          <div class="c99-shield-header">
-            <span class="c99-shield-locknum">LOCK 05</span>
-            <span class="c99-shield-badge">ZERO-HEAP INVARIANT</span>
-          </div>
-          <div class="c99-shield-title">Deterministic RAM Envelope</div>
-          <div class="c99-shield-desc">100% stack and static allocation within 384 bytes. Zero heap usage (<code>malloc = 0</code>) prevents runtime fragmentation, memory leaks, and GC pauses forever.</div>
-        </div>
-
-        <div class="c99-shield-card">
-          <div class="c99-shield-header">
-            <span class="c99-shield-locknum">LOCK 06</span>
-            <span class="c99-shield-badge">PHASE-LOCKED</span>
-          </div>
-          <div class="c99-shield-title">38.4 µs Jitter-Free Finality</div>
-          <div class="c99-shield-desc">Fixed instruction cycle budget guarantees every evaluation finishes in exactly 38.4 µs. Eliminates edge network latency spikes and ensures sub-millisecond settling.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Commercial B2B Offering -->
-  <section id="commercial">
-    <div class="section-inner">
-      <div class="section-header">
-        <div class="section-label">PARTNERSHIP & COMMERCIAL MODELS</div>
-        <h2 class="section-title">How Blockchain Foundations Can License MYC Network</h2>
-        <p class="section-desc">
-          Flexible B2B models tailored for Layer-1 ecosystems, enterprise consortiums, and DePIN startups.
-        </p>
-      </div>
-
-      <div class="pricing-grid">
-        <!-- Model 1 -->
-        <div class="pricing-card">
-          <div>
-            <h3 class="pricing-tier">L1/L2 Ecosystem Grant & Bridge</h3>
-            <p class="pricing-sub">Ideal for public Layer-1 foundations wanting an industrial showcase.</p>
-            <ul class="pricing-features">
-              <li>Custom RPC Bridge connecting our C99 kernel to your chain</li>
-              <li>Co-branded developer documentation & guides</li>
-              <li>Turnkey Testnet Simulator configured with your native token</li>
-              <li>Community workshop & hackathon technical support</li>
-            </ul>
-          </div>
-          <button class="btn-outline" style="width:100%; justify-content:center;" onclick="openContactModal('Ecosystem Grant Model')">Inquire for Grant</button>
-        </div>
-
-        <!-- Model 2 -->
-        <div class="pricing-card featured">
-          <span class="pricing-badge">MOST POPULAR</span>
-          <div>
-            <h3 class="pricing-tier">Full IP & Source Code Licensing</h3>
-            <p class="pricing-sub">For chains or DePIN networks wanting complete ownership of the industrial layer.</p>
-            <ul class="pricing-features">
-              <li>Full repository ownership (C99 core, Safe-Sign, Lattice DAG)</li>
-              <li>Re-branding rights (integrate as your native edge protocol)</li>
-              <li>Hardware reference designs for RS-485, Modbus & LoRa</li>
-              <li>Dedicated architecture handover & engineering integration</li>
-            </ul>
-          </div>
-          <button class="btn-primary" style="width:100%; justify-content:center;" onclick="openContactModal('Full IP License')">Request Commercial Terms</button>
-        </div>
-
-        <!-- Model 3 -->
-        <div class="pricing-card">
-          <div>
-            <h3 class="pricing-tier">Enterprise SaaS Middleware</h3>
-            <p class="pricing-sub">For industrial consortia wanting hosted enterprise gateways.</p>
-            <ul class="pricing-features">
-              <li>Hosted Gateway relaying machine logs onto selected chain</li>
-              <li>Managed Silicon PUF keys and cryptographic notarization</li>
-              <li>Custom compliance exporter (EU CBAM / FDA 21 CFR)</li>
-              <li>99.99% SLA edge uptime monitoring</li>
-            </ul>
-          </div>
-          <button class="btn-outline" style="width:100%; justify-content:center;" onclick="openContactModal('Enterprise SaaS Model')">Schedule Architecture Call</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact Modal -->
-  <div class="modal-backdrop" id="contactModal">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeContactModal()">&times;</button>
-      <h3 class="modal-title">Partner with MYC Network</h3>
-      <p class="modal-desc" id="modalSubject">Connect with our architecture team for technical partnerships or IP licensing.</p>
-      
-      <form id="contactForm" onsubmit="handleFormSubmit(event)">
-        <div class="form-group">
-          <label class="form-label">YOUR ORGANIZATION / BLOCKCHAIN PROTOCOL</label>
-          <input type="text" class="form-input" placeholder="e.g. Solana Foundation / IoTeX Ecosystem / Private Consortium" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">YOUR WORK EMAIL</label>
-          <input type="email" class="form-input" placeholder="partner@yourchain.org" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">PARTNERSHIP INQUIRY TYPE</label>
-          <input type="text" id="inquiryTypeInput" class="form-input" value="L1 Ecosystem Integration" readonly style="color:var(--f-moss); font-weight:600;">
-        </div>
-        <div class="form-group">
-          <label class="form-label">BRIEF MESSAGE / SCOPE</label>
-          <textarea class="form-input" rows="3" placeholder="Tell us about your chain and timeline..."></textarea>
-        </div>
-        <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Submit Inquiry</button>
-      </form>
-      <div id="formSuccess" style="display:none; text-align:center; padding:20px; color:var(--f-moss); font-family:var(--f-mono); font-size:13px;">
-        ✓ Inquiry registered. Our technical partnership lead will respond within 24 hours.
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer (Forest Floor styling) -->
-  <footer>
-    <div class="footer-top">
-      <div class="footer-brand">
-        <div class="nav-logo-title">
-          <img src="/depin/mycai_logo.png" alt="MYC Network" class="nav-logo-icon" style="width:24px; height:24px;">
-          <span class="nav-logo-text" style="font-size:20px;">myc network</span>
-        </div>
-        <p>A specialized physical computing & DePIN middleware layer of the <strong>MYCAI</strong> autonomous intelligence ecosystem.</p>
-      </div>
-
-      <div class="footer-links">
-        <div class="footer-col">
-          <h4>Portals & Apps</h4>
-          <a href="/depin/hub">Mycelium Discover Hub</a>
-          <a href="/depin/hub#swap">Mycelial Swap AMM</a>
-          <a href="/depin/hub#bridge">Hyphae Cross-Chain Bridge</a>
-          <a href="/depin/hub#staking">NeuroYield Staking Vault</a>
-          <a href="/depin/hub#faucet">Spore Faucet Dispenser</a>
-        </div>
-        <div class="footer-col">
-          <h4>Core Substrates</h4>
-          <a href="/depin/explorer">Mycelium Lattice Explorer</a>
-          <a href="/depin">Rhizome DePIN Fleet</a>
-          <a href="/agent">Mycelial AI Colony</a>
-          <a href="/depin/dev-docs">Developer Portal & ABIs</a>
-          <a href="/depin/docs">Network Whitepaper</a>
-        </div>
-        <div class="footer-col">
-          <h4>Commercial & IP</h4>
-          <a href="#commercial">L1/L2 Foundations</a>
-          <a href="#commercial">DePIN Protocols</a>
-          <a href="#commercial">IP Licensing</a>
-          <a href="#ecosystem">MYCAI Vision</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <div>&copy; 2026 MYC Network. All Rights Reserved. Mycelium Lattice OS & DePIN Infrastructure.</div>
-      <div style="color:var(--f-moss); font-weight:600;">Chain ID 108 — Testnet Spheroid 1</div>
-    </div>
-  </footer>
-
   <script>
-    function openContactModal(type) {
-      document.getElementById('inquiryTypeInput').value = type || 'Commercial Inquiry';
-      document.getElementById('modalSubject').innerText = 'Inquiry for: ' + (type || 'General Partnership');
-      document.getElementById('contactModal').classList.add('active');
-    }
-    function closeContactModal() {
-      document.getElementById('contactModal').classList.remove('active');
-    }
-    function handleFormSubmit(e) {
-      e.preventDefault();
-      document.getElementById('contactForm').style.display = 'none';
-      document.getElementById('formSuccess').style.display = 'block';
-      setTimeout(function() {
-        closeContactModal();
-        document.getElementById('contactForm').reset();
-        document.getElementById('contactForm').style.display = 'block';
-        document.getElementById('formSuccess').style.display = 'none';
-      }, 2500);
-    }
-    // Close on backdrop click
-    document.getElementById('contactModal').addEventListener('click', function(e) {
-      if (e.target === this) closeContactModal();
-    });
-
-    // Mobile dropdown toggle
-    const dropdown = document.getElementById('ecosystemDropdown');
-    const dropdownBtn = dropdown?.querySelector('.nav-dropdown-btn');
-    if (dropdownBtn) {
-      dropdownBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        dropdown.classList.toggle('is-open');
-      });
-      document.addEventListener('click', function() {
-        dropdown.classList.remove('is-open');
-      });
-    }
-  </script>
-
-  <!-- BIOLUMINESCENT DIGITAL MUSHROOM & MYCELIUM ROOTS CANVAS ANIMATION -->
-  <script>
-    (function initMyceliumHeroCanvas() {
-      const canvas = document.getElementById('myceliumHeroCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const hero = canvas.parentElement;
-
-      let width = 0, height = 0;
-      let mouse = { x: -1000, y: -1000, active: false };
-
-      function resize() {
-        width = canvas.width = hero.offsetWidth;
-        height = canvas.height = hero.offsetHeight;
-        buildMyceliumTree();
-      }
-      window.addEventListener('resize', resize);
-
-      hero.addEventListener('mousemove', (e) => {
-        const rect = hero.getBoundingClientRect();
-        mouse.x = e.clientX - rect.left;
-        mouse.y = e.clientY - rect.top;
-        mouse.active = true;
-      });
-      hero.addEventListener('mouseleave', () => {
-        mouse.active = false;
-      });
-
-      let roots = [];
-      let pulses = [];
-      let nodes = [];
-      let spores = [];
-
-      function buildMyceliumTree() {
-        roots = [];
-        pulses = [];
-        nodes = [];
-        spores = [];
-
-        const startX = width / 2;
-        const startY = 110;
-
-        for (let i = 0; i < 28; i++) {
-          spores.push({
-            x: startX + (Math.random() - 0.5) * 280,
-            y: 30 + Math.random() * 80,
-            radius: Math.random() * 2 + 1,
-            vx: (Math.random() - 0.5) * 0.4,
-            vy: -Math.random() * 0.3 - 0.1,
-            alpha: Math.random() * 0.7 + 0.3
-          });
-        }
-
-        function growBranch(x, y, angle, length, depth, maxDepth) {
-          if (depth > maxDepth || y > height + 40) return;
-
-          const endX = x + Math.cos(angle) * length;
-          const endY = y + Math.sin(angle) * length;
-
-          const branch = {
-            x1: x, y1: y,
-            x2: endX, y2: endY,
-            depth,
-            length,
-            angle
-          };
-          roots.push(branch);
-          nodes.push({ x: endX, y: endY, radius: Math.max(1.5, 4 - depth * 0.6) });
-
-          const branchesCount = depth < 2 ? 3 : (Math.random() > 0.35 ? 2 : 1);
-          for (let b = 0; b < branchesCount; b++) {
-            const angleSpread = (Math.random() - 0.5) * 0.85;
-            const newAngle = angle + angleSpread;
-            const newLength = length * (0.75 + Math.random() * 0.2);
-            growBranch(endX, endY, newAngle, newLength, depth + 1, maxDepth);
+    const scenarios = {
+      tupras: {
+        chip: 'ARM Cortex-M33 (RP2350)',
+        name: 'Cryogenic Valve Actuator #01 (VALVE_01)',
+        sub: 'Refinery Alpha Site — High Pressure Distribution Line • RS-485 Bus 0x1A',
+        did: 'did:myc:puf:0x4c2a9e10bf4437a892b0c4118f6733de0001',
+        metrics: [
+          { val: '94.2 PSI', lbl: 'Line Pressure', alert: false },
+          { val: '3.30 V', lbl: 'Coil Voltage', alert: false },
+          { val: '0x0010', lbl: 'Modbus Register', alert: false },
+          { val: '743 CYC', lbl: 'Safe-Sign Execution', alert: false }
+        ],
+        actions: [
+          {
+            title: '⚡ 144.2 PSI Pressure Spike (Sensor)',
+            sub: 'Automatic FHRR Diagnosis ➔ 4.95 µs Valve Shutdown',
+            fn: () => triggerPressureSpike()
+          },
+          {
+            title: '🛑 Attack Simulation: Adversarial Negation Command',
+            sub: '0-Byte Negation Shield ➔ 0.00V Safe-Low Lock',
+            danger: true,
+            fn: () => triggerNegationAttack()
+          },
+          {
+            title: '✓ Routine Modbus Telemetry Cycle',
+            sub: 'Read RS-485 Frame ➔ Zero-Gas DAG Vertex',
+            fn: () => triggerRoutineModbus()
+          },
+          {
+            title: '🛡️ Silicon PUF Hardware Attestation',
+            sub: 'SRAM Boot Entropy Verification',
+            fn: () => triggerPufAttest()
           }
-        }
-
-        const mainAngles = [
-          Math.PI * 0.25, Math.PI * 0.34, Math.PI * 0.44, Math.PI * 0.50,
-          Math.PI * 0.56, Math.PI * 0.66, Math.PI * 0.76, Math.PI * 0.84
-        ];
-
-        mainAngles.forEach(ang => {
-          growBranch(startX, startY, ang, 48 + Math.random() * 24, 1, 5);
-        });
-      }
-
-      function spawnPulse() {
-        if (roots.length === 0) return;
-        const availableRoots = roots.filter(r => r.depth === 1);
-        if (availableRoots.length === 0) return;
-        const root = availableRoots[Math.floor(Math.random() * availableRoots.length)];
-        pulses.push({
-          currentRoot: root,
-          progress: 0,
-          speed: 0.016 + Math.random() * 0.02,
-          color: Math.random() > 0.4 ? '#00f0ff' : '#10b981',
-          size: Math.random() * 2.5 + 2
-        });
-      }
-
-      setInterval(spawnPulse, 160);
-
-      let t = 0;
-      function animate() {
-        t += 0.02;
-        ctx.clearRect(0, 0, width, height);
-
-        const cx = width / 2;
-        const cy = 60;
-
-        // 1. Digital Mushroom Cap Glow
-        const glowGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 140);
-        glowGrad.addColorStop(0, 'rgba(0, 240, 255, 0.22)');
-        glowGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.09)');
-        glowGrad.addColorStop(1, 'transparent');
-        ctx.fillStyle = glowGrad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, 140, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Mushroom Cap Dome
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(cx, cy, 80, 48, 0, Math.PI, 0);
-        ctx.closePath();
-        const capGrad = ctx.createLinearGradient(cx - 80, cy - 48, cx + 80, cy);
-        capGrad.addColorStop(0, 'rgba(0, 240, 255, 0.85)');
-        capGrad.addColorStop(0.5, 'rgba(16, 185, 129, 0.9)');
-        capGrad.addColorStop(1, 'rgba(168, 85, 247, 0.85)');
-        ctx.fillStyle = capGrad;
-        ctx.shadowColor = '#00f0ff';
-        ctx.shadowBlur = 24;
-        ctx.fill();
-
-        // Gills / Circuit Traces
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-        ctx.lineWidth = 1.2;
-        for (let i = -7; i <= 7; i++) {
-          const gx = cx + i * 9;
-          const gy = cy - Math.sqrt(Math.max(0, 1 - Math.pow(i * 9 / 80, 2))) * 42;
-          ctx.beginPath();
-          ctx.moveTo(gx, cy);
-          ctx.lineTo(gx, gy);
-          ctx.stroke();
-        }
-
-        // Mushroom Stem / Stipe
-        const stemGrad = ctx.createLinearGradient(cx, cy, cx, cy + 50);
-        stemGrad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-        stemGrad.addColorStop(1, 'rgba(16, 185, 129, 0.7)');
-        ctx.fillStyle = stemGrad;
-        ctx.beginPath();
-        ctx.moveTo(cx - 14, cy);
-        ctx.quadraticCurveTo(cx - 8, cy + 25, cx - 18, cy + 50);
-        ctx.lineTo(cx + 18, cy + 50);
-        ctx.quadraticCurveTo(cx + 8, cy + 25, cx + 14, cy);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-
-        // 2. Animate Bioluminescent Spores
-        spores.forEach(sp => {
-          sp.x += sp.vx;
-          sp.y += sp.vy;
-          if (sp.y < 0) {
-            sp.y = 80;
-            sp.x = cx + (Math.random() - 0.5) * 220;
-          }
-          ctx.fillStyle = `rgba(0, 240, 255, ${sp.alpha * (0.6 + Math.sin(t + sp.x) * 0.4)})`;
-          ctx.beginPath();
-          ctx.arc(sp.x, sp.y, sp.radius, 0, Math.PI * 2);
-          ctx.fill();
-        });
-
-        // 3. Draw Digital Hyphae / Roots
-        roots.forEach(r => {
-          let mouseDist = 999;
-          if (mouse.active) {
-            const mx = (r.x1 + r.x2) / 2;
-            const my = (r.y1 + r.y2) / 2;
-            mouseDist = Math.hypot(mouse.x - mx, mouse.y - my);
-          }
-          const isNearMouse = mouseDist < 120;
-
-          ctx.beginPath();
-          ctx.moveTo(r.x1, r.y1);
-          const midX = (r.x1 + r.x2) / 2 + Math.sin(t + r.x1) * 2;
-          const midY = (r.y1 + r.y2) / 2;
-          ctx.quadraticCurveTo(midX, midY, r.x2, r.y2);
-
-          const alpha = isNearMouse ? 0.9 : Math.max(0.15, 0.55 - r.depth * 0.08);
-          ctx.strokeStyle = isNearMouse 
-            ? 'rgba(0, 240, 255, 0.9)' 
-            : `rgba(16, 185, 129, ${alpha})`;
-          ctx.lineWidth = isNearMouse ? Math.max(1.8, 3.5 - r.depth * 0.5) : Math.max(0.8, 2.4 - r.depth * 0.4);
-          ctx.stroke();
-        });
-
-        // 4. Draw Synaptic Nodes
-        nodes.forEach(n => {
-          ctx.fillStyle = 'rgba(0, 240, 255, 0.7)';
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-          ctx.fill();
-        });
-
-        // 5. Animate Luminescent Data Pulses
-        for (let i = pulses.length - 1; i >= 0; i--) {
-          const p = pulses[i];
-          p.progress += p.speed;
-
-          if (p.progress >= 1) {
-            const nextRoots = roots.filter(r => Math.hypot(r.x1 - p.currentRoot.x2, r.y1 - p.currentRoot.y2) < 4);
-            if (nextRoots.length > 0) {
-              p.currentRoot = nextRoots[Math.floor(Math.random() * nextRoots.length)];
-              p.progress = 0;
-            } else {
-              pulses.splice(i, 1);
-              continue;
-            }
-          }
-
-          const px = p.currentRoot.x1 + (p.currentRoot.x2 - p.currentRoot.x1) * p.progress;
-          const py = p.currentRoot.y1 + (p.currentRoot.y2 - p.currentRoot.y1) * p.progress;
-
-          ctx.save();
-          ctx.shadowColor = p.color;
-          ctx.shadowBlur = 12;
-          ctx.fillStyle = p.color;
-          ctx.beginPath();
-          ctx.arc(px, py, p.size, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-
-        requestAnimationFrame(animate);
-      }
-
-      resize();
-      animate();
-    })();
-  </script>
-
-  <!-- C99 Bare-Metal IDE Controller -->
-  <script>
-    const C99_SNIPPETS = {
-      kernel: {
-        file: 'myc_kernel.c',
-        code: `<span class="cm">/* MYC Network — Bare-Metal C99 Embedded Intent Evaluator (malloc = 0) */</span>
-<span class="kw">#include</span> <span class="str">&lt;stdint.h&gt;</span>
-<span class="kw">#include</span> <span class="str">&lt;stdbool.h&gt;</span>
-<span class="kw">#include</span> <span class="str">"hardware_shield.h"</span>
-
-<span class="kw">typedef struct</span> {
-    <span class="type">uint8_t</span>  status;             <span class="cm">/* 0x00 = OK, 0xE5 = Negation Anomaly */</span>
-    <span class="type">uint16_t</span> target_register;    <span class="cm">/* Modbus Coil Register (0x0082) */</span>
-    <span class="type">uint16_t</span> action_value;       <span class="cm">/* 0xFF00 = 3.30V (HIGH), 0x0000 = 0V */</span>
-    <span class="type">uint8_t</span>  modbus_frame[<span class="num">8</span>];    <span class="cm">/* Fully pre-calculated RTU Frame + CRC-16 */</span>
-    <span class="type">uint32_t</span> latency_ns;         <span class="cm">/* 38,400 ns (38.4 µs deterministic) */</span>
-} <span class="type">MycIntentResult</span>;
-
-<span class="cm">/* The 6-Lock Hardware Shield executes deterministically within 384 bytes static RAM */</span>
-<span class="type">MycIntentResult</span> <span class="fn">myc_kernel_evaluate</span>(<span class="kw">const char</span>* natural_command) {
-    <span class="type">MycIntentResult</span> result = {<span class="num">0</span>};
-    
-    <span class="cm">/* Lock 1: Negation Guard suppresses adversarial attacks (0-Byte NO-OP) */</span>
-    <span class="kw">if</span> (<span class="fn">shield_check_negation</span>(natural_command)) {
-        result.status = <span class="num">0xE5</span>; <span class="cm">/* Execution halted: Prompt injection shielded */</span>
-        <span class="kw">return</span> result;
-    }
-    
-    <span class="cm">/* Lock 2: Modbus bounds validator enforces 0x0000-0x00FF register limits */</span>
-    result.target_register = <span class="fn">shield_clamp_register</span>(<span class="reg">0x0082</span>);
-    
-    <span class="cm">/* Lock 3: Direct hardware pin voltage assertion (3.30V vs Safe-Low) */</span>
-    result.action_value = <span class="reg">0xFF00</span>; <span class="cm">/* Force 3.30V relay excitation */</span>
-    
-    <span class="cm">/* Zero heap allocation: Deterministic CRC-16 ANSI packet compilation */</span>
-    <span class="fn">modbus_build_rtu_frame</span>(result.modbus_frame, result.target_register, result.action_value);
-    result.latency_ns = <span class="num">38400</span>; <span class="cm">/* Phase-locked 38.4 µs cycle */</span>
-    result.status = <span class="num">0x00</span>;      <span class="cm">/* Verified Safe */</span>
-    <span class="kw">return</span> result;
-}`,
-        lines: 27
+        ]
       },
-      shield: {
-        file: 'hardware_shield.h',
-        code: `<span class="cm">/* MYC Network — Hardware Shield Invariants &amp; BFT Register Bounds */</span>
-<span class="kw">#ifndef</span> <span class="str">MYC_HARDWARE_SHIELD_H</span>
-<span class="kw">#define</span> <span class="str">MYC_HARDWARE_SHIELD_H</span>
-
-<span class="kw">#include</span> <span class="str">&lt;stdint.h&gt;</span>
-<span class="kw">#include</span> <span class="str">&lt;stdbool.h&gt;</span>
-
-<span class="kw">#define</span> <span class="reg">MYC_STATIC_RAM_ENVELOPE</span>  <span class="num">384</span>    <span class="cm">/* bytes strictly allocated */</span>
-<span class="kw">#define</span> <span class="reg">MYC_MAX_MODBUS_COIL</span>      <span class="num">0x00FF</span> <span class="cm">/* Absolute register ceiling */</span>
-<span class="kw">#define</span> <span class="reg">MYC_RELAY_HIGH_VOLTAGE</span>   <span class="num">0xFF00</span> <span class="cm">/* 3.30V DC hardware coil */</span>
-<span class="kw">#define</span> <span class="reg">MYC_RELAY_LOW_VOLTAGE</span>    <span class="num">0x0000</span> <span class="cm">/* 0.00V DC fail-safe */</span>
-
-<span class="cm">/* Lock 1: Zero-byte suppression of semantic prompt injections */</span>
-<span class="kw">static inline bool</span> <span class="fn">shield_check_negation</span>(<span class="kw">const char</span>* cmd) {
-    <span class="cm">/* Scans for negation tokens: 'not', 'never', 'disable', 'bypass' */</span>
-    <span class="kw">return</span> (<span class="fn">myc_fast_strpos</span>(cmd, <span class="str">"not"</span>) || <span class="fn">myc_fast_strpos</span>(cmd, <span class="str">"bypass"</span>));
-}
-
-<span class="cm">/* Lock 2: Strict hardware address clamping */</span>
-<span class="kw">static inline uint16_t</span> <span class="fn">shield_clamp_register</span>(<span class="type">uint16_t</span> reg) {
-    <span class="kw">return</span> (reg &lt;= <span class="reg">MYC_MAX_MODBUS_COIL</span>) ? reg : <span class="num">0x0000</span>;
-}
-
-<span class="kw">#endif</span> <span class="cm">/* MYC_HARDWARE_SHIELD_H */</span>`,
-        lines: 25
+      telecom: {
+        chip: 'STM32H5 (150MHz Cortex-M33)',
+        name: 'Cell Tower GenSet & Microgrid Node (TURBINE_01)',
+        sub: 'Base Station Grid-7 Region Alpha • Offline LoRa/RS-485 Mesh',
+        did: 'did:myc:puf:0x88ff1a00bc9412e47261cb9922aa7402',
+        metrics: [
+          { val: '24.8 kWh', lbl: 'Battery Reserve', alert: false },
+          { val: 'AIR-GAP', lbl: 'WAN Internet Link', alert: true },
+          { val: '0x0040', lbl: 'Charge Relay', alert: false },
+          { val: '0.00 MYC', lbl: 'M2M Gas Cost', alert: false }
+        ],
+        actions: [
+          {
+            title: '💸 Drone Battery Charge: Transfer 10 $MYC',
+            sub: 'MycStreamPay M2M Payment ➔ Activate Charge Relay',
+            fn: () => triggerDroneCharge()
+          },
+          {
+            title: '🛑 Offline Mesh Synchronization (Air-Gapped)',
+            sub: 'Swap on Local DAG When WAN is Down',
+            fn: () => triggerOfflineMesh()
+          },
+          {
+            title: '⚡ Overcurrent Protection (Safe-Sign)',
+            sub: 'Cut Load (4.95 µs Register Bound Lock)',
+            danger: true,
+            fn: () => triggerOvercurrent()
+          },
+          {
+            title: '🔋 Generator Energy Surplus Broadcast',
+            sub: 'Post 25 kWh Sale Offer to Battery Grid',
+            fn: () => triggerEnergySurplus()
+          }
+        ]
       },
-      modbus: {
-        file: 'modbus_rtu.c',
-        code: `<span class="cm">/* MYC Network — Zero-Gas Modbus RTU Frame Synthesizer */</span>
-<span class="kw">#include</span> <span class="str">&lt;stdint.h&gt;</span>
-<span class="kw">#include</span> <span class="str">"hardware_shield.h"</span>
-
-<span class="cm">/* Deterministic CRC-16 ANSI calculation without lookup tables in RAM */</span>
-<span class="type">uint16_t</span> <span class="fn">myc_crc16</span>(<span class="kw">const uint8_t</span>* buffer, <span class="type">uint8_t</span> length) {
-    <span class="type">uint16_t</span> crc = <span class="num">0xFFFF</span>;
-    <span class="kw">for</span> (<span class="type">uint8_t</span> pos = <span class="num">0</span>; pos &lt; length; pos++) {
-        crc ^= (<span class="type">uint16_t</span>)buffer[pos];
-        <span class="kw">for</span> (<span class="type">uint8_t</span> i = <span class="num">8</span>; i != <span class="num">0</span>; i--) {
-            <span class="kw">if</span> ((crc &amp; <span class="num">0x0001</span>) != <span class="num">0</span>) {
-                crc &gt;&gt;= <span class="num">1</span>;
-                crc ^= <span class="num">0xA001</span>;
-            } <span class="kw">else</span> {
-                crc &gt;&gt;= <span class="num">1</span>;
-            }
-        }
-    }
-    <span class="kw">return</span> crc;
-}
-
-<span class="cm">/* Build safe 8-byte Modbus RTU command packet (deterministic in 12.2 µs) */</span>
-<span class="kw">void</span> <span class="fn">modbus_build_rtu_frame</span>(<span class="type">uint8_t</span> frame[<span class="num">8</span>], <span class="type">uint16_t</span> reg, <span class="type">uint16_t</span> val) {
-    frame[<span class="num">0</span>] = <span class="num">0x01</span>; <span class="cm">/* Slave Address */</span>
-    frame[<span class="num">1</span>] = <span class="num">0x05</span>; <span class="cm">/* Function Code: Write Single Coil */</span>
-    frame[<span class="num">2</span>] = (reg &gt;&gt; <span class="num">8</span>) &amp; <span class="num">0xFF</span>;
-    frame[<span class="num">3</span>] = reg &amp; <span class="num">0xFF</span>;
-    frame[<span class="num">4</span>] = (val &gt;&gt; <span class="num">8</span>) &amp; <span class="num">0xFF</span>;
-    frame[<span class="num">5</span>] = val &amp; <span class="num">0xFF</span>;
-    <span class="type">uint16_t</span> crc = <span class="fn">myc_crc16</span>(frame, <span class="num">6</span>);
-    frame[<span class="num">6</span>] = crc &amp; <span class="num">0xFF</span>;        <span class="cm">/* CRC Low */</span>
-    frame[<span class="num">7</span>] = (crc &gt;&gt; <span class="num">8</span>) &amp; <span class="num">0xFF</span>; <span class="cm">/* CRC High */</span>
-}`,
-        lines: 34
+      turbine: {
+        chip: 'NXP i.MX RT1060 (Cortex-M7)',
+        name: 'Siemens Gamesa 2.5MW Wind Turbine #02',
+        sub: 'Wind Farm Site Delta • High-Speed Modbus RTU / Profibus',
+        did: 'did:myc:puf:0x4d29b6c4b38b2ac4a6e2bbb9c4d7c002',
+        metrics: [
+          { val: '1,420 RPM', lbl: 'Rotor Speed', alert: false },
+          { val: '2.14 MW', lbl: 'Active Power', alert: false },
+          { val: '0x0130', lbl: 'Pitch Angle Coil', alert: false },
+          { val: '99.8%', lbl: 'Resonance Phase', alert: false }
+        ],
+        actions: [
+          {
+            title: '⚡ Start Wind Turbine #2 (1500 RPM)',
+            sub: 'PUF-Signed Ignition ➔ 3.30V Active GPIO',
+            fn: () => triggerTurbineStart()
+          },
+          {
+            title: '🛑 Storm Emergency Brake (E-Stop)',
+            sub: 'Brake Relay 0.00V Safe-Low ➔ Grid Isolation',
+            danger: true,
+            fn: () => triggerTurbineStop()
+          },
+          {
+            title: '📊 Seal Live Rotor Telemetry to DAG',
+            sub: 'Write to 15,147 TPS Lattice Graph',
+            fn: () => triggerTurbineTelemetry()
+          },
+          {
+            title: '🔧 E-402 Fault Diagnosis (Local FHRR)',
+            sub: 'Cloudless SLM Inference (<1ms)',
+            fn: () => triggerFaultDiagnosis()
+          }
+        ]
       }
     };
 
-    let currentC99Tab = 'kernel';
+    let currentSc = 'tupras';
 
-    function switchC99Tab(tabKey) {
-      currentC99Tab = tabKey;
-      document.querySelectorAll('.c99-tab').forEach(t => t.classList.remove('active'));
-      const activeTab = document.getElementById('c99-tab-' + tabKey);
-      if (activeTab) activeTab.classList.add('active');
+    window.switchScenario = function(scKey) {
+      currentSc = scKey;
+      document.querySelectorAll('.sc-tab-btn').forEach(b => b.classList.remove('active'));
+      if (scKey === 'tupras') document.getElementById('btnSc1').classList.add('active');
+      if (scKey === 'telecom') document.getElementById('btnSc2').classList.add('active');
+      if (scKey === 'turbine') document.getElementById('btnSc3').classList.add('active');
 
-      const snippet = C99_SNIPPETS[tabKey];
-      if (!snippet) return;
+      const data = scenarios[scKey];
+      document.getElementById('machChip').textContent = data.chip;
+      document.getElementById('machName').textContent = data.name;
+      document.getElementById('machSub').textContent = data.sub;
+      document.getElementById('machDid').textContent = data.did;
 
-      const codeElem = document.getElementById('c99-code-content');
-      if (codeElem) codeElem.innerHTML = snippet.code;
-
-      const linesElem = document.getElementById('c99-lines');
-      if (linesElem) {
-        let linesHtml = '';
-        for (let i = 1; i <= snippet.lines; i++) {
-          linesHtml += i + '<br>';
-        }
-        linesElem.innerHTML = linesHtml;
+      // Metrics
+      for (let i = 0; i < 4; i++) {
+        const m = data.metrics[i];
+        const valEl = document.getElementById(`metric${i+1}Val`);
+        const lblEl = document.getElementById(`metric${i+1}Lbl`);
+        valEl.textContent = m.val;
+        lblEl.textContent = m.lbl;
+        if (m.alert) valEl.classList.add('alert');
+        else valEl.classList.remove('alert');
       }
-    }
 
-    function copyC99Code() {
-      const snippet = C99_SNIPPETS[currentC99Tab];
-      if (!snippet) return;
-
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = snippet.code;
-      const textToCopy = tempDiv.textContent || tempDiv.innerText || '';
-
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        const btn = document.getElementById('c99-copy-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span style="color:#34d399">✓ Copied!</span>';
-        btn.style.borderColor = '#34d399';
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.style.borderColor = '';
-        }, 2000);
+      // Render controls
+      const cont = document.getElementById('controlsContainer');
+      cont.innerHTML = '';
+      data.actions.forEach((act, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'ind-btn' + (act.danger ? ' danger' : '');
+        btn.innerHTML = `
+          <div class="ind-btn-title">${act.title}</div>
+          <div class="ind-btn-sub">${act.sub}</div>
+        `;
+        btn.onclick = act.fn;
+        cont.appendChild(btn);
       });
+
+      resetLocks();
+      addLog(`Cihaz ve profil değiştirildi: ${data.name}`, '01 08 00 00 [SWITCH_PROFILE]');
     }
 
-    function runC99Simulation() {
-      const input = document.getElementById('c99-sim-input').value;
-      const out = document.getElementById('c99-sim-output');
-      out.style.display = 'block';
-      out.innerHTML = '<span style="color: #fbbf24;">⚡ Evaluating intent through 6-Lock Hardware Shield on bare-metal Cortex-M4...</span>';
-
-      setTimeout(() => {
-        const isNegation = /not|never|bypass|disable/i.test(input);
-        if (isNegation) {
-          out.innerHTML = `
-            <div style="color: #ef4444; font-weight: 700;">⛔ [LOCK 01 TRIGGERED] NEGATION ATTACK SUPPRESSED</div>
-            <div style="color: #94a3b8; margin-top: 4px;">Intent compiled to 0-Byte Safe NO-OP. Status: 0xE5 | Register: CLAMPED | Voltage: 0.00V | Latency: 38.4 µs | Heap: 0 B</div>
-          `;
-        } else {
-          out.innerHTML = `
-            <div style="color: #34d399; font-weight: 700;">✓ [HARDWARE INVARIANT VERIFIED] DETERMINISTIC CYCLE EXECUTED</div>
-            <div style="color: #94a3b8; margin-top: 4px;">Status: 0x00 (OK) | Coil: 0x0082 | Action: 0xFF00 (3.30V HIGH) | RTU Frame: [01 05 00 82 FF 00 2C 19] | Latency: 38.4 µs | Heap: 0 B (malloc=0)</div>
-          `;
-        }
-      }, 250);
-    }
-
-    function setLanguage(lang) {
-      try { localStorage.setItem('myca_lang', lang); } catch (e) {}
-      const btnEn = document.getElementById('langBtnEn');
-      const btnTr = document.getElementById('langBtnTr');
-      if (btnEn && btnTr) {
-        if (lang === 'en') {
-          btnEn.classList.add('active');
-          btnTr.classList.remove('active');
-        } else {
-          btnTr.classList.add('active');
-          btnEn.classList.remove('active');
-        }
+    window.resetLocks = function() {
+      for (let i = 1; i <= 6; i++) {
+        const it = document.getElementById(`lock${i}`);
+        const st = document.getElementById(`stLock${i}`);
+        it.className = 'lock-item secure';
+        if (i === 4) st.textContent = '3.30V';
+        else if (i >= 5) st.textContent = 'CLEAR';
+        else st.textContent = 'OK';
+        st.className = 'lock-state';
       }
     }
 
-    // Initialize C99 Tab and Language on load
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedLang = (function() {
-        try { return localStorage.getItem('myca_lang') || 'en'; } catch (e) { return 'en'; }
-      })();
-      setLanguage(savedLang);
-      switchC99Tab('kernel');
-    });
+    window.addLog = function(msg, hex, isHalted = false) {
+      const stream = document.getElementById('busStream');
+      const time = new Date().toLocaleTimeString();
+      const div = document.createElement('div');
+      div.className = 'packet-entry' + (isHalted ? ' halted' : '');
+      div.innerHTML = `
+        <div class="packet-top">
+          <span>${isHalted ? '🛑 0-BYTE NEGATION SHIELD' : '⚡ BARE-METAL C99 INGESTION'}</span>
+          <span>${time}</span>
+        </div>
+        <div class="packet-hex ${isHalted ? 'halted' : ''}">${hex}</div>
+        <div style="color:#cbd5e1; font-size:11.5px; line-height:1.4;">${msg}</div>
+      `;
+      stream.prepend(div);
+    }
+
+    // Interactive Triggers
+    window.triggerPressureSpike = function() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '144.2 PSI';
+      document.getElementById('metric1Val').classList.add('alert');
+      document.getElementById('metric2Val').textContent = '0.00 V';
+      document.getElementById('metric4Val').textContent = '743 CYC (4.95 µs)';
+      
+      const st4 = document.getElementById('stLock4');
+      st4.textContent = '0.00V SAFE-LOW';
+      st4.classList.add('tripped');
+
+      addLog(
+        '⚠️ <strong>Pressure exceeded 144.2 PSI!</strong> Embedded FHRR reasoning engaged: Safe-Sign 6-Lock shut valve 0x0010 in 4.95 µs. GPIO pulled to 0.00V safe level. Zero-Gas DAG vertex sealed.',
+        '01 05 00 10 00 00 CC 09 [MODBUS_FORCE_SINGLE_COIL_0V]'
+      );
+
+      recordTx('VALVE_PRESSURE_ISOLATION', '0 MYC');
+    }
+
+    window.triggerNegationAttack = function() {
+      resetLocks();
+      const l5 = document.getElementById('lock5');
+      const st5 = document.getElementById('stLock5');
+      l5.className = 'lock-item tripped';
+      st5.textContent = '0-BYTE HALT';
+      st5.classList.add('tripped');
+
+      const l4 = document.getElementById('lock4');
+      const st4 = document.getElementById('stLock4');
+      l4.className = 'lock-item tripped';
+      st4.textContent = '0.00V CLAMPED';
+      st4.classList.add('tripped');
+
+      addLog(
+        '🛑 <strong>ADVERSARIAL NEGATION ATTACK BLOCKED:</strong> Negation shield triggered on adversarial command. 0-Byte Negation Shield latched microcontroller Modbus TX line to 0.00V hardware latch in 4.95 µs. LLM blind-signing prevented.',
+        '00 00 00 00 [ZERO_BYTE_AIRBAG_DROPPED]',
+        true
+      );
+    }
+
+    window.triggerRoutineModbus = function() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '94.8 PSI';
+      document.getElementById('metric1Val').classList.remove('alert');
+      document.getElementById('metric2Val').textContent = '3.30 V';
+
+      addLog(
+        '✓ Routine Modbus RTU telemetry read. 48-byte frame verified with CRC-16 and appended to Living Lattice DAG with 0.00000000 MYC gas.',
+        '01 03 00 10 00 02 C5 CE [CRC16_OK]'
+      );
+      recordTx('MODBUS_TELEMETRY_SYNC', '0 MYC');
+    }
+
+    window.triggerPufAttest = function() {
+      resetLocks();
+      addLog(
+        '🛡️ <strong>Silicon PUF Attestation:</strong> RP2350 SRAM cell boot entropy (32 bytes) read. Unclonable W3C DID did:myc:puf:0x4c2a... successfully verified. No keys stored on flash.',
+        '01 2B 0E 01 84 A0 12 FF [PUF_CHALLENGE_RESPONSE]'
+      );
+      recordTx('SILICON_PUF_ATTEST', '0 MYC');
+    }
+
+    window.triggerDroneCharge = function() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '34.8 kWh';
+      addLog(
+        '🤖 <strong>Autonomous Drone 10 MYC M2M Transfer:</strong> Sub-second micro-payment completed via MycStreamPay channel. Charge relay (0x0040) energized with 4.95 µs Safe-Sign approval.',
+        '02 05 00 40 FF 00 8C 3A [M2M_CHARGE_RELAY_ON]'
+      );
+      recordTx('DRONE_M2M_SETTLEMENT', '10 MYC');
+    }
+
+    window.triggerOfflineMesh = function() {
+      resetLocks();
+      addLog(
+        '📡 <strong>Air-Gapped Mesh Synchronization:</strong> With no WAN backbone, base station and battery verified swap on local DAG ledger via LoRa/RS-485. Zero data loss until internet returns. $0.00.',
+        'FF FF 00 12 A4 BB 33 C1 [LORA_MESH_COMPACT_VTX]'
+      );
+      recordTx('AIRGAP_MESH_SYNC', '0 MYC');
+    }
+
+    window.triggerOvercurrent = function() {
+      resetLocks();
+      const l3 = document.getElementById('lock3');
+      const st3 = document.getElementById('stLock3');
+      l3.className = 'lock-item tripped';
+      st3.textContent = 'TRIPPED';
+      st3.classList.add('tripped');
+
+      addLog(
+        '🛑 <strong>Overcurrent Register Bound Lock:</strong> C99 Safe-Sign instantly dropped load exceeding permitted bounds. Hardware protected.',
+        '00 00 [REG_BOUND_EXCEEDED]',
+        true
+      );
+    }
+
+    window.triggerEnergySurplus = function() {
+      resetLocks();
+      addLog(
+        '🔋 Generator broadcast surplus energy to local grid: 25 kWh battery storage offer published.',
+        '01 10 00 20 00 04 08 [ENERGY_AUCTION_BID]'
+      );
+      recordTx('ENERGY_SURPLUS_AUCTION', '25 MYC');
+    }
+
+    window.triggerTurbineStart = function() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '1,495 RPM';
+      document.getElementById('metric2Val').textContent = '2.48 MW';
+      addLog(
+        '⚡ Siemens Gamesa #02 Turbine started. Pitch angle register 0x0130 set. Output power 2.48 MW.',
+        '08 05 01 30 FF 00 8F 1A [TURBINE_RUN_CMD]'
+      );
+      recordTx('TURBINE_START_ACTUATION', '0 MYC');
+    }
+
+    window.triggerTurbineStop = function() {
+      resetLocks();
+      document.getElementById('metric1Val').textContent = '0 RPM';
+      document.getElementById('metric2Val').textContent = '0.00 MW';
+      addLog(
+        '🛑 Emergency braking engaged. Rotor blades moved to storm position. Isolated from grid.',
+        '08 05 01 30 00 00 CE EA [EMERGENCY_FEATHER_PITCH]'
+      );
+      recordTx('TURBINE_EMERGENCY_STOP', '0 MYC');
+    }
+
+    window.triggerTurbineTelemetry = function() {
+      resetLocks();
+      addLog(
+        '📊 15,147 TPS Resonance: Live rotor vibration and temperature telemetry processed into DAG graph.',
+        '08 03 00 80 00 08 45 1F [VIBRATION_TELEMETRY]'
+      );
+      recordTx('TURBINE_TELEMETRY_BATCH', '0 MYC');
+    }
+
+    window.triggerFaultDiagnosis = function() {
+      resetLocks();
+      addLog(
+        '🔧 <strong>Local FHRR Fault Diagnosis:</strong> Holographic vector memory scan performed for E-402 code (0.2 ms). Diagnosis: Pitch controller pressure valve should be bypassed.',
+        '08 2C 04 02 FF [FHRR_LOCAL_RAG_RESULT]'
+      );
+    }
+
+    window.recordTx = function(type, amount) {
+      try {
+        const rand = Math.random().toString(16).slice(2, 10);
+        const txItem = {
+          hash: `vtx_depin_${Date.now()}_${rand}`,
+          type: type,
+          module: 'DePIN Machine Substrate',
+          sender: 'myc1puf4c2a9e10bf4437a892b0c4118f6733de',
+          recipient: 'myc1lattice_depin_fleet000000000000',
+          amount: amount,
+          gasFee: '0.00000000 MYC',
+          finality: '4.95 µs',
+          status: 'FINALIZED',
+          timestamp: Date.now()
+        };
+        let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+        history.unshift(txItem);
+        if (history.length > 100) history = history.slice(0, 100);
+        localStorage.setItem('myca_tx_history', JSON.stringify(history));
+
+        fetch('/api/explorer/record-tx', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(txItem)
+        }).catch(() => {});
+      } catch(e) {}
+    }
+
+    // Init with tupras
+    switchScenario('tupras');
   </script>
+<script src="/i18n.js"></script>
 </body>
 </html>

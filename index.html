@@ -239,18 +239,70 @@ footer {
 
 <nav>
   <a href="/" style="display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0;">
-    <img src="/assets/logo.png" alt="Myca OS" style="width:32px; height:32px; border-radius:6px; object-fit:contain; flex-shrink:0;" />
-    <span class="nav-logo f-serif-italic" style="margin-right:0; font-size:22px; font-weight:700; color:var(--f-deep);">myca os</span>
+    <img src="/assets/logo.png" alt="MYCA" style="width:32px; height:32px; border-radius:6px; object-fit:contain; flex-shrink:0;" />
+    <span class="nav-logo f-serif-italic" style="margin-right:0; font-size:22px; font-weight:700; color:var(--f-deep);">myc<span style="color:#2E6B45;">a</span></span>
   </a>
 
-    <div class="nav-links" style="margin: 0 auto; display:flex; align-items:center; gap:20px;">
-    <a href="/hub" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🌐 Hub</a>
-    <a href="/explorer" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🧭 Explorer</a>
-    <a href="/depin" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🤖 DePIN</a>
-    <a href="/agent" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🧠 AI Colony</a>
-    <a href="/build" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;">🛠️ Build</a>
+  <div class="nav-links" style="margin: 0 auto; display:flex; align-items:center; gap:24px;">
+    <a href="#c99-core" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;" id="t-nav-c99">🧬 C99 Core</a>
+    
+    <!-- DePIN Pillar Dropdown -->
+    <div class="nav-dropdown" id="navDepinDropdown" style="position:relative; display:inline-flex; align-items:center;">
+      <a href="/depin" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;" id="t-nav-depin">
+        <span>🤖 DePIN</span>
+        <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <div class="nav-dropdown-menu" style="min-width:270px;">
+        <a href="/depin" class="dropdown-item">
+          <div class="dropdown-icon">🚪</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">DePIN Gateway</span>
+            <span class="dropdown-desc">Industrial fleet & SCADA workbench</span>
+          </div>
+        </a>
+        <a href="/hub" class="dropdown-item">
+          <div class="dropdown-icon">🌐</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Mycelium Hub</span>
+            <span class="dropdown-desc">Swap, Bridge, Staking & Faucet</span>
+          </div>
+        </a>
+        <a href="/explorer" class="dropdown-item">
+          <div class="dropdown-icon">🧭</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Lattice Explorer</span>
+            <span class="dropdown-desc">Blockless Living Lattice DAG</span>
+          </div>
+        </a>
+        <a href="/agent" class="dropdown-item">
+          <div class="dropdown-icon">🧠</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">AI Colony Swarm</span>
+            <span class="dropdown-desc">Autonomous M2M orchestrator</span>
+          </div>
+        </a>
+        <a href="/build" class="dropdown-item">
+          <div class="dropdown-icon">🛠️</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Developer Tools</span>
+            <span class="dropdown-desc">Edge SDK, RPC & C99 toolchain</span>
+          </div>
+        </a>
+        <a href="/mint" class="dropdown-item">
+          <div class="dropdown-icon">💰</div>
+          <div class="dropdown-text">
+            <span class="dropdown-title">Node Sale</span>
+            <span class="dropdown-desc">Validator tiers & minting</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <a href="#myca-os" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600;" id="t-nav-os">🖥️ Myca OS</a>
+
+    <!-- Docs Dropdown -->
     <div class="nav-dropdown" id="navDocsDropdown" style="position:relative; display:inline-flex; align-items:center;">
-      <a href="/docs" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;">
+      <a href="/docs" style="color:var(--f-soil); font-size:14px; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:4px;" id="t-nav-docs">
         <span>📚 Docs</span>
         <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       </a>
@@ -273,38 +325,97 @@ footer {
     </div>
   </div>
 
-  <div style="display:flex; align-items:center; gap:20px; flex-shrink:0;">
+  <div style="display:flex; align-items:center; gap:16px; flex-shrink:0;">
     <button class="lang-switch" id="langSwitchBtn" onclick="toggleLang()">EN / TR</button>
-    <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="nav-download" id="t-nav-dl">Download</a>
+    <a href="#download" class="nav-download" id="t-nav-dl">Download</a>
   </div>
 </nav>
 
 <section class="hero" style="position:relative; overflow:hidden;">
   <canvas id="heroCanvas" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;"></canvas>
   <div class="hero-content" style="position:relative; z-index:1;">
-    <h1 class="f-serif-italic" id="t-hero-title">A Single Living Operating System for All Your Devices & Work.</h1>
+    <div class="section-label" style="margin-bottom:14px; font-weight:700; color:var(--f-spore); display:inline-flex; align-items:center; gap:8px; background:rgba(46,107,69,0.1); padding:6px 14px; border-radius:100px; border:1px solid rgba(46,107,69,0.25);" id="t-hero-tag">
+      <span>●</span> CHAIN 108 • DETERMINISTIC DEPIN KERNEL
+    </div>
+    <h1 class="f-serif-italic" id="t-hero-title">The World's Smallest DePIN Kernel.</h1>
     <p class="hero-sub" id="t-hero-sub">
-      Instead of juggling dozens of apps and cloud subscriptions, simply state your intent. Powered by biomimetic local intelligence and a distributed device mesh, Myca orchestrates the plan and executes securely across your hardware and enterprise systems—keeping your data entirely private.
+      240 bytes of static RAM. 4.95 µs hardware Safe-Sign interlock. Zero gas overhead. Running bare-metal on sub-dollar industrial microcontrollers to turn physical machines into self-sovereign cryptographic nodes.
     </p>
     <div class="hero-actions">
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.dmg" class="btn-primary" id="t-hero-dl">Download for macOS (DMG)</a>
-      <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.2/Myca-macOS.zip" class="btn-secondary" id="t-hero-dl-zip">macOS (ZIP)</a>
-      <a href="https://github.com/brienteth/myc-ai" class="btn-secondary" id="t-hero-gh">View on GitHub</a>
+      <a href="/depin" class="btn-primary" id="t-hero-depin">Explore DePIN Network →</a>
+      <a href="#c99-core" class="btn-secondary" id="t-hero-c99">C99 Architecture</a>
+      <a href="https://github.com/brienteth/myc-ai" target="_blank" rel="noopener noreferrer" class="btn-secondary" id="t-hero-gh">View on GitHub</a>
     </div>
     <div class="hero-stats">
       <div class="stat-item">
-        <div class="stat-val">100%</div>
-        <div class="stat-lbl" id="t-stat-1">Local</div>
+        <div class="stat-val">240 B</div>
+        <div class="stat-lbl" id="t-stat-1">Static RAM</div>
       </div>
       <div class="stat-item">
-        <div class="stat-val">MIT</div>
-        <div class="stat-lbl" id="t-stat-2">Open Source</div>
+        <div class="stat-val">4.95 µs</div>
+        <div class="stat-lbl" id="t-stat-2">Safe-Sign Airbag</div>
       </div>
       <div class="stat-item">
-        <div class="stat-val">∞</div>
-        <div class="stat-lbl" id="t-stat-3">Offline</div>
+        <div class="stat-val">zsh.00</div>
+        <div class="stat-lbl" id="t-stat-3">Gas Overhead</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">6-Lock</div>
+        <div class="stat-lbl" id="t-stat-4">Hardware Airbag</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- C99 CORE HERO SECTION -->
+<section class="section-pad" id="c99-core" style="background:#0F1410; color:#E2E8F0; border-top:1px solid rgba(46,107,69,0.3); border-bottom:1px solid rgba(46,107,69,0.3); position:relative; overflow:hidden;">
+  <div style="max-width:1180px; margin:0 auto; position:relative; z-index:2;">
+    <div class="section-label" style="text-align:center; color:#00E87A; letter-spacing:2.5px;" id="t-c99-lbl">L0 & L1 DETERMINISTIC MICRO-KERNEL</div>
+    <h2 class="section-title f-serif-italic" style="text-align:center; color:#F8FAF6; margin-bottom:20px;" id="t-c99-title">The 240-Byte Silicon Shield</h2>
+    <p class="hero-sub" style="margin:0 auto 64px auto; text-align:center; max-width:760px; color:#94A3B8;" id="t-c99-sub">
+      Industrial edge controllers (RP2350, STM32H5) cannot run heavy EVM runtimes or cloud LLMs. The MYCA C99 kernel executes deterministic safe-signing in under 5 microseconds directly on raw silicon.
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; margin-bottom:48px;">
+      <div style="background:#161C17; border:1px solid rgba(46,107,69,0.3); border-radius:14px; padding:28px 22px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:24px;">🧬</div>
+        <div style="font-size:16px; font-weight:600; color:#F8FAF6;" id="t-c99-c1-t">240-Byte Static RAM</div>
+        <div style="font-size:13px; color:#94A3B8; line-height:1.6;" id="t-c99-c1-d">Zero dynamic memory allocation (no malloc/free). Deterministic footprint guaranteed against heap exhaustion or buffer overflow exploits.</div>
+      </div>
+      <div style="background:#161C17; border:1px solid rgba(46,107,69,0.3); border-radius:14px; padding:28px 22px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:24px;">🛡️</div>
+        <div style="font-size:16px; font-weight:600; color:#F8FAF6;" id="t-c99-c2-t">6-Lock Hardware Airbag</div>
+        <div style="font-size:13px; color:#94A3B8; line-height:1.6;" id="t-c99-c2-d">6 physical and logical gates evaluated in 4.95 µs (743 clock cycles) to prevent prompt injection and hazardous out-of-spec actuation.</div>
+      </div>
+      <div style="background:#161C17; border:1px solid rgba(46,107,69,0.3); border-radius:14px; padding:28px 22px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:24px;">🔑</div>
+        <div style="font-size:16px; font-weight:600; color:#F8FAF6;" id="t-c99-c3-t">Silicon PUF Root-of-Trust</div>
+        <div style="font-size:13px; color:#94A3B8; line-height:1.6;" id="t-c99-c3-d">Unclonable device identity generated from atomic microscopic manufacturing variance in SRAM silicon. Self-sovereign W3C DIDs per chip.</div>
+      </div>
+      <div style="background:#161C17; border:1px solid rgba(46,107,69,0.3); border-radius:14px; padding:28px 22px; display:flex; flex-direction:column; gap:12px;">
+        <div style="font-size:24px;">⚡</div>
+        <div style="font-size:16px; font-weight:600; color:#F8FAF6;" id="t-c99-c4-t">Zero-Gas Machine DAG</div>
+        <div style="font-size:13px; color:#94A3B8; line-height:1.6;" id="t-c99-c4-d">Living Lattice blockless DAG enables sub-second bilateral machine-to-machine settlements and telemetry without EVM transaction fees.</div>
+      </div>
+    </div>
+
+    <!-- 6-Lock Visual Airbag Strip -->
+    <div style="background:#131814; border:1px solid rgba(0,232,122,0.3); border-radius:14px; padding:20px 24px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#00E87A; box-shadow:0 0 10px #00E87A;"></span>
+        <span style="font-family:var(--f-mono); font-size:13px; font-weight:700; color:#00E87A; letter-spacing:1px;" id="t-c99-strip-lbl">SAFE-SIGN 6-LOCK AIRBAG PIPELINE:</span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <span style="font-family:var(--f-mono); font-size:11px; background:rgba(0,232,122,0.12); color:#00E87A; border:1px solid rgba(0,232,122,0.3); padding:4px 10px; border-radius:6px;">L1: RAM (240B) ✓</span>
+        <span style="font-family:var(--f-mono); font-size:11px; background:rgba(0,232,122,0.12); color:#00E87A; border:1px solid rgba(0,232,122,0.3); padding:4px 10px; border-radius:6px;">L2: NEGATION ✓</span>
+        <span style="font-family:var(--f-mono); font-size:11px; background:rgba(0,232,122,0.12); color:#00E87A; border:1px solid rgba(0,232,122,0.3); padding:4px 10px; border-radius:6px;">L3: BOUNDS (BAR) ✓</span>
+        <span style="font-family:var(--f-mono); font-size:11px; background:rgba(0,232,122,0.12); color:#00E87A; border:1px solid rgba(0,232,122,0.3); padding:4px 10px; border-radius:6px;">L4: PUF DID ✓</span>
+        <span style="font-family:var(--f-mono); font-size:11px; background:rgba(0,232,122,0.12); color:#00E87A; border:1px solid rgba(0,232,122,0.3); padding:4px 10px; border-radius:6px;">L5: MODBUS CRC ✓</span>
+        <span style="font-family:var(--f-mono); font-size:11px; background:rgba(0,232,122,0.12); color:#00E87A; border:1px solid rgba(0,232,122,0.3); padding:4px 10px; border-radius:6px;">L6: 0.00V LATCH ✓</span>
+      </div>
+      <a href="/depin" style="font-family:var(--f-mono); font-size:12px; color:#00E87A; text-decoration:none; font-weight:600; display:flex; align-items:center; gap:6px;">
+        <span>Launch Workbench</span> <span>→</span>
+      </a>
     </div>
   </div>
 </section>
@@ -314,7 +425,7 @@ footer {
   <div class="section-label" style="text-align:center;">PLAYGROUND</div>
   <h2 class="section-title f-serif-italic" style="text-align:center;">Interactive Workflow Studio</h2>
   <p class="hero-sub" style="margin: 0 auto 56px auto; text-align:center; max-width:720px;">
-    Myca'nın <strong>Agent → Graph → Verify → Loop</strong> mimarisini 3 gerçek kurumsal akış üzerinde canlı deneyimleyin. Her çerçeve bağımsız planlama, onay ve doğrulama süreçlerini simüle eder.
+    Experience Myca's <strong>Agent → Graph → Verify → Loop</strong> architecture across 3 live enterprise workflows. Each frame simulates independent planning, verification, and hardware policy enforcement.
   </p>
 
   <style>
@@ -474,7 +585,7 @@ footer {
       </div>
       <div class="flow-frame-body">
         <div class="flow-prompt-box">
-          <div class="flow-prompt-label">Prompt / Niyet</div>
+          <div class="flow-prompt-label">Prompt / Intent</div>
           "Send customer weekly executive summary via Telegram"
         </div>
         <div class="flow-steps-list" id="flow1-steps">
@@ -513,7 +624,7 @@ footer {
       </div>
       <div class="flow-frame-body">
         <div class="flow-prompt-box">
-          <div class="flow-prompt-label">Prompt / Niyet</div>
+          <div class="flow-prompt-label">Prompt / Intent</div>
           "Scrape top 3 competitors, verify pricing and generate report"
         </div>
         <div class="flow-steps-list" id="flow2-steps">
@@ -552,7 +663,7 @@ footer {
       </div>
       <div class="flow-frame-body">
         <div class="flow-prompt-box">
-          <div class="flow-prompt-label">Prompt / Niyet</div>
+          <div class="flow-prompt-label">Prompt / Intent</div>
           "Process $75,000 corporate settlement instruction via SAP ERP"
         </div>
         <div class="flow-steps-list" id="flow3-steps">
@@ -576,7 +687,7 @@ footer {
       </div>
       <div class="flow-frame-footer">
         <span style="color:#d4a373;">Approval Required</span>
-        <button class="flow-btn-run" style="background:#d4a373; color:#181E19;" onclick="runSimulatedFlow(3)">🔑 Passkey İle Onayla</button>
+        <button class="flow-btn-run" style="background:#d4a373; color:#181E19;" onclick="runSimulatedFlow(3)">🔑 Approve with Passkey</button>
       </div>
     </div>
   </div>
@@ -628,7 +739,7 @@ footer {
       DePIN & Autonomous Machine Substrate
     </h2>
     <p class="hero-sub" style="margin: 0 auto 56px auto; text-align:center; max-width:760px;" id="t-depin-sub">
-      Yazılım dünyasında kalan LLM'ler fiziksel fabrikaları yönetemez, geleneksel blokzincirler ise zsh.30'lık mikrodenetleyicilerde çalışamaz. Myca, donanım seviyesinde deterministik C99 mikro-çekirdeği ve Safe-Sign kalkanıyla iki dünyayı birleştirir.
+      Software-only LLMs cannot manage physical factories, and legacy blockchains cannot run on a zsh.30 microcontroller. MYCA bridges both worlds with a deterministic C99 micro-kernel and sub-5 µs Safe-Sign hardware airbag.
     </p>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:32px; margin-bottom:48px;">
@@ -646,19 +757,19 @@ footer {
             DePIN & Bare-Metal Silicon Substrate
           </h3>
           <p style="font-size:14px; color:var(--f-soil); line-height:1.6; margin-bottom:20px;">
-            ARM Cortex-M, ESP32 ve RP2350 çipleri doğrudan <strong>0G, peaq, IoTeX ve Ethereum L2</strong> ağlarına bağlanır. Fabrika PLC'leri, SCADA ve enerji şebekeleri için mikrosaniyelik deterministik Modbus RTU yürütmesi sunar.
+            ARM Cortex-M, ESP32, and RP2350 chips connect directly to the Living Lattice DAG and major DePIN networks. Delivers microsecond deterministic Modbus RTU execution for factory PLCs, SCADA units, and power grids.
           </p>
           <ul style="font-size:13px; color:var(--f-humus); line-height:1.8; margin-bottom:24px; padding-left:18px;">
             <li><strong>Zero Dynamic Heap:</strong> Strictly 240 bytes static RAM budget; zero heap allocations.</li>
-            <li><strong>Çoklu-Zincir Doğrulama:</strong> 0G Storage/AI, peaq did:peaq ve IoTeX ioID.</li>
-            <li><strong>Endüstriyel Modbus RTU:</strong> Donanım seviyesinde CRC-16 doğrulaması.</li>
+            <li><strong>Multi-Chain Verification:</strong> Native settlement, W3C DID attestation, and Silicon PUF identity.</li>
+            <li><strong>Industrial Modbus RTU:</strong> Hardware-level CRC-16 validation and bounds checking.</li>
           </ul>
         </div>
         <div style="display:flex; gap:12px; align-items:center;">
           <a href="/depin" class="btn-primary" style="padding:10px 20px; font-size:13px; text-decoration:none;">
             Explore DePIN Matrix →
           </a>
-          <span style="font-size:12px; font-family:var(--f-mono); color:var(--f-soil);">743 döngü • 4.95 µs</span>
+          <span style="font-size:12px; font-family:var(--f-mono); color:var(--f-soil);">743 cycles • 4.95 µs</span>
         </div>
       </div>
 
@@ -669,18 +780,18 @@ footer {
             <span style="font-family:var(--f-mono); font-size:11px; background:var(--f-parchment); color:var(--f-spore); padding:4px 8px; border-radius:6px; font-weight:700;">
               🛡️ SAFE-SIGN GUARD
             </span>
-            <span style="font-family:var(--f-mono); font-size:11px; color:var(--f-soil);">0.00V SAFE-LOW MANDALI</span>
+            <span style="font-family:var(--f-mono); font-size:11px; color:var(--f-soil);">0.00V SAFE-LOW LATCH</span>
           </div>
           <h3 class="f-serif-italic" style="font-size:28px; color:var(--f-deep); margin-bottom:14px;">
             Hardware Airbag for Autonomous AI Agents
           </h3>
           <p style="font-size:14px; color:var(--f-soil); line-height:1.6; margin-bottom:20px;">
-            Buluttaki otonom ajanlar (Virtuals, Fetch.ai, ElizaOS, LangChain) fiziksel dünyada saçmalayamaz. 4.95 µs çalışan Safe-Sign kalkanı, halüsinasyon veya prompt injection anında çip voltajını 0.00V'a kilitler.
+            Cloud-based autonomous agents (Virtuals, Fetch.ai, ElizaOS, LangChain) cannot blindly control physical machines. The 4.95 µs Safe-Sign shield locks chip pin voltage to 0.00V on prompt injection or out-of-spec actuation.
           </p>
           <ul style="font-size:13px; color:var(--f-humus); line-height:1.8; margin-bottom:24px; padding-left:18px;">
-            <li><strong>Donanım Hava Yastığı:</strong> Ajanın halüsinasyonu fabrikayı yakamaz.</li>
-            <li><strong>Otonom M2M Ekonomisi:</strong> Robotlar arası 38 µs insansız mikro-ödeme.</li>
-            <li><strong>Fiziksel Eylem Noteri:</strong> Çipin bacağındaki voltajla kanıtlanan DePIN Oracle'ı.</li>
+            <li><strong>Hardware Airbag:</strong> Hallucinating agents cannot damage physical infrastructure.</li>
+            <li><strong>Autonomous M2M Economy:</strong> Direct 38 µs machine-to-machine micropayments between edge devices.</li>
+            <li><strong>Physical Action Notary:</strong> DePIN oracle proven by physical GPIO pin voltage and cryptographic attestation.</li>
           </ul>
         </div>
         <div style="display:flex; gap:12px; align-items:center;">
@@ -700,16 +811,16 @@ footer {
         <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">Negation Lock (RP2350)</div>
       </div>
       <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
-        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">240 Bayt</div>
-        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">Toplam Stack (malloc=0)</div>
+        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">240 Bytes</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">Total Stack (malloc=0)</div>
       </div>
       <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
         <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">38 µs</div>
-        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">M2M İnsansız Ödeme</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">M2M Micro-Payment</div>
       </div>
       <div style="background:var(--f-cream); border:1px solid var(--f-bark); border-radius:12px; padding:18px; text-align:center;">
-        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">4 Çoklu-Zincir</div>
-        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">0G • peaq • IoTeX • Arb</div>
+        <div style="font-family:var(--f-mono); font-size:20px; font-weight:700; color:var(--f-moss);">Chain 108</div>
+        <div style="font-size:11px; text-transform:uppercase; color:var(--f-soil); font-weight:600; margin-top:4px;">Living Lattice DAG</div>
       </div>
     </div>
   </div>
@@ -791,7 +902,7 @@ footer {
   <div class="section-label" style="text-align:center;" id="t-res-lbl">RESONANCE CORE</div>
   <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-res-title">Biomimetic Living Cognitive Architecture</h2>
   <p class="hero-sub" style="text-align:center; margin: -40px auto 56px; max-width: 720px;" id="t-res-sub">
-    Myca, klasik ağır bulut yapay zeka modellerine bağımlı kalmaz. Cihazınızda çalışan <strong>Hyperdimensional Resonance Motoru</strong> ile dili morfolojik olarak anlar, hafızayı biyolojik kurallarla esnetir ve akıl yürütmeyi milisaniyeler içinde sıfır bulut maliyetiyle yerelde tamamlar.
+    Myca does not rely on heavy cloud AI models. Running directly on your machine, the <strong>Hyperdimensional Resonance Core</strong> natively parses linguistic morphology, flexes memory with biological rules, and completes reasoning in milliseconds with zero cloud footprint.
   </p>
 
   <div class="comparison-grid" style="grid-template-columns: repeat(4, 1fr); max-width: 1200px;">
@@ -880,7 +991,7 @@ footer {
         <li class="lpc-item">1,000 Holographic Memory Nodes</li>
         <li class="lpc-item">MIT Open-Source License</li>
       </ul>
-      <a href="https://github.com/mycai-pro/mycai" class="btn-secondary" style="text-align:center;">GitHub İncele</a>
+      <a href="https://github.com/mycai-pro/mycai" class="btn-secondary" style="text-align:center;">View on GitHub</a>
     </div>
 
     <div class="landing-price-card">
@@ -893,13 +1004,13 @@ footer {
         <li class="lpc-item">Embedded PDF & Technical Manual RAG</li>
         <li class="lpc-item">Priority Technical Support & SLA</li>
       </ul>
-      <a href="mailto:enterprise@mycai.pro" class="btn-secondary" style="text-align:center;">Başlayın</a>
+      <a href="mailto:enterprise@mycai.pro" class="btn-secondary" style="text-align:center;">Get Started</a>
     </div>
 
     <div class="landing-price-card featured">
       <div class="lpc-tag">Industrial OEM (PLC / HMI)</div>
       <div class="lpc-val">$1.50 - $3.50 <span style="font-size:15px; font-weight:normal;">/cihaz</span></div>
-      <div class="lpc-desc">PLC, HMI, medikal ve otomasyon üreticilerine özel gömülü telif modeli.</div>
+      <div class="lpc-desc">Embedded licensing model tailored for PLC, HMI, medical, and industrial automation OEMs.</div>
       <ul class="lpc-list">
         <li class="lpc-item">Zero Tooling Surcharge (<20MB RAM)</li>
         <li class="lpc-item">ESP32, STM32, RP2040 (<7$ CPU)</li>
@@ -908,7 +1019,7 @@ footer {
         <li class="lpc-item">Complete White-Label Embedded Distribution</li>
         <li class="lpc-item">Option: $12,000/Year Unlimited Plant License</li>
       </ul>
-      <a href="/simule" class="btn-primary" style="text-align:center; background:var(--f-spore);">Simülasyonda Test Et</a>
+      <a href="/simule" class="btn-primary" style="text-align:center; background:var(--f-spore);">Test in Simulation</a>
     </div>
 
     <div class="landing-price-card">
@@ -919,77 +1030,77 @@ footer {
         <li class="lpc-item">Unlimited Node Fleets & Sovereign Enclaves</li>
         <li class="lpc-item">On-Premise Air-Gapped Cluster</li>
         <li class="lpc-item">Air-Gapped Tactical Enclave Integration</li>
-        <li class="lpc-item">Tam Kaynak Kod Denetimi & 7/24 SLA</li>
+        <li class="lpc-item">Full Source Code Audit & 24/7 SLA</li>
       </ul>
-      <a href="https://t.me/blambuer10" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="text-align:center;">İletişime Geçin (@blambuer10)</a>
+      <a href="https://t.me/blambuer10" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="text-align:center;">Contact Enterprise (@blambuer10)</a>
     </div>
   </div>
 </section>
 
 <section class="section-pad bg-parchment" id="sovereign-stack">
   <div class="section-label" style="text-align:center;" id="t-sov-lbl">Sovereign Runtime Stack</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-sov-title">Sıfır Bağımlılık. %100 Egemen Altyapı.</h2>
+  <h2 class="section-title f-serif-italic" style="text-align:center;" id="t-sov-title">Zero Dependencies. 100% Sovereign Infrastructure.</h2>
   <p class="hero-sub" style="margin: 0 auto 48px auto; text-align:center; max-width:680px;">
-    SAP, Oracle, AWS, hatta HTTP/1.1'e bile bağımlı olmayan, %100 kendi kontrolünüzde olan Rust tabanlı Sovereign Runtime.
+    Independent of SAP, Oracle, AWS, or even HTTP/1.1. A 100% self-sovereign Rust and C99 runtime under your direct control.
   </p>
   <div class="comparison-grid">
     <div class="card">
       <div class="card-tag">L0 - L1 Storage & Identity</div>
       <div class="card-title">Ed25519 & Content-Addressing</div>
-      <div class="card-body">Cihazlar arasında Ed25519 kriptografik kimlik doğrulama. Blake3, FastCDC chunking ve Merkle DAG ile içerik adresli P2P depolama.</div>
+      <div class="card-body">Ed25519 cryptographic authentication between nodes. Content-addressed P2P storage with Blake3, FastCDC chunking, and Merkle DAG.</div>
     </div>
     <div class="card">
       <div class="card-tag">L2 - L3 Mesh Transport</div>
       <div class="card-title">QUIC & HTTP/3 Transport</div>
-      <div class="card-body">Yerel ağ ve Wi-Fi üzerinde kesintisiz QUIC & HTTP/3 protokolu. mDNS P2P peer keşfi ve otomatik yetenek (VRAM/NPU) duyurusu.</div>
+      <div class="card-body">Uninterrupted QUIC & HTTP/3 transport across local network and Wi-Fi. mDNS P2P peer discovery with automatic capability advertisement.</div>
     </div>
     <div class="card accent">
       <div class="card-tag">L4 - L5 Execution & PyO3 FFI</div>
       <div class="card-title f-serif-italic">C-Extension Rust Core Bridge</div>
-      <div class="card-body">Python Execution OS ile 12 parçalı izole Rust workspace arasında PyO3 C-Extension FFI entegrasyonu.</div>
+      <div class="card-body">PyO3 C-Extension FFI integration between the Python Execution OS and 12-crate isolated Rust workspace.</div>
     </div>
   </div>
 </section>
 
 <section class="section-pad" id="planner-v3">
   <div class="section-label" style="text-align:center;">Planner v3 — Multi-Agent Mesh</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;">Deterministik Execution Compiler</h2>
+  <h2 class="section-title f-serif-italic" style="text-align:center;">Deterministic Execution Compiler</h2>
   <p class="hero-sub" style="margin: 0 auto 48px auto; text-align:center; max-width:720px;">
-    Planner halüsinasyon yapmaz. İstekleri satıcılardan bağımsız (Vendor-Neutral) niyet graflarına çevirir ve 9 uzman ajanla denetler.
+    Planner eliminates hallucinations. Translates user requests into vendor-neutral intent graphs and verifies them with 9 specialized agents.
   </p>
 
   <div class="how-grid" style="grid-template-columns: repeat(3, 1fr); gap: 24px;">
     <div class="how-step">
       <div class="how-num f-serif-italic">01</div>
       <div class="how-title">Intent & Capability Agents</div>
-      <div class="how-body">Prompt'u satıcılardan bağımsız (Communication.Send, Data.Query) soyut niyetlere ayırır. Satıcı seçimi runtime'a bırakılır.</div>
+      <div class="how-body">Decomposes user prompts into vendor-neutral abstract intents (Communication.Send, Data.Query). Model selection deferred to runtime.</div>
     </div>
     <div class="how-step">
       <div class="how-num f-serif-italic">02</div>
       <div class="how-title">Parameter & Security Agents</div>
-      <div class="how-body">Knowledge OS, Geçmiş Çalıştırmalar ve OS Keychain / Secrets Vault katmanlarını tarayarak parametre ve kimlikleri otomatik bağlar.</div>
+      <div class="how-body">Scans Knowledge OS, execution history, and OS Keychain / Secrets Vault to automatically bind parameters and cryptographic credentials.</div>
     </div>
     <div class="how-step">
       <div class="how-num f-serif-italic">03</div>
       <div class="how-title">Critic & Simulation Agents</div>
-      <div class="how-body">Aday grafları eleştirir, dry-run mock simülasyonu yapar. 8 Metrik üzerinden Quality Score (≥96/100) alana kadar çalıştırılmaz.</div>
+      <div class="how-body">Critiques candidate execution graphs via dry-run mock simulations. Execution blocked until Quality Score reaches ≥96/100 across 8 metrics.</div>
     </div>
   </div>
 </section>
 
 <section class="section-pad bg-parchment" id="enterprise-platform">
-  <div class="section-label" style="text-align:center;">Kurumsal Platform & Mantar Branding</div>
-  <h2 class="section-title f-serif-italic" style="text-align:center;">Passkey Onay Kuyruğu & Politika Motoru</h2>
+  <div class="section-label" style="text-align:center;">Enterprise Governance & Policy Engine</div>
+  <h2 class="section-title f-serif-italic" style="text-align:center;">Hardware Passkey Approval Queue & Policy Engine</h2>
   <div class="comparison-grid" style="grid-template-columns: repeat(2, 1fr);">
     <div class="card">
       <div class="card-tag" style="background: rgba(46, 107, 69, 0.12); color: var(--f-moss);">Human-in-the-Loop</div>
       <div class="card-title">Hardware Passkey Approval Queue</div>
-      <div class="card-body">Yüksek riskli SAP ödemeleri ($50k+), AWS sunucu ölçekleme ve Oracle DDL işlemleri için donanım anahtarı / Passkey PIN onayı.</div>
+      <div class="card-body">Hardware security key / Passkey PIN confirmation for high-risk operations (k+ payments, server cluster scaling, and database schema mutations).</div>
     </div>
     <div class="card">
       <div class="card-tag" style="background: rgba(176, 137, 59, 0.12); color: var(--f-dormant);">Sovereign Governance</div>
       <div class="card-title">Enterprise Policy Engine</div>
-      <div class="card-body">GDPR Veri Egemenliği, SOX Bütçe Limiti ve ISO27001 kurallarını çalıştırma öncesinde canlı denetleyen kural motoru.</div>
+      <div class="card-body">Real-time policy validation engine evaluating GDPR data residency, SOX expenditure thresholds, and ISO 27001 constraints prior to execution dispatch.</div>
     </div>
   </div>
 </section>
@@ -1046,19 +1157,19 @@ footer {
       <a href="https://github.com/brienteth/myc-ai/releases/download/v0.1.0/Myca-Setup-0.1.0.exe" class="btn-secondary" id="dl-win">Windows (EXE)</a>
       <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.1/Myca-Windows.zip" class="btn-secondary" id="dl-win-zip">Windows (ZIP)</a>
       <a href="https://github.com/brienteth/myc-ai/releases/download/v1.0.1/Myca-Linux.zip" class="btn-secondary" id="dl-linux">Linux (ZIP)</a>
-      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary" id="dl-all">Tüm Sürümler (GitHub Releases)</a>
+      <a href="https://github.com/brienteth/myc-ai/releases" class="btn-secondary" id="dl-all">All Releases (GitHub)</a>
     </div>
-    <!-- Canlı sürüm göstergesi: JS tarafından doldurulur -->
+    <!-- Live release indicator: populated by JS -->
     <p id="release-latest-label" style="margin-top:16px; font-size:12px; color:var(--f-spore); opacity:0.85; font-family:var(--f-mono); display:none;">
-      ⬇ En Güncel Sürüm: <span id="release-version-info">–</span>
+      ⬇ Latest Release: <span id="release-version-info">–</span>
     </p>
-    <p style="margin-top:8px; font-size:12px; color:var(--f-soil); opacity:0.7;">macOS'te indirdikten sonra DMG'yi aç, Myca.app'i Applications klasörüne sürükle ve çalıştır.</p>
+    <p style="margin-top:8px; font-size:12px; color:var(--f-soil); opacity:0.7;">After downloading on macOS, open the DMG, drag Myca.app into your Applications folder, and run.</p>
     
     <div style="margin-top:24px; padding:14px 20px; background:rgba(0, 232, 122, 0.05); border:1px solid rgba(0, 232, 122, 0.2); border-radius:12px; font-size:13px; color:var(--f-soil); max-width:640px; margin-left:auto; margin-right:auto; text-align:left; line-height:1.6;">
-      <strong style="color:#00e87a; display:block; margin-bottom:6px;">💡 macOS "Hasar Görmüş / Çöp Sepetine Taşı" Uyarısı Çözümü:</strong>
-      Açık kaynaklı bağımsız uygulamalarda macOS bu koruma uyarısını çıkarabilir. İki kolay yoldan anında açabilirsiniz:<br>
-      <strong>1. Yöntem (En Kolayı):</strong> Uygulamaya <strong>Sağ Tıklayıp "Aç"</strong> seçeneğini seçin ve açılan onay penceresinde <strong>"Aç"</strong> butonuna tıklayın.<br>
-      <strong>2. Yöntem (Terminal):</strong> Terminal'de aşağıdaki tek satırlık komutu çalıştırın:<br>
+      <strong style="color:#00e87a; display:block; margin-bottom:6px;">💡 macOS "Damaged / Move to Trash" Workaround:</strong>
+      macOS Gatekeeper may flag unsigned open-source applications. You can bypass this immediately via either method below:<br>
+      <strong>Method 1 (Recommended):</strong> Right-click the app, select <strong>"Open"</strong>, and confirm in the system prompt.<br>
+      <strong>Method 2 (Terminal):</strong> Run the single command below in Terminal:<br>
       <code style="color:#00e87a; font-family:var(--f-mono, monospace); background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:6px; margin-top:6px; display:inline-block;">xattr -cr /Applications/Myca.app</code>
     </div>
   </div>
@@ -1083,7 +1194,7 @@ footer {
     </svg>
     <div>
       <div class="footer-logo f-serif-italic">myc</div>
-      <div id="t-foot-slogan">Sovereign machine autonomy./div>
+      <div id="t-foot-slogan">Sovereign machine autonomy.</div>
     </div>
   </div>
   <div class="footer-links">
@@ -1092,7 +1203,7 @@ footer {
     <a href="https://github.com/brienteth/myc-ai/releases">Releases</a>
   </div>
   <div>
-    <div id="t-foot-lic">MIT Lisansı · 2026</div>
+    <div id="t-foot-lic">MIT License · 2026</div>
   </div>
 </footer>
 
@@ -1126,16 +1237,24 @@ footer {
   const appTranslations = {
     tr: {
       btn: "EN / TR",
-      nav_products: "Ürünler",
-      nav_docs: "Dokümantasyon",
+      nav_c99: "🧬 C99 Çekirdeği",
+      nav_depin: "🤖 DePIN",
+      nav_os: "🖥️ Myca OS",
+      nav_docs: "📚 Doküman",
       nav_dl: "Hemen İndir",
-      hero_title: "Tüm Cihazlarınız ve İşleriniz İçin Tek Bir Canlı İşletim Sistemi.",
-      hero_sub: "Instead of juggling dozens of apps and cloud subscriptions, simply state your intent. Powered by biomimetic local intelligence and a distributed device mesh, Myca orchestrates the plan and executes securely across your hardware and enterprise systems—keeping your data entirely private.",
-      hero_dl: "Mac için İndir",
+      hero_tag: "ZİNCİR 108 • DETERMINİSTİK DEPIN ÇEKİRDEĞİ",
+      hero_title: "Dünyanın En Küçük DePIN Çekirdeği.",
+      hero_sub: "240 bayt statik RAM. 4.95 µs donanımsal Safe-Sign kalkanı. Sıfır gas masrafı. Endüstriyel mikrodenetleyiciler üzerinde doğrudan çalışarak fiziksel makineleri egemen kriptografik düğümlere dönüştürür.",
+      hero_depin: "DePIN Ağını Keşfet →",
+      hero_c99: "C99 Mimarisi",
       hero_gh: "GitHub'da İncele",
-      stat1: "Yerel",
-      stat2: "Açık Kaynak",
-      stat3: "Çevrimdışı",
+      stat1: "Statik RAM",
+      stat2: "Safe-Sign Hava Yastığı",
+      stat3: "Gas Masrafı",
+      stat4: "Donanım Kalkanı",
+      c99_lbl: "L0 & L1 DETERMINİSTİK MİKRO-ÇEKİRDEK",
+      c99_title: "240 Baytlık Silikon Kalkan",
+      c99_sub: "Endüstriyel uç kontrolcüler (RP2350, STM32H5) ağır EVM sanal makinelerini veya bulut LLM'lerini çalıştıramaz. MYCA C99 çekirdeği, doğrudan ham silikon üzerinde 5 mikrosaniyenin altında deterministik güvenli imzalama yapar.",
       prob_lbl: "SORUN",
       prob_title: "Veriniz nereye gidiyor?",
       prob_title_1: "Her mesajın OpenAI'a gidiyor",
@@ -1158,8 +1277,8 @@ footer {
       h5_b: "İşlem tamamlanır, öğrenilir ve gelecekteki hız için önbelleğe alınır.",
       comp_lbl: "HESAPLAMADAN KAÇINMA",
       comp_title: "GPU son çaredir.",
-      comp_sub: "While the industry races to build power-hungry GPU clusters, Myca optimizes compute to zero. Inferences are resolved at the lowest latency, zero-gas local layer.",
-      f4: "Colony (Ağdaki diğer cihaz)",
+      comp_sub: "Sektör dev GPU sunucuları kurarken, Myca hesaplama maliyetini sıfıra indirmeyi hedefler. Çıkarımlar en düşük gecikmeli, sıfır gas harcayan yerel katmanda çözülür.",
+      f4: "Koloni (Ağdaki diğer cihaz)",
       f6: "Cloud (Bulut)",
       res_lbl: "REZONANS ÇEKİRDEĞİ",
       res_title: "Biyomimetik Yerel Zeka Katmanı",
@@ -1174,7 +1293,7 @@ footer {
       res_c4_b: "Deterministic formal verification ensuring zero-hallucination logic and mathematical policy enforcement.",
       depin_lbl: "FİZİKSEL DÜNYA & BLOKZİNCİR ÇÖZÜMLERİ",
       depin_title: "DePIN & Autonomous Machine Substrate",
-      depin_sub: "Software-only LLMs cannot control physical factories, and traditional blockchains cannot run on sub-dollar microcontrollers. Myca bridges both worlds with a deterministic C99 micro-kernel and sub-5 µs Safe-Sign airbag.",
+      depin_sub: "Yazılım dünyasında kalan LLM'ler fabrikaları yönetemez; geleneksel blokzincirler ucuz mikrodenetleyicilerde çalışamaz. MYCA deterministik C99 mikro-çekirdeği ve 4.95 µs Safe-Sign kalkanı ile iki dünyayı birleştirir.",
       arch_lbl: "MİMARİ",
       os_lbl: "KAYNAKLAR",
       os_title: "Açık Kaynak",
@@ -1193,16 +1312,24 @@ footer {
     },
     en: {
       btn: "TR / EN",
-      nav_products: "Products",
-      nav_docs: "Documentation",
+      nav_c99: "🧬 C99 Core",
+      nav_depin: "🤖 DePIN",
+      nav_os: "🖥️ Myca OS",
+      nav_docs: "📚 Docs",
       nav_dl: "Download",
-      hero_title: "A Single Living Operating System for All Your Devices & Work.",
-      hero_sub: "Instead of juggling dozens of apps and cloud subscriptions, simply state your intent. Powered by biomimetic local intelligence and a distributed device mesh, Myca orchestrates the plan and executes securely across your hardware and enterprise systems—keeping your data entirely private.",
-      hero_dl: "Download for Mac",
+      hero_tag: "CHAIN 108 • DETERMINISTIC DEPIN KERNEL",
+      hero_title: "The World's Smallest DePIN Kernel.",
+      hero_sub: "240 bytes of static RAM. 4.95 µs hardware Safe-Sign interlock. Zero gas overhead. Running bare-metal on sub-dollar industrial microcontrollers to turn physical machines into self-sovereign cryptographic nodes.",
+      hero_depin: "Explore DePIN Network →",
+      hero_c99: "C99 Architecture",
       hero_gh: "View on GitHub",
-      stat1: "Local",
-      stat2: "Open Source",
-      stat3: "Offline",
+      stat1: "Static RAM",
+      stat2: "Safe-Sign Airbag",
+      stat3: "Gas Overhead",
+      stat4: "Hardware Airbag",
+      c99_lbl: "L0 & L1 DETERMINISTIC MICRO-KERNEL",
+      c99_title: "The 240-Byte Silicon Shield",
+      c99_sub: "Industrial edge controllers (RP2350, STM32H5) cannot run heavy EVM runtimes or cloud LLMs. The MYCA C99 kernel executes deterministic safe-signing in under 5 microseconds directly on raw silicon.",
       prob_lbl: "THE PROBLEM",
       prob_title: "Where does your data go?",
       prob_title_1: "Every message goes to OpenAI",
@@ -1241,7 +1368,7 @@ footer {
       res_c4_b: "Deterministic reasoning layer that eliminates hallucinations for structured mathematical and logic tasks.",
       depin_lbl: "PHYSICAL DEPIN & BLOCKCHAIN SOLUTIONS",
       depin_title: "DePIN & Autonomous AI Agent Runtime",
-      depin_sub: "Software LLMs cannot manage physical factories, and legacy blockchains cannot run on a $0.30 microcontroller. Myca bridges both worlds with a deterministic C99 micro-kernel and Safe-Sign hardware airbag.",
+      depin_sub: "Software LLMs cannot manage physical factories, and legacy blockchains cannot run on a zsh.30 microcontroller. Myca bridges both worlds with a deterministic C99 micro-kernel and Safe-Sign hardware airbag.",
       arch_lbl: "ARCHITECTURE",
       os_lbl: "RESOURCES",
       os_title: "Open Source",
@@ -1278,22 +1405,26 @@ footer {
     if (btn) btn.innerText = d.btn;
 
     // Nav
-    const navProd = document.getElementById('t-nav-products');
-    if (navProd) {
-      const span = navProd.querySelector('span');
-      if (span) span.innerText = d.nav_products;
-    }
+    safeSet('t-nav-c99', d.nav_c99);
+    safeSet('t-nav-os', d.nav_os);
     safeSet('t-nav-docs', d.nav_docs);
     safeSet('t-nav-dl', d.nav_dl);
 
-    // Hero
+    // Hero & C99
+    safeSet('t-hero-tag', d.hero_tag);
     safeSet('t-hero-title', d.hero_title);
     safeSet('t-hero-sub', d.hero_sub);
-    safeSet('t-hero-dl', d.hero_dl);
+    safeSet('t-hero-depin', d.hero_depin);
+    safeSet('t-hero-c99', d.hero_c99);
     safeSet('t-hero-gh', d.hero_gh);
     safeSet('t-stat-1', d.stat1);
     safeSet('t-stat-2', d.stat2);
     safeSet('t-stat-3', d.stat3);
+    safeSet('t-stat-4', d.stat4);
+
+    safeSet('t-c99-lbl', d.c99_lbl);
+    safeSet('t-c99-title', d.c99_title);
+    safeSet('t-c99-sub', d.c99_sub);
 
     // Problem
     safeSet('t-prob-lbl', d.prob_lbl);
