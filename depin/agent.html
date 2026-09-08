@@ -316,6 +316,26 @@
     .meter-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #00f0ff; }
   
 
+    :root {
+      --bg-dark: #06090e;
+      --bg-card: rgba(13, 20, 31, 0.75);
+      --bg-card-hover: rgba(18, 28, 44, 0.9);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-card-hover: rgba(16, 185, 129, 0.4);
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #00f0ff;
+      --cyan-glow: rgba(0, 240, 255, 0.25);
+      --purple: #a855f7;
+      --purple-glow: rgba(168, 85, 247, 0.25);
+      --amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --f-sans: 'DM Sans', system-ui, sans-serif;
+      --f-mono: 'JetBrains Mono', monospace;
+    }
+
 .mycelium-arch-card {
       background: linear-gradient(180deg, rgba(13, 22, 35, 0.88) 0%, rgba(7, 12, 20, 0.96) 100%);
       border: 1px solid rgba(16, 185, 129, 0.22);
@@ -777,6 +797,183 @@
       </div>
     </div>
 
+    <section class="mycelium-arch-card" id="myceliumArchSection" style="margin-top: 24px;">
+      <div class="arch-header">
+        <div class="arch-badge" id="txtArchBadge">🌱 Colony Mesh Topology • Biological-to-DePIN Architecture</div>
+        <h2 class="arch-title" id="txtArchTitle">Living Mycelium Network Architecture</h2>
+        <p class="arch-subtitle" id="txtArchSubtitle">
+          How nature's oldest decentralized intelligence coordinates 10,000 nodes without a single point of failure.
+          From microscopic Spore sensors to sovereign Fruiting Body anchors, explore how the Colony Mesh routes data and locks phase coherence.
+        </p>
+      </div>
+
+      <div class="arch-body">
+        <!-- Canvas Visualizer Column -->
+        <div class="canvas-panel">
+          <div class="canvas-top-bar">
+            <div class="canvas-live-indicator">
+              <span class="live-dot"></span>
+              <span class="live-text" id="txtLiveSim">Living Mesh Simulation (60 FPS)</span>
+            </div>
+            <div class="canvas-actions">
+              <button class="canvas-btn" id="btnPulseWave" onclick="triggerMeshPulse()">⚡ Send Micro-Pulse</button>
+              <button class="canvas-btn" id="btnReroute" onclick="triggerStressReroute()">🔄 Test Self-Healing</button>
+            </div>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="myceliumCanvas"></canvas>
+            <div id="canvasTooltip" class="canvas-tooltip"></div>
+          </div>
+          <div class="canvas-legend">
+            <div class="legend-item active" id="leg1" onclick="selectTierLayer(1)">
+              <span class="legend-color t1-dot"></span>
+              <span id="txtLeg1">Spore (Edge)</span>
+            </div>
+            <div class="legend-item" id="leg2" onclick="selectTierLayer(2)">
+              <span class="legend-color t2-dot"></span>
+              <span id="txtLeg2">Hyphae (Mesh)</span>
+            </div>
+            <div class="legend-item" id="leg3" onclick="selectTierLayer(3)">
+              <span class="legend-color t3-dot"></span>
+              <span id="txtLeg3">Trunk (Highway)</span>
+            </div>
+            <div class="legend-item" id="leg4" onclick="selectTierLayer(4)">
+              <span class="legend-color t4-dot"></span>
+              <span id="txtLeg4">Apex (Crown)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biological to DePIN Mapping Cards -->
+        <div class="arch-layers">
+          <!-- Layer 1: Spore -->
+          <div class="arch-layer-card active" id="layerCard1" onclick="selectTierLayer(1)">
+            <div class="layer-num">01</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL1Name">Spore (Seed Sensor)</span>
+                <span class="layer-badge t1">Tier 1 • $299 • 1,000 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL1Bio">🍄 <strong>In Nature:</strong> Single microscopic seed spore dispersed across the forest canopy.</div>
+              <p class="layer-desc" id="txtL1Desc">
+                <strong>DePIN Architecture:</strong> Ultra-lightweight edge sensor (ESP32/RP2350) equipped with Silicon PUF root identity. Gathers boundary telemetry and broadcasts 48-byte quantum pulse signals to neighboring peers.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL1Topo">Edge Sensor</strong></span>
+                <span>Weight: <strong id="txtL1Mult">1.0x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL1Hw">ESP32</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 2: Hyphae -->
+          <div class="arch-layer-card" id="layerCard2" onclick="selectTierLayer(2)">
+            <div class="layer-num">02</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL2Name">Hyphae (Local Mesh)</span>
+                <span class="layer-badge t2">Tier 2 • $449 • 2,500 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL2Bio">🌿 <strong>In Nature:</strong> Interconnected living fungal threads branching beneath the forest floor.</div>
+              <p class="layer-desc" id="txtL2Desc">
+                <strong>DePIN Architecture:</strong> Cluster routing nodes (Raspberry Pi 4/5) forming the local Colony Mesh. Establishes Phase-Locked Loops (PLL) across K=8 peers to synchronize latency without central servers.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL2Topo">Local Relay</strong></span>
+                <span>Weight: <strong id="txtL2Mult">1.3x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL2Hw">Raspberry Pi</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 3: Mycelial Highway -->
+          <div class="arch-layer-card" id="layerCard3" onclick="selectTierLayer(3)">
+            <div class="layer-num">03</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL3Name">Mycelial Highway (Trunk Substrate)</span>
+                <span class="layer-badge t3">Tier 3 • $699 • 4,000 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL3Bio">⚡ <strong>In Nature:</strong> High-density nutrient super-highway transferring minerals across vast distances.</div>
+              <p class="layer-desc" id="txtL3Desc">
+                <strong>DePIN Architecture:</strong> Industrial regional gateways (Mini PC / Jetson). Aggregates edge sensor feeds, coordinates distributed AI inference, and manages zero-gas micropayment streams.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL3Topo">Regional Gateway</strong></span>
+                <span>Weight: <strong id="txtL3Mult">1.8x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL3Hw">Mini PC/Jetson</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 4: Fruiting Body -->
+          <div class="arch-layer-card" id="layerCard4" onclick="selectTierLayer(4)">
+            <div class="layer-num">04</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL4Name">Fruiting Body (Sovereign Apex)</span>
+                <span class="layer-badge t4">Tier 4 • $1,099 • 2,500 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL4Bio">👑 <strong>In Nature:</strong> The crown emerging above the soil, unifying the forest colony and releasing new spores.</div>
+              <p class="layer-desc" id="txtL4Desc">
+                <strong>DePIN Architecture:</strong> Global phase synchronization and state anchor (Sovereign GPU/Server). Calculates network-wide PoQR energy and Merkle state roots, sealing verified cumulative proofs onto Base L2.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL4Topo">Consensus & Anchor</strong></span>
+                <span>Weight: <strong id="txtL4Mult">2.5x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL4Hw">Sovereign GPU</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Biological Principles Micro-Grid -->
+      <div class="arch-principles-grid">
+        <div class="principle-box">
+          <div class="principle-icon">🛡️</div>
+          <div class="principle-title" id="txtP1Title">Self-Healing Topology</div>
+          <div class="principle-desc" id="txtP1Desc">
+            Just like a living mycelium network, if a physical node loses power or connectivity, neighboring hyphae automatically establish alternative routes within 500ms. Zero single points of failure.
+          </div>
+        </div>
+        <div class="principle-box">
+          <div class="principle-icon">⚛️</div>
+          <div class="principle-title" id="txtP2Title">Anti-Sybil Phase Damping</div>
+          <div class="principle-desc" id="txtP2Desc">
+            Virtual clones cannot replicate real-world physical jitter. Nodes with clock offsets exceeding 45° undergo destructive quantum interference: cos²(ΔΦ) → 0, eliminating malicious reward extraction.
+          </div>
+        </div>
+        <div class="principle-box">
+          <div class="principle-icon">🔄</div>
+          <div class="principle-title" id="txtP3Title">Symbiotic Zero-Waste Equilibrium</div>
+          <div class="principle-desc" id="txtP3Desc">
+            Every compute cycle and data packet converts into metabolic energy (E_i). All network fees and slashed penalties are recycled back into the soil (the daily 100,000 MYC reward pool) to nourish active hardware stakers.
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- CALL TO ACTION: NODE SALE REDIRECT -->
+    <div class="colony-cta-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(0, 240, 255, 0.1) 100%), rgba(10, 16, 28, 0.95); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 20px; padding: 32px 24px; text-align: center; margin: 24px 0 32px 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #10b981; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px;">BECOME A NETWORK OPERATOR</div>
+      <h2 style="font-size: 26px; font-weight: 800; color: #fff; margin: 0 0 10px 0; font-family: 'DM Sans', sans-serif;">Ready to Operate a Living Colony Node?</h2>
+      <p style="font-size: 14px; color: #94a3b8; max-width: 720px; margin: 0 auto 22px auto; line-height: 1.6;">
+        Now that you've inspected the Living Colony mesh and verified the C99 deterministic resonance pipeline, claim your permanent hardware node license. 
+        Hold your Node NFT securely in your wallet—no complex staking required—and begin earning passive DePIN rewards today.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+        <a href="/mindcast-node" style="background: linear-gradient(135deg, #10b981, #059669); color: #000; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800; text-decoration: none; padding: 13px 26px; border-radius: 12px; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4); transition: transform 0.2s;">
+          🔥 Mint MindCast Genesis Node (300k $MIND / 80% Burn) →
+        </a>
+        <a href="/depin/mint" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; text-decoration: none; padding: 13px 26px; border-radius: 12px; transition: all 0.2s;">
+          🌱 Base DePIN Living Node Sale (Tier 1-4) →
+        </a>
+      </div>
+    </div>
+
+
     <!-- 5 Active Colony Nodes Matrix -->
     <div class="nodes-matrix">
       <div class="node-tile" id="nodeSentinel">
@@ -962,185 +1159,7 @@
 
     </div>
 
-  
-
-<section class="mycelium-arch-card" id="myceliumArchSection" style="margin-top: 24px;">
-      <div class="arch-header">
-        <div class="arch-badge" id="txtArchBadge">🌱 Colony Mesh Topology • Biological-to-DePIN Architecture</div>
-        <h2 class="arch-title" id="txtArchTitle">Living Mycelium Network Architecture</h2>
-        <p class="arch-subtitle" id="txtArchSubtitle">
-          How nature's oldest decentralized intelligence coordinates 10,000 nodes without a single point of failure.
-          From microscopic Spore sensors to sovereign Fruiting Body anchors, explore how the Colony Mesh routes data and locks phase coherence.
-        </p>
-      </div>
-
-      <div class="arch-body">
-        <!-- Canvas Visualizer Column -->
-        <div class="canvas-panel">
-          <div class="canvas-top-bar">
-            <div class="canvas-live-indicator">
-              <span class="live-dot"></span>
-              <span class="live-text" id="txtLiveSim">Living Mesh Simulation (60 FPS)</span>
-            </div>
-            <div class="canvas-actions">
-              <button class="canvas-btn" id="btnPulseWave" onclick="triggerMeshPulse()">⚡ Send Micro-Pulse</button>
-              <button class="canvas-btn" id="btnReroute" onclick="triggerStressReroute()">🔄 Test Self-Healing</button>
-            </div>
-          </div>
-          <div class="canvas-wrapper">
-            <canvas id="myceliumCanvas"></canvas>
-            <div id="canvasTooltip" class="canvas-tooltip"></div>
-          </div>
-          <div class="canvas-legend">
-            <div class="legend-item active" id="leg1" onclick="selectTierLayer(1)">
-              <span class="legend-color t1-dot"></span>
-              <span id="txtLeg1">Spore (Edge)</span>
-            </div>
-            <div class="legend-item" id="leg2" onclick="selectTierLayer(2)">
-              <span class="legend-color t2-dot"></span>
-              <span id="txtLeg2">Hyphae (Mesh)</span>
-            </div>
-            <div class="legend-item" id="leg3" onclick="selectTierLayer(3)">
-              <span class="legend-color t3-dot"></span>
-              <span id="txtLeg3">Trunk (Highway)</span>
-            </div>
-            <div class="legend-item" id="leg4" onclick="selectTierLayer(4)">
-              <span class="legend-color t4-dot"></span>
-              <span id="txtLeg4">Apex (Crown)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Biological to DePIN Mapping Cards -->
-        <div class="arch-layers">
-          <!-- Layer 1: Spore -->
-          <div class="arch-layer-card active" id="layerCard1" onclick="selectTierLayer(1)">
-            <div class="layer-num">01</div>
-            <div class="layer-content">
-              <div class="layer-title-row">
-                <span class="layer-name" id="txtL1Name">Spore (Seed Sensor)</span>
-                <span class="layer-badge t1">Tier 1 • $299 • 1,000 Cap</span>
-              </div>
-              <div class="layer-bio-analogy" id="txtL1Bio">🍄 <strong>In Nature:</strong> Single microscopic seed spore dispersed across the forest canopy.</div>
-              <p class="layer-desc" id="txtL1Desc">
-                <strong>DePIN Architecture:</strong> Ultra-lightweight edge sensor (ESP32/RP2350) equipped with Silicon PUF root identity. Gathers boundary telemetry and broadcasts 48-byte quantum pulse signals to neighboring peers.
-              </p>
-              <div class="layer-meta">
-                <span>Topology: <strong id="txtL1Topo">Edge Sensor</strong></span>
-                <span>Weight: <strong id="txtL1Mult">1.0x Multiplier</strong></span>
-                <span>Hardware: <strong id="txtL1Hw">ESP32</strong></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Layer 2: Hyphae -->
-          <div class="arch-layer-card" id="layerCard2" onclick="selectTierLayer(2)">
-            <div class="layer-num">02</div>
-            <div class="layer-content">
-              <div class="layer-title-row">
-                <span class="layer-name" id="txtL2Name">Hyphae (Local Mesh)</span>
-                <span class="layer-badge t2">Tier 2 • $449 • 2,500 Cap</span>
-              </div>
-              <div class="layer-bio-analogy" id="txtL2Bio">🌿 <strong>In Nature:</strong> Interconnected living fungal threads branching beneath the forest floor.</div>
-              <p class="layer-desc" id="txtL2Desc">
-                <strong>DePIN Architecture:</strong> Cluster routing nodes (Raspberry Pi 4/5) forming the local Colony Mesh. Establishes Phase-Locked Loops (PLL) across K=8 peers to synchronize latency without central servers.
-              </p>
-              <div class="layer-meta">
-                <span>Topology: <strong id="txtL2Topo">Local Relay</strong></span>
-                <span>Weight: <strong id="txtL2Mult">1.3x Multiplier</strong></span>
-                <span>Hardware: <strong id="txtL2Hw">Raspberry Pi</strong></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Layer 3: Mycelial Highway -->
-          <div class="arch-layer-card" id="layerCard3" onclick="selectTierLayer(3)">
-            <div class="layer-num">03</div>
-            <div class="layer-content">
-              <div class="layer-title-row">
-                <span class="layer-name" id="txtL3Name">Mycelial Highway (Trunk Substrate)</span>
-                <span class="layer-badge t3">Tier 3 • $699 • 4,000 Cap</span>
-              </div>
-              <div class="layer-bio-analogy" id="txtL3Bio">⚡ <strong>In Nature:</strong> High-density nutrient super-highway transferring minerals across vast distances.</div>
-              <p class="layer-desc" id="txtL3Desc">
-                <strong>DePIN Architecture:</strong> Industrial regional gateways (Mini PC / Jetson). Aggregates edge sensor feeds, coordinates distributed AI inference, and manages zero-gas micropayment streams.
-              </p>
-              <div class="layer-meta">
-                <span>Topology: <strong id="txtL3Topo">Regional Gateway</strong></span>
-                <span>Weight: <strong id="txtL3Mult">1.8x Multiplier</strong></span>
-                <span>Hardware: <strong id="txtL3Hw">Mini PC/Jetson</strong></span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Layer 4: Fruiting Body -->
-          <div class="arch-layer-card" id="layerCard4" onclick="selectTierLayer(4)">
-            <div class="layer-num">04</div>
-            <div class="layer-content">
-              <div class="layer-title-row">
-                <span class="layer-name" id="txtL4Name">Fruiting Body (Sovereign Apex)</span>
-                <span class="layer-badge t4">Tier 4 • $1,099 • 2,500 Cap</span>
-              </div>
-              <div class="layer-bio-analogy" id="txtL4Bio">👑 <strong>In Nature:</strong> The crown emerging above the soil, unifying the forest colony and releasing new spores.</div>
-              <p class="layer-desc" id="txtL4Desc">
-                <strong>DePIN Architecture:</strong> Global phase synchronization and state anchor (Sovereign GPU/Server). Calculates network-wide PoQR energy and Merkle state roots, sealing verified cumulative proofs onto Base L2.
-              </p>
-              <div class="layer-meta">
-                <span>Topology: <strong id="txtL4Topo">Consensus & Anchor</strong></span>
-                <span>Weight: <strong id="txtL4Mult">2.5x Multiplier</strong></span>
-                <span>Hardware: <strong id="txtL4Hw">Sovereign GPU</strong></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3 Biological Principles Micro-Grid -->
-      <div class="arch-principles-grid">
-        <div class="principle-box">
-          <div class="principle-icon">🛡️</div>
-          <div class="principle-title" id="txtP1Title">Self-Healing Topology</div>
-          <div class="principle-desc" id="txtP1Desc">
-            Just like a living mycelium network, if a physical node loses power or connectivity, neighboring hyphae automatically establish alternative routes within 500ms. Zero single points of failure.
-          </div>
-        </div>
-        <div class="principle-box">
-          <div class="principle-icon">⚛️</div>
-          <div class="principle-title" id="txtP2Title">Anti-Sybil Phase Damping</div>
-          <div class="principle-desc" id="txtP2Desc">
-            Virtual clones cannot replicate real-world physical jitter. Nodes with clock offsets exceeding 45° undergo destructive quantum interference: cos²(ΔΦ) → 0, eliminating malicious reward extraction.
-          </div>
-        </div>
-        <div class="principle-box">
-          <div class="principle-icon">🔄</div>
-          <div class="principle-title" id="txtP3Title">Symbiotic Zero-Waste Equilibrium</div>
-          <div class="principle-desc" id="txtP3Desc">
-            Every compute cycle and data packet converts into metabolic energy (E_i). All network fees and slashed penalties are recycled back into the soil (the daily 100,000 MYC reward pool) to nourish active hardware stakers.
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- CALL TO ACTION: NODE SALE REDIRECT -->
-    <div class="colony-cta-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(0, 240, 255, 0.1) 100%), rgba(10, 16, 28, 0.95); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 20px; padding: 36px 28px; text-align: center; margin: 36px 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden;">
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #10b981; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px;">BECOME A NETWORK OPERATOR</div>
-      <h2 style="font-size: 28px; font-weight: 800; color: #fff; margin: 0 0 12px 0; font-family: 'DM Sans', sans-serif;">Ready to Operate a Living Colony Node?</h2>
-      <p style="font-size: 14.5px; color: #94a3b8; max-width: 720px; margin: 0 auto 24px auto; line-height: 1.6;">
-        Now that you've simulated the Living Colony mesh and verified the C99 deterministic resonance pipeline, claim your permanent hardware node license. 
-        Hold your Node NFT securely in your wallet—no complex staking required—and begin earning passive DePIN rewards today.
-      </p>
-      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-        <a href="/mindcast-node" style="background: linear-gradient(135deg, #10b981, #059669); color: #000; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4); transition: transform 0.2s;">
-          🔥 Mint MindCast Genesis Node (300k $MIND / 80% Burn) →
-        </a>
-        <a href="/depin/mint" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; transition: all 0.2s;">
-          🌱 Base DePIN Living Node Sale (Tier 1-4) →
-        </a>
-      </div>
-    </div>
-
-</div>
+  </div>
 
   <script>
     function animateNode(nodeId) {
@@ -1285,9 +1304,13 @@
       } catch(e) {}
     }
   </script>
-<script src="/i18n.js">
+<script src="/i18n.js"></script>
 
-// LIVING MYCELIUM NETWORK SIMULATION ENGINE
+
+  <!-- LIVING MYCELIUM NETWORK SIMULATION ENGINE -->
+  <script>
+// ==========================================
+    // LIVING MYCELIUM NETWORK SIMULATION ENGINE
     // ==========================================
     let canvas, ctx;
     let meshNodes = [];
@@ -1709,7 +1732,23 @@
       // Pulse wave on selection
       pulseRings.push({ radius: 8, speed: 4.0, alpha: 0.9 });
     }
-window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { if (typeof initMyceliumCanvas === 'function') initMyceliumCanvas(); }, 200); });
-</script>
+
+    // Self-healing fail-safe & Auto-Start
+    function startMyceliumSimulation() {
+      if (typeof initMyceliumCanvas === 'function') {
+        initMyceliumCanvas();
+        setTimeout(() => {
+          if (typeof triggerMeshPulse === 'function') triggerMeshPulse();
+        }, 500);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startMyceliumSimulation);
+    } else {
+      setTimeout(startMyceliumSimulation, 60);
+    }
+  </script>
+
 </body>
 </html>
