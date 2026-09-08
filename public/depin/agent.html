@@ -314,7 +314,340 @@
     }
     .meter-lbl { color: #94a3b8; font-weight: 600; }
     .meter-val { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #00f0ff; }
-  </style>
+  
+
+.mycelium-arch-card {
+      background: linear-gradient(180deg, rgba(13, 22, 35, 0.88) 0%, rgba(7, 12, 20, 0.96) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 24px;
+      padding: 36px 32px;
+      margin-bottom: 40px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .mycelium-arch-card::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -120px;
+      width: 340px;
+      height: 340px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .arch-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 28px;
+    }
+    .arch-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--emerald);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .arch-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .arch-subtitle {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      max-width: 820px;
+      line-height: 1.6;
+    }
+
+    .arch-body {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 28px;
+      margin-bottom: 32px;
+    }
+
+    /* Canvas Panel */
+    .canvas-panel {
+      background: rgba(4, 8, 14, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .canvas-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .canvas-live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      color: var(--emerald);
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulseLive 1.8s infinite;
+    }
+    @keyframes pulseLive {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .canvas-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .canvas-btn {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .canvas-btn:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: var(--emerald);
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      width: 100%;
+      height: 440px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: radial-gradient(circle at center, rgba(16, 185, 129, 0.05) 0%, rgba(4, 7, 12, 0.95) 75%);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+    #myceliumCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+    .canvas-tooltip {
+      position: absolute;
+      display: none;
+      background: rgba(10, 16, 26, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-card-hover);
+      padding: 10px 14px;
+      border-radius: 10px;
+      pointer-events: none;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: #fff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      max-width: 260px;
+      line-height: 1.5;
+    }
+
+    .canvas-legend {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .legend-item:hover, .legend-item.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .legend-color {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .t1-dot { background: var(--emerald); box-shadow: 0 0 6px var(--emerald); }
+    .t2-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+    .t3-dot { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+    .t4-dot { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
+
+    /* Right Layers Column */
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: space-between;
+    }
+    .arch-layer-card {
+      background: rgba(13, 20, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .arch-layer-card:hover {
+      background: rgba(18, 28, 44, 0.8);
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateX(4px);
+    }
+    .arch-layer-card.active {
+      background: rgba(16, 26, 40, 0.95);
+      border-color: var(--emerald);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    }
+    .arch-layer-card.active.t2-active { border-color: var(--cyan); box-shadow: 0 8px 24px rgba(0, 240, 255, 0.15); }
+    .arch-layer-card.active.t3-active { border-color: var(--amber); box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15); }
+    .arch-layer-card.active.t4-active { border-color: var(--purple); box-shadow: 0 8px 24px rgba(168, 85, 247, 0.15); }
+
+    .layer-num {
+      font-family: var(--f-mono);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-faint);
+      line-height: 1;
+      padding-top: 2px;
+    }
+    .arch-layer-card.active .layer-num { color: var(--emerald); }
+    .arch-layer-card.active.t2-active .layer-num { color: var(--cyan); }
+    .arch-layer-card.active.t3-active .layer-num { color: var(--amber); }
+    .arch-layer-card.active.t4-active .layer-num { color: var(--purple); }
+
+    .layer-content {
+      flex: 1;
+    }
+    .layer-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .layer-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .layer-badge {
+      font-family: var(--f-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .layer-badge.t1 { background: rgba(16, 185, 129, 0.15); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .layer-badge.t2 { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid rgba(0, 240, 255, 0.3); }
+    .layer-badge.t3 { background: rgba(245, 158, 11, 0.15); color: var(--amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .layer-badge.t4 { background: rgba(168, 85, 247, 0.15); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    .layer-bio-analogy {
+      font-size: 11.5px;
+      color: #93c5fd;
+      margin-bottom: 4px;
+    }
+    .layer-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 6px;
+    }
+    .layer-meta {
+      display: flex;
+      gap: 14px;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      color: var(--text-faint);
+    }
+    .layer-meta span strong {
+      color: var(--text-main);
+    }
+
+    /* 3 Biological Principles Micro-Grid */
+    .arch-principles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 24px;
+    }
+    .principle-box {
+      background: rgba(13, 20, 31, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .principle-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .principle-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .principle-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1024px) {
+      .arch-body { grid-template-columns: 1fr; }
+      .arch-principles-grid { grid-template-columns: 1fr; }
+      .canvas-wrapper { height: 380px; }
+      .canvas-legend { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 1024px) {
+      .tiers-grid { grid-template-columns: repeat(2, 1fr); }
+      .calc-grid { grid-template-columns: 1fr; }
+      .global-stats-bar { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .tiers-grid { grid-template-columns: 1fr; }
+      .global-stats-bar { grid-template-columns: 1fr; }
+    }
+</style>
 </head>
 <body style="padding-top: 80px;">
 
@@ -629,7 +962,185 @@
 
     </div>
 
-  </div>
+  
+
+<section class="mycelium-arch-card" id="myceliumArchSection" style="margin-top: 24px;">
+      <div class="arch-header">
+        <div class="arch-badge" id="txtArchBadge">🌱 Colony Mesh Topology • Biological-to-DePIN Architecture</div>
+        <h2 class="arch-title" id="txtArchTitle">Living Mycelium Network Architecture</h2>
+        <p class="arch-subtitle" id="txtArchSubtitle">
+          How nature's oldest decentralized intelligence coordinates 10,000 nodes without a single point of failure.
+          From microscopic Spore sensors to sovereign Fruiting Body anchors, explore how the Colony Mesh routes data and locks phase coherence.
+        </p>
+      </div>
+
+      <div class="arch-body">
+        <!-- Canvas Visualizer Column -->
+        <div class="canvas-panel">
+          <div class="canvas-top-bar">
+            <div class="canvas-live-indicator">
+              <span class="live-dot"></span>
+              <span class="live-text" id="txtLiveSim">Living Mesh Simulation (60 FPS)</span>
+            </div>
+            <div class="canvas-actions">
+              <button class="canvas-btn" id="btnPulseWave" onclick="triggerMeshPulse()">⚡ Send Micro-Pulse</button>
+              <button class="canvas-btn" id="btnReroute" onclick="triggerStressReroute()">🔄 Test Self-Healing</button>
+            </div>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="myceliumCanvas"></canvas>
+            <div id="canvasTooltip" class="canvas-tooltip"></div>
+          </div>
+          <div class="canvas-legend">
+            <div class="legend-item active" id="leg1" onclick="selectTierLayer(1)">
+              <span class="legend-color t1-dot"></span>
+              <span id="txtLeg1">Spore (Edge)</span>
+            </div>
+            <div class="legend-item" id="leg2" onclick="selectTierLayer(2)">
+              <span class="legend-color t2-dot"></span>
+              <span id="txtLeg2">Hyphae (Mesh)</span>
+            </div>
+            <div class="legend-item" id="leg3" onclick="selectTierLayer(3)">
+              <span class="legend-color t3-dot"></span>
+              <span id="txtLeg3">Trunk (Highway)</span>
+            </div>
+            <div class="legend-item" id="leg4" onclick="selectTierLayer(4)">
+              <span class="legend-color t4-dot"></span>
+              <span id="txtLeg4">Apex (Crown)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biological to DePIN Mapping Cards -->
+        <div class="arch-layers">
+          <!-- Layer 1: Spore -->
+          <div class="arch-layer-card active" id="layerCard1" onclick="selectTierLayer(1)">
+            <div class="layer-num">01</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL1Name">Spore (Seed Sensor)</span>
+                <span class="layer-badge t1">Tier 1 • $299 • 1,000 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL1Bio">🍄 <strong>In Nature:</strong> Single microscopic seed spore dispersed across the forest canopy.</div>
+              <p class="layer-desc" id="txtL1Desc">
+                <strong>DePIN Architecture:</strong> Ultra-lightweight edge sensor (ESP32/RP2350) equipped with Silicon PUF root identity. Gathers boundary telemetry and broadcasts 48-byte quantum pulse signals to neighboring peers.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL1Topo">Edge Sensor</strong></span>
+                <span>Weight: <strong id="txtL1Mult">1.0x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL1Hw">ESP32</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 2: Hyphae -->
+          <div class="arch-layer-card" id="layerCard2" onclick="selectTierLayer(2)">
+            <div class="layer-num">02</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL2Name">Hyphae (Local Mesh)</span>
+                <span class="layer-badge t2">Tier 2 • $449 • 2,500 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL2Bio">🌿 <strong>In Nature:</strong> Interconnected living fungal threads branching beneath the forest floor.</div>
+              <p class="layer-desc" id="txtL2Desc">
+                <strong>DePIN Architecture:</strong> Cluster routing nodes (Raspberry Pi 4/5) forming the local Colony Mesh. Establishes Phase-Locked Loops (PLL) across K=8 peers to synchronize latency without central servers.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL2Topo">Local Relay</strong></span>
+                <span>Weight: <strong id="txtL2Mult">1.3x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL2Hw">Raspberry Pi</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 3: Mycelial Highway -->
+          <div class="arch-layer-card" id="layerCard3" onclick="selectTierLayer(3)">
+            <div class="layer-num">03</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL3Name">Mycelial Highway (Trunk Substrate)</span>
+                <span class="layer-badge t3">Tier 3 • $699 • 4,000 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL3Bio">⚡ <strong>In Nature:</strong> High-density nutrient super-highway transferring minerals across vast distances.</div>
+              <p class="layer-desc" id="txtL3Desc">
+                <strong>DePIN Architecture:</strong> Industrial regional gateways (Mini PC / Jetson). Aggregates edge sensor feeds, coordinates distributed AI inference, and manages zero-gas micropayment streams.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL3Topo">Regional Gateway</strong></span>
+                <span>Weight: <strong id="txtL3Mult">1.8x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL3Hw">Mini PC/Jetson</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Layer 4: Fruiting Body -->
+          <div class="arch-layer-card" id="layerCard4" onclick="selectTierLayer(4)">
+            <div class="layer-num">04</div>
+            <div class="layer-content">
+              <div class="layer-title-row">
+                <span class="layer-name" id="txtL4Name">Fruiting Body (Sovereign Apex)</span>
+                <span class="layer-badge t4">Tier 4 • $1,099 • 2,500 Cap</span>
+              </div>
+              <div class="layer-bio-analogy" id="txtL4Bio">👑 <strong>In Nature:</strong> The crown emerging above the soil, unifying the forest colony and releasing new spores.</div>
+              <p class="layer-desc" id="txtL4Desc">
+                <strong>DePIN Architecture:</strong> Global phase synchronization and state anchor (Sovereign GPU/Server). Calculates network-wide PoQR energy and Merkle state roots, sealing verified cumulative proofs onto Base L2.
+              </p>
+              <div class="layer-meta">
+                <span>Topology: <strong id="txtL4Topo">Consensus & Anchor</strong></span>
+                <span>Weight: <strong id="txtL4Mult">2.5x Multiplier</strong></span>
+                <span>Hardware: <strong id="txtL4Hw">Sovereign GPU</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Biological Principles Micro-Grid -->
+      <div class="arch-principles-grid">
+        <div class="principle-box">
+          <div class="principle-icon">🛡️</div>
+          <div class="principle-title" id="txtP1Title">Self-Healing Topology</div>
+          <div class="principle-desc" id="txtP1Desc">
+            Just like a living mycelium network, if a physical node loses power or connectivity, neighboring hyphae automatically establish alternative routes within 500ms. Zero single points of failure.
+          </div>
+        </div>
+        <div class="principle-box">
+          <div class="principle-icon">⚛️</div>
+          <div class="principle-title" id="txtP2Title">Anti-Sybil Phase Damping</div>
+          <div class="principle-desc" id="txtP2Desc">
+            Virtual clones cannot replicate real-world physical jitter. Nodes with clock offsets exceeding 45° undergo destructive quantum interference: cos²(ΔΦ) → 0, eliminating malicious reward extraction.
+          </div>
+        </div>
+        <div class="principle-box">
+          <div class="principle-icon">🔄</div>
+          <div class="principle-title" id="txtP3Title">Symbiotic Zero-Waste Equilibrium</div>
+          <div class="principle-desc" id="txtP3Desc">
+            Every compute cycle and data packet converts into metabolic energy (E_i). All network fees and slashed penalties are recycled back into the soil (the daily 100,000 MYC reward pool) to nourish active hardware stakers.
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- CALL TO ACTION: NODE SALE REDIRECT -->
+    <div class="colony-cta-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(0, 240, 255, 0.1) 100%), rgba(10, 16, 28, 0.95); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 20px; padding: 36px 28px; text-align: center; margin: 36px 0; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #10b981; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px;">BECOME A NETWORK OPERATOR</div>
+      <h2 style="font-size: 28px; font-weight: 800; color: #fff; margin: 0 0 12px 0; font-family: 'DM Sans', sans-serif;">Ready to Operate a Living Colony Node?</h2>
+      <p style="font-size: 14.5px; color: #94a3b8; max-width: 720px; margin: 0 auto 24px auto; line-height: 1.6;">
+        Now that you've simulated the Living Colony mesh and verified the C99 deterministic resonance pipeline, claim your permanent hardware node license. 
+        Hold your Node NFT securely in your wallet—no complex staking required—and begin earning passive DePIN rewards today.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <a href="/mindcast-node" style="background: linear-gradient(135deg, #10b981, #059669); color: #000; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 800; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 0 25px rgba(16, 185, 129, 0.4); transition: transform 0.2s;">
+          🔥 Mint MindCast Genesis Node (300k $MIND / 80% Burn) →
+        </a>
+        <a href="/depin/mint" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 12px; transition: all 0.2s;">
+          🌱 Base DePIN Living Node Sale (Tier 1-4) →
+        </a>
+      </div>
+    </div>
+
+</div>
 
   <script>
     function animateNode(nodeId) {
@@ -774,6 +1285,431 @@
       } catch(e) {}
     }
   </script>
-<script src="/i18n.js"></script>
+<script src="/i18n.js">
+
+// LIVING MYCELIUM NETWORK SIMULATION ENGINE
+    // ==========================================
+    let canvas, ctx;
+    let meshNodes = [];
+    let meshEdges = [];
+    let meshParticles = [];
+    let pulseRings = [];
+    let activeTierFilter = 1;
+    let hoveredNode = null;
+    let selfHealingActive = false;
+    let selfHealingTimer = null;
+    let emergencyLinks = [];
+
+    function initMyceliumCanvas() {
+      canvas = document.getElementById('myceliumCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.resetTransform();
+        ctx.scale(dpr, dpr);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      buildMeshGraph();
+      setupCanvasInteractions();
+      requestAnimationFrame(renderMeshLoop);
+    }
+
+    function buildMeshGraph() {
+      meshNodes = [];
+      meshEdges = [];
+      meshParticles = [];
+
+      // 1 Apex Fruiting Body (Center)
+      meshNodes.push({
+        id: 0,
+        tier: 4,
+        name: 'Fruiting Body (Apex #01)',
+        did: 'did:myc:puf:0x7a3f8901',
+        relX: 0.5,
+        relY: 0.5,
+        radius: 14,
+        color: '#c084fc',
+        glow: 'rgba(168, 85, 247, 0.6)',
+        coherence: 99.9,
+        latency: 4,
+        pulseOffset: 0
+      });
+
+      // 4 Primary Trunk Hubs (Tier 3)
+      for (let i = 0; i < 4; i++) {
+        const angle = (i * Math.PI / 2) + Math.PI / 4;
+        const dist = 0.20;
+        meshNodes.push({
+          id: meshNodes.length,
+          tier: 3,
+          name: `Mycelial Trunk #0${i + 1}`,
+          did: `did:myc:puf:0x${(100 + i).toString(16)}bc4f`,
+          relX: 0.5 + Math.cos(angle) * dist,
+          relY: 0.5 + Math.sin(angle) * dist * 0.9,
+          radius: 9,
+          color: '#fbbf24',
+          glow: 'rgba(245, 158, 11, 0.5)',
+          coherence: 99.6,
+          latency: 8,
+          pulseOffset: i * 0.4
+        });
+        meshEdges.push({ from: 0, to: meshNodes.length - 1, width: 2.8, color: 'rgba(245, 158, 11, 0.35)' });
+      }
+
+      // Connect trunks in a loop
+      for (let i = 1; i <= 4; i++) {
+        const next = i === 4 ? 1 : i + 1;
+        meshEdges.push({ from: i, to: next, width: 1.8, color: 'rgba(245, 158, 11, 0.2)' });
+      }
+
+      // 12 Hyphae Nodes (Tier 2)
+      for (let i = 0; i < 12; i++) {
+        const parentTrunk = 1 + Math.floor(i / 3);
+        const baseAngle = (i * (2 * Math.PI / 12));
+        const dist = 0.33 + (i % 2 === 0 ? 0.03 : -0.02);
+        meshNodes.push({
+          id: meshNodes.length,
+          tier: 2,
+          name: `Hyphae Relay #0${i + 1}`,
+          did: `did:myc:puf:0x${(200 + i).toString(16)}a7d1`,
+          relX: 0.5 + Math.cos(baseAngle) * dist,
+          relY: 0.5 + Math.sin(baseAngle) * dist * 0.9,
+          radius: 6,
+          color: '#22d3ee',
+          glow: 'rgba(0, 240, 255, 0.45)',
+          coherence: 99.2,
+          latency: 14,
+          pulseOffset: i * 0.3
+        });
+        meshEdges.push({ from: parentTrunk, to: meshNodes.length - 1, width: 1.5, color: 'rgba(0, 240, 255, 0.25)' });
+      }
+
+      // Add cross-mesh links between neighboring hyphae
+      for (let i = 5; i < 17; i++) {
+        const next = i === 16 ? 5 : i + 1;
+        meshEdges.push({ from: i, to: next, width: 1.0, color: 'rgba(0, 240, 255, 0.18)' });
+      }
+
+      // 24 Spore Nodes (Tier 1) along outer periphery
+      for (let i = 0; i < 24; i++) {
+        const parentHypha = 5 + (i % 12);
+        const angle = (i * (2 * Math.PI / 24)) + (Math.sin(i) * 0.08);
+        const dist = 0.44 + (Math.sin(i * 3) * 0.04);
+        meshNodes.push({
+          id: meshNodes.length,
+          tier: 1,
+          name: `Spore Sensor #0${i + 1}`,
+          did: `did:myc:puf:0x${(300 + i).toString(16)}f8e9`,
+          relX: 0.5 + Math.cos(angle) * dist,
+          relY: 0.5 + Math.sin(angle) * dist * 0.9,
+          radius: 4,
+          color: '#34d399',
+          glow: 'rgba(16, 185, 129, 0.5)',
+          coherence: 98.8,
+          latency: 22,
+          pulseOffset: i * 0.2
+        });
+        meshEdges.push({ from: parentHypha, to: meshNodes.length - 1, width: 0.8, color: 'rgba(16, 185, 129, 0.2)' });
+      }
+
+      // Spawn 40 ambient moving nutrient particles
+      for (let i = 0; i < 42; i++) {
+        const edgeIdx = Math.floor(Math.random() * meshEdges.length);
+        meshParticles.push({
+          edgeIdx: edgeIdx,
+          t: Math.random(),
+          speed: 0.003 + Math.random() * 0.005,
+          dir: Math.random() > 0.5 ? 1 : -1,
+          size: 1.5 + Math.random() * 1.5
+        });
+      }
+    }
+
+    function setupCanvasInteractions() {
+      const tooltip = document.getElementById('canvasTooltip');
+      if (!tooltip || !canvas) return;
+
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        const w = rect.width;
+        const h = rect.height;
+
+        hoveredNode = null;
+        for (const n of meshNodes) {
+          const nx = n.relX * w;
+          const ny = n.relY * h;
+          const dist = Math.hypot(mx - nx, my - ny);
+          if (dist <= n.radius + 8) {
+            hoveredNode = n;
+            break;
+          }
+        }
+
+        if (hoveredNode) {
+          tooltip.style.display = 'block';
+          tooltip.style.left = `${Math.min(mx + 14, w - 240)}px`;
+          tooltip.style.top = `${Math.min(my + 14, h - 120)}px`;
+          tooltip.innerHTML = `
+            <div style="color: ${hoveredNode.color}; font-weight: 800; font-size: 12px; margin-bottom: 2px;">
+              Tier ${hoveredNode.tier} • ${hoveredNode.name}
+            </div>
+            <div style="color: var(--text-faint); margin-bottom: 4px; font-size: 10px;">${hoveredNode.did}</div>
+            <div style="display: flex; justify-content: space-between; gap: 8px;">
+              <span style="color: var(--text-muted);">Coherence:</span>
+              <strong style="color: #fff;">${hoveredNode.coherence}% cos²(ΔΦ)</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 8px;">
+              <span style="color: var(--text-muted);">Mesh Latency:</span>
+              <strong style="color: var(--emerald);">${hoveredNode.latency} ms</strong>
+            </div>
+          `;
+        } else {
+          tooltip.style.display = 'none';
+        }
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        hoveredNode = null;
+        const tt = document.getElementById('canvasTooltip');
+        if (tt) tt.style.display = 'none';
+      });
+
+      canvas.addEventListener('click', () => {
+        if (hoveredNode) {
+          selectTierLayer(hoveredNode.tier);
+        }
+      });
+    }
+
+    function renderMeshLoop(time) {
+      if (!canvas || !ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 1. Draw Expanding Pulse Waves
+      for (let i = pulseRings.length - 1; i >= 0; i--) {
+        const ring = pulseRings[i];
+        ring.radius += ring.speed;
+        ring.alpha -= 0.012;
+
+        if (ring.alpha <= 0) {
+          pulseRings.splice(i, 1);
+          continue;
+        }
+
+        ctx.beginPath();
+        ctx.arc(w * 0.5, h * 0.5, ring.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(16, 185, 129, ${ring.alpha * 0.8})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(w * 0.5, h * 0.5, ring.radius * 0.85, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 240, 255, ${ring.alpha * 0.4})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // 2. Draw Edges (Filaments)
+      for (const edge of meshEdges) {
+        const n1 = meshNodes[edge.from];
+        const n2 = meshNodes[edge.to];
+        if (!n1 || !n2) continue;
+
+        const x1 = n1.relX * w;
+        const y1 = n1.relY * h;
+        const x2 = n2.relX * w;
+        const y2 = n2.relY * h;
+
+        const isDimmed = activeTierFilter !== 0 && n1.tier !== activeTierFilter && n2.tier !== activeTierFilter;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = isDimmed ? 'rgba(255, 255, 255, 0.04)' : (edge.color || 'rgba(16, 185, 129, 0.15)');
+        ctx.lineWidth = isDimmed ? 0.6 : (edge.width || 1);
+        ctx.stroke();
+      }
+
+      // Draw Emergency Self-Healing Links
+      if (selfHealingActive && emergencyLinks.length > 0) {
+        for (const e of emergencyLinks) {
+          const n1 = meshNodes[e.from];
+          const n2 = meshNodes[e.to];
+          if (!n1 || !n2) continue;
+          ctx.beginPath();
+          ctx.moveTo(n1.relX * w, n1.relY * h);
+          ctx.lineTo(n2.relX * w, n2.relY * h);
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 2.4;
+          ctx.setLineDash([4, 4]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      // 3. Draw Animated Nutrient / Micro-pulse Particles
+      for (const p of meshParticles) {
+        p.t += p.speed * p.dir;
+        if (p.t >= 1) { p.t = 1; p.dir = -1; }
+        else if (p.t <= 0) { p.t = 0; p.dir = 1; }
+
+        const edge = meshEdges[p.edgeIdx];
+        if (!edge) continue;
+        const n1 = meshNodes[edge.from];
+        const n2 = meshNodes[edge.to];
+        if (!n1 || !n2) continue;
+
+        const px = (n1.relX + (n2.relX - n1.relX) * p.t) * w;
+        const py = (n1.relY + (n2.relY - n1.relY) * p.t) * h;
+
+        ctx.beginPath();
+        ctx.arc(px, py, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = n1.tier === 4 || n2.tier === 4 ? '#c084fc' : (n1.tier === 3 || n2.tier === 3 ? '#fbbf24' : '#10b981');
+        ctx.fill();
+      }
+
+      // 4. Draw Nodes
+      const now = (time || performance.now()) * 0.003;
+      for (const node of meshNodes) {
+        const nx = node.relX * w;
+        const ny = node.relY * h;
+        const isSelected = activeTierFilter === node.tier;
+        const isDimmed = activeTierFilter !== 0 && !isSelected;
+        const pulse = Math.sin(now + node.pulseOffset) * 1.5;
+
+        // Severed node state
+        if (selfHealingActive && node.id === 8) {
+          ctx.beginPath();
+          ctx.arc(nx, ny, node.radius + 2, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+          // Draw X
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(nx - 4, ny - 4); ctx.lineTo(nx + 4, ny + 4);
+          ctx.moveTo(nx + 4, ny - 4); ctx.lineTo(nx - 4, ny + 4);
+          ctx.stroke();
+          continue;
+        }
+
+        // Outer Halo for active or selected tier
+        if (isSelected || hoveredNode === node) {
+          ctx.beginPath();
+          ctx.arc(nx, ny, node.radius + 6 + pulse, 0, Math.PI * 2);
+          ctx.fillStyle = node.glow;
+          ctx.fill();
+        }
+
+        // Main Node Body
+        ctx.beginPath();
+        ctx.arc(nx, ny, Math.max(2, node.radius + (isSelected ? pulse * 0.5 : 0)), 0, Math.PI * 2);
+        ctx.fillStyle = isDimmed ? 'rgba(255, 255, 255, 0.2)' : node.color;
+        ctx.shadowColor = isDimmed ? 'transparent' : node.color;
+        ctx.shadowBlur = isDimmed ? 0 : 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Central core highlight
+        ctx.beginPath();
+        ctx.arc(nx, ny, node.radius * 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      }
+
+      requestAnimationFrame(renderMeshLoop);
+    }
+
+    // Trigger Pulse Wave
+    function triggerMeshPulse() {
+      pulseRings.push({ radius: 10, speed: 4.5, alpha: 1.0 });
+      pulseRings.push({ radius: 4, speed: 3.5, alpha: 0.8 });
+      for (const p of meshParticles) {
+        p.speed *= 2.2;
+      }
+      setTimeout(() => {
+        for (const p of meshParticles) { p.speed /= 2.2; }
+      }, 1500);
+    }
+
+    // Test Self-Healing Failover
+    function triggerStressReroute() {
+      if (selfHealingActive) return;
+      selfHealingActive = true;
+      emergencyLinks = [
+        { from: 7, to: 9 },
+        { from: 2, to: 9 }
+      ];
+
+      const btn = document.getElementById('btnReroute');
+      if (btn) btn.innerText = '⚡ Severing Link & Rerouting...';
+
+      setTimeout(() => {
+        if (btn) btn.innerText = '✅ Rerouted via Peer (18ms) — 0% Loss';
+      }, 500);
+
+      if (selfHealingTimer) clearTimeout(selfHealingTimer);
+      selfHealingTimer = setTimeout(() => {
+        selfHealingActive = false;
+        emergencyLinks = [];
+        if (btn) btn.innerText = '🔄 Test Self-Healing';
+      }, 4000);
+    }
+
+    // Tier Layer Selection Synchronization
+    function selectTierLayer(tierId) {
+      activeTierFilter = tierId;
+
+      // Update Layer Cards
+      for (let i = 1; i <= 4; i++) {
+        const card = document.getElementById(`layerCard${i}`);
+        const leg = document.getElementById(`leg${i}`);
+        if (card) {
+          card.classList.remove('active', 't2-active', 't3-active', 't4-active');
+          if (i === tierId) {
+            card.classList.add('active');
+            if (tierId === 2) card.classList.add('t2-active');
+            if (tierId === 3) card.classList.add('t3-active');
+            if (tierId === 4) card.classList.add('t4-active');
+          }
+        }
+        if (leg) {
+          if (i === tierId) leg.classList.add('active');
+          else leg.classList.remove('active');
+        }
+      }
+
+      // Highlight target Tier Card in Tab 1
+      for (let i = 1; i <= 4; i++) {
+        const tc = document.getElementById(`tierCard${i}`);
+        if (tc) {
+          if (i === tierId) {
+            tc.style.borderColor = tierId === 1 ? 'var(--emerald)' : (tierId === 2 ? 'var(--cyan)' : (tierId === 3 ? 'var(--amber)' : 'var(--purple)'));
+            tc.style.boxShadow = `0 16px 40px rgba(0, 0, 0, 0.8)`;
+          } else {
+            tc.style.borderColor = 'var(--border-card)';
+            tc.style.boxShadow = 'none';
+          }
+        }
+      }
+
+      // Pulse wave on selection
+      pulseRings.push({ radius: 8, speed: 4.0, alpha: 0.9 });
+    }
+window.addEventListener('DOMContentLoaded', () => { setTimeout(() => { if (typeof initMyceliumCanvas === 'function') initMyceliumCanvas(); }, 200); });
+</script>
 </body>
 </html>
