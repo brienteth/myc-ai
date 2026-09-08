@@ -1,6 +1,0 @@
-{
-  "name": "peaq-edge-network",
-  "version": "1.0.0",
-  "description": "peaq Edge: 240-Byte Bare-Metal C99 Micro-DID & Machine Actuator for the Economy of Things",
-  "type": "module"
-}

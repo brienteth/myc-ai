@@ -1,5 +1,31 @@
 {
-  "dependencies": {
-    "@vercel/analytics": "^2.0.1"
-  }
+  "name": "myc-network",
+  "version": "1.0.0",
+  "description": "MYC Network: Sovereign Zero-Gas, Nodeless, Zero-Heap Edge Blockchain Runtime",
+  "type": "module",
+  "bin": {
+    "myc": "./cli/myc-cli.js",
+    "myc-node": "./bin/myc-node.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "node:start": "node bin/myc-node.js start",
+    "cli": "node cli/myc-cli.js",
+    "test": "node test/run_all_tests.js",
+    "benchmark": "node tests/network_finality_benchmarks.js",
+    "benchmark:evm": "node scripts/monad_evm_benchmark.js",
+    "benchmark:ideal": "node scripts/monad_evm_benchmark.js --ideal-pure"
+  },
+  "keywords": [
+    "blockchain",
+    "zero-gas",
+    "nodeless",
+    "zero-heap",
+    "edge-ai",
+    "depin",
+    "c99",
+    "proof-of-resonance"
+  ],
+  "author": "MYC Core Architecture Team",
+  "license": "MIT"
 }

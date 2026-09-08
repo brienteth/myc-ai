@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonance SDK v1.0 - Browser Integration Example</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #38bdf8;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .card {
+            background-color: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #334155;
+        }
+        button {
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0369a1;
+        }
+        pre {
+            background-color: #0f172a;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #1e293b;
+        }
+        .status {
+            font-weight: bold;
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resonance SDK Browser Example</h1>
+    <div class="card">
+        <p>Status: <span id="status" class="status">Loading WASM & Corpus...</span></p>
+        <button id="generateBtn" disabled>Generate Text</button>
+        <div style="margin-top: 20px;">
+            <h3>Prompt:</h3>
+            <pre>yeni bir kitap</pre>
+            <h3>Result:</h3>
+            <pre id="output">Click "Generate Text" to run.</pre>
+        </div>
+    </div>
+
+    <script type="module">
+        import { ResonanceSDK } from '../resonance_sdk.js';
+
+        const sdk = new ResonanceSDK({
+            temperature: 0.7,
+            maxLength: 8
+        });
+
+        const statusEl = document.getElementById('status');
+        const generateBtn = document.getElementById('generateBtn');
+        const outputEl = document.getElementById('output');
+
+        try {
+            await sdk.init({
+                wasmUrl: '../../wasm/spectral_core.wasm',
+                corpusUrl: '../../tr_corpus_embed.js'
+            });
+            statusEl.textContent = 'Ready (SDK version 1.0)';
+            generateBtn.disabled = false;
+        } catch (err) {
+            statusEl.textContent = 'Initialization Failed';
+            statusEl.style.color = '#ef4444';
+            outputEl.textContent = err.message;
+            console.error(err);
+        }
+
+        generateBtn.addEventListener('click', () => {
+            outputEl.textContent = 'Generating...';
+            const prompt = 'yeni bir kitap';
+            const result = sdk.generate(prompt, {
+                onToken: (token) => {
+                    console.log('Streamed token:', token);
+                }
+            });
+            outputEl.textContent = JSON.stringify(result, null, 2);
+        });
+    </script>
+</body>
+</html>

@@ -21,6 +21,7 @@ jobs:
 
       - name: Run Core Network Tests
         run: |
-          cd packages/network
           node test/run_all_tests.js
           node tests/depin_machine_wallets.test.js
+          node tests/zero_gas_invariant.test.js
+          node tests/spam_attack_stress_test.js

@@ -1,0 +1,4 @@
+node_modules/
+data/google_bert_tiny.safetensors
+.DS_Store
+.gemini/

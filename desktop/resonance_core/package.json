@@ -1,0 +1,14 @@
+{
+  "name": "turkish-resonance-ai-core",
+  "version": "3.0.0",
+  "type": "module",
+  "description": "Turkish Resonance AI Core: Experimental, modular AI representation and spectral computing system.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

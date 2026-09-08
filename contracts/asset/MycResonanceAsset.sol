@@ -46,12 +46,31 @@ contract MycResonanceAsset {
         mapping(address => uint256) shares; // Fractional equity balance per stakeholder
     }
 
+    // LAYER: Blockchain — ERC-721R 3-Tier Constants & Structs
+    uint8 public constant SEED = 0;
+    uint8 public constant RESONANT = 1;
+    uint8 public constant SOVEREIGN = 2;
+
+    struct TierConfig {
+        uint256 maxSupply;
+        uint256 mintPriceUsdc;
+        uint256 initialEnergy;
+        uint8 maxTasks;
+        string name;
+    }
+
     // Storage
     uint256 private _nextTokenId = 1;
+    mapping(uint256 => address) public ownerOf;
     mapping(uint256 => ResonanceAsset) public assets;
     mapping(uint256 => ObservationLog) private _observations;
     mapping(uint256 => CollectiveOwnership) private _collective;
     mapping(uint256 => uint256[]) public resonanceBonds; // tokenA => array of bonded tokenBs
+
+    // 3-Tier Configuration Mappings
+    mapping(uint8 => TierConfig) public tierConfigs;
+    mapping(uint8 => uint256) public tierMintedCount;
+    mapping(uint256 => uint8) public tokenTier;
 
     // Global Constants
     uint256 public constant RESONANCE_THRESHOLD = 6500; // 0.65 Cosine similarity in basis points
@@ -63,6 +82,9 @@ contract MycResonanceAsset {
     // Interaction Weights (Einstein Energy Layer)
     mapping(uint8 => uint256) public interactionWeights;
 
+    // Colony Node Integration
+    address public nodeRegistryAddress;
+
     // Events
     event AssetMinted(uint256 indexed tokenId, address indexed creator, uint256 dominantHz);
     event EnergyUpdated(uint256 indexed tokenId, uint256 newEnergyScore, uint8 interactionType);
@@ -71,6 +93,10 @@ contract MycResonanceAsset {
     event Observed(uint256 indexed tokenId, address indexed observer, bytes32 indexed contextHash, uint256 timestamp);
     event DiscoveryAchieved(uint256 indexed tokenId, uint256 totalObservers);
     event SharesTransferred(uint256 indexed tokenId, address indexed from, address indexed to, uint256 shares);
+    event NodeActivated(uint256 indexed tokenId, uint8 indexed tier, address indexed operator);
+    event FrequencyDNAGenerated(uint256 indexed tokenId, uint256 dominantHz, uint256[8] harmonics);
+    event NodeEnergyUpdated(uint256 indexed tokenId, uint256 newEnergyScore);
+    event NodeOwnershipTransferred(uint256 indexed tokenId, address indexed newOwner);
 
     constructor() {
         // Initialize Einstein interaction weights
@@ -78,10 +104,151 @@ contract MycResonanceAsset {
         interactionWeights[2] = 120;  // DePIN machine telemetry pulse / sensor tick
         interactionWeights[3] = 300;  // AI model inference / compute consumption
         interactionWeights[4] = 600;  // Commercial M2M payment / micro-settlement
+
+        // LAYER: Blockchain — Immutable 3-Tier Specifications
+        tierConfigs[SEED] = TierConfig({
+            maxSupply: 10000,
+            mintPriceUsdc: 50,
+            initialEnergy: 500,
+            maxTasks: 1,
+            name: "SEED"
+        });
+
+        tierConfigs[RESONANT] = TierConfig({
+            maxSupply: 2000,
+            mintPriceUsdc: 500,
+            initialEnergy: 3500,
+            maxTasks: 5,
+            name: "RESONANT"
+        });
+
+        tierConfigs[SOVEREIGN] = TierConfig({
+            maxSupply: 200,
+            mintPriceUsdc: 5000,
+            initialEnergy: 9000,
+            maxTasks: 20,
+            name: "SOVEREIGN"
+        });
+    }
+
+    function setNodeRegistry(address _registry) external {
+        nodeRegistryAddress = _registry;
+    }
+
+    // =========================================================================
+    // LAYER: Blockchain — 3-TIER COLONY NODE MINT FUNCTIONS
+    // =========================================================================
+
+    /**
+     * @notice Mint a SEED tier Colony Node (50 USDC, Max 10,000, 500 Energy)
+     */
+    function mintSeed(address to) external returns (uint256) {
+        return _mintTier(to, SEED, 2); // Role 2: COLONY_PEER
     }
 
     /**
-     * @notice Mint a new Living Resonance Asset
+     * @notice Mint a RESONANT tier Colony Node (500 USDC, Max 2,000, 3,500 Energy)
+     */
+    function mintResonant(address to) external returns (uint256) {
+        return _mintTier(to, RESONANT, 2); // Role 2: COLONY_PEER
+    }
+
+    /**
+     * @notice Mint a SOVEREIGN tier Colony Node (5,000 USDC, Max 200, 9,000 Energy, VALIDATOR)
+     */
+    function mintSovereign(address to) external returns (uint256) {
+        return _mintTier(to, SOVEREIGN, 1); // Role 1: VALIDATOR
+    }
+
+    /**
+     * @dev Core internal 3-tier mint engine with deterministic DNA and instant Colony registration
+     */
+    function _mintTier(address to, uint8 tier, uint8 nodeRole) internal returns (uint256) {
+        require(tier <= SOVEREIGN, "INVALID_TIER");
+        TierConfig memory config = tierConfigs[tier];
+        require(tierMintedCount[tier] < config.maxSupply, "Tier supply exhausted");
+
+        uint256 tokenId = _nextTokenId++;
+        tierMintedCount[tier]++;
+        tokenTier[tokenId] = tier;
+        ownerOf[tokenId] = to;
+
+        // Generate deterministic frequency DNA from tokenId and recipient hash
+        bytes32 seedHash = keccak256(abi.encodePacked(tokenId, to, block.timestamp, tier));
+        uint256 dominantHz = tier == SEED ? 432 : (tier == RESONANT ? 528 : 963);
+        uint256[8] memory harmonics;
+        for (uint256 i = 0; i < 8; i++) {
+            harmonics[i] = 4000 + (uint256(uint8(seedHash[i])) * 23);
+        }
+
+        ResonanceAsset storage asset = assets[tokenId];
+        asset.tokenId = tokenId;
+        asset.uri = string(abi.encodePacked("ipfs://bafkreia_myc_node_", _uint2str(tokenId), ".json"));
+        asset.creator = to;
+        asset.energyScore = config.initialEnergy;
+        asset.lastInteraction = block.timestamp;
+        asset.decayRate = tier == SEED ? 5 : (tier == RESONANT ? 10 : 15);
+        asset.status = Status.ACTIVE;
+        asset.frequency.harmonics = harmonics;
+        asset.frequency.dominantHz = dominantHz;
+
+        // Atatürk Collective Ownership Initialization
+        CollectiveOwnership storage coll = _collective[tokenId];
+        coll.totalShares = 10000;
+        coll.shares[to] = 10000;
+        coll.minimumShareForProposal = 500;
+
+        // LAYER: Colony — Synchronous Node Registration in same transaction
+        if (nodeRegistryAddress != address(0)) {
+            (bool ok, ) = nodeRegistryAddress.call(
+                abi.encodeWithSignature("registerNode(uint256,address,uint8,uint8,uint256)", tokenId, to, nodeRole, tier, config.initialEnergy)
+            );
+            require(ok, "NODE_REGISTRATION_FAILED");
+        }
+
+        emit AssetMinted(tokenId, to, dominantHz);
+        emit FrequencyDNAGenerated(tokenId, dominantHz, harmonics);
+        emit NodeActivated(tokenId, tier, to);
+        return tokenId;
+    }
+
+    /**
+     * @notice Query remaining, minted, and maximum supply for a tier
+     */
+    function getRemainingSupply(uint8 tier) external view returns (uint256 remaining, uint256 minted, uint256 max) {
+        require(tier <= SOVEREIGN, "INVALID_TIER");
+        max = tierConfigs[tier].maxSupply;
+        minted = tierMintedCount[tier];
+        remaining = max > minted ? max - minted : 0;
+    }
+
+    /**
+     * @notice Query immutable tier of a token
+     */
+    function getTierOfToken(uint256 tokenId) external view returns (uint8) {
+        require(assets[tokenId].tokenId != 0, "TOKEN_NONEXISTENT");
+        return tokenTier[tokenId];
+    }
+
+    function _uint2str(uint256 _i) internal pure returns (string memory str) {
+        if (_i == 0) return "0";
+        uint256 j = _i;
+        uint256 len;
+        while (j != 0) { len++; j /= 10; }
+        bytes memory bstr = new bytes(len);
+        uint256 k = len;
+        while (_i != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        str = string(bstr);
+    }
+
+    /**
+     * @notice Mint a new Living Resonance Asset & automatically activate as Colony Node
      */
     function mintResonanceAsset(
         string calldata uri,
@@ -96,21 +263,33 @@ contract MycResonanceAsset {
         asset.tokenId = tokenId;
         asset.uri = uri;
         asset.creator = msg.sender;
-        asset.energyScore = 1000; // Baseline vitality
+        asset.energyScore = 1000; // Baseline vitality (SEED tier)
         asset.lastInteraction = block.timestamp;
         asset.decayRate = initialDecayRate > 0 ? initialDecayRate : 10;
         asset.status = Status.ACTIVE;
         asset.frequency.harmonics = harmonics;
         asset.frequency.dominantHz = dominantHz;
 
+        tokenTier[tokenId] = SEED;
+
         // Atatürk Collective Ownership Initialization (100% to creator initial)
+        ownerOf[tokenId] = msg.sender;
         CollectiveOwnership storage coll = _collective[tokenId];
         coll.totalShares = 10000;
         coll.shares[msg.sender] = 10000;
         coll.governanceContract = governanceContract;
         coll.minimumShareForProposal = 500; // 5.00%
 
+        // Colony Node Activation (NFT TokenId = NodeId)
+        if (nodeRegistryAddress != address(0)) {
+            (bool ok, ) = nodeRegistryAddress.call(
+                abi.encodeWithSignature("registerNode(uint256,address,uint8,uint8,uint256)", tokenId, msg.sender, 2, 0, 1000)
+            );
+            require(ok, "NODE_REGISTRATION_FAILED");
+        }
+
         emit AssetMinted(tokenId, msg.sender, dominantHz);
+        emit NodeActivated(tokenId, SEED, msg.sender);
         return tokenId;
     }
 
@@ -131,7 +310,15 @@ contract MycResonanceAsset {
         assets[tokenId].energyScore += weight;
         assets[tokenId].lastInteraction = block.timestamp;
 
+        // Notify Node Registry of energy update to recalibrate node tier
+        if (nodeRegistryAddress != address(0)) {
+            (bool ok, ) = nodeRegistryAddress.call(
+                abi.encodeWithSignature("updateNodeEnergy(uint256,uint256)", tokenId, assets[tokenId].energyScore)
+            );
+        }
+
         emit EnergyUpdated(tokenId, assets[tokenId].energyScore, interactionType);
+        emit NodeEnergyUpdated(tokenId, assets[tokenId].energyScore);
     }
 
     /**
@@ -258,6 +445,53 @@ contract MycResonanceAsset {
         coll.shares[to] += shareAmount;
 
         emit SharesTransferred(tokenId, msg.sender, to, shareAmount);
+    }
+
+    /**
+     * @notice Standard ERC-721 transfer override triggering automatic node operator handoff
+     */
+    function transfer(address to, uint256 tokenId) external {
+        require(ownerOf[tokenId] == msg.sender, "NOT_OWNER");
+        require(to != address(0), "INVALID_RECIPIENT");
+        address from = msg.sender;
+        ownerOf[tokenId] = to;
+
+        // Atatürk collective equity mirrors token ownership
+        _collective[tokenId].shares[from] = 0;
+        _collective[tokenId].shares[to] = 10000;
+
+        _afterTokenTransfer(from, to, tokenId);
+        emit SharesTransferred(tokenId, from, to, 10000);
+    }
+
+    /**
+     * @notice Hook invoked after any token transfer to sync Colony Node ownership
+     */
+    function _afterTokenTransfer(address from, address to, uint256 tokenId) internal {
+        if (nodeRegistryAddress != address(0)) {
+            (bool ok, ) = nodeRegistryAddress.call(
+                abi.encodeWithSignature("transferNodeOwnership(uint256,address)", tokenId, to)
+            );
+            require(ok, "NODE_TRANSFER_FAILED");
+        }
+        emit NodeOwnershipTransferred(tokenId, to);
+    }
+
+    /**
+     * @notice Transfer Node ownership when NFT is sold or primary control transferred
+     */
+    function transferNodeOwnership(uint256 tokenId, address newOwner) external {
+        CollectiveOwnership storage coll = _collective[tokenId];
+        require(coll.shares[msg.sender] >= 5000, "MUST_HOLD_MAJORITY_SHARES");
+        require(newOwner != address(0), "INVALID_RECIPIENT");
+
+        if (nodeRegistryAddress != address(0)) {
+            (bool ok, ) = nodeRegistryAddress.call(
+                abi.encodeWithSignature("transferNodeOwnership(uint256,address)", tokenId, newOwner)
+            );
+            require(ok, "NODE_TRANSFER_FAILED");
+        }
+        emit NodeOwnershipTransferred(tokenId, newOwner);
     }
 
     function getShares(uint256 tokenId, address stakeholder) external view returns (uint256) {

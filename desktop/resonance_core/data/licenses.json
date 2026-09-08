@@ -1,0 +1,12 @@
+{
+  "RES-DEMO-2026": {
+    "status": "paid",
+    "customer": "Global Developer Corp",
+    "updatedAt": "2026-08-23T21:00:32.020Z"
+  },
+  "RES-ENTERPRISE-OFFLINE": {
+    "status": "paid",
+    "customer": "Strategic Bank Corp",
+    "updatedAt": "2026-08-22T08:00:00Z"
+  }
+}

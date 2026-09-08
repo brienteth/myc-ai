@@ -1,0 +1,239 @@
+{
+  "random": [
+    {
+      "N": 10,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.28405412372865424,
+      "stdSim": 0.005509932957912184,
+      "crosstalkFloor": 0.046875,
+      "fpRate": 0,
+      "fnRate": 0
+    },
+    {
+      "N": 25,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.17613004214835368,
+      "stdSim": 0.015527013633559877,
+      "crosstalkFloor": 0.07654655446197431,
+      "fpRate": 0,
+      "fnRate": 0.08
+    },
+    {
+      "N": 50,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.12466453698987552,
+      "stdSim": 0.012779614651234537,
+      "crosstalkFloor": 0.109375,
+      "fpRate": 0,
+      "fnRate": 0.98
+    },
+    {
+      "N": 100,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.08780395946636763,
+      "stdSim": 0.012367060870488458,
+      "crosstalkFloor": 0.15546678704790937,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 200,
+      "recall1": 0.985,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.06295177034810466,
+      "stdSim": 0.010903308553209024,
+      "crosstalkFloor": 0.22041774968227945,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 500,
+      "recall1": 0.636,
+      "recall5": 0.834,
+      "recall10": 0.886,
+      "meanSim": 0.039263904560208736,
+      "stdSim": 0.010967064919915396,
+      "crosstalkFloor": 0.34903606099513557,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 1000,
+      "recall1": 0.19,
+      "recall5": 0.372,
+      "recall10": 0.461,
+      "meanSim": 0.027932962153728206,
+      "stdSim": 0.01085206615982089,
+      "crosstalkFloor": 0.4938587696649721,
+      "fpRate": 0,
+      "fnRate": 1
+    }
+  ],
+  "correlated": [
+    {
+      "N": 10,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.28245325320303694,
+      "stdSim": 0.006105337461885063,
+      "crosstalkFloor": 0.046875,
+      "fpRate": 0,
+      "fnRate": 0
+    },
+    {
+      "N": 25,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.17876254142210282,
+      "stdSim": 0.008705833886002046,
+      "crosstalkFloor": 0.07654655446197431,
+      "fpRate": 0,
+      "fnRate": 0
+    },
+    {
+      "N": 50,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.122903950689638,
+      "stdSim": 0.010638108051844387,
+      "crosstalkFloor": 0.109375,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 100,
+      "recall1": 0.9,
+      "recall5": 0.96,
+      "recall10": 0.99,
+      "meanSim": 0.09053804506990405,
+      "stdSim": 0.010495008651806501,
+      "crosstalkFloor": 0.15546678704790937,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 200,
+      "recall1": 0.37,
+      "recall5": 0.695,
+      "recall10": 0.77,
+      "meanSim": 0.06285972364543176,
+      "stdSim": 0.011550412409509509,
+      "crosstalkFloor": 0.22041774968227945,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 500,
+      "recall1": 0.066,
+      "recall5": 0.212,
+      "recall10": 0.336,
+      "meanSim": 0.0393868710560882,
+      "stdSim": 0.010791066258046707,
+      "crosstalkFloor": 0.34903606099513557,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 1000,
+      "recall1": 0.015,
+      "recall5": 0.052,
+      "recall10": 0.083,
+      "meanSim": 0.02781478777171354,
+      "stdSim": 0.010946788374766647,
+      "crosstalkFloor": 0.4938587696649721,
+      "fpRate": 0,
+      "fnRate": 1
+    }
+  ],
+  "adversarial": [
+    {
+      "N": 10,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.27952676933694254,
+      "stdSim": 0.01100249012242247,
+      "crosstalkFloor": 0.046875,
+      "fpRate": 0,
+      "fnRate": 0
+    },
+    {
+      "N": 25,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.17628201936011803,
+      "stdSim": 0.0071892556721840405,
+      "crosstalkFloor": 0.07654655446197431,
+      "fpRate": 0,
+      "fnRate": 0
+    },
+    {
+      "N": 50,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.12613220116277957,
+      "stdSim": 0.009000192868210214,
+      "crosstalkFloor": 0.109375,
+      "fpRate": 0,
+      "fnRate": 0.98
+    },
+    {
+      "N": 100,
+      "recall1": 1,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.08932672798776244,
+      "stdSim": 0.011826146104650869,
+      "crosstalkFloor": 0.15546678704790937,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 200,
+      "recall1": 0.99,
+      "recall5": 1,
+      "recall10": 1,
+      "meanSim": 0.06371254809773441,
+      "stdSim": 0.010736412878994607,
+      "crosstalkFloor": 0.22041774968227945,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 500,
+      "recall1": 0.622,
+      "recall5": 0.816,
+      "recall10": 0.886,
+      "meanSim": 0.03918247533757403,
+      "stdSim": 0.01144726289084591,
+      "crosstalkFloor": 0.34903606099513557,
+      "fpRate": 0,
+      "fnRate": 1
+    },
+    {
+      "N": 1000,
+      "recall1": 0.217,
+      "recall5": 0.398,
+      "recall10": 0.496,
+      "meanSim": 0.028168362422341914,
+      "stdSim": 0.010925774943031732,
+      "crosstalkFloor": 0.4938587696649721,
+      "fpRate": 0,
+      "fnRate": 1
+    }
+  ]
+}

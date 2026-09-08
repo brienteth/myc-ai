@@ -24,6 +24,7 @@ export class SovereignAgent {
     this.memory = [];
     this.executionLog = [];
     this.todoList = [];
+    this.conversationHistory = [];
 
     // Load persisted local memory if in browser
     this.loadPersistedMemory();
@@ -165,6 +166,17 @@ export class SovereignAgent {
           },
           required: ["action"]
         }
+      },
+      {
+        name: "resolve_machine_did",
+        description: "Resolves W3C Decentralized Identifier (did:myc:puf:0x...) and hardware attestation document for an industrial machine or agent",
+        parameters: {
+          type: "object",
+          properties: {
+            identifier: { type: "string", description: "Machine alias (e.g. TURBINE_01), wallet address, or full did:myc:puf:0x... string" }
+          },
+          required: ["identifier"]
+        }
       }
     ];
   }
@@ -180,6 +192,10 @@ export class SovereignAgent {
         if (savedTodos) {
           this.todoList = JSON.parse(savedTodos);
         }
+        const savedHistory = localStorage.getItem("myca_conv_history");
+        if (savedHistory) {
+          this.conversationHistory = JSON.parse(savedHistory);
+        }
       } catch (e) {}
     }
   }
@@ -189,6 +205,7 @@ export class SovereignAgent {
       try {
         localStorage.setItem("myca_fhrr_memory", JSON.stringify(this.memory.slice(0, 100)));
         localStorage.setItem("myca_offline_todos", JSON.stringify(this.todoList));
+        localStorage.setItem("myca_conv_history", JSON.stringify(this.conversationHistory.slice(-20)));
       } catch (e) {}
     }
   }
@@ -432,6 +449,25 @@ export class SovereignAgent {
       };
     }
 
+    // Machine DID / Hardware Identity Tool Matching
+    if (low.includes("did") || low.includes("kimlik") || low.includes("attestation") || low.includes("puf key")) {
+      let identifier = "TURBINE_01";
+      if (low.includes("vana") || low.includes("valve")) identifier = "VALVE_01";
+      else if (low.includes("gpu") || low.includes("compute")) identifier = "GPU_EDGE_01";
+      else if (low.includes("pompa") || low.includes("pump")) identifier = "PUMP_01";
+      else if (low.includes("sensör") || low.includes("sensor")) identifier = "SENSOR_AIR_01";
+      const didMatch = prompt.match(/did:myc:puf:[a-zA-Z0-9x]+/i);
+      if (didMatch) identifier = didMatch[0];
+
+      return {
+        safe: true,
+        tool_call: {
+          name: "resolve_machine_did",
+          arguments: { identifier }
+        }
+      };
+    }
+
     // M2M Financial Settlement Tool Matching
     if (low.includes("gönder") || low.includes("transfer") || low.includes("öde") || low.includes("send")) {
       const amountMatch = low.match(/(\d+(?:\.\d+)?)/);
@@ -507,17 +543,76 @@ export class SovereignAgent {
   async synthesizeGeneralReasoning(prompt) {
     const p = prompt.trim();
     
-    // 1. Try Native Turkish Resonance AI Server (Port 3500 /v1/chat/completions)
+    // 0. High-Speed Perplexity Lily Metal MoE Backend (Qwen3.6-35B-A3B on Apple Silicon - Port 8080 / 8421)
     if (typeof fetch !== 'undefined') {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
+        const res = await fetch("http://127.0.0.1:8080/v1/chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            model: "qwen3.6-35b-a3b",
+            messages: [{ role: "user", content: p }],
+            temperature: 0.2
+          })
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = await res.json();
+          const content = data.choices?.[0]?.message?.content || data.response;
+          if (content && content.trim().length > 0) {
+            this.remember("lily_moe_output", content);
+            return `⚡ **Myca Sovereign Lily Metal MoE Çıkarımı (Qwen 35B / 3B Aktif - Çevrimdışı):**\n\n${content}\n\n*(Perplexity Lily Bare-Metal Engine / Apple Silicon Metal GPU / 0 Cloud / $0.00)*`;
+          }
+        }
+      } catch (e) {
+        // Fall through to primary sovereign engine
+      }
+    }
+
+    // 1. Primary Sovereign In-Process Neural Engine (Port 8420 - llama.cpp / Metal GPU Qwen2.5-3B)
+    if (typeof fetch !== 'undefined') {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        // Send clean, direct prompt to local neural engine
+        const res = await fetch("http://127.0.0.1:8420/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            prompt: p,
+            stream: false
+          })
+        });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          const data = await res.json();
+          const content = data.response || data.text;
+          if (content && content.trim().length > 0) {
+            this.remember("sovereign_llm_output", content);
+            const tps = data.tps ? `${data.tps} tok/s` : 'Metal Hızlandırmalı';
+            return `🧠 **Myca Sovereign Yerel Nöral Çıkarımı (Qwen 3B Metal - Çevrimdışı):**\n\n${content}\n\n*(0 Harici Bulut / %100 Yerel Apple Silicon Metal GPU / ${tps} / $0.00 Maliyet)*`;
+          }
+        }
+      } catch (e) {
+        // Fall through to secondary local engines
+      }
+    }
+
+    // 2. Secondary: Hybrid Reasoning Engine (Port 3500 — SpectralSLM → Ollama cascade)
+    if (typeof fetch !== 'undefined') {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 35000); // Longer timeout for Ollama
         const res = await fetch("http://127.0.0.1:3500/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
           body: JSON.stringify({
-            model: "spectral-slm-tr-v4.0",
+            model: "myca-hybrid",
             messages: [{ role: "user", content: p }]
           })
         });
@@ -525,9 +620,28 @@ export class SovereignAgent {
         if (res.ok) {
           const data = await res.json();
           const content = data.choices?.[0]?.message?.content;
-          if (content && !content.includes("bilgim yok") && !content.includes("hafızada bulunamadı") && !content.includes("kayıt edilmemiş") && content.length > 20) {
-            this.remember("resonance_slm_output", content);
-            return `🧠 **Myca Türkçe Rezonans Yapay Zeka Çekirdeği (Spectral SLM v4.0):**\n\n${content}\n\n*(0 Harici Bulut / %100 Yerel HDC & Spektral FFT Çıkarımı)*`;
+          const engine = data.engine || 'spectral';
+          const latencyMs = data.latencyMs || 0;
+          const ollamaMeta = data.ollama;
+
+          if (content && content.trim().length > 5 && 
+              !content.includes("bilgim yok") && 
+              !content.includes("hafızada bulunamadı") && 
+              !content.includes("kayıt edilmemiş") &&
+              !content.includes("yüklenmiyor")) {
+            this.remember("hybrid_engine_output", content.slice(0, 200));
+            
+            // Build engine info string
+            let engineInfo = '';
+            if (engine === 'ollama' && ollamaMeta) {
+              engineInfo = `(Ollama ${ollamaMeta.model} / ${ollamaMeta.tokensPerSec} tok/s / ${latencyMs}ms / $0.00 Maliyet)`;
+            } else if (engine === 'spectral-slm') {
+              engineInfo = `(Spectral SLM / HDC FFT Çıkarımı / ${latencyMs}ms / $0.00 Maliyet)`;
+            } else {
+              engineInfo = `(Myca Hybrid Engine / ${latencyMs}ms / $0.00 Maliyet)`;
+            }
+            
+            return `🧠 **Myca Sovereign Yerel Hibrit Çıkarımı (${engine} - Çevrimdışı):**\n\n${content}\n\n*${engineInfo}*`;
           }
         }
       } catch (e) {
@@ -871,15 +985,42 @@ export class SovereignAgent {
           const { language, taskDescription } = tc.arguments;
           let code = "";
 
-          if (language === "PYTHON") {
-            code = `# %100 Yerel Asenkron Veri Çekme & İşleme Scripti\nimport asyncio\n\nasync def fetch_local_telemetry():\n    print("🔍 Cihaz telemetrisi okunuyor...")\n    await asyncio.sleep(0.05)\n    return {"status": "HEALTHY", "latency_us": 4.95, "cost": 0.00}\n\nasync def main():\n    telemetry = await fetch_local_telemetry()\n    print(f"✓ Başarılı: {telemetry}")\n\nif __name__ == "__main__":\n    asyncio.run(main())`;
-          } else if (language === "RUST") {
-            code = `// Zero-Allocation Fast-Path Rust Core\n#[no_mangle]\npub extern "C" fn evaluate_safe_sign(opcode: u8) -> bool {\n    match opcode {\n        0xAB => false, // Abort / Negation lock\n        _ => true,\n    }\n}`;
-          } else if (language === "C99") {
-            code = `// C99 Deterministic Fast-Path\n#include <stdint.h>\n#include <stdbool.h>\n\nbool evaluate_safe_lock(uint32_t flags) {\n    return (flags & 0x01) == 0; // 0.00V Clamped if bit 0 is set\n}`;
-          } else {
-            // JAVASCRIPT / BASH
-            code = `// Çevrimdışı Otonom Görev Yürütücü\nexport async function runLocalTask(payload) {\n  const startTime = performance.now();\n  console.log("⚡ Yerel işlem icra ediliyor:", payload);\n  return {\n    success: true,\n    latencyUs: (performance.now() - startTime) * 1000,\n    gasCost: 0\n  };\n}`;
+          // 1. Try local neural model to write real, custom code
+          if (typeof fetch !== 'undefined') {
+            try {
+              const codePrompt = `Sen uzman bir yazılım mühendisisin. Aşağıdaki görevi yerine getiren, modern, çalışan ve temiz ${language || 'JavaScript'} kodunu yaz. Açıklamayı kısa tut, doğrudan çalışan kodu ver.\n\nGörev: ${taskDescription || prompt}`;
+              const controller = new AbortController();
+              const timeoutId = setTimeout(() => controller.abort(), 60000);
+              const res = await fetch("http://127.0.0.1:8420/query", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                signal: controller.signal,
+                body: JSON.stringify({ prompt: codePrompt, stream: false })
+              });
+              clearTimeout(timeoutId);
+              if (res.ok) {
+                const data = await res.json();
+                const content = data.response || data.text;
+                if (content && content.trim().length > 15) {
+                  code = content;
+                }
+              }
+            } catch (e) {
+              // Fallback to offline templates below
+            }
+          }
+
+          // 2. Offline fallback templates if engine is unreachable
+          if (!code) {
+            if (language === "PYTHON") {
+              code = `# %100 Yerel Asenkron Veri Scripti\nimport asyncio\n\nasync def main():\n    print("Görev: ${taskDescription}")\n\nif __name__ == "__main__":\n    asyncio.run(main())`;
+            } else if (language === "RUST") {
+              code = `// Zero-Allocation Rust Core\nfn main() {\n    println!("Görev: ${taskDescription}");\n}`;
+            } else if (language === "C99") {
+              code = `// C99 Deterministic Fast-Path\n#include <stdio.h>\nint main(void) {\n    printf("Görev: ${taskDescription}\\n");\n    return 0;\n}`;
+            } else {
+              code = `// Çevrimdışı Otonom Görev: ${taskDescription}\nexport async function runTask() {\n  console.log("İcra ediliyor: ${taskDescription}");\n}`;
+            }
           }
 
           executionOutput = {
@@ -927,6 +1068,49 @@ export class SovereignAgent {
               ]
             };
           }
+          break;
+        }
+
+        case "resolve_machine_did": {
+          const { identifier } = tc.arguments;
+          let doc = null;
+          if (typeof fetch !== 'undefined') {
+            try {
+              const res = await fetch(`http://localhost:4040/api/depin/did?did=${encodeURIComponent(identifier)}`);
+              if (res.ok) {
+                const data = await res.json();
+                doc = data.didDocument;
+              }
+            } catch (e) {}
+          }
+          if (!doc) {
+            // Local offline fallback document format
+            doc = {
+              "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/ed25519-2020/v1"],
+              "id": identifier.startsWith("did:myc:puf:") ? identifier : `did:myc:puf:0x${identifier.toLowerCase()}`,
+              "alias": identifier,
+              "controller": "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002",
+              "verificationMethod": [{
+                "id": `#puf-key-1`,
+                "type": "SiliconPufVerificationKey2026",
+                "hardwareAttestation": {
+                  "standard": "MYCA-RHIZOME-PUF-V1",
+                  "entropySource": "SRAM_STARTUP_POLYMORPHISM",
+                  "zeroByteShield": true
+                }
+              }],
+              "service": [{
+                "type": "MyceliumM2MWalletService",
+                "gasPolicy": "ZERO_GAS_GUARANTEED"
+              }]
+            };
+          }
+          executionOutput = {
+            status: "DID_RESOLVED",
+            identifier,
+            didDocument: doc
+          };
+          this.remember("did_resolved", `${identifier} -> ${doc.id}`, "identity");
           break;
         }
       }

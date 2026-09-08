@@ -1,0 +1,82 @@
+[
+  {
+    "sequenceLength": 32,
+    "attention": {
+      "latencyMs": 16.801297795772552,
+      "flops": 16782336,
+      "memoryBytes": 2101248
+    },
+    "resonance": {
+      "latencyMs": 5.530729053914547,
+      "flops": 909312,
+      "memoryBytes": 589824
+    },
+    "speedup": 3.037808873295087,
+    "flopSavings": 18.45608108108108,
+    "memorySavings": 3.5625
+  },
+  {
+    "sequenceLength": 64,
+    "attention": {
+      "latencyMs": 66.19779374599457,
+      "flops": 67129344,
+      "memoryBytes": 4210688
+    },
+    "resonance": {
+      "latencyMs": 10.09422305226326,
+      "flops": 1302528,
+      "memoryBytes": 1114112
+    },
+    "speedup": 6.5579880098995975,
+    "flopSavings": 51.5377358490566,
+    "memorySavings": 3.7794117647058822
+  },
+  {
+    "sequenceLength": 128,
+    "attention": {
+      "latencyMs": 269.5689523026347,
+      "flops": 268517376,
+      "memoryBytes": 8454144
+    },
+    "resonance": {
+      "latencyMs": 19.44903544783592,
+      "flops": 2088960,
+      "memoryBytes": 2162688
+    },
+    "speedup": 13.86027358660758,
+    "flopSavings": 128.54117647058823,
+    "memorySavings": 3.909090909090909
+  },
+  {
+    "sequenceLength": 256,
+    "attention": {
+      "latencyMs": 1137.0991457998753,
+      "flops": 1074069504,
+      "memoryBytes": 17039360
+    },
+    "resonance": {
+      "latencyMs": 39.8203458994627,
+      "flops": 3661824,
+      "memoryBytes": 4259840
+    },
+    "speedup": 28.55573250596043,
+    "flopSavings": 293.3154362416107,
+    "memorySavings": 4
+  },
+  {
+    "sequenceLength": 512,
+    "attention": {
+      "latencyMs": 6373.051060251892,
+      "flops": 4296278016,
+      "memoryBytes": 34603008
+    },
+    "resonance": {
+      "latencyMs": 75.77674589753151,
+      "flops": 6807552,
+      "memoryBytes": 8454144
+    },
+    "speedup": 84.10299208242326,
+    "flopSavings": 631.1046931407942,
+    "memorySavings": 4.093023255813954
+  }
+]

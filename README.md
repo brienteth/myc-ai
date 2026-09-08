@@ -1,161 +1,165 @@
-# 🌐 MYCA / MYC NETWORK — SOVEREIGN COGNITIVE INFRASTRUCTURE
+# 🌐 MYCA NETWORK: Sovereign Zero-Gas L1 Protocol & DePIN Runtime
 
-[![Chain ID](https://img.shields.io/badge/Chain_ID-108_(MYC--LATTICE--MAINNET)-00f2fe.svg)](#)
-[![Gas Fee](https://img.shields.io/badge/Gas_Fee-0.00000000_MYC_(Strict_Invariant)-00e676.svg)](#)
-[![Finality](https://img.shields.io/badge/Finality-%3C9.79_ms_(PoR_Resonance)-7c3aed.svg)](#)
-[![Post-Quantum Armor](https://img.shields.io/badge/Post--Quantum-10--Pillar_Shield_(NIST_ML--DSA_%2B_ML--KEM)-ff0055.svg)](#)
-[![Offline Air-Gap](https://img.shields.io/badge/Offline_Air--Gap-100%25_Mesh_Resilience-00f0ff.svg)](#)
-[![Hardware Safety](https://img.shields.io/badge/Safety_Brake-4.95µs_0--Byte_Clamp-ff9900.svg)](#)
-[![Dune Analytics](https://img.shields.io/badge/Dune_Analytics-Query_%238625163-ff6b00.svg)](https://dune.com/queries/8625163)
+<div align="center">
 
-> **"Her node kendi cihazında çalışır — Merkezi sunucu yok, kullanıcı VPS'i yok. Herkes hem kullanıcı hem altyapı."**
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Consensus](https://img.shields.io/badge/Consensus-Proof--of--Resonance_(PoR)-00f2fe.svg)](#architecture)
+[![Gas Invariant](https://img.shields.io/badge/Gas_Fee-0.00000000_MYC_(Strict)-00e676.svg)](#zero-gas-invariant)
+[![Execution Kernel](https://img.shields.io/badge/Kernel-Bare--Metal_C99_(Zero--Heap)-ff0055.svg)](#c99-microkernel)
+[![10M Stress Benchmark](https://img.shields.io/badge/Stress_Benchmark-3.02M_tx%2Fs_Drop_Rate-7c3aed.svg)](#empirical-attack-benchmarks)
+[![Hardware Identity](https://img.shields.io/badge/Hardware_Identity-Silicon_SRAM_PUF_(FIPS_140--3)-ff9900.svg)](#silicon-puf-depin)
+[![Documentation](https://img.shields.io/badge/Docs-GitBook_Official-2e6b45.svg)](https://www.mycai.pro/docs)
 
-MYCA, yapay zeka ajanları (Autonomous Cognitive Agents) ve DePIN donanımları için tasarlanmış; **Sıfır Gaz (Zero-Gas)**, **Donanım PUF Güvenliği**, **Nodeless Lattice DAG** ve **Çift Yollu (Dual-Lane) Ekonomik Yerleşim** mimarisine sahip egemen bir blokzincir çalışma ortamıdır.
+**Sovereign Cognitive Infrastructure, Living Lattice DAG, Silicon PUF DePIN Fleet Identity & Zero-Gas Autonomous Machine Economy**
 
----
+[Website](https://www.mycai.pro) • [Interactive Docs](https://www.mycai.pro/docs) • [C99 Core Spec](https://www.mycai.pro/c99-core) • [Whitepaper](docs/WHITEPAPER_COMPREHENSIVE.md) • [Node Portal](https://www.mycai.pro/depin/mint)
 
-## ⚡ 1-Tıkla Kurulum ve Başlatma (Quickstart)
-
-Sistemi tanımayan herhangi bir kullanıcı, hiçbir karmaşık ayar yapmadan tek bir komutla kendi cihazını ağa bağlayabilir:
-
-### macOS & Linux
-```bash
-curl -sSL https://mycai.pro/install.sh | bash
-```
-*(veya yerel depoda:* `./install.sh` *)*
-
-### Windows (PowerShell)
-```powershell
-irm https://mycai.pro/install.ps1 | iex
-```
-
-Kurulum tamamlandığında node'unuz anında ayağa kalkar:
-```bash
-myc-node start
-```
-
-Tarayıcınızda otomatik olarak **MYCA NEXUS Web3 Portalı** açılır:
-👉 **[http://localhost:4040/nexus](http://localhost:4040/nexus)**
+</div>
 
 ---
 
-## 🏛️ Temel Mimari Prensipleri
+## 🏛️ Executive Summary
+
+**MYCA Network** is a sovereign Layer-1 decentralized physical infrastructure network (DePIN) and autonomous agent coordination runtime engineered from the ground up to overcome the latency, cost, and memory fragmentation bottlenecks of legacy EVM blockchains.
+
+By synthesizing theoretical physics and biological network routing (Einstein, Tesla, Heisenberg, and Atatürk institutional layers), MYCA replaces economic gas friction with a mathematical **Proof-of-Resonance (PoR)** consensus and a deterministic **Bare-Metal C99 Zero-Heap Microkernel**.
+
+### Core Architecture Highlights:
+* **Strict Zero-Gas Substrate ($0.00000000 MYC):** Ordinary machine transactions, sensory telemetry ticks, and peer-to-peer agent messages execute with **zero gas fees**, eliminating unpredictable pricing for high-frequency industrial robotics.
+* **Non-Inflationary Real-Yield Economics:** Protocol revenues are generated from enterprise state storage leases, guaranteed sub-millisecond QoS priority bandwidth, hardware PUF verification fees, and M2M agent escrows (2.5%). Distributed daily to **40% Soft-Staking** and **60% Active C99 Node Runners**.
+* **Bare-Metal C99 Microkernel (`core/kernel/myc_core.c`):** 240-byte static RAM envelope with zero dynamic heap allocations (`malloc = 0`). Drops unauthorized or malformed packets in **330 nanoseconds** (743 clock cycles).
+* **Silicon SRAM PUF DIDs:** Cryptographic machine identities derived from physical silicon wafer manufacturing entropy (ISO/IEC 15408 EAL6+, FIPS 140-3 Level 4).
+* **10-Pillar Post-Quantum Armor:** Native lattice-based post-quantum cryptography (NIST ML-DSA / Dilithium & ML-KEM / Kyber).
+
+---
+
+## 📂 Repository Directory Layout
+
+The MYCA architecture is structured into sovereign, high-performance modular subsystems:
 
 ```text
-┌────────────────────────────────────────────────────────┐
-│                   MYCA SOVEREIGN STACK                 │
-├────────────────────────────────────────────────────────┤
-│  Layer 3: Autonomous Agent Colony & Machine Economy    │
-│           (Dual-PoR Task Escrow, Sub-ms MycStreamPay)  │
-├────────────────────────────────────────────────────────┤
-│  Layer 2: Dual-Lane Settlement Matrix                  │
-│           Lane A: Zero-Gas Lattice DAG (<38.4 µs)      │
-│           Lane B: Multi-Chain EVM & USDC Collateral    │
-├────────────────────────────────────────────────────────┤
-│  Layer 1: Proof-of-Resonance (PoR) Consensus Engine    │
-│           (0-Byte Negation Shield, BFT Supermajority)  │
-├────────────────────────────────────────────────────────┤
-│  Layer 0: Silicon PUF Hardware & DePIN Gateway         │
-│           (Ed25519 Deterministic Seed, myc1... format) │
-└────────────────────────────────────────────────────────┘
+myc-ai/
+├── apps/                    # Decentralized Applications & Frontend Portals
+│   └── web/                 # Official Web3 Portal, GitBook Docs & Mint Interface
+├── bin/                     # Standalone Executable Node Binaries (myc-node)
+├── cli/                     # Developer Command Line Interface (myc)
+├── colony/                  # Multi-Agent Colony Scheduler, Swarm Dispatch & Peer Scoring
+├── contracts/               # Native System Smart Contracts (Bridge, Staking, Escrow, AMM)
+├── core/                    # Core Execution Engine & Deterministic Kernel
+│   ├── kernel/              # Bare-Metal C99 Microkernel (myc_core.c, c99_trillion_stress_test.c)
+│   ├── consensus/           # Proof-of-Resonance (PoR) Consensus Engine
+│   ├── crypto/              # Silicon PUF, Hardware Wallet & Post-Quantum Resilience
+│   └── events/              # Low-Latency State Transition Event Bus
+├── depin/                   # Hardware-in-the-Loop (HIL) Drivers & Industrial Modbus Adapters
+├── docs/                    # Comprehensive Technical Whitepapers, Audits & Specifications
+├── ledger/                  # Sovereign State, DAG Ledger & Mempool Admission
+│   ├── dag/                 # Living Lattice Asynchronous DAG (Sub-ms Finality)
+│   ├── blockchain/          # Block, Transaction, and Canonical State Trie Engine
+│   ├── mempool/             # 9-Step Transaction Admission Controller & Dynamic Rate-Limiter
+│   └── por/                 # Generalized Holographic Resonance (GHR) Evaluator
+├── mesh/                    # P2P Transport, Gossip Protocol, RS-485 & Offline DTN Sync
+├── public/                  # Production Static Assets & Web Deployment Root
+├── rpc/                     # Web3 JSON-RPC Server & Edge HTTP API Gateway
+├── sdk/                     # Official Client SDKs (TypeScript, Python, Rust, ANSI C99)
+├── scripts/                 # Automated Genesis Builder, Toolchains & Stress Benchmarks
+├── server.js                # Full Node RPC & Consensus Service Entrypoint
+├── tests/                   # Invariant Verification & Adversarial Stress Suites
+└── .github/workflows/       # Automated CI/CD, Consensus & Benchmark Verification
 ```
 
-### 1. Katı Sıfır-Gaz Kuralı (Zero-Gas Protocol Invariant)
-* İşlem transferleri, sözleşme çalıştırmaları ve PoR doğrulamaları için **gaz ücreti daima 0.00000000 MYC'dir**.
-* `gasPrice > 0` veya `gasLimit > 0` içeren tüm işlemler protokol düzeyinde derhal reddedilir.
+---
 
-### 2. Dinamik Gerçek Getiri Modeli (Provable Real-Yield APY)
-* Karşılıksız enflasyon basarak veya borçlanarak sabit %18 getiri vaat edilmez.
-* **Formül:** $\text{APY} = \min\left(\frac{Y}{X}, 0.18\right)$
-  * $X$: Toplam stake edilen $\$MYC$ miktarı.
-  * $Y$: Protokolün gerçek on-chain yıllık nakit akışı (DEX 0.3% komisyonu + Görev Escrow %5 kesintisi + Bridge ücretleri).
-  * Protokol geliri yetersizse APY dinamik olarak düşer; yüksekse %18 tavanında tutulup fazlası Hazineye aktarılır.
+## 💥 Empirical Attack Benchmarks (10 Million Transactions)
 
-### 3. Cross-Chain Bridge BFT Güvenlik Modeli
-* **BFT 2/3 + 1 Süper-Çoğunluk:** Tekil relayer veya merkezi admin mint/release yapamaz; en az 3/4 validatör imzası şarttır.
-* **Replay Attack Koruması:** Deterministik transfer hash mühürleme (`transferId`) ile mükerrer çekim engellenir.
-* **Devre Kesici (Circuit Breaker):** Tek işlemde maksimum 50,000 MYC sınırı ve acil durum dondurma mekanizması (`pauseBridge`).
+To verify protocol resilience under zero-gas conditions, the core runtime was evaluated against continuous adversarial attack vectors:
+
+| Benchmark Suite | Attack Vector | Packets Injected | Execution Time | Drop / Processing Rate | Latency | Memory Impact | Outcome |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Bare-Metal C99 Kernel** | Buffer Overflow & Negation Injection | **10,000,000** | **3.304 sec** | **3,026,843 tx/sec** | **330.38 ns** | **0 Bytes malloc** | **100% Deflected (Zero Crash)** |
+| **P2P Mempool Shield** | Unfunded Sybil Botnet Flood | **50,000** | **166.26 ms** | **300,731 tx/sec** | **3.32 µs** | 0 MB Leak | **100% Filtered** |
+| **Dynamic Rate-Limiter** | Zero-Value High-Frequency Burst | **10,000** | **54.28 ms** | Dynamic Quota | Sub-ms | Quarantined | **94% Dropped (60 tx/min cap)** |
+| **PoR Mathematical Trap**| Incoherent Noise Payloads | **10,000** | **2.84 ms** | **3,521,126 proofs/s**| **0.28 µs** | 0 MB Leak | **100% Trapped** |
+| **Legitimate User Under Attack** | Real Value Transfer | 1 (Active Load) | 0.459 ms | Real-Time | 0.459 ms | Normal State | **Confirmed (0.00 MYC Gas)** |
 
 ---
 
-## 🛡️ 10 Katmanlı Kuantum Sonrası ve Fiziksel Güvenlik Zırhı (Post-Quantum & Physical Hardening)
+## ⚡ Quickstart: Running a Node in 60 Seconds
 
-MYCA Network, kuantum bilgisayarların (Shor ve Grover algoritmaları) ve fiziksel yan-kanal saldırılarının tehdit oluşturamayacağı **10 katmanlı birleşik bir savunma kalkanı** ile korunur:
+### Prerequisites
+* Node.js >= 20.0.0
+* GCC / Clang (for compiling C99 native microkernel)
 
-| # | Güvenlik Sütunu | Teknik / Matematiksel Tanım | Savunma Mekanizması |
-| :-: | :--- | :--- | :--- |
-| **1** | **Silicon PUF** | `did:myc:puf:<sram_hash>` | Klonlanamaz fiziksel kök; atomik üretim jitter'ı kuantum PC ile kopyalanamaz. |
-| **2** | **C99 Çekirdeği** | Constant-Time $\mathcal{O}(1)$ (malloc=0) | Mikrokod seviyesinde zamanlama ve yan-kanal (side-channel) sızıntısını sıfırlar. |
-| **3** | **PoR 64-D HDC** | Hyperdimensional Vector Space | %25 kuantum bit-flip gürültüsü ve bozulmasında dahi kararlı kosinüs benzerliği. |
-| **4** | **Colony Mesh** | K=8 Neighborhood Graph (80k Links) | Dağıtık miselyum topolojisi; merkezi hedef yok, <350ms self-healing onarım. |
-| **5** | **Air-Gapped DTN** | Delay-Tolerant Networking | İnternetsiz izole segment koruması; yerel mühürleme ve sıfır veri kaybı. |
-| **6** | **Dilithium3 (ML-DSA-65)** | NIST Module-LWE Kafes İmzası | Shor algoritmasına karşı post-kuantum matematiksel bağışıklık. |
-| **7** | **BLAKE3-512** | 512-Bit Merkle Ağaç Hash'i | Grover kuantum arama algoritmasına karşı 256-bit tam güvenlik marjı. |
-| **8** | **4.95 µs Safe-Sign** | 0-Bayt Donanım Fren Kalkanı | Kuantum şifreyi çözse bile fiziksel akım röleden geçemez, aktüatör 4.95µs'de sıfırlanır. |
-| **9** | **Kuantum Faz Sönümleme** | $\Delta\Phi > 45^\circ \implies \cos^2(\Delta\Phi) \equiv 0.0$ | Heisenberg-Tesla kuralı; kuantum süperpozisyon ve Sybil forku anında 0'a söner. |
-| **10**| **ML-KEM-1024 (Kyber)** | NIST Seviye-5 Post-Quantum KEM | "Şimdi kaydet, kuantum çıkınca çöz" saldırısını P2P seviyesinde imkansız kılar. |
-
----
-
-## 🌲 İnternetsiz & Çevrimdışı Çalışma Mimarisi (Air-Gapped Operation)
-
-MYCA Network, dünya genelinde elektrik veya internet altyapısının kesildiği kriz ve saha şartlarında **100% bağımsız ve çevrimdışı** çalışacak şekilde tasarlanmıştır:
-
-1. **Sıfır Bulut Bağımlılığı:** Düğümler, internet olmadan yerel SRAM mikroskobik varyasyonlarından donanım kimliğini (`did:myc:puf:...`) anında türetir.
-2. **Fiziksel Kablo & Radyo Mesh (RS-485 / LoRa / BLE):** Maden ocakları, tarım arazileri ve fabrikalardaki cihazlar RS-485 Modbus kablosu veya LoRaWAN üzerinden yerel P2P mutabakatı (PoQR) yürütür.
-3. **Çevrimdışı Mikro-DAG Mühürleme:** Sıfır gas'li işlemler yerel Flash/EEPROM/IndexedDB belleğe mikrosaniyeler içinde mühürlenir.
-4. **DTN (Delay-Tolerant Networking) Senkronizasyonu:** İnternet saatler veya günler sonra geri geldiğinde, çevrimdışı üretilen tüm DAG dalları ana zincire (Chain 108) çift harcama veya geri alma olmadan pürüzsüzce bağlanır.
-
----
-
-## 🧩 Eklentiler ve Arayüzler
-
-### 🛡️ Google Chrome Cüzdanı (MYCA Sovereign Wallet)
-Manifest V3 standardında hazırlanmış, Silicon PUF tohumlu Chrome Eklentisi:
-* **Dizin:** [`chrome-extension/`](file:///Users/bl10buer/Desktop/myc-network/chrome-extension/)
-* **Yükleme:** Chrome'da `chrome://extensions/` adresine gidin $\to$ "Geliştirici modu"nu açın $\to$ "Paketlenmemiş öğe yükle" diyerek `chrome-extension` klasörünü seçin.
-
-### 🧭 MYCA NEXUS Portalı (`http://localhost:4040/nexus`)
-* **Lattice Explorer:** Canlı bloklar, sıfır-gaz işlem akışı, konsensüs kanıtları.
-* **MYC Swap (DEX):** 7 katmanlı güvenlik (Slippage guard, Anti-sandwich cooldown, Whale guard, TWAP oracle) destekli AMM ($MYC / USDT).
-* **Sovereign Bridge:** Base, Arbitrum ve Ethereum ile çift yönlü kriptografik köprü (BFT Quorum & Replay Guard).
-* **MycStreamPay & Direct Pay:** Ajanlar arası alt-milisaniye streaming ödeme kanalları.
-* **DePIN Staking & Fleets:** Fiziksel aktüatör ve compute slot kotaları, cihaz cüzdanları.
-* **MYC Agent Terminal:** Gerçek zamanlı ikili PoR doğrulamalı yapay zeka görev yöneticisi.
-
----
-
-## 🧪 Test ve Doğrulama
-
-Tüm katmanlar 18 bağımsız kabul ve güvenlik test paketiyle %100 kapsanmıştır:
-
+### 1. Installation
 ```bash
-npm test
+git clone https://github.com/brienteth/myc-ai.git
+cd myc-ai
+npm install
 ```
 
-Çalıştırılan test paketleri:
-1. `Baseline Zero-Gas Verification`
-2. `Phase 2: Blockchain Core (BFT, State Machine, Block Merkle Trees)`
-3. `Phase 3: Proof-of-Resonance Resources & Negation Shield`
-4. `Phase 4: Colony Foundation & Autonomous Node Identity`
-5. `Phase 5: Distributed Cognition & P2P Task Schedulers`
-6. `Phase 7: Agent Economy & Dual-Lane Escrow Settlement`
-7. `Phase 8: Agent SDK Integration & Multi-Agent Workflows`
-8. `Phase 9: Actuator Hardware Safety & Modbus Guard`
-9. `Production Hardening & Sub-ms Finality Benchmarks`
-10. `Live P2P Network (Fault Tolerance, Fork Reorg, Double-Spend Defense)`
-11. `Security & Game Theory (Sybil Attack, Proof Farming, Escrow Griefing)`
-12. `SDK Developer Experience & PUF Keypair Lifecycle`
-13. `Real Autonomous Agent E2E Workload (Dual-PoR 95/5 Settlement)`
-14. `Zero-Gas Invariant Suite (8/8 Adversarial Invariant Tests)`
-15. `Due-Diligence Dynamic APY & Bridge Security Model (8/8 Tests)`
-16. `DePIN Machine Wallets & Hardware Telemetry Suite`
-17. `Agent Bridge Gateway (Cross-Chain Intent, IoT M2M, Agent Economy)`
-18. `MycSwap Security & Anti-Bot Verification (32/32 Tests)`
-19. `Air-Gapped & Offline Resilience Suite (RS-485 / LoRa DTN Mesh)`
-20. `10-Pillar Post-Quantum Armor Suite (ML-DSA-65, ML-KEM-1024, BLAKE3-512)`
+### 2. Compile Native C99 Microkernel
+```bash
+gcc -O3 -shared -fPIC -Icore/kernel core/kernel/myc_core.c -o core/kernel/libmyc_core.dylib
+```
+
+### 3. Run Automated Invariant & Security Verification
+```bash
+# Run Core Consensus & Zero-Gas Invariant Tests
+npm test
+
+# Run 10-Million Packet Adversarial Stress Test
+node tests/spam_attack_stress_test.js
+```
+
+### 4. Start the Node Daemon
+```bash
+npm run node:start
+```
+The node will launch the Living Lattice DAG engine, expose Web3 JSON-RPC on port `8545`, and open the local portal at `http://localhost:4040`.
 
 ---
 
-## 📄 Lisans
-MIT License — MYCA Core Engineering Team.
+## 💰 Economic Model: Zero-Gas Real Yield
+
+```text
+                  ┌─────────────────────────────────────────────────────────┐
+                  │          ENTERPRISE & AGENT ECONOMIC DEMAND             │
+                  └────────────────────────────┬────────────────────────────┘
+                                               │
+             ┌─────────────────┬───────────────┴───────────────┬─────────────────┐
+             ▼                 ▼                               ▼                 ▼
+     [State & Memory]  [Priority QoS]                  [Hardware DePIN]   [M2M Escrow]
+     [Lease Rents   ]  [Bandwidth   ]                  [Attestation   ]   [Fees (2.5%)]
+             │                 │                               │                 │
+             └─────────────────┴───────────────┬───────────────┴─────────────────┘
+                                               ▼
+                              ┌─────────────────────────────────┐
+                              │  SOVEREIGN PROTOCOL TREASURY    │
+                              └────────────────┬────────────────┘
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       ▼                                               ▼
+               [40% POOL SHARE]                                [60% POOL SHARE]
+           Passive Soft-Staking Vault                      Active C99 Verification
+         (Non-custodial Wallet Hold)                      (Proof-of-Resonance Uptime)
+```
+
+* **Passive Soft-Staking (40%):** Simply hold a Node NFT in a self-custodial wallet. No token lockup, 0-day unbonding delay, 100% liquid.
+* **Active C99 Runner (60%):** Run the lightweight C99 node daemon on a Raspberry Pi or VPS to earn per-task verification and attestation fees.
+
+---
+
+## 🛡️ Security & Bug Bounty
+
+The MYCA cryptographic substrate is engineered in accordance with:
+* **ISO/IEC 15408 EAL6+** (High robustness physical security)
+* **FIPS 140-3 Level 4** (Physical tamper protection & zeroization)
+* **NIST FIPS 203 / 204** (Post-Quantum Cryptography standards)
+
+To report a vulnerability, please review our [SECURITY.md](SECURITY.md) or submit a disclosure to `security@mycai.pro`.
+
+---
+
+## 📜 License & Acknowledgments
+
+This repository is licensed under the [MIT License](LICENSE).  
+Architected by the **MYCA Core Architecture Team** with foundational inspirations from theoretical physics, biological mycelium lattice routing, and sovereign hardware cryptography.

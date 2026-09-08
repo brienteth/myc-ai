@@ -1,61 +1,58 @@
-# Python
-.venv/
-venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-.mypy_cache/
-
-# Node / JS
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Environment and Local Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel & Cloud
+.vercel
+.vercel.bak
+
+# Build Artifacts & Binaries
 dist/
 build/
-.eslintcache
+*.dylib
+*.so
+*.dll
+*.bin
+*.out
+*.exe
+core/kernel/c99_stress_bin
+core/kernel/test_ram_bin
+core/kernel/bench_real
 
-# OS/System
+# Temporary & Scratch
+scratch/
+tmp/
+temp/
 .DS_Store
 Thumbs.db
+.pytest_cache/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# App specific
-downloads/
-local_models/
-*.gguf
-*.spec
-.myca/
-ai-layer/data/
-db.sqlite
+# Database local storage
+data/*.db
+data/*.sqlite
 
-# Release & builds
-desktop/release/
-desktop/out/
-runtime/target/
+target/
 rust-core/target/
-
-.vercel
-desktop/release_final/
-ai-layer/.env
-.env*
-docs/.env
-myca-intelligence/
-desktop/resonance_core/
-scratch/
-*.wasm
-
-
-# Temporary & Data Uploads
-data/uploads/
+ai-layer/data/
+*.mov
+*.mp4
 *.pdf
-*.jpg
-*.png
-!hero.png
-!icon.png
-!logo.png
-__grok/
-.continue/
-.cursor/
-*.db
-*.sqlite
 
-data/library.db
+# Release Binaries
+desktop/release/
+desktop/release_final/
+*.dmg
+*.zip
+*.blockmap
