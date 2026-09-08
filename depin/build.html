@@ -628,7 +628,7 @@
           <div class="step-number">2</div>
           <h2 class="section-title">Daily Testnet Faucet (5 $MYC Grant)</h2>
         </div>
-        <span style="font-size: 13px; color: var(--f-moss); font-weight: 700;">● Günde 1 Kez • 24h Cooldown • Sıfır Gas</span>
+        <span style="font-size: 13px; color: var(--f-moss); font-weight: 700;">● Once Daily • 24h Cooldown • Zero Gas</span>
       </div>
 
       <div class="faucet-box" style="flex-direction: column; align-items: stretch; gap: 16px;">
@@ -650,33 +650,33 @@
         <!-- Faucet Step 1: Twitter Follow Requirement -->
         <div style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center; background: var(--f-parchment); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--f-bark);">
           <div style="font-size: 13px; font-weight: 700; color: var(--f-humus); display: flex; align-items: center; gap: 6px;">
-            <span>🐦</span> 1. @myc_ai Hesabını Takip Edin:
+            <span>🐦</span> 1. Follow @myc_ai on X:
           </div>
           <a href="https://x.com/intent/follow?screen_name=myc_ai" target="_blank" rel="noopener noreferrer" style="background: #1DA1F2; color: #fff; text-decoration: none; padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
             Follow @myc_ai on X ↗
           </a>
-          <input type="text" id="build-faucet-twitter" placeholder="Twitter Kullanıcı Adınız (@...)" style="flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid var(--f-bark); border-radius: 8px; font-family: var(--f-mono); font-size: 12px; background: var(--f-cream); color: var(--f-humus);">
+          <input type="text" id="build-faucet-twitter" placeholder="Your Twitter / X Handle (@...)" style="flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid var(--f-bark); border-radius: 8px; font-family: var(--f-mono); font-size: 12px; background: var(--f-cream); color: var(--f-humus);">
           <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--f-humus); cursor: pointer;">
             <input type="checkbox" id="build-faucet-check" checked style="accent-color: var(--f-moss);">
-            Takip ediyorum
+            I am following
           </label>
         </div>
 
         <!-- Faucet Step 2: Custom Recipient Address -->
         <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
           <div style="flex: 1; min-width: 260px;">
-            <label style="display: block; font-size: 11.5px; font-weight: 700; color: var(--f-soil); margin-bottom: 4px;">Hedef Cüzdan Adresi (İstenilen adrese gönder):</label>
+            <label style="display: block; font-size: 11.5px; font-weight: 700; color: var(--f-soil); margin-bottom: 4px;">Recipient Wallet Address (Send to any wallet):</label>
             <input type="text" id="build-faucet-recipient" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" placeholder="myc1..." style="width: 100%; box-sizing: border-box; padding: 9px 12px; border: 1px solid var(--f-bark); border-radius: 8px; font-family: var(--f-mono); font-size: 12px; background: var(--f-parchment); color: var(--f-humus);">
           </div>
           <button class="faucet-action-btn" id="btn-faucet-action" onclick="sendBuildFaucet()" style="align-self: flex-end; height: 38px; display: flex; align-items: center; gap: 6px;">
-            🚀 5 $MYC Gönder (Send)
+            🚀 Request 5 $MYC Grant
           </button>
         </div>
       </div>
 
       <div class="faucet-banner" id="faucet-success-banner" style="display: none;">
         <span>🎉</span>
-        <span id="faucet-banner-text">5 $MYC testnet hibesi cüzdana aktarıldı! (Sıfır Gas • Chain 108).</span>
+        <span id="faucet-banner-text">5 $MYC testnet grant dispatched to wallet! (Zero Gas • Chain 108).</span>
       </div>
 
       <div id="build-faucet-error" style="display: none; margin-top: 10px; padding: 10px 16px; border-radius: 10px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #DC2626; font-size: 12.5px;"></div>
@@ -916,21 +916,21 @@
       if (banner) banner.style.display = 'none';
 
       if (!recipient) {
-        if (errEl) { errEl.innerText = 'Lütfen geçerli bir hedef cüzdan adresi girin.'; errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = 'Please enter a valid recipient wallet address.'; errEl.style.display = 'block'; }
         return;
       }
       if (!twitter) {
-        if (errEl) { errEl.innerText = 'Lütfen Twitter / X kullanıcı adınızı girin (Örn: @kullaniciadi).'; errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = 'Please enter your Twitter / X handle (e.g. @username).'; errEl.style.display = 'block'; }
         return;
       }
       if (!check) {
-        if (errEl) { errEl.innerText = 'Lütfen @myc_ai hesabını takip ettiğinizi onaylayın.'; errEl.style.display = 'block'; }
+        if (errEl) { errEl.innerText = 'Please confirm that you follow @myc_ai.'; errEl.style.display = 'block'; }
         return;
       }
 
       if (btn) {
         btn.disabled = true;
-        btn.innerText = '⏳ 5 $MYC Gönderiliyor...';
+        btn.innerText = '⏳ Dispatched: Sending 5 $MYC...';
       }
 
       fetch(API_BASE + '/api/faucet', {
@@ -949,33 +949,33 @@
           if (banner) {
             var bannerText = document.getElementById('faucet-banner-text');
             if (bannerText) {
-              bannerText.innerHTML = '5 $MYC başarıyla <code>' + data.claim.recipient + '</code> adresine aktarıldı! (Tx: ' + data.claim.txHash.slice(0, 14) + '... • Sıfır Gas)';
+              bannerText.innerHTML = '5 $MYC successfully dispatched to <code>' + data.claim.recipient + '</code> wallet! (Tx: ' + data.claim.txHash.slice(0, 14) + '... • Zero Gas)';
             }
             banner.style.display = 'flex';
           }
           if (btn) {
             btn.disabled = true;
-            btn.innerText = '✅ 5 $MYC Gönderildi';
+            btn.innerText = '✅ 5 $MYC Dispatched';
           }
         } else {
           if (errEl) {
-            errEl.innerText = '❌ ' + (data.error || 'Faucet talebi başarısız');
+            errEl.innerText = '❌ ' + (data.error || 'Faucet request failed');
             errEl.style.display = 'block';
           }
           if (btn) {
             btn.disabled = false;
-            btn.innerText = '🚀 5 $MYC Gönder (Send)';
+            btn.innerText = '🚀 Request 5 $MYC Grant';
           }
         }
       })
       .catch(function(e) {
         if (errEl) {
-          errEl.innerText = '❌ Bağlantı hatası: ' + e.message;
+          errEl.innerText = '❌ Network connection error: ' + e.message;
           errEl.style.display = 'block';
         }
         if (btn) {
           btn.disabled = false;
-          btn.innerText = '🚀 5 $MYC Gönder (Send)';
+          btn.innerText = '🚀 Request 5 $MYC Grant';
         }
       });
     }

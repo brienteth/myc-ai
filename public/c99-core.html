@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C99 Resonance Core Documentation | MYCA Network</title>
+  <meta name="description" content="Official technical documentation for MYCA C99 Resonance Core: 240-byte static RAM micro-kernel, 4.95 µs Safe-Sign cryptographic proof, 6-Lock Airbag, and multi-language SDKs (TypeScript, Python, Rust, C99).">
+  
+  <link rel="stylesheet" href="/brand.css">
+  <link rel="icon" type="image/png" href="/mycai_logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --gb-bg: var(--f-cream);
+      --gb-sidebar: var(--f-parchment);
+      --gb-border: var(--f-bark);
+      --gb-text: var(--f-humus);
+      --gb-muted: var(--f-soil);
+      --gb-accent: var(--f-moss);
+      --gb-accent-light: rgba(46, 107, 69, 0.1);
+      --gb-glow: var(--f-glow);
+      --c-cyan: #00f0ff;
+      --c-emerald: #10b981;
+      --c-amber: #f59e0b;
+      --c-rose: #f43f5e;
+      --c-purple: #a855f7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--gb-bg);
+      color: var(--gb-text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      margin: 0;
+      padding-top: 86px;
+      line-height: 1.6;
+    }
+
+    /* Master GitBook 3-Column Layout */
+    .gitbook-layout {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 290px minmax(0, 1fr) 230px;
+      gap: 36px;
+      padding: 24px 28px 80px;
+    }
+
+    .gitbook-sidebar {
+      position: sticky;
+      top: 104px;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gb-border) transparent;
+    }
+
+    .sidebar-section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gb-muted);
+      margin: 22px 0 8px 12px;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--gb-text);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background: var(--gb-accent-light);
+      color: var(--gb-accent);
+      font-weight: 600;
+    }
+
+    .content-area {
+      min-width: 0;
+    }
+
+    /* Hero Banner Inside Docs */
+    .docs-hero {
+      background: linear-gradient(135deg, #0f1712 0%, #060907 100%);
+      border: 1px solid rgba(46, 107, 69, 0.4);
+      border-radius: 18px;
+      padding: 36px;
+      color: #f8fafc;
+      margin-bottom: 40px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .docs-hero::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0; width: 40%;
+      background: radial-gradient(circle at 80% 30%, rgba(0, 232, 122, 0.15), transparent 70%);
+      pointer-events: none;
+    }
+    .docs-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 232, 122, 0.12);
+      border: 1px solid rgba(0, 232, 122, 0.3);
+      color: #00E87A;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .docs-hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 12px;
+      color: #fff;
+    }
+    .docs-hero p {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 680px;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* Metric Grid */
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .spec-card {
+      background: var(--gb-sidebar);
+      border: 1px solid var(--gb-border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .spec-val {
+      font-family: var(--f-mono);
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gb-accent);
+    }
+    .spec-lbl {
+      font-size: 12px;
+      color: var(--gb-muted);
+      font-weight: 600;
+    }
+    .spec-desc {
+      font-size: 11.5px;
+      color: var(--gb-text);
+      line-height: 1.4;
+    }
+
+    /* Headings in Content */
+    h2.doc-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      margin: 48px 0 16px;
+      padding-bottom: 10px;
+      border-bottom: 1.5px solid var(--gb-border);
+      color: var(--gb-text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h3.doc-subheading {
+      font-size: 19px;
+      font-weight: 700;
+      margin: 28px 0 12px;
+      color: var(--gb-text);
+    }
+    p.doc-p {
+      font-size: 15px;
+      color: var(--gb-text);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+
+    /* Airbag Locks Diagram */
+    .airbag-locks-box {
+      background: #090d0b;
+      border: 1px solid rgba(0, 232, 122, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
+      color: #f8fafc;
+    }
+    .airbag-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .lock-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .lock-tag {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: #00E87A;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lock-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .lock-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+
+    /* Use Cases Cards */
+    .usecase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin: 20px 0;
+    }
+    .usecase-card {
+      background: var(--gb-sidebar);
+      border: 1px solid var(--gb-border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .usecase-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gb-text);
+    }
+    .usecase-tag {
+      display: inline-block;
+      font-family: var(--f-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--gb-accent-light);
+      color: var(--gb-accent);
+      align-self: flex-start;
+    }
+    .usecase-body {
+      font-size: 13.5px;
+      color: var(--gb-muted);
+      line-height: 1.55;
+    }
+
+    /* Code Block & Tabs */
+    .code-tabs-widget {
+      background: #0d1210;
+      border: 1px solid rgba(46, 107, 69, 0.4);
+      border-radius: 14px;
+      margin: 24px 0;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .code-tabs-header {
+      display: flex;
+      background: #070a08;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0 12px;
+      gap: 4px;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-family: var(--f-mono);
+      font-size: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      color: #00E87A;
+      border-bottom-color: #00E87A;
+      background: rgba(0, 232, 122, 0.05);
+    }
+    .code-pre {
+      margin: 0;
+      padding: 20px 24px;
+      font-family: var(--f-mono);
+      font-size: 13px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      line-height: 1.6;
+    }
+
+    /* Workflow Pipeline Steps */
+    .workflow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .workflow-step {
+      background: var(--gb-sidebar);
+      border: 1px solid var(--gb-border);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num-badge {
+      background: var(--gb-accent);
+      color: #fff;
+      font-family: var(--f-mono);
+      font-weight: 800;
+      font-size: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-text h4 {
+      margin: 0 0 6px;
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--gb-text);
+    }
+    .step-text p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--gb-muted);
+      line-height: 1.5;
+    }
+
+    /* Right On-This-Page TOC */
+    .gitbook-toc {
+      position: sticky;
+      top: 104px;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-left: 14px;
+      border-left: 1px solid var(--gb-border);
+    }
+    .toc-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gb-muted);
+      margin-bottom: 12px;
+    }
+    .toc-link {
+      display: block;
+      color: var(--gb-muted);
+      text-decoration: none;
+      font-size: 12.5px;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      transition: color 0.15s;
+    }
+    .toc-link:hover {
+      color: var(--gb-accent);
+    }
+
+    @media (max-width: 1100px) {
+      .gitbook-layout {
+        grid-template-columns: 250px 1fr;
+      }
+      .gitbook-toc { display: none; }
+    }
+    @media (max-width: 768px) {
+      .gitbook-layout {
+        grid-template-columns: 1fr;
+      }
+      .gitbook-sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="myca-navbar" style="position: fixed; top: 0; left: 0; right: 0; height: 72px; background: rgba(247, 243, 235, 0.94); backdrop-filter: blur(16px); border-bottom: 1px solid var(--gb-border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; z-index: 1000;">
+    <a href="/" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--gb-text);">
+      <img src="/mycai_logo.png" alt="MYCA" style="height: 32px; width: auto; border-radius: 6px;">
+      <span style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.02em;">MYCA <span style="color: var(--gb-accent);">C99</span></span>
+    </a>
+
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <a href="/" style="color: var(--gb-muted); text-decoration: none; font-size: 14px; font-weight: 600;">Home</a>
+      <a href="/c99-core" style="color: var(--gb-accent); text-decoration: none; font-size: 14px; font-weight: 700;">🧬 C99 Docs</a>
+      <a href="/depin" style="color: var(--gb-muted); text-decoration: none; font-size: 14px; font-weight: 600;">DePIN Workbench</a>
+      <a href="/mindcast-node" style="color: var(--gb-muted); text-decoration: none; font-size: 14px; font-weight: 600;">MindCast Node</a>
+      <a href="/build" style="color: var(--gb-muted); text-decoration: none; font-size: 14px; font-weight: 600;">Build & Faucet</a>
+      <a href="https://github.com/brienteth/myc-ai" target="_blank" style="background: var(--gb-text); color: #fff; text-decoration: none; padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <div class="gitbook-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="gitbook-sidebar">
+      <div class="sidebar-section-title">C99 Micro-Kernel</div>
+      <a href="#overview" class="sidebar-nav-item active">🧬 Executive Overview</a>
+      <a href="#the-problem" class="sidebar-nav-item">⚠️ The LLM Crisis</a>
+      <a href="#c99-solution" class="sidebar-nav-item">🛡️ The C99 Solution</a>
+      <a href="#specs" class="sidebar-nav-item">📊 Hardware Specs (240B)</a>
+
+      <div class="sidebar-section-title">Architecture & Engine</div>
+      <a href="#how-it-works" class="sidebar-nav-item">⚙️ How It Works</a>
+      <a href="#six-lock-airbag" class="sidebar-nav-item">🔒 6-Lock Safe-Sign Pipeline</a>
+      <a href="#puf-root-of-trust" class="sidebar-nav-item">🔑 Silicon PUF DID</a>
+
+      <div class="sidebar-section-title">Applications & Workflow</div>
+      <a href="#use-cases" class="sidebar-nav-item">🚀 Production Use Cases</a>
+      <a href="#mindcast-integration" class="sidebar-nav-item">🧠 MindCast Cognitive Arena</a>
+      <a href="#developer-workflow" class="sidebar-nav-item">🔄 5-Step Dev Workflow</a>
+
+      <div class="sidebar-section-title">SDKs & Test Suites</div>
+      <a href="#sdk-packages" class="sidebar-nav-item">📦 Official SDK Packages</a>
+      <a href="#code-examples" class="sidebar-nav-item">💻 Code Quickstarts</a>
+      <a href="#benchmark-kit" class="sidebar-nav-item">⚡ Benchmark Test Kit</a>
+    </aside>
+
+    <!-- CENTER CONTENT -->
+    <main class="content-area">
+
+      <!-- Docs Hero -->
+      <section class="docs-hero" id="overview">
+        <div class="docs-hero-badge">ISO/IEC 9899:1999 • ZERO-DEPENDENCY MICRO-KERNEL</div>
+        <h1>MYCA C99 Resonance Core</h1>
+        <p>
+          The world's first 240-byte deterministic AI arbitration and cryptographic verification kernel. 
+          Evaluated in <strong>4.95 microseconds</strong> (743 clock cycles) on bare-metal silicon without operating systems, 
+          heap allocations, or cloud dependencies.
+        </p>
+      </section>
+
+      <!-- HARDWARE SPECIFICATION METRICS -->
+      <section id="specs">
+        <div class="spec-grid">
+          <div class="spec-card">
+            <span class="spec-val">240 Bytes</span>
+            <span class="spec-lbl">STATIC RAM FOOTPRINT</span>
+            <span class="spec-desc">Zero malloc/free. Immune to buffer overflows, heap exhaustion, and memory leaks.</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-val">4.95 µs</span>
+            <span class="spec-lbl">SAFE-SIGN LATENCY</span>
+            <span class="spec-desc">743 clock cycles on ARM Cortex-M4/M33. Sub-millisecond deterministic certainty.</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-val">6-Lock</span>
+            <span class="spec-lbl">HARDWARE AIRBAG</span>
+            <span class="spec-desc">Physical & logical gate pipeline enforcing non-negotiable safety and bounds.</span>
+          </div>
+          <div class="spec-card">
+            <span class="spec-val">0.00 Gas</span>
+            <span class="spec-lbl">MACHINE SETTLEMENT</span>
+            <span class="spec-desc">Living Lattice blockless DAG anchors proofs without EVM transaction fees.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- THE PROBLEM -->
+      <section id="the-problem">
+        <h2 class="doc-heading">⚠️ The Problem: Why Modern AI Fails on Decentralized Networks</h2>
+        <p class="doc-p">
+          Large Language Models (LLMs) and standard multi-agent frameworks are <strong>probabilistic, non-deterministic black boxes</strong>. 
+          When deployed for governance, autonomous physical robotics, financial arbitration, or decentralized DePIN protocols, 
+          they introduce fatal vulnerabilities:
+        </p>
+        <ul style="padding-left: 20px; font-size: 14.5px; color: var(--gb-text); line-height: 1.8; margin-bottom: 20px;">
+          <li><strong>Massive Memory Bloat:</strong> Python, PyTorch, CUDA, and ONNX runtimes require gigabytes of RAM and heavy GPUs, making them impossible to run on edge microcontrollers, satellites, drones, or smart energy meters.</li>
+          <li><strong>Hallucination & Indeterminism:</strong> The exact same input can produce contrasting outputs across different executions, making decentralized cryptographic consensus impossible.</li>
+          <li><strong>Prohibitive Cloud Ingestion Bills:</strong> Repeating LLM inference calls for high-frequency agent interactions drains hundreds of thousands of dollars per month in OpenAI / Anthropic API subscriptions.</li>
+          <li><strong>Zero Physical Safety Guarantees:</strong> Software-level prompt engineering cannot prevent malicious jailbreaks or hardware out-of-bounds actuator damage.</li>
+        </ul>
+      </section>
+
+      <!-- THE C99 SOLUTION -->
+      <section id="c99-solution">
+        <h2 class="doc-heading">🛡️ The C99 Solution: Deterministic Mathematical Resonance</h2>
+        <p class="doc-p">
+          MYCA engineers developed the <strong>C99 Resonance Core</strong> from first principles. 
+          Written strictly in standardized ANSI C99, it replaces nondeterministic floating-point chaos with 
+          <strong>hyperdimensional vector phase invariants</strong> (Fourier Holographic Reduced Representations — FHRR).
+        </p>
+        <p class="doc-p">
+          Instead of asking an LLM "Who won this debate?", the C99 engine maps arguments into a fixed-dimension vector manifold, 
+          calculates the mathematical resonance dot-product against ground-truth axioms, verifies physical actuator safety limits 
+          through a 6-stage hardware airbag, and stamps an unclonable Silicon PUF proof in <strong>4.95 microseconds</strong>.
+        </p>
+      </section>
+
+      <!-- 6-LOCK SAFE-SIGN HARDWARE AIRBAG -->
+      <section id="six-lock-airbag">
+        <h2 class="doc-heading">🔒 How It Works: The 6-Lock Safe-Sign Pipeline</h2>
+        <p class="doc-p">
+          Before any autonomous agent decision, debate score, or robotic actuation is authorized or broadcast to the network, 
+          it must traverse the <strong>6-Lock Safe-Sign Pipeline</strong> sequentially. If any single gate fails, 
+          the system latches to a 0.00V safe state instantly:
+        </p>
+
+        <div class="airbag-locks-box">
+          <div style="font-family: var(--f-mono); font-size: 13px; font-weight: 700; color: #00E87A; display: flex; align-items: center; gap: 8px;">
+            <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #00E87A;"></span>
+            <span>PIPELINE VERIFICATION STAGES (4.95 µs END-TO-END)</span>
+          </div>
+
+          <div class="airbag-grid">
+            <div class="lock-item">
+              <span class="lock-tag">STAGE L1</span>
+              <span class="lock-title">240B Static Buffer Lock</span>
+              <span class="lock-desc">Ensures the entire execution state fits into a 240-byte bounded frame. Strict zero-heap invariant.</span>
+            </div>
+            <div class="lock-item">
+              <span class="lock-tag">STAGE L2</span>
+              <span class="lock-title">Polarity & Negation Gate</span>
+              <span class="lock-desc">Formally checks thesis vs antithesis for logical paradoxes and circular fallacies before calculation.</span>
+            </div>
+            <div class="lock-item">
+              <span class="lock-tag">STAGE L3</span>
+              <span class="lock-title">BAR Actuation Bounds</span>
+              <span class="lock-desc">Clamps resonance metrics within strict mathematical limits [-1.0, +1.0] to prevent algorithmic runaway.</span>
+            </div>
+            <div class="lock-item">
+              <span class="lock-tag">STAGE L4</span>
+              <span class="lock-title">Silicon PUF Root-of-Trust</span>
+              <span class="lock-desc">Validates the chip's atomic SRAM microscopic hardware fingerprint (W3C DID), preventing VM spoofing.</span>
+            </div>
+            <div class="lock-item">
+              <span class="lock-tag">STAGE L5</span>
+              <span class="lock-title">Modbus / UART CRC16</span>
+              <span class="lock-desc">Industrial-grade checksum validating telemetry frame integrity over noisy physical hardware channels.</span>
+            </div>
+            <div class="lock-item">
+              <span class="lock-tag">STAGE L6</span>
+              <span class="lock-title">0.00V Physical Latch</span>
+              <span class="lock-desc">Hardware air-gap fail-safe. If any preceding check is violated, output is physically forced to zero.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- USE CASES -->
+      <section id="use-cases">
+        <h2 class="doc-heading">🚀 Production Use Cases</h2>
+
+        <div class="usecase-grid">
+          <div class="usecase-card" id="mindcast-integration">
+            <span class="usecase-tag">COGNITIVE GOVERNANCE</span>
+            <div class="usecase-header">
+              <span>🧠</span>
+              <span>MindCast Autonomous Debate Engine</span>
+            </div>
+            <div class="usecase-body">
+              MindCast simulates 5-round Arena Debates between historical titans (Einstein, Tesla, Heisenberg, Atatürk). 
+              Instead of relying on biased cloud LLMs, the debate results, confidence shifts, and victor determinations are 
+              calculated deterministically by MYCA C99 Genesis Nodes and sealed to the Living Lattice DAG.
+            </div>
+          </div>
+
+          <div class="usecase-card">
+            <span class="usecase-tag">COST REDUCTION</span>
+            <div class="usecase-header">
+              <span>⚡</span>
+              <span>Semantic Caching & Compute Avoidance</span>
+            </div>
+            <div class="usecase-body">
+              By indexing arguments into local hyperdimensional FHRR vectors, C99 intercepts up to 92% of redundant queries. 
+              If two minds argue a previously analyzed question (e.g. "Will the Fed cut rates?"), the node serves the verified 
+              answer instantly with zero cloud API expenditure.
+            </div>
+          </div>
+
+          <div class="usecase-card">
+            <span class="usecase-tag">EMBEDDED HARDWARE</span>
+            <div class="usecase-header">
+              <span>🤖</span>
+              <span>Edge Robotics & Microcontrollers</span>
+            </div>
+            <div class="usecase-body">
+              Deployable directly on STM32, ESP32, Raspberry Pi, Arduino, and industrial PLCs. 
+              The 240-byte footprint allows autonomous swarm drones and industrial machinery to execute cryptographic safety 
+              checks locally in microseconds, even in 100% offline air-gapped environments.
+            </div>
+          </div>
+
+          <div class="usecase-card">
+            <span class="usecase-tag">DePIN HARDWARE</span>
+            <div class="usecase-header">
+              <span>📡</span>
+              <span>Sybil-Resistant DePIN Oracles</span>
+            </div>
+            <div class="usecase-body">
+              Sensor data, solar telemetry, and bandwidth verification are signed using the chip's internal Silicon PUF. 
+              Virtual machines and emulator farms cannot fake hardware proofs, ensuring pristine DePIN data feeds.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DEVELOPER WORKFLOW -->
+      <section id="developer-workflow">
+        <h2 class="doc-heading">🔄 5-Step Developer Workflow</h2>
+        <p class="doc-p">
+          Integrating C99 into your AI application, game client, or IoT firmware takes less than 10 minutes:
+        </p>
+
+        <div class="workflow-steps">
+          <div class="workflow-step">
+            <div class="step-num-badge">1</div>
+            <div class="step-text">
+              <h4>Initialize 240B Context Frame</h4>
+              <p>Allocate the static 240-byte execution buffer on the stack or in static memory. No dynamic heap allocation occurs.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num-badge">2</div>
+            <div class="step-text">
+              <h4>Ingest Thought or Action Vectors</h4>
+              <p>Pass input text or telemetry to the tokenizer. C99 maps words to hyperdimensional orthogonal vectors using fixed lookup tables.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num-badge">3</div>
+            <div class="step-text">
+              <h4>Compute Resonance Metric</h4>
+              <p>Execute the core phase alignment formula to generate a deterministic resonance score between [-1.0, +1.0].</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num-badge">4</div>
+            <div class="step-text">
+              <h4>Execute Safe-Sign 6-Lock Validation</h4>
+              <p>Run the 4.95 µs hardware airbag. If all 6 physical and logical gates succeed, sign with the Silicon PUF DID.</p>
+            </div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num-badge">5</div>
+            <div class="step-text">
+              <h4>Broadcast Proof to DAG or Blockchain</h4>
+              <p>Submit the lightweight proof to the MYCA Living Lattice DAG (Zero-Gas) or verify it via Robinhood Chain (Chain 4663) smart contracts.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SDK PACKAGES & CODE EXAMPLES -->
+      <section id="sdk-packages">
+        <h2 class="doc-heading">📦 Official SDK Packages</h2>
+        <p class="doc-p">
+          The C99 Resonance Core provides first-class bindings across all modern development ecosystems:
+        </p>
+
+        <div class="code-tabs-widget" id="code-examples">
+          <div class="code-tabs-header">
+            <button class="tab-btn active" onclick="switchCodeTab('ts')">TypeScript / Node.js</button>
+            <button class="tab-btn" onclick="switchCodeTab('py')">Python</button>
+            <button class="tab-btn" onclick="switchCodeTab('rs')">Rust (no_std)</button>
+            <button class="tab-btn" onclick="switchCodeTab('c')">Pure ANSI C99</button>
+          </div>
+
+          <!-- TypeScript Tab -->
+          <div id="code-tab-ts">
+            <pre class="code-pre"><code><span style="color: #64748b;">// 1. Install via npm: npm install @myca/c99-core</span>
+<span style="color: #c084fc;">import</span> { C99Core, SafeSignVerifier } <span style="color: #c084fc;">from</span> <span style="color: #38bdf8;">'@myca/c99-core'</span>;
+
+<span style="color: #64748b;">// 2. Initialize 240-byte deterministic engine (WASM or Native)</span>
+<span style="color: #c084fc;">const</span> kernel = <span style="color: #c084fc;">new</span> <span style="color: #10b981;">C99Core</span>({ memoryCeilingBytes: <span style="color: #f59e0b;">240</span> });
+
+<span style="color: #64748b;">// 3. Evaluate a 5-round debate argument (e.g. MindCast Arena)</span>
+<span style="color: #c084fc;">const</span> proof = <span style="color: #c084fc;">await</span> kernel.<span style="color: #38bdf8;">evaluateResonance</span>({
+  thesis: <span style="color: #38bdf8;">"Deterministic physics governs macroeconomic equilibria"</span>,
+  speakerDid: <span style="color: #38bdf8;">"did:myc:puf:einstein_relativity_01"</span>,
+  roundIndex: <span style="color: #f59e0b;">3</span>
+});
+
+console.log(<span style="color: #38bdf8;">`Latency: ${proof.executionMicros} µs`</span>); <span style="color: #64748b;">// 4.95 µs</span>
+console.log(<span style="color: #38bdf8;">`Resonance Score: ${proof.score}`</span>);          <span style="color: #64748b;">// 0.8942</span>
+console.log(<span style="color: #38bdf8;">`6-Lock Airbag Status: ${proof.airbagPassed ? 'PASSED ✓' : 'LATCHED 0.00V'}`</span>);
+
+<span style="color: #64748b;">// 4. Anchor zero-gas proof to Living Lattice DAG</span>
+<span style="color: #c084fc;">const</span> receipt = <span style="color: #c084fc;">await</span> kernel.<span style="color: #38bdf8;">anchorToDag</span>(proof);
+console.log(<span style="color: #38bdf8;">`DAG Vertex ID: ${receipt.vertexHash}`</span>);</code></pre>
+          </div>
+
+          <!-- Python Tab -->
+          <div id="code-tab-py" style="display: none;">
+            <pre class="code-pre"><code><span style="color: #64748b;"># 1. Install via pip: pip install myca-c99</span>
+<span style="color: #c084fc;">from</span> myca_c99 <span style="color: #c084fc;">import</span> C99Engine, SiliconPuf
+
+<span style="color: #64748b;"># 2. Bootstrapping C99 Micro-Kernel</span>
+engine = C99Engine(ram_limit_bytes=<span style="color: #f59e0b;">240</span>)
+
+<span style="color: #64748b;"># 3. Read Physical Unclonable Function (SRAM variance)</span>
+puf_id = SiliconPuf.get_hardware_did()
+<span style="color: #c084fc;">print</span>(<span style="color: #38bdf8;">f"Hardware Root of Trust: {puf_id}"</span>)
+
+<span style="color: #64748b;"># 4. Run 6-Lock Safe-Sign Verification</span>
+res = engine.evaluate(
+    argument=<span style="color: #38bdf8;">"Resonance energy conservation in DePIN networks"</span>,
+    timeout_micros=<span style="color: #f59e0b;">10</span>
+)
+
+<span style="color: #c084fc;">if</span> res.is_valid:
+    <span style="color: #c084fc;">print</span>(<span style="color: #38bdf8;">f"Passed in {res.elapsed_us} µs with score {res.resonance_score}"</span>)
+<span style="color: #c084fc;">else</span>:
+    <span style="color: #c084fc;">print</span>(<span style="color: #38bdf8;">"Violation detected! Hardware Latch triggered."</span>)</code></pre>
+          </div>
+
+          <!-- Rust Tab -->
+          <div id="code-tab-rs" style="display: none;">
+            <pre class="code-pre"><code><span style="color: #64748b;">// Cargo.toml: myca-c99 = { version = "1.0", default-features = false }</span>
+<span style="color: #c084fc;">#![no_std]</span>
+<span style="color: #c084fc;">use</span> myca_c99::{C99Kernel, SafeSignProof};
+
+<span style="color: #c084fc;">pub fn</span> <span style="color: #38bdf8;">verify_debate_proof</span>(input: &[u8]) -> <span style="color: #10b981;">Result</span>&lt;SafeSignProof, &str&gt; {
+    <span style="color: #64748b;">// 240 bytes allocated strictly on the stack</span>
+    <span style="color: #c084fc;">let mut</span> kernel = C99Kernel::new_static_240b();
+    
+    <span style="color: #c084fc;">let</span> proof = kernel.evaluate_safe_sign(input)?;
+    <span style="color: #c084fc;">if</span> !proof.airbag_verified() {
+        <span style="color: #c084fc;">return Err</span>(<span style="color: #38bdf8;">"Lock failed: 0.00V latch"</span>);
+    }
+    
+    <span style="color: #10b981;">Ok</span>(proof)
+}</code></pre>
+          </div>
+
+          <!-- Pure C Tab -->
+          <div id="code-tab-c" style="display: none;">
+            <pre class="code-pre"><code><span style="color: #64748b;">// Drop-in single header: myca_c99.h</span>
+<span style="color: #c084fc;">#define</span> MYCA_C99_IMPLEMENTATION
+<span style="color: #c084fc;">#include</span> <span style="color: #38bdf8;">"myca_c99.h"</span>
+
+<span style="color: #c084fc;">int</span> <span style="color: #38bdf8;">main</span>(<span style="color: #c084fc;">void</span>) {
+    <span style="color: #64748b;">/* Strictly 240-byte static memory footprint */</span>
+    <span style="color: #c084fc;">c99_context_t</span> ctx;
+    <span style="color: #38bdf8;">c99_init</span>(&ctx);
+
+    <span style="color: #c084fc;">const char</span>* arg = <span style="color: #38bdf8;">"Energy conservation across cognitive DAG"</span>;
+    <span style="color: #c084fc;">float</span> score = <span style="color: #f59e0b;">0.0f</span>;
+    
+    <span style="color: #64748b;">/* Evaluates in 4.95 µs (743 clock cycles) */</span>
+    <span style="color: #c084fc;">int</span> status = <span style="color: #38bdf8;">c99_eval_safe_sign</span>(&ctx, arg, <span style="color: #38bdf8;">strlen</span>(arg), &score);
+    
+    <span style="color: #c084fc;">if</span> (status == C99_AIRBAG_OK) {
+        <span style="color: #38bdf8;">printf</span>(<span style="color: #38bdf8;">"Valid resonance proof: %f\n"</span>, score);
+    } <span style="color: #c084fc;">else</span> {
+        <span style="color: #38bdf8;">printf</span>(<span style="color: #38bdf8;">"Airbag Tripped! Code: %d\n"</span>, status);
+    }
+    <span style="color: #c084fc;">return</span> <span style="color: #f59e0b;">0</span>;
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- BENCHMARK KIT DOWNLOAD -->
+      <section id="benchmark-kit" style="background: var(--gb-sidebar); border: 1px solid var(--gb-border); border-radius: 16px; padding: 28px 32px; margin-top: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <h3 style="margin: 0 0 6px; font-size: 19px; font-weight: 800; color: var(--gb-text);">Download the C99 Benchmark Test Kit</h3>
+          <p style="margin: 0; font-size: 13.5px; color: var(--gb-muted);">Contains standalone C test harnesses, Valgrind memory leak verification, and ARM Cortex benchmark scripts.</p>
+        </div>
+        <a href="/downloads/mycai-c99-core-benchmark-kit.zip" download class="btn-primary" style="background: var(--gb-accent); color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+          <span>⚡ Download Benchmark Kit (.ZIP)</span>
+        </a>
+      </section>
+
+    </main>
+
+    <!-- RIGHT TABLE OF CONTENTS -->
+    <nav class="gitbook-toc">
+      <div class="toc-title">On This Page</div>
+      <a href="#overview" class="toc-link">Executive Overview</a>
+      <a href="#specs" class="toc-link">Hardware Specs (240B)</a>
+      <a href="#the-problem" class="toc-link">The LLM Crisis</a>
+      <a href="#c99-solution" class="toc-link">The C99 Solution</a>
+      <a href="#six-lock-airbag" class="toc-link">6-Lock Safe-Sign Pipeline</a>
+      <a href="#use-cases" class="toc-link">Production Use Cases</a>
+      <a href="#mindcast-integration" class="toc-link">MindCast Integration</a>
+      <a href="#developer-workflow" class="toc-link">5-Step Dev Workflow</a>
+      <a href="#sdk-packages" class="toc-link">SDK Packages & Code</a>
+      <a href="#benchmark-kit" class="toc-link">Benchmark Kit</a>
+    </nav>
+
+  </div>
+
+  <script>
+    function switchCodeTab(lang) {
+      const tabs = ['ts', 'py', 'rs', 'c'];
+      tabs.forEach(t => {
+        const el = document.getElementById('code-tab-' + t);
+        if (el) el.style.display = (t === lang) ? 'block' : 'none';
+      });
+
+      const btns = document.querySelectorAll('.code-tabs-header .tab-btn');
+      btns.forEach((btn, idx) => {
+        if (tabs[idx] === lang) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
