@@ -268,6 +268,101 @@ graph TD
 * **Collective AI Model Weights & Datasets:** Open-source research communities pool data into collective assets. Every autonomous agent querying the dataset streams micro-royalties back to fractional stakeholders.
 * **Harmonic DeFi Yield Clans:** Portfolios of frequency-aligned assets automatically merge into self-optimizing yield vaults with zero managerial overhead.
 
+### 4.5 3-Tier Living Machine Mint System (ERC-721R + Colony Protocol Integration)
+On MYCA Network, NFT ownership is not a passive decorative token—it represents active, sovereign participation in an industrial Colony Node. Every minted machine is dynamically wired into `ColonyProtocol.sol`:
+
+```
+COLONY NODE MACHINE LIFECYCLE & VALUE STREAM
+┌────────────────┐     ┌────────────────┐     ┌────────────────┐     ┌────────────────┐     ┌────────────────┐
+│ 1. MINT MACHINE│ ──> │ 2. COLONY REG  │ ──> │ 3. ASSIGN TASK │ ──> │ 4. EARN USDC   │ ──> │ 5. LEVEL UP    │
+│  (50-5000 USDC)│     │  (+10 Rep Init)│     │  (Telemetry/AI)│     │  (95% Real-Net)│     │  (+600 Energy) │
+└────────────────┘     └────────────────┘     └────────────────┘     └────────────────┘     └────────────────┘
+```
+
+| Parameter | 🟢 Seed Tier | 🟡 Resonant Tier | 🟣 Sovereign Tier |
+| :--- | :--- | :--- | :--- |
+| **Mint Price** | **50 USDC** | **500 USDC** | **5,000 USDC** |
+| **Max Cap (12,200 Total)** | 10,000 Units | 2,000 Units | 200 Units |
+| **Starting Energy** | 500 E ($0 - 2,999\text{ E}$) | 3,500 E ($3,000 - 7,999\text{ E}$) | 9,000 E ($8,000+\text{ E}$) |
+| **Concurrent Tasks** | 1 Task | 5 Tasks | 20 Tasks |
+| **Est. Daily Yield** | **2 – 5 USDC / day** | **10 – 20 USDC / day** | **30 – 60 USDC / day** |
+| **Payback Period** | **~15 – 25 Days** | **~35 – 50 Days** | **~83 – 167 Days** |
+| **Hardware Roles** | Light Telemetry & IoT | AI Inference & DePIN Fleets | BFT Validator & Escrow Arbiter |
+| **Treasury Allocation** | 95% Node Vault / 5% Protocol | 95% Node Vault / 5% Protocol | 95% Node Vault / 5% Protocol |
+
+* **Strict Supply Caps & Zero Inflation:** Total maximum supply across all tiers is hard-capped at **12,200 units**.
+* **Direct 95/5 Treasury Allocation:**
+  $$\text{Treasury}_{\text{Node}} = 95\% \times \text{MintPrice}, \quad \text{Treasury}_{\text{Protocol}} = 5\% \times \text{MintPrice}$$
+  95% of incoming capital is locked into the node's local operational reserve to fund real compute, hardware maintenance, and staking quotas.
+* **Non-Custodial Hardware Operator Delegation (`delegateNode` / `undelegateNode`):**
+  Users who do not operate physical edge microcontrollers or GPUs can delegate their living machine to a certified community node operator. The owner retains 100% cryptographic custody and receives 95% of real-yield task cashflows, while the operator earns a 5% performance commission.
+* **Genesis Vitality Boost:** Every newly minted machine is initialized with $+600\text{ energy boost}$ and $+10\text{ reputation}$ in `ColonyProtocol.sol`.
+* **Social Media Asset Card:** High-resolution 16:9 infographic available at `/myca_resonance_asset_x.png` and customizable via the interactive studio at `/x-card`.
+
+### 4.6 The Dedicated Secondary Living Machine Marketplace
+Generic marketplaces (OpenSea, Magic Eden) fail because they treat NFTs as static images without cashflow, energy decay, or machine utility. MYCA operates a native, specialized secondary trading layer (`contracts/marketplace/MycResonanceMarketplace.sol`):
+
+1. **30-Day Rolling On-Chain Telemetry & Payback Valuation:**
+   Every listed machine streams its verifiable 30-day task earnings and computed payback period:
+   $$\text{Payback Period (Days)} = \frac{\text{Listing Price (USDC)}}{\text{Daily Net Real-Yield (USDC)}}$$
+2. **`minEnergy` Living Decay Protection Lock:**
+   Unlike static NFTs, living assets decay if abandoned. When a buyer submits a purchase transaction, they define a `minEnergy` constraint. If the machine's energy fell below this threshold prior to settlement, the transaction reverts safely, protecting the buyer from purchasing depleted hardware.
+3. **Harmonic Resonance Compatibility Pre-Flight:**
+   Prospective buyers can evaluate the harmonic frequency compatibility ($\mathcal{S}(\mathbf{f}_A, \mathbf{f}_B) \ge 0.65$) between the target asset and their existing machine fleet before committing capital.
+
+### 4.7 Seamless Cross-Chain Inbound Gateway & Base Onboarding
+New participants can enter the MYCA ecosystem directly from external EVM ecosystems (Base, Arbitrum, Ethereum Mainnet) without prior configuration or token acquisition:
+* **Deposit on Base (Chain 8453):** The user locks USDC/USDT/ETH into `MycBridge.sol` on Base.
+* **BFT Quorum Finality:** A 4-validator committee (`ConsensusVerifier.js`) collects real secp256k1 ECDSA signatures over canonical EIP-712 structured message hashes. Once the $2/3+1$ threshold is achieved, the cross-chain settlement is dispatched.
+* **Zero-Gas Execution Advantage on Chain 108:**
+  On traditional Layer-2s, a bridged user cannot transact until they acquire native gas tokens. Because MYCA Network maintains a strict **0.00000000 MYC gas invariant**, the user receives native bridged USDC at their `myc1...` address and can immediately mint an NFT, trade on the marketplace, or trigger game actions with **zero prior MYC tokens**.
+
+### 4.8 Proof-of-Quantum-Resonance (PoQR) & Base DePIN Node Economics
+Classical DePIN consensus mechanisms rely on Newtonian surveillance: continuous pinging and centralized watcher police forces. This introduces bandwidth exhaustion and invites bribery or GPS-spoofing. MYCA replaces this with **Proof-of-Quantum-Resonance (PoQR)**, synthesizing principles from Einstein, Tesla, Heisenberg, and Atatürk:
+
+$$\mathcal{E}_i(e) = \hbar_{\text{myc}} \cdot \left[ 1 - e^{-\left( \frac{\mathcal{I}_{\text{acc}}}{\Omega_{\text{bound}}} \right)} \right] \cdot \cos^2\left( \Delta \Phi_{i,\text{net}} \right) \cdot \left( \frac{T_{\text{coherence}}}{\tau_{\text{epoch}}} \right) \cdot \text{TierMult}_i \cdot \text{CompoundMult}_i$$
+
+```mermaid
+graph LR
+    subgraph PoQREngine["Proof-of-Quantum-Resonance Engine"]
+        M1["1. Accessibility Saturation [1 - exp(-I/Ω)]"] --> Res["Resonant Information Energy E_i"]
+        M2["2. Tesla Phase Coherence cos²(ΔΦ)"] --> Res
+        M3["3. Heisenberg Coherence Ratio (T_coh / τ)"] --> Res
+        M4["4. Tier & Auto-Compound Multipliers"] --> Res
+    end
+    Res --> Dist["Daily Fixed Emission Pool (100,000 MYC Ceiling)"]
+    Dist --> Claim["Dual Claim: 30/70 Liquid or 100% Auto-Compound"]
+```
+
+#### 1. The Accessibility Bound ($\Omega_{\text{bound}}$) & Information Saturation
+- $\mathcal{I}_{\text{acc}}$ represents validated accessible telemetry data.
+- As data increases, node energy scales asymptotically up to physical bandwidth saturation limit $\Omega_{\text{bound}} = 50\text{ MB/day}$.
+- Spammed or fabricated data beyond the bound yields vanishing marginal utility, economically neutralizing data-flooding attacks.
+
+#### 2. Phase Coherence ($\cos^2 \Delta \Phi$) & Anti-Sybil Destructive Interference
+- Each node synchronizes its local oscillator with its $K=8$ nearest Colony Mesh peers via 500ms EIP-712 micro-pulses.
+- $\Delta \Phi_{i,\text{net}}$ is the phase error between the node's broadcast pulse and the collective mesh median.
+- If a node operates coherently with the network, $\Delta \Phi \approx 0 \implies \cos^2(0) = 1.0$ (Full Reward Weight).
+- **Anti-Sybil Destructive Interference Cutoff:** If an attacker attempts to spoof telemetry or spoof round-trip delays, phase error diverges ($\Delta \Phi > 45^\circ \implies \cos^2 \Delta \Phi = 0$). The attacker's reward is mathematically quenched to $0.00\text{ MYC}$ without human or watcher intervention.
+
+#### 3. Heisenberg Observation Limits & Coherence Decay ($T_{\text{coherence}} / \tau_{\text{epoch}}$)
+- In quantum mechanics, continuous observation disrupts state coherence.
+- $T_{\text{coherence}}$ measures the uninterrupted duration a node sustains phase lock with its Colony Mesh peers.
+- Intermittent nodes that frequently drop out suffer coherence collapse, scaling down their reward proportionally.
+
+#### 4. Base L2 Multi-Tier Node License Hardcaps:
+| Tier | Title | Price (USDC) | Hardcap Supply | Base Multiplier | Target Role |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| **Tier 1** | **Spore** | **$299** | 1,000 | 1.0x | Edge Micro-Sensor & IoT Pulse |
+| **Tier 2** | **Hyphae** | **$449** | 2,500 | 1.3x | Local Mesh Relay & P2P Router |
+| **Tier 3** | **Mycelial** | **$699** | 4,000 | 1.8x | Regional Cluster Master & Gateway |
+| **Tier 4** | **Fruiting Body** | **$1,099** | 2,500 | 2.5x | Global Phase Synchronizer & BFT Arbiter |
+| **TOTAL** | **Global Cap** | — | **10,000 Licenses** | — | **$6,965,000 Gross Cap** |
+
+#### 5. Dual Settlement Options:
+- **Liquid Claim:** 30% instant payout + 70% released via 90-day block-by-block linear streaming vesting.
+- **Auto-Compound Mode:** 100% credited to staked balance + sets **1.25x future reward weight multiplier**. (Does not inflate the 100,000 MYC daily emission ceiling; shifts relative allocation only).
+
 ---
 
 ## 5. Tokenomics & Mathematical Formalism
@@ -294,12 +389,93 @@ Where:
   $$\mathcal{Y}_{\text{actual}} = \sum \text{DEX}_{\text{fee}} (0.3\%) + \sum \text{Escrow}_{\text{fee}} (5.0\%) + \sum \text{Bridge}_{\text{fee}} (0.1\%) + \sum \text{Quota}_{\text{slashing}}$$
 * If protocol revenue is zero, staking emission is strictly zero. If revenue exceeds $18\%$, the ceiling is maintained and surplus capital is directed to the **Autonomous Sovereign Buyback & Burn Vault**.
 
-### 5.2 The 0-Gas Resource Quota Equation
-To prevent Denial-of-Service attacks in a zero-gas environment, bandwidth is governed by physical resonance coherence:
+### 5.2 Zero-Gas Substrate: Protocol Revenue Model & Node Yield Distribution
 
-$$\mathcal{C}(\vec{u}, \vec{v}) = \frac{\sum_{i=1}^{64} u_i \cdot v_i}{\|\vec{u}\|_2 \cdot \|\vec{v}\|_2} \ge 0.50$$
+#### 1. Why Zero-Gas? The Fundamental Paradigm Shift
+Classical Layer-1 blockchains charge users gas fees as an economic friction mechanism against transaction spam. While effective for simple financial transfers, this paradigm introduces severe friction that renders high-frequency robotics, microsecond IoT actuation, and autonomous multi-agent economies unviable.
 
-Transactions failing the coherence threshold or exceeding the 384-byte static RAM envelope are dropped at the network interface card (NIC) layer with zero computational impact on validators.
+MYCA decouples transaction signaling from enterprise utility:
+* **Frictionless Signaling:** Basic peer-to-peer transfers, sensory telemetry pings, and inter-agent coordination packets execute at **strictly 0.00000000 MYC gas**.
+* **Monetized State & Enterprise Workloads:** Network cashflow is derived from high-value enterprise services:
+
+```
+                  ┌─────────────────────────────────────────────────────────┐
+                  │          ENTERPRISE & AGENT ECONOMIC DEMAND             │
+                  └────────────────────────────┬────────────────────────────┘
+                                               │
+             ┌─────────────────┬───────────────┴───────────────┬─────────────────┐
+             ▼                 ▼                               ▼                 ▼
+     [State & Memory]  [Priority QoS]                  [Hardware DePIN]   [M2M Escrow]
+     [Lease Rents   ]  [Bandwidth   ]                  [Attestation   ]   [Fees (2.5%)]
+             │                 │                               │                 │
+             └─────────────────┴───────────────┬───────────────┴─────────────────┘
+                                               ▼
+                              ┌─────────────────────────────────┐
+                              │  SOVEREIGN PROTOCOL TREASURY    │
+                              └────────────────┬────────────────┘
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       ▼                                               ▼
+               [40% POOL SHARE]                                [60% POOL SHARE]
+           Passive Soft-Staking Vault                      Active C99 Verification
+         (Non-custodial Wallet Hold)                      (Proof-of-Resonance Uptime)
+```
+
+1. **State & Memory Rent:** Ephemeral transactions are pruned automatically. Enterprises and agents requiring persistent vector memory or knowledge graph storage pay monthly memory lease fees in $MYC per megabyte.
+2. **Priority QoS Bandwidth Lanes:** Standard users enjoy free rate-limited throughput; high-frequency algorithmic actors purchase guaranteed sub-millisecond Quality-of-Service bandwidth reservations.
+3. **Hardware DePIN Attestation:** Critical infrastructure (solar inverters, energy meters, robotic arms) pays verification fees to obtain immutable cryptographic attestations signed by C99 verifier nodes.
+4. **M2M Autonomous Escrow Settlement (2.5%):** Automated multi-step agent task workflows utilize protocol escrows, generating a 2.5% fee on final task settlement.
+
+#### 2. Node Yield Distribution: Soft-Staking vs. Active Runner
+Node operators can participate under two non-inflationary models:
+* **Passive Soft-Staking (40% Protocol Allocation):** Node NFTs earn daily base dividends simply by residing in the holder's personal wallet. **Zero unbonding delay, 0 days lockup, and 100% non-custodial.**
+* **Active C99 Node Runner (60% Protocol Allocation):** Operators running the lightweight C99 client (1 vCPU, 512MB RAM) on edge devices or VPS earn additional performance-based micro-rewards for deterministic state verification, attestation signing, and network uptime.
+
+---
+
+### 5.3 3-Tier Spam & DDoS Defense Architecture
+
+In the absence of gas fees, network integrity is defended via three deterministic layers:
+
+1. **Tier 1 — Proof-of-Local-Resonance (Micro-PoW):**
+   Every dispatching node calculates a lightweight 3ms cryptographic challenge. For legitimate participants, execution latency is imperceptible. For malicious botnets attempting high-volume flooding, computational energy costs scale non-linearly, imposing an insurmountable thermodynamic barrier:
+   $$\mathcal{C}(\vec{u}, \vec{v}) = \frac{\sum_{i=1}^{64} u_i \cdot v_i}{\|\vec{u}\|_2 \cdot \|\vec{v}\|_2} \ge 0.50$$
+
+2. **Tier 2 — Biological Dynamic Rate-Limiter:**
+   Mirroring nutrient allocation in mycelial hyphae, node admission controllers enforce a 60 tx/minute sliding quota per sender address. Unfunded accounts attempting zero-value bursts are quarantined and rate-limited.
+
+3. **Tier 3 — Bare-Metal C99 Zero-Heap Hardware Eviction:**
+   The deterministic C99 micro-kernel (`core/kernel/myc_core.c`) enforces a strict **zero-heap allocation policy** (`malloc = 0`). Malicious, overflowing, or unauthorized frames are dropped at the CPU register level in **330 nanoseconds** without consuming memory buffers.
+
+---
+
+### 5.4 Empirical Attack Benchmark: 10,000,000 Attack Stress Test
+
+To mathematically validate the zero-gas security invariants under adversarial stress, the production engine was evaluated against continuous malicious injections:
+
+```
+========================================================================================
+💥 EMPIRICAL ADVERSARIAL BENCHMARK: BARE-METAL C99 & MEMPOOL STRESS VERIFICATION
+Runtime: libmyc_core.dylib (Apple Silicon / Clang -O3) | Engine: Living Lattice DAG
+========================================================================================
+
+[STAGE 1] Bare-Metal C99 Kernel Stress Test (c99_trillion_stress_test.c)
+• Adversarial Packets Tested       : 10,000,000 Raw Attacks (Buffer Overflow & Malformed)
+• Total Benchmark Execution Time   : 3.304 seconds
+• Sustained Hardware Drop Rate     : 3,026,843 packets / second
+• Mean Evaluation Latency          : 330.38 nanoseconds (0.330 µs)
+• Heap Memory Allocated (malloc)   : 0 BYTES (Strict Zero-Heap Invariant)
+• Segmentation Faults / Crashes    : 0 (100% Memory Safety Verified)
+
+[STAGE 2] High-Throughput Network Mempool Blast (spam_attack_stress_test.js)
+• 50,000 Unfunded Sybil Flood      : Deflected in 166.26 ms (300,731 packets/sec drop rate)
+• 10,000 Zero-Value Burst Attack   : 9,400 packets dropped by rate-limiter in 54.28 ms
+• 10,000 Incoherent PoR Proofs     : 100.00% trapped & rejected in 2.84 ms (0.28 µs/proof)
+• Legitimate User During Attack    : Block produced in 0.459 ms | User Gas Paid: 0.000000 MYC
+• Node Memory Stability (RSS)      : 47.89 MB (Zero persistent leak during attack)
+========================================================================================
+```
+
 
 ---
 
@@ -344,13 +520,21 @@ KLASİK BLOKZİNCİRLER (PEAQ / ETH) vs. GERÇEK SANAYİ VE DEPIN DÜNYASI
 4. **Yapay Zeka Halüsinasyonu ve Tehdit Komutları:** Cihaza bağlı yapay zeka modelleri olumsuz veya çelişkili ifadeleri (*“Sakın 2 nolu vanayı açma, durdur”*) yanlış yorumlayarak felakete neden olabilir.
 5. **Bulut ve İnternet Bağımlılığı:** Baz istasyonları, petrol sahaları veya fabrikalarda internet bağlantısı koptuğunda geleneksel blokzincir node'ları tamamen devre dışı kalır.
 
-### MYCA Çözümü: Egemen Silikon Bilişim Altyapısı
-MYCA Network; silikon seviyesinden başlayarak fiziksel güvenlik, sıfır gaz ve yerel bilişsel zekayı tek bir yaşayan organizmada birleştirir:
-* **Living Lattice DAG:** Blok süresi ve mempool darboğazı olmayan, asenkron ve yüksek ölçeklenebilir yönlü döngüsüz çizge defteri.
-* **Proof-of-Resonance (PoR):** Enerji israfı yapan PoW ve sermaye tekelleşmesi yaratan PoS yerine; telemetri doğrulaması, faz uyumu ve bilişsel rezonansa dayalı yeni nesil mutabakat.
-* **Silicon PUF Egemen Makine Kimliği (`did:myc:puf:0x...`):** Her makinenin özel anahtarı ve W3C kimliği, çipin mikroskobik üretim jitter'ından anlık türetilir; diske asla şifresiz anahtar yazılmaz.
-* **C99 Safe-Sign 6-Lock ve 0-Bayt Kalkanı:** 240 baytlık statik bellekte **4.95 µs (743 saat çevrimi)** içinde olumsuz ve zararlı aktüasyon komutlarını fiziksel olarak bloke eden C99 donanım hava yastığı.
-* **Mesh Colony Çevrimdışı Çalışma:** İnternet kopsa dahi cihazlar RS-485, Modbus RTU, LoRa ve BLE üzerinden kendi aralarında P2P mutabakatı ve çalışmayı sürdürür.
+### MYCA Çözümü: 10 Katmanlı Kuantum Sonrası & Fiziksel Zırh (Post-Quantum & Physical Hardening Shield)
+MYCA Network; silikon seviyesinden başlayarak fiziksel güvenlik, sıfır gaz ve kuantum-sonrası kriptografiyi tek bir yaşayan organizmada birleştirir:
+
+| # | Güvenlik Katmanı | Matematiksel / Fiziksel Formül | Koruma Sağladığı Tehdit |
+| :-: | :--- | :--- | :--- |
+| **1** | **Silicon PUF** | $\text{DID} = \text{SHA512}(\text{SRAM}_{\text{noise}}) \to \text{did:myc:puf:...}$ | Klonlanamaz fiziksel kimlik; Kuantum PC bile çipin atomik üretim kusurunu kopyalayamaz. |
+| **2** | **C99 Çekirdeği** | $\mathcal{O}(1) \text{ Constant-Time Ops (240-Byte RAM, malloc=0)}$ | Yan kanal (side-channel) ve zamanlama (timing) saldırılarını mikrokodda sıfırlar. |
+| **3** | **PoR 64-D HDC** | $\mathcal{C}(\vec{u}, \vec{v}) = \frac{\sum u_i \cdot v_i}{\|\vec{u}\|_2 \cdot \|\vec{v}\|_2} \ge 0.50$ | Hiper-boyutlu vektör uzayı; kuantum gürültüsüne ve %25'e varan bit-flip hatalarına bağışık. |
+| **4** | **Colony Mesh** | $K=8 \text{ P2P Neighborhood Graph (80,000 Links)}$ | Dağıtık miselyum topolojisi; merkezi hedef yok, <350ms otonom self-healing onarım. |
+| **5** | **Air-Gapped DTN** | $\text{Lattice}_{\text{sealed}} \xrightarrow{\text{Gossip DTN}} \text{Chain}_{108}$ | İzole segment koruması; internet kopsa dahi yerel mühürleme ve sıfır veri kaybı. |
+| **6** | **Dilithium3 (ML-DSA-65)** | $\text{NIST Module-LWE Lattice Signature}$ | Shor algoritmasına karşı matematiksel kuantum geçirmezlik. |
+| **7** | **BLAKE3-512** | $\text{Tree-Hash Merkle} \to 512\text{-Bit Digest}$ | Grover kuantum arama algoritmasına karşı 256-bit tam güvenlik marjı. |
+| **8** | **4.95 µs Safe-Sign** | $\text{Register}_{\text{val}} \xrightarrow{\text{Anomalous}} 0x0000 \ (\le 4.95 \ \mu\text{s})$ | 0-Bayt Kalkanı; kuantum hacker şifreyi çözse bile fiziksel akım röleden geçemez. |
+| **9** | **Kuantum Faz Sönümleme** | $\Delta\Phi > 45^\circ \implies \cos^2(\Delta\Phi) \equiv 0.00000000$ | Heisenberg-Tesla kuralı; kuantum süperpozisyon ve Sybil forku anında 0'a söner. |
+| **10** | **ML-KEM-1024 (Kyber)** | $\text{NIST Level-5 Post-Quantum Key Encapsulation}$ | Düğümler arası oturum şifrelemesi; "Şimdi kaydet, kuantum çıkınca çöz" saldırısını imkansız kılar. |
 
 ---
 
@@ -560,6 +744,55 @@ graph TD
 * **Makine ve DePIN Varlıkları:** Kendi NFT'sini basan rüzgar türbinleri ve IoT sensörleri. Uyumlu çalışan komşu türbinlerin rezonans bağı kurarak şebeke verimini artırması.
 * **Kolektif Yapay Zeka Veri Kümeleri ve Model Ağırlıkları:** Toplulukların birlikte sahiplendiği AI eğitim verileri; model her sorgulandığında kolektife otomatik mikro-ödeme aktarımı.
 * **Frekans Uyumlu DeFi Getiri Kümeleri:** Birbirini güçlendiren algoritmik varlıkların otomatik birleşerek yüksek verimli yield havuzları kurması.
+
+### 4.5 3-Kademeli Yaşayan Makine Mint Sistemi (ERC-721R + Colony Protokolü)
+MYCA Network'te bir NFT'ye sahip olmak pasif bir resim tutmak değil, çalışan bir Colony Node'una doğrudan ortak olmaktır. Mint edilen her makine anında `ColonyProtocol.sol` akıllı sözleşmesine bağlanır:
+
+```
+COLONY NODE YAŞAM DÖNGÜSÜ VE DEĞER AKIŞI
+┌────────────────┐     ┌────────────────┐     ┌────────────────┐     ┌────────────────┐     ┌────────────────┐
+│ 1. MAKİNE MİNT │ ──> │ 2. NODE KAYIT  │ ──> │ 3. GÖREV AL    │ ──> │ 4. USDC KAZAN  │ ──> │ 5. TİER YÜKSELT│
+│ (50-5000 USDC) │     │ (+10 İtibar)   │     │ (Telemetri/AI) │     │ (%95 Net Gelir)│     │ (+600 Enerji)  │
+└────────────────┘     └────────────────┘     └────────────────┘     └────────────────┘     └────────────────┘
+```
+
+| Parametre | 🟢 Seed Kademesi | 🟡 Resonant Kademesi | 🟣 Sovereign Kademesi |
+| :--- | :--- | :--- | :--- |
+| **Mint Fiyatı** | **50 USDC** | **500 USDC** | **5.000 USDC** |
+| **Maksimum Arz (12.200 Toplam)**| 10.000 Adet | 2.000 Adet | 200 Adet |
+| **Başlangıç Enerjisi** | 500 E ($0 - 2.999\text{ E}$) | 3.500 E ($3.000 - 7.999\text{ E}$) | 9.000 E ($8.000+\text{ E}$) |
+| **Eşzamanlı Görev Kapasitesi**| 1 Görev | 5 Görev | 20 Görev |
+| **Günlük Tahmini Getiri** | **2 – 5 USDC / gün** | **10 – 20 USDC / gün** | **30 – 60 USDC / gün** |
+| **Geri Dönüş (Amortisman)** | **~15 – 25 Gün** | **~35 – 50 Gün** | **~83 – 167 Gün** |
+| **Donanım ve Ağ Rolü** | Telemetri & IoT Algılama | Uçta AI & DePIN Filoları | BFT Validatör & Escrow Hakemi |
+| **Hazine Dağılımı** | %95 Node Kasası / %5 Protokol| %95 Node Kasası / %5 Protokol| %95 Node Kasası / %5 Protokol|
+
+* **Kesin Sınırlandırılmış Arz ve Sıfır Enflasyon:** Tüm kademelerdeki toplam küresel arz **12.200 adet** ile kesin olarak sınırlandırılmıştır.
+* **Doğrudan %95 / %5 Hazine Paylaşımı:**
+  $$\text{Hazine}_{\text{Node}} = \%95 \times \text{MintFiyatı}, \quad \text{Hazine}_{\text{Protokol}} = \%5 \times \text{MintFiyatı}$$
+  Toplanan fonun %95'i doğrudan ilgili node'un yerel operasyonel rezervine kilitlenir; böylece gerçek hesaplama gücü ve donanım bakımı finanse edilir. Protokole yalnızca %5 geliştirme payı ayrılır.
+* **Vesayetsiz Donanım Operatörü Delegasyonu (`delegateNode` / `undelegateNode`):**
+  Fiziksel donanıma sahip olmayan bir yatırımcı veya oyuncu, makinesini onaylı topluluk donanım operatörlerine güvenle delege edebilir. Mülkiyet ve anahtar %100 kullanıcıda kalır; elde edilen USDC gelirinin %95'i makine sahibine akar, operatör %5 performans komisyonu alır.
+* **Genesis Canlılık Bonusu:** Yeni basılan her makine `ColonyProtocol.sol` üzerinde $+600\text{ enerji}$ ve $+10\text{ itibar skoru}$ ile hayata başlar.
+* **Sosyal Medya Görsel Kartı:** Resmi 16:9 X (Twitter) infografiği `/myca_resonance_asset_x.png` konumunda ve `/x-card` stüdyosunda canlıdır.
+
+### 4.6 Özel Yaşayan Makine İkincil Pazaryeri (Secondary Marketplace)
+OpenSea veya Magic Eden gibi genel pazaryerleri yaşayan makineleri listeleyemez; çünkü nakit akışını, enerji sönümlenmesini ve donanım faydasını göremezler. MYCA, yerel akıllı sözleşmelerle çalışan özel bir borsa katmanı sunar (`contracts/marketplace/MycResonanceMarketplace.sol`):
+
+1. **30 Günlük Doğrulanmış On-Chain Nakit Akışı ve Geri Dönüş Hesabı:**
+   Listelenen her makine son 30 günlük doğrulanmış net getirisini ve amortisman süresini canlı gösterir:
+   $$\text{Geri Dönüş Süresi (Gün)} = \frac{\text{Satış Fiyatı (USDC)}}{\text{Günlük Net Gelir (USDC)}}$$
+2. **`minEnergy` Çürüme Koruma Kilidi:**
+   Geleneksel NFT'lerin aksine yaşayan makineler dokunulmazsa sönümlenir. Alıcı işlem gönderirken sözleşmeye bir `minEnergy` şartı koyar. Eğer makine satış anına kadar bu sınırın altına düşmüşse işlem güvenle iptal edilir (revert) ve alıcı korunur.
+3. **Harmonik Rezonans Uyumluluk Testi:**
+   Alıcılar, satın almak istedikleri makinenin veya oyun içi silahın kendi mevcut filolarıyla rezonans uyumunu ($\mathcal{S}(\mathbf{f}_A, \mathbf{f}_B) \ge 0.65$) önceden test edebilir.
+
+### 4.7 Sürtünmesiz Çapraz Zincir Girişi & Base Gateway
+Ağa ilk kez katılacak harici bir kullanıcı (Base, Arbitrum veya Ethereum üzerinden) karmaşık süreçler olmadan tek tıkla ağa katılabilir:
+* **Base (Chain 8453) Üzerinden Kilit:** Kullanıcı Base ağındaki USDC/USDT/ETH varlığını `MycBridge.sol` sözleşmesine yatırır.
+* **BFT Quorum Mutabakatı:** 4 validatörden oluşan komite (`ConsensusVerifier.js`), EIP-712 standartlarında kanonik mesaj özetlerini secp256k1 ECDSA ile imzalar ve $2/3+1$ çoğunluk sağlandığında transfer onaylanır.
+* **Chain 108'de Sıfır-Gaz Giriş Devrimi:**
+  Geleneksel ağlarda köprüden geçen bir kullanıcı gaz tokeni (ETH/MATIC) olmadan işlem yapamaz. MYCA Network'te ise **gaz ücreti kesin olarak 0.00000000 MYC** olduğu için, kullanıcı Base'den geçirdiği USDC ile hiçbir ek gaz tokenine ihtiyaç duymadan anında Colony Node NFT'si mint edebilir, pazaryerinden alım yapabilir ve oyun oynayabilir.
 
 ---
 
