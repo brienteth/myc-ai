@@ -1,3 +1,4 @@
+import { TurkishMorphology } from "./morphology.js";
 /**
  * Industrial Natural Language to Modbus RTU Intent Engine
  * Fully Air-Gapped, Zero-Dependency, Sub-millisecond Execution
@@ -5,7 +6,7 @@
  */
 
 export class IndustrialIntentEngine {
-  constructor(morphology) {
+  constructor(morphology = new TurkishMorphology()) {
     this.morphology = morphology;
 
     this.UNITS = {
@@ -45,7 +46,9 @@ export class IndustrialIntentEngine {
 
     // Equipment coil offsets
     this.equipmentMap = {
+      'pump': { type: 'PUMP', baseCoil: 0x0000 },
       'pompa': { type: 'PUMP', baseCoil: 0x0000 },
+      'valve': { type: 'VALVE', baseCoil: 0x0010 },
       'vana': { type: 'VALVE', baseCoil: 0x0010 },
       'valf': { type: 'VALVE', baseCoil: 0x0010 },
       'konveyör': { type: 'CONVEYOR', baseCoil: 0x0020 },
@@ -72,6 +75,9 @@ export class IndustrialIntentEngine {
       'kontaktör': { type: 'SWITCH', baseCoil: 0x0050 },
       'kesici': { type: 'SWITCH', baseCoil: 0x0050 },
       'kompresör': { type: 'COMPRESSOR', baseCoil: 0x0070 },
+      'turbine': { type: 'TURBINE', baseCoil: 0x0080 },
+      'türbin': { type: 'TURBINE', baseCoil: 0x0080 },
+      'turbin': { type: 'TURBINE', baseCoil: 0x0080 },
       'kompresor': { type: 'COMPRESSOR', baseCoil: 0x0070 },
     };
   }
@@ -216,7 +222,12 @@ export class IndustrialIntentEngine {
   }
 
   parseCommand(rawSentence) {
-    const norm = this.morphology.normalize(rawSentence);
+    if (!rawSentence || typeof rawSentence !== "string" || rawSentence.trim().length === 0) {
+      return { success: false, error: "EMPTY_INPUT", intent: "UNKNOWN_INTENT", message: "Boş veya geçersiz komut girildi" };
+    }
+    const norm = (this.morphology && typeof this.morphology.normalize === "function") 
+      ? this.morphology.normalize(rawSentence)
+      : rawSentence.toLowerCase().trim();
     if (!norm) {
       return { success: false, error: 'EMPTY_INPUT', intent: 'UNKNOWN_INTENT', message: 'Boş komut girildi' };
     }
@@ -294,7 +305,7 @@ export class IndustrialIntentEngine {
     let isNegative = false;
 
     // Negation word markers
-    const negKeywords = ['sakın', 'yapma', 'etme', 'olmasın', 'istemiyorum', 'asla', 'yok', 'iptal', 'değil', 'gerek', 'yasak'];
+    const negKeywords = ['never', 'abort', 'cancel', 'dont', "don't", 'sakın', 'yapma', 'etme', 'olmasın', 'istemiyorum', 'asla', 'yok', 'iptal', 'değil', 'gerek', 'yasak'];
     for (const w of words) {
       if (negKeywords.includes(w)) isNegative = true;
     }
@@ -318,13 +329,21 @@ export class IndustrialIntentEngine {
         }
       }
 
+      // Ignore question words that collide with verb roots
+      const isQuestionWord = ['acaba', 'nedir', 'nasil', 'ne', 'kim', 'hangi'].includes(w);
+
       // START verbs
-      if (['başla', 'çalış', 'aç', 'devre', 'start', 'sür', 'yol'].includes(r) || w.startsWith('başla') || w.startsWith('çalış') || w.startsWith('aç') || w.startsWith('start') || w.startsWith('devre')) {
-        hasStart = true;
+      if (!isQuestionWord) {
+        if (['başla', 'çalış', 'aç', 'devre', 'start', 'sür', 'yol', 'open', 'baslat', 'calistir'].includes(r) ||
+            w === 'aç' || w === 'ac' || w === 'açık' || w === 'acik' ||
+            w.startsWith('başla') || w.startsWith('baslat') || w.startsWith('start') ||
+            w.startsWith('open') || w.startsWith('çalış') || w.startsWith('calis') || w.startsWith('devre')) {
+          hasStart = true;
+        }
       }
 
       // STOP verbs
-      if (['dur', 'kapat', 'kes', 'indir'].includes(r) || w.startsWith('durdur') || w.startsWith('kapat') || w.startsWith('kes')) {
+      if (['dur', 'kapat', 'kes', 'indir', 'stop', 'close', 'durdur'].includes(r) || w.startsWith('durdur') || w.startsWith('stop') || w.startsWith('close') || w.startsWith('kapat') || w.startsWith('kapat') || w.startsWith('kes')) {
         hasStop = true;
       }
     }

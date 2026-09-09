@@ -14,7 +14,9 @@
     "test": "node test/run_all_tests.js",
     "benchmark": "node tests/network_finality_benchmarks.js",
     "benchmark:evm": "node scripts/monad_evm_benchmark.js",
-    "benchmark:ideal": "node scripts/monad_evm_benchmark.js --ideal-pure"
+    "benchmark:ideal": "node scripts/monad_evm_benchmark.js --ideal-pure",
+    "test:s1_s17": "node tests/s1_s17.js",
+    "test:c99": "make -C core/kernel test"
   },
   "keywords": [
     "blockchain",

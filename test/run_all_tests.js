@@ -93,6 +93,7 @@ console.log("===================================================================
 // Run all production engineering phase suites
 import { execSync } from "child_process";
 const suites = [
+  "tests/s1_s17.js",
   "tests/phase2/blockchain_core.test.js",
   "tests/phase3/por_resources.test.js",
   "tests/phase4/colony_foundation.test.js",

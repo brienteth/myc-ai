@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #define MYC_MAX_INPUT_LEN    128
-#define MYC_STATIC_RAM_BYTES 384
+#define MYC_STATIC_RAM_BYTES 128
 
 /* Return Status Codes */
 #define MYC_OK                  0x00
