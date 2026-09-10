@@ -1,3 +1,5 @@
+import { MycHardwareWallet } from "../../core/crypto/wallet.js";
+
 /**
  * $MYC Sovereign Network Token Specification
  * Total Supply: 1,000,000,000 MYC (1 Billion Fixed)
@@ -18,19 +20,42 @@ export class MycToken {
     this.balances.set("myc_bridge_escrow", 10_000_000n * 10n**18n);   // 10M Bridge Escrow
   }
 
+  _norm(addr) {
+    if (!addr || typeof addr !== "string") return "";
+    return MycHardwareWallet.normalizeAddress(addr);
+  }
+
   balanceOf(address) {
-    const raw = this.balances.get(address) || 0n;
+    if (!address) return 0;
+    const norm = this._norm(address);
+    const raw = this.balances.get(norm) ?? this.balances.get(address) ?? 0n;
     return Number(raw / 10n**18n);
   }
 
   transfer(from, to, amount) {
+    const fromNorm = this._norm(from) || from;
+    const toNorm = this._norm(to) || to;
     const amountBig = BigInt(Math.floor(amount)) * 10n**18n;
-    const senderBal = this.balances.get(from) || 0n;
-    if (senderBal < amountBig) throw new Error("Insufficient $MYC balance");
 
-    this.balances.set(from, senderBal - amountBig);
-    const receiverBal = this.balances.get(to) || 0n;
-    this.balances.set(to, receiverBal + amountBig);
+    let senderBal = this.balances.get(fromNorm);
+    let senderKey = fromNorm;
+    if (senderBal === undefined || senderBal === null) {
+      senderBal = this.balances.get(from) || 0n;
+      senderKey = from;
+    }
+
+    if (senderBal < amountBig) {
+      throw new Error(`Insufficient $MYC balance. Available: ${Number(senderBal / 10n**18n)} MYC, Required: ${amount} MYC`);
+    }
+
+    this.balances.set(senderKey, senderBal - amountBig);
+
+    let receiverBal = this.balances.get(toNorm);
+    let receiverKey = toNorm;
+    if (receiverBal === undefined || receiverBal === null) {
+      receiverBal = this.balances.get(to) || 0n;
+    }
+    this.balances.set(receiverKey, receiverBal + amountBig);
     return true;
   }
 }

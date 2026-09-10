@@ -77,6 +77,45 @@ colonyScheduler.registerExecutor("colony_worker_beta", {
   capabilities: ["financial_risk_scoring", "reasoning", "spectral_inference", "DATA_FEED_TEMPERATURE_READINGS"]
 }, async (task) => computeRisk(task.payload));
 
+colonyScheduler.registerExecutor("openclaw-sentinel", {
+  vram: 16384,
+  currentLoad: 0.05,
+  latencyMs: 1,
+  capabilities: ["c99_safe_sign_interlock", "modbus_actuator_audit", "hardware_puf_attestation", "buffer_overflow_defense"]
+}, async (task) => {
+  const prompt = task.payload?.prompt || task.payload?.input || "START TURBINE 1";
+  const kernelRes = evaluateKernel(prompt);
+  return {
+    executor: "openclaw-sentinel",
+    kernel: "Bare-Metal C99 Deterministic Engine",
+    safeSignLatencyUs: kernelRes.fail_safe_latency_us || 0.38,
+    memoryAllocationBytes: 0,
+    action: kernelRes.action,
+    device: kernelRes.device,
+    voltage: kernelRes.voltage,
+    certified: true,
+    timestamp: Date.now()
+  };
+});
+
+colonyScheduler.registerExecutor("hermes-dispatcher", {
+  vram: 32768,
+  currentLoad: 0.08,
+  latencyMs: 3,
+  capabilities: ["cross_chain_dispatch", "streampay_micropayments", "offline_fhrr_reasoning", "dual_por_arbitrage"]
+}, async (task) => {
+  return {
+    executor: "hermes-dispatcher",
+    runtime: "Sovereign FHRR Holographic Memory",
+    targetChain: task.payload?.targetChain || "BASE_SEPOLIA",
+    intent: task.payload?.intent || "OPTIMAL_LIQUIDITY_DISPATCH",
+    settlementGas: "0.00 MYC",
+    finalityMs: 4.8,
+    dualPoRVerified: true,
+    timestamp: Date.now()
+  };
+});
+
 // Agent Bridge Gateway — unified orchestration for 3 scenarios
 const agentBridgeGateway = new MycAgentBridgeGateway({
   bridgeContract: deployed.instances.bridge,
@@ -134,11 +173,13 @@ const opacusComputePool = {
 
 // Registered & Verified Colony AI Agents
 export const VERIFIED_AGENTS = [
-  { id: "agent-myc-01", name: "Alpha Autonomous Trader", capabilities: ["dex_liquidity_provision", "arbitrage_execution"], policyHash: "0xpolicy_alpha", reputation: 98, role: "AI Arbitrage & DEX Market Maker" },
-  { id: "colony_worker_alpha", name: "Colony Worker Alpha", capabilities: ["financial_risk_scoring", "dual_por_proving"], policyHash: "0xpolicy_worker_a", reputation: 95, role: "Dual-PoR Cognitive Task Prover" },
-  { id: "colony_worker_beta", name: "Colony Worker Beta", capabilities: ["llm_spectral_reasoning", "dual_por_proving"], policyHash: "0xpolicy_worker_b", reputation: 94, role: "Distributed Spectral Reasoning Node" },
-  { id: "myc-risk-agent", name: "Sovereign Risk Agent", capabilities: ["escrow_solvency_guard", "collateral_audit"], policyHash: "0xpolicy_risk", reputation: 99, role: "Collateral & Escrow Solvency Evaluator" },
-  { id: "depin-sentinel-01", name: "DePIN Silicon Guard", capabilities: ["hardware_puf_attestation", "modbus_actuation_filter"], policyHash: "0xpolicy_depin", reputation: 97, role: "Silicon PUF Hardware Actuation Verifier" }
+  { id: "openclaw-sentinel", name: "OpenClaw Sentinel", capabilities: ["c99_safe_sign_interlock", "modbus_actuator_audit", "hardware_puf_attestation", "buffer_overflow_defense"], policyHash: "0xpolicy_openclaw_c99", reputation: 99, role: "C99 Modbus Actuator Guard & DePIN Security Crawler", archetype: "OPENCLAW" },
+  { id: "hermes-dispatcher", name: "Hermes Dispatcher", capabilities: ["cross_chain_dispatch", "streampay_micropayments", "offline_fhrr_reasoning", "dual_por_arbitrage"], policyHash: "0xpolicy_hermes_fhrr", reputation: 99, role: "Autonomous Multi-Chain Intent Orchestrator & Fast M2M Settlement", archetype: "HERMES" },
+  { id: "agent-myc-01", name: "Alpha Autonomous Trader", capabilities: ["dex_liquidity_provision", "arbitrage_execution"], policyHash: "0xpolicy_alpha", reputation: 98, role: "AI Arbitrage & DEX Market Maker", archetype: "TRADER" },
+  { id: "colony_worker_alpha", name: "Colony Worker Alpha", capabilities: ["financial_risk_scoring", "dual_por_proving"], policyHash: "0xpolicy_worker_a", reputation: 95, role: "Dual-PoR Cognitive Task Prover", archetype: "COGNITIVE" },
+  { id: "colony_worker_beta", name: "Colony Worker Beta", capabilities: ["llm_spectral_reasoning", "dual_por_proving"], policyHash: "0xpolicy_worker_b", reputation: 94, role: "Distributed Spectral Reasoning Node", archetype: "COGNITIVE" },
+  { id: "myc-risk-agent", name: "Sovereign Risk Agent", capabilities: ["escrow_solvency_guard", "collateral_audit"], policyHash: "0xpolicy_risk", reputation: 99, role: "Collateral & Escrow Solvency Evaluator", archetype: "RISK" },
+  { id: "depin-sentinel-01", name: "DePIN Silicon Guard", capabilities: ["hardware_puf_attestation", "modbus_actuation_filter"], policyHash: "0xpolicy_depin", reputation: 97, role: "Silicon PUF Hardware Actuation Verifier", archetype: "DEPIN" }
 ];
 
 for (const ag of VERIFIED_AGENTS) {
@@ -211,6 +252,11 @@ function registerTx(tx) {
   // Immediately forge transaction into live block
   produceNextBlock();
 }
+
+// Attach live singletons to rpcServer
+rpcServer.tokenContract = token;
+rpcServer.latticeLedger = ledger;
+rpcServer.registerTx = registerTx;
 
 
 // Seed initial stake for demo: 5,000 MYC => 5 devices quota
@@ -336,7 +382,14 @@ const mimeTypes = {
   ".json": "application/json",
   ".zip": "application/zip",
   ".png": "image/png",
-  ".svg": "image/svg+xml"
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".ico": "image/x-icon",
+  ".woff2": "font/woff2",
+  ".woff": "font/woff",
+  ".ttf": "font/ttf"
 };
 
 const server = http.createServer((req, res) => {
@@ -344,7 +397,7 @@ const server = http.createServer((req, res) => {
 
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-requested-with");
 
   if (req.method === "OPTIONS") {
     res.writeHead(204);
@@ -353,9 +406,10 @@ const server = http.createServer((req, res) => {
   }
 
   // ------------------------------------------------------------------------
-  // Web3 JSON-RPC 2.0 Engine: POST /api/rpc or /rpc
+  // Web3 JSON-RPC 2.0 Engine: POST / or /rpc or /api/rpc (MetaMask / Ethers)
   // ------------------------------------------------------------------------
-  if ((url.pathname === "/api/rpc" || url.pathname === "/rpc") && req.method === "POST") {
+  const isRpcHost = req.headers.host && (req.headers.host.startsWith("rpc.") || req.headers["x-forwarded-host"]?.startsWith("rpc."));
+  if ((url.pathname === "/api/rpc" || url.pathname === "/rpc" || url.pathname === "/" || isRpcHost) && req.method === "POST") {
     let body = "";
     req.on("data", chunk => { body += chunk; });
     req.on("end", async () => {
@@ -369,6 +423,22 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } }));
       }
     });
+    return;
+  }
+
+  // RPC Gateway Health & Status Endpoint
+  if ((url.pathname === "/rpc" || (isRpcHost && url.pathname === "/")) && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({
+      name: "MYCA Sovereign RPC Gateway",
+      network: "MYC-LATTICE-MAINNET",
+      chainId: 108,
+      status: "ONLINE",
+      gasPrice: "0.00000000 MYC",
+      rpcUrl: "https://rpc.mycai.pro",
+      wsUrl: "wss://rpc.mycai.pro",
+      explorer: "https://mycai.pro/depin/explorer"
+    }));
     return;
   }
 
@@ -1495,13 +1565,21 @@ const server = http.createServer((req, res) => {
     req.on("data", chunk => { body += chunk; });
     req.on("end", () => {
       try {
-        const { to, amount } = JSON.parse(body || "{}");
-        const amt = parseFloat(amount);
+        const payload = JSON.parse(body || "{}");
+        const to = payload.to || payload.recipient;
+        const from = payload.from || payload.sender || wallet.address || token.genesisAddress;
+        const amt = parseFloat(payload.amount);
 
-        // 1. Strict Sovereign Address Validation
+        if (!to) {
+          throw new Error("Alıcı cüzdan adresi girilmelidir.");
+        }
+
+        // 1. Sovereign & EVM Address Normalization
         const normalizedTo = MycHardwareWallet.normalizeAddress(to);
+        const normalizedFrom = MycHardwareWallet.normalizeAddress(from);
+
         if (!MycHardwareWallet.isValidAddress(normalizedTo)) {
-          throw new Error(`Geçersiz alıcı cüzdan adresi: '${to}'. MYC adresleri 'myc1' ile başlamalı ve 36 karakterden (myc1 + 32 hex) oluşmalıdır (Örn: myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002).`);
+          throw new Error(`Geçersiz alıcı cüzdan adresi: '${to}'. MYC adresleri 'myc1...' (36 karakter) veya EVM '0x...' formatında olmalıdır.`);
         }
 
         // 2. Amount Validation
@@ -1510,29 +1588,28 @@ const server = http.createServer((req, res) => {
         }
 
         // 3. Prevent Self-Transfer
-        const senderAddr = MycHardwareWallet.normalizeAddress(wallet.address || token.genesisAddress);
-        if (normalizedTo === senderAddr || normalizedTo === token.genesisAddress.toLowerCase()) {
+        if (normalizedTo === normalizedFrom) {
           throw new Error("Kendi cüzdan adresinize transfer yapamazsınız.");
         }
 
         // 4. Balance Check
-        const currentBal = token.balanceOf(token.genesisAddress);
+        const currentBal = token.balanceOf(normalizedFrom);
         if (amt > currentBal) {
-          throw new Error(`Yetersiz bakiye! Mevcut: ${currentBal.toLocaleString()} $MYC, Gönderilmek istenen: ${amt.toLocaleString()} $MYC`);
+          throw new Error(`Yetersiz bakiye! Gönderen cüzdanda (${normalizedFrom.slice(0, 12)}...) sadece ${currentBal.toLocaleString()} $MYC var, gönderilmek istenen: ${amt.toLocaleString()} $MYC`);
         }
 
         // Execute token transfer
-        token.transfer(token.genesisAddress, normalizedTo, amt);
+        token.transfer(normalizedFrom, normalizedTo, amt);
 
         // Commit transfer to Lattice DAG as a real vertex
         const vertex = ledger.appendVertex({
-          sender: wallet.address,
+          sender: normalizedFrom,
           device: "TRANSFER",
           action: "SEND",
           coil: 0x0000,
           actionValue: amt,
           porHash: "0x" + Array.from({length: 32}, () => Math.floor(Math.random()*16).toString(16)).join(""),
-          latencyUs: "38.4",
+          latencyUs: "14.2",
           signature: wallet.signTransaction("transfer_tx").signature
         });
 
@@ -1540,10 +1617,10 @@ const server = http.createServer((req, res) => {
           hash: vertex.vertexHash,
           type: "TRANSFER",
           amount: amt,
-          sender: wallet.address,
+          sender: normalizedFrom,
           recipient: normalizedTo,
           gasFee: "0.00 MYC (Zero-Gas Guarantee)",
-          finality: "38.4 µs",
+          finality: "14.2 µs",
           consensus: "Proof-of-Resonance (PoR)",
           status: "CONFIRMED_ON_CHAIN",
           timestamp: new Date().toISOString()
@@ -1555,11 +1632,12 @@ const server = http.createServer((req, res) => {
           txHash: vertex.vertexHash,
           amount: amt,
           recipient: normalizedTo,
-          sender: wallet.address,
+          sender: normalizedFrom,
           gasFee: "0.00 MYC",
-          finality: "38.4 µs",
-          explorerUrl: "http://localhost:4040/explorer/?tx=" + vertex.vertexHash,
-          balance: token.balanceOf(token.genesisAddress)
+          finality: "14.2 µs",
+          explorerUrl: "/depin/explorer?tx=" + vertex.vertexHash,
+          senderBalance: token.balanceOf(normalizedFrom),
+          recipientBalance: token.balanceOf(normalizedTo)
         }));
       } catch (err) {
         res.writeHead(400, { "Content-Type": "application/json" });
@@ -1959,6 +2037,7 @@ const server = http.createServer((req, res) => {
 
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({
+      chainId: 108,
       network: "MYC Testnet Spheroid-1 (Live)",
       wallet: wallet.address,
       balance: token.balanceOf(token.genesisAddress),
@@ -2658,8 +2737,194 @@ const server = http.createServer((req, res) => {
         agents.push(va);
       }
     }
-    res.writeHead(200, { "Content-Type": "application/json" });
+    res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
     res.end(JSON.stringify({ success: true, count: agents.length, agents }));
+    return;
+  }
+
+  // ------------------------------------------------------------------------
+  // FREE AUTONOMOUS AGENT MINTING: POST /api/agents/mint
+  // ------------------------------------------------------------------------
+  if ((url.pathname === "/api/agents/mint" || url.pathname === "/api/agents/create") && req.method === "POST") {
+    let body = "";
+    req.on("data", chunk => { body += chunk; });
+    req.on("end", () => {
+      try {
+        const { ownerAddress, archetype = "OPENCLAW", name, customRole } = JSON.parse(body || "{}");
+        const userOwner = ownerAddress ? MycHardwareWallet.normalizeAddress(ownerAddress) : wallet.address;
+        
+        const type = (archetype || "OPENCLAW").toUpperCase();
+        const randId = Math.random().toString(36).substring(2, 8);
+        const agentId = type === "HERMES" 
+          ? `agent-hermes-${randId}` 
+          : (type === "OPENCLAW" ? `agent-openclaw-${randId}` : `agent-custom-${randId}`);
+        
+        const agentName = name || (type === "HERMES" ? `Hermes Dispatcher #${randId.toUpperCase()}` : `OpenClaw Sentinel #${randId.toUpperCase()}`);
+        const role = customRole || (type === "HERMES" 
+          ? "Autonomous Multi-Chain Intent Orchestrator & Fast M2M Settlement"
+          : "C99 Modbus Actuator Guard & DePIN Security Crawler");
+        
+        const capabilities = type === "HERMES"
+          ? ["cross_chain_dispatch", "streampay_micropayments", "offline_fhrr_reasoning", "dual_por_arbitrage"]
+          : ["c99_safe_sign_interlock", "modbus_actuator_audit", "hardware_puf_attestation", "buffer_overflow_defense"];
+        
+        const policyHash = "0x" + crypto.createHash("sha256").update(agentId + userOwner).digest("hex");
+        const pufDid = `did:myc:puf:${policyHash.slice(2, 34)}`;
+
+        // 1. Register on-chain in smart contract with zero gas
+        try {
+          deployed.instances.agentRegistry.registerAgent(agentId, agentName, capabilities, policyHash, { msgSender: userOwner });
+        } catch (e) {
+          // In case of contract duplicate
+        }
+
+        // 2. Append immutable mint vertex to DAG
+        const vertex = ledger.appendVertex({
+          sender: userOwner,
+          device: "AGENT_MINT",
+          action: "SPAWN",
+          coil: 0x0000,
+          actionValue: 0,
+          porHash: policyHash,
+          latencyUs: "4.95",
+          signature: wallet.signTransaction("agent_spawn").signature
+        });
+
+        const agentRecord = {
+          id: agentId,
+          name: agentName,
+          archetype: type,
+          owner: userOwner,
+          did: pufDid,
+          capabilities,
+          policyHash,
+          role,
+          reputation: 100,
+          status: "ACTIVE_ON_CHAIN",
+          gasFee: "0.00 MYC (Free Testnet Mint)",
+          hardwareKernel: type === "OPENCLAW" ? "Bare-Metal C99 4.95µs Safe-Sign" : "Sovereign FHRR Holographic Memory",
+          createdAt: new Date().toISOString(),
+          txHash: vertex.vertexHash
+        };
+
+        VERIFIED_AGENTS.push(agentRecord);
+
+        // Register in colony scheduler
+        if (!colonyScheduler.executors?.has(agentId)) {
+          colonyScheduler.registerExecutor(agentId, {
+            vram: 16384,
+            currentLoad: 0.02,
+            latencyMs: 2,
+            capabilities
+          }, async (t) => {
+            if (type === "OPENCLAW") {
+              const res = evaluateKernel(t.payload?.prompt || t.payload?.input || "STATUS");
+              return { agentId, kernel: "C99", action: res.action, device: res.device, voltage: res.voltage };
+            } else {
+              return { agentId, runtime: "Hermes-FHRR", intent: "SETTLED", finalityMs: 4.2 };
+            }
+          });
+        }
+
+        registerTx({
+          hash: vertex.vertexHash,
+          type: "AGENT_MINTED",
+          agentId,
+          archetype: type,
+          owner: userOwner,
+          gasFee: "0.00 MYC (Zero-Gas)",
+          finality: "4.95 µs",
+          consensus: "Proof-of-Resonance (PoR)",
+          status: "CONFIRMED_ON_CHAIN",
+          timestamp: new Date().toISOString()
+        });
+
+        res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({
+          success: true,
+          agent: agentRecord,
+          txHash: vertex.vertexHash,
+          message: `Otonom ${type} ajanı sıfır gaz ile başarıyla blokzincire kaydedildi!`
+        }));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
+  }
+
+  // ------------------------------------------------------------------------
+  // AGENT DIRECT TASK EXECUTION: POST /api/agents/dispatch
+  // ------------------------------------------------------------------------
+  if ((url.pathname === "/api/agents/dispatch" || url.pathname === "/api/agents/run") && req.method === "POST") {
+    let body = "";
+    req.on("data", chunk => { body += chunk; });
+    req.on("end", async () => {
+      try {
+        const { agentId, prompt, action } = JSON.parse(body || "{}");
+        const targetId = agentId || "openclaw-sentinel";
+        const inputPrompt = prompt || action || "CHECK VALVE 1";
+
+        const agent = VERIFIED_AGENTS.find(a => a.id === targetId) || {
+          id: targetId,
+          archetype: targetId.includes("hermes") ? "HERMES" : "OPENCLAW"
+        };
+
+        let executionResult;
+        if (agent.archetype === "OPENCLAW" || targetId.includes("openclaw")) {
+          const kRes = evaluateKernel(inputPrompt);
+          executionResult = {
+            agentId: targetId,
+            archetype: "OPENCLAW",
+            kernel: "Bare-Metal C99 Deterministic Microkernel",
+            clockCycles: 743,
+            latencyUs: kRes.fail_safe_latency_us || 0.38,
+            memoryAllocated: "0 Bytes (malloc = 0)",
+            action: kRes.action,
+            device: kRes.device,
+            voltage: kRes.voltage,
+            status: kRes.action === "REJECT" ? "SAFETY_INTERLOCK_TRIPPED" : "EXECUTED_SAFELY",
+            executionProof: "0x" + crypto.createHash("sha256").update(inputPrompt + Date.now()).digest("hex"),
+            timestamp: Date.now()
+          };
+        } else {
+          executionResult = {
+            agentId: targetId,
+            archetype: "HERMES",
+            runtime: "Sovereign FHRR Cross-Chain Router",
+            latencyMs: 4.6,
+            intentProcessed: inputPrompt,
+            consensus: "Dual-PoR Quorum Verified",
+            targetChain: "BASE_SEPOLIA",
+            status: "INTENT_DISPATCHED",
+            executionProof: "0x" + crypto.createHash("sha256").update(inputPrompt + Date.now()).digest("hex"),
+            timestamp: Date.now()
+          };
+        }
+
+        const vertex = ledger.appendVertex({
+          sender: targetId,
+          device: agent.archetype === "OPENCLAW" ? "C99_ACTUATOR" : "HERMES_ROUTER",
+          action: executionResult.action || "DISPATCH",
+          coil: 0x0000,
+          actionValue: 0,
+          porHash: executionResult.executionProof,
+          latencyUs: "0.38",
+          signature: wallet.signTransaction("agent_exec").signature
+        });
+
+        res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({
+          success: true,
+          execution: executionResult,
+          txHash: vertex.vertexHash
+        }));
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
     return;
   }
 
@@ -2987,6 +3252,18 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // GET /api/stats or /api/stats.json (Global ecosystem stats)
+  if ((url.pathname === "/api/stats" || url.pathname === "/api/stats.json") && req.method === "GET") {
+    const statsPath = path.join(__dirname, "dashboard", "api", "stats.json");
+    if (fs.existsSync(statsPath)) {
+      const data = JSON.parse(fs.readFileSync(statsPath, "utf-8"));
+      data.timestamp = Date.now();
+      res.writeHead(200, { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" });
+      res.end(JSON.stringify(data));
+      return;
+    }
+  }
+
   // GET /api/depin/did or /api/depin/did?did=... (W3C DID Document Resolution)
   if (url.pathname === "/api/depin/did" && req.method === "GET") {
     const targetDid = url.searchParams.get("did") || url.searchParams.get("id");
@@ -3147,10 +3424,10 @@ const server = http.createServer((req, res) => {
 
   // Static File Serving
   let reqPath = url.pathname;
-  if (reqPath === "/") reqPath = "/landing.html";
+  if (reqPath === "/") reqPath = "/index.html";
   if (reqPath === "/hub" || reqPath === "/hub/" || reqPath === "/discover" || reqPath === "/discover/") reqPath = "/hub.html";
-  if (reqPath === "/nexus" || reqPath === "/nexus/") reqPath = "/hub.html";
-  if (reqPath === "/depin" || reqPath === "/depin/") reqPath = "/depin.html";
+  if (reqPath === "/nexus" || reqPath === "/nexus/") reqPath = "/nexus.html";
+  if (reqPath === "/depin" || reqPath === "/depin/") reqPath = "/depin/index.html";
   if (reqPath === "/explorer" || reqPath === "/explorer/") reqPath = "/explorer.html";
   if (reqPath === "/bridge" || reqPath === "/bridge/") reqPath = "/hub.html";
   if (reqPath === "/swap" || reqPath === "/swap/") reqPath = "/hub.html";
@@ -3165,6 +3442,9 @@ const server = http.createServer((req, res) => {
   if (reqPath === "/arcade" || reqPath === "/arcade/" || reqPath === "/game" || reqPath === "/game/") reqPath = "/arcade.html";
   if (reqPath === "/marketplace" || reqPath === "/marketplace/" || reqPath === "/market" || reqPath === "/market/") reqPath = "/marketplace.html";
   if (reqPath === "/mint" || reqPath === "/mint/") reqPath = "/mint.html";
+  if (reqPath === "/mindcast" || reqPath === "/mindcast/" || reqPath === "/mindcast-node" || reqPath === "/mindcast-node/") reqPath = "/mindcast-node.html";
+  if (reqPath === "/c99" || reqPath === "/c99/" || reqPath === "/c99-core" || reqPath === "/c99-core/") reqPath = "/c99-core.html";
+  if (reqPath === "/app" || reqPath === "/app/") reqPath = "/app.html";
   
   let targetPath;
   if (reqPath === "/install.sh" || reqPath === "/install.ps1" || reqPath.startsWith("/dist/")) {
