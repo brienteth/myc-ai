@@ -1190,6 +1190,121 @@
       .hub-title { font-size: 32px; }
       .quorum-grid { grid-template-columns: repeat(2, 1fr); }
       .stake-strat-grid { grid-template-columns: 1fr; }
+    /* Connect Wallet Button */
+    .myca-wallet-btn {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(16, 185, 129, 0.15));
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: #00f0ff;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.15);
+      font-family: inherit;
+    }
+    .myca-wallet-btn:hover {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(16, 185, 129, 0.25));
+      border-color: #00f0ff;
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+    }
+    .myca-wallet-btn.connected {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #34d399;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Modal Backdrop - placed at root body */
+    .wallet-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 13, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2147483647;
+      padding: 16px;
+    }
+    .wallet-modal-overlay.active {
+      display: flex !important;
+    }
+    .wallet-modal-card {
+      background: #0d131f;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 32px rgba(0, 240, 255, 0.12);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 440px;
+      padding: 26px;
+      position: relative;
+      animation: walletModalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes walletModalPop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .wallet-modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .wallet-modal-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .wallet-option-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    .wallet-option-card:hover {
+      background: rgba(0, 240, 255, 0.06);
+      border-color: rgba(0, 240, 255, 0.35);
+      transform: translateY(-2px);
+    }
+    .wallet-option-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .wallet-badge-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
     }
   </style>
 </head>
@@ -1269,8 +1384,12 @@
         </div>
         <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
           <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
-          <span>5,000 MYC</span>
+          <span id="nav-wallet-balance">5,000 MYC</span>
         </div>
+        <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn">
+          <span id="wallet-btn-icon">⚡</span>
+          <span id="wallet-btn-label">Connect Wallet</span>
+        </button>
         <a href="/hub#faucet" class="myca-btn-primary">
           <span>🎁 Faucet</span>
         </a>
@@ -1356,6 +1475,9 @@
       </button>
       <button class="hub-tab-btn" id="tab-btn-faucet" onclick="switchHubTab('faucet')">
         🎁 Spore Faucet <span class="hub-tab-badge">DAILY 5 MYC</span>
+      </button>
+      <button class="hub-tab-btn" id="tab-btn-agents" onclick="switchHubTab('agents')">
+        🤖 Autonomous Agents <span class="hub-tab-badge" style="background: rgba(168, 85, 247, 0.18); color: #c084fc; border-color: rgba(168, 85, 247, 0.3);">OPENCLAW &amp; HERMES</span>
       </button>
     </div>
   </div>
@@ -1833,7 +1955,7 @@
             <div style="margin-bottom: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <label style="font-size: 11px; color: var(--text-muted); display: block;">🎯 Hedef MYCA Cüzdan Adresi (Varlıkların teslim edileceği adres)</label>
-                <button type="button" onclick="document.getElementById('metamask-inbound-myc-recipient').value = DEFAULT_WALLET" style="background: transparent; border: none; color: var(--teal-accent); font-size: 11px; cursor: pointer; text-decoration: underline;">[Benim MYCA Adresim]</button>
+                <button type="button" onclick="document.getElementById('metamask-inbound-myc-recipient').value = getActiveWalletAddress()" style="background: transparent; border: none; color: var(--teal-accent); font-size: 11px; cursor: pointer; text-decoration: underline;">[Benim MYCA Adresim]</button>
               </div>
               <input type="text" id="metamask-inbound-myc-recipient" class="swap-number-input" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="font-size: 13.5px; font-family: 'JetBrains Mono', monospace; padding: 8px 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
               <div style="margin-top: 4px; font-size: 11px; color: var(--text-muted); line-height: 1.4;">
@@ -2198,11 +2320,474 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════════
+       VIEW 6: AUTONOMOUS AGENTS (OPENCLAW & HERMES)
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div id="view-agents" class="hub-tab-view">
+    <div style="max-width: 1100px; margin: 0 auto 50px; padding: 0 20px;">
+      
+      <!-- Header Banner -->
+      <div style="text-align: center; margin-bottom: 36px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 100px; background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.28); color: #c084fc; font-size: 13px; font-weight: 600; margin-bottom: 12px;">
+          ⚡ C99 DETERMINISTIC KERNEL &amp; SOVEREIGN FHRR RUNTIME
+        </div>
+        <h2 style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px;">Autonomous Edge Agents</h2>
+        <p style="font-size: 15px; color: var(--text-muted); max-width: 680px; margin: 0 auto;">
+          Deploy and command on-chain AI agents powered by the <strong>C99 4.95µs Safe-Sign Microkernel</strong> and <strong>Sovereign FHRR Cross-Chain Routers</strong>. Mint your own autonomous agent on Chain 108 with <strong>$0.00 Gas</strong>.
+        </p>
+      </div>
+
+      <!-- Two Flagship Agents Showcase -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 36px;">
+        
+        <!-- OpenClaw Card -->
+        <div style="background: rgba(13, 19, 31, 0.85); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 18px; padding: 24px; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), transparent); padding: 4px 14px; border-bottom-left-radius: 12px; font-size: 11px; font-weight: 700; color: #f87171; border-left: 1px solid rgba(239, 68, 68, 0.3); border-bottom: 1px solid rgba(239, 68, 68, 0.3);">
+            C99 BARE-METAL KERNEL
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(239, 68, 68, 0.15); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+              🦀
+            </div>
+            <div>
+              <div style="font-size: 18px; font-weight: 700; color: #fff;">OpenClaw Sentinel</div>
+              <div style="font-size: 12px; color: var(--text-muted);">DePIN Hardware Guard &amp; Security Crawler</div>
+            </div>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+            Modbus PLC röleleri ve IoT donanım güvenliğini denetleyen otonom nöbetçi. Kötü niyetli komutları <strong>743 CPU döngüsünde (0.38 µs)</strong> 0.00V Safe-Low moduna kilitler.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; font-family: 'JetBrains Mono', monospace; margin-bottom: 16px;">
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 8px 10px; border-radius: 8px;">
+              <span style="color: var(--text-faint); display: block;">Tepki Süresi</span>
+              <span style="color: #f87171; font-weight: 700;">4.95 µs (Airbag)</span>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 8px 10px; border-radius: 8px;">
+              <span style="color: var(--text-faint); display: block;">Dinamik Bellek</span>
+              <span style="color: var(--emerald); font-weight: 700;">malloc = 0 B</span>
+            </div>
+          </div>
+          <button class="filter-btn" style="width: 100%; justify-content: center; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.35); color: #fca5a5;" onclick="quickTestAgent('openclaw-sentinel', 'START TURBINE 1')">
+            ⚡ Test C99 Safe-Sign
+          </button>
+        </div>
+
+        <!-- Hermes Card -->
+        <div style="background: rgba(13, 19, 31, 0.85); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 18px; padding: 24px; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), transparent); padding: 4px 14px; border-bottom-left-radius: 12px; font-size: 11px; font-weight: 700; color: #38bdf8; border-left: 1px solid rgba(56, 189, 248, 0.3); border-bottom: 1px solid rgba(56, 189, 248, 0.3);">
+            SOVEREIGN FHRR ROUTER
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+              ⚡
+            </div>
+            <div>
+              <div style="font-size: 18px; font-weight: 700; color: #fff;">Hermes Dispatcher</div>
+              <div style="font-size: 12px; color: var(--text-muted);">Autonomous Cross-Chain Intent Orchestrator</div>
+            </div>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+            Çapraz zincir likidite ve M2M mikro ödeme akışlarını koordine eder. EIP-712 Dual-PoR rezonans mutabakatı ile <strong>&lt; 5 ms</strong> içinde mutabakat kanıtı üretir.
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px; font-family: 'JetBrains Mono', monospace; margin-bottom: 16px;">
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 8px 10px; border-radius: 8px;">
+              <span style="color: var(--text-faint); display: block;">Mutabakat Hızı</span>
+              <span style="color: #38bdf8; font-weight: 700;">&lt; 4.8 ms (BFT)</span>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 8px 10px; border-radius: 8px;">
+              <span style="color: var(--text-faint); display: block;">İşlem Gazı</span>
+              <span style="color: var(--emerald); font-weight: 700;">0.00 MYC</span>
+            </div>
+          </div>
+          <button class="filter-btn" style="width: 100%; justify-content: center; background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #7dd3fc;" onclick="quickTestAgent('hermes-dispatcher', 'DISPATCH LIQUIDITY TO BASE SEPOLIA')">
+            ⚡ Test Hermes Intent
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Two Column: Free Mint Form + Task Execution Console -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+        
+        <!-- FREE AGENT MINT CARD -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 18px; padding: 24px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">⚡ Ücretsiz Otonom Agent Oluştur</h3>
+            <span class="hub-tab-badge" style="background: rgba(16, 185, 129, 0.18); color: var(--emerald);">0.00 GAS</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">
+            Cüzdanınız adına zincir üzerinde kayıtlı, Silicon PUF W3C DID kimliğine sahip kendi otonom yapay zeka ajanınızı saniyeler içinde mint edin.
+          </p>
+
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Ajan Tipi (Archetype)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <button id="archetype-btn-openclaw" class="filter-btn active" style="justify-content: center; border-radius: 8px;" onclick="setAgentArchetype('OPENCLAW')">
+                🦀 OpenClaw (C99 Guard)
+              </button>
+              <button id="archetype-btn-hermes" class="filter-btn" style="justify-content: center; border-radius: 8px;" onclick="setAgentArchetype('HERMES')">
+                ⚡ Hermes (Dispatcher)
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Ajan Adı</label>
+            <input type="text" id="mint-agent-name" class="swap-number-input" placeholder="Örn: My Custom OpenClaw Sentinel" value="My OpenClaw Sentinel #1" style="font-size: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px;">
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Sahip Cüzdan Adresi</label>
+            <input type="text" id="mint-agent-owner" class="swap-number-input" readonly style="font-size: 12px; font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 14px; color: var(--teal-accent);">
+          </div>
+
+          <button id="btn-mint-agent" class="swap-action-btn" onclick="executeMintAgent()" style="background: linear-gradient(135deg, #a855f7, #3b82f6);">
+            <span>⚡ Zincirde Ajanı Oluştur (Free Mint)</span>
+          </button>
+          
+          <div id="mint-agent-status" style="margin-top: 14px; font-size: 12.5px;"></div>
+        </div>
+
+        <!-- AGENT TASK DISPATCH CONSOLE -->
+        <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 18px; padding: 24px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">🚀 Agent Konsolu &amp; Görev Yürütme</h3>
+            <span class="hub-tab-badge" style="background: rgba(56, 189, 248, 0.18); color: #38bdf8;">DUAL-PoR</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 18px;">
+            Otonom ajana C99 Safe-Sign korumalı donanım denetimi veya çapraz zincir komutu verin:
+          </p>
+
+          <div style="margin-bottom: 14px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Hedef Ajan</label>
+            <select id="dispatch-target-agent" class="swap-number-input" style="font-size: 13.5px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; color: #fff;">
+              <option value="openclaw-sentinel">🦀 OpenClaw Sentinel (C99 Guard)</option>
+              <option value="hermes-dispatcher">⚡ Hermes Dispatcher (Cross-Chain)</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">Görev Komutu / Prompt</label>
+            <input type="text" id="dispatch-task-prompt" class="swap-number-input" value="START TURBINE 1" placeholder="Örn: START TURBINE 1, CHECK VALVE 0x0010, DISPATCH TO BASE" style="font-size: 13.5px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px;">
+          </div>
+
+          <button id="btn-dispatch-agent" class="swap-action-btn" onclick="executeDispatchAgentTask()" style="background: linear-gradient(135deg, #059669, #0284c7);">
+            <span>🚀 Görevi Yürüt &amp; DAG'a İşle (0.00 Gas)</span>
+          </button>
+
+          <div id="dispatch-agent-output" style="margin-top: 14px; padding: 12px; border-radius: 10px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); font-family: 'JetBrains Mono', monospace; font-size: 12px; display: none;">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Registered Agents Table -->
+      <div style="margin-top: 36px; background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 18px; padding: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+          <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">🌐 Zincirde Kayıtlı Otonom Ajanlar (Canlı Ağ)</h3>
+          <button class="filter-btn" onclick="fetchLiveAgentsList()" style="font-size: 12px; padding: 4px 12px;">🔄 Listeyi Yenile</button>
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-faint);">
+                <th style="padding: 10px 12px;">Ajan Adı &amp; ID</th>
+                <th style="padding: 10px 12px;">Mimari / Kernel</th>
+                <th style="padding: 10px 12px;">Yetenekler</th>
+                <th style="padding: 10px 12px;">İtibar Skoru</th>
+                <th style="padding: 10px 12px;">Durum</th>
+              </tr>
+            </thead>
+            <tbody id="live-agents-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
        CLIENT-SIDE SCRIPT & LIVE API INTEGRATION
        ═══════════════════════════════════════════════════════════════════ -->
   <script>
     const API_BASE = window.location.origin;
     const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MULTI-WALLET STATE MANAGEMENT (METAMASK & NATIVE LATTICE WALLET)
+    // ═══════════════════════════════════════════════════════════════════
+    let activeWallet = {
+      type: 'none', // 'metamask' | 'native' | 'none'
+      evmAddress: null,
+      mycAddress: DEFAULT_WALLET
+    };
+
+    function toMycAddress(evmAddr) {
+      if (!evmAddr) return DEFAULT_WALLET;
+      const clean = evmAddr.toLowerCase().replace('0x', '');
+      return 'myc1' + clean.slice(0, 32);
+    }
+
+    function toEvmAddress(mycAddr) {
+      if (!mycAddr) return '0x0000000000000000000000000000000000000000';
+      if (mycAddr.startsWith('0x')) return mycAddr;
+      const clean = mycAddr.replace('myc1', '');
+      return '0x' + clean.padEnd(40, '0');
+    }
+
+    function getActiveWalletAddress() {
+      if (activeWallet.type === 'metamask') {
+        return activeWallet.mycAddress || toMycAddress(activeWallet.evmAddress) || DEFAULT_WALLET;
+      }
+      return activeWallet.mycAddress || DEFAULT_WALLET;
+    }
+
+    function getActiveEvmAddress() {
+      if (activeWallet.evmAddress) return activeWallet.evmAddress;
+      return toEvmAddress(activeWallet.mycAddress);
+    }
+
+    async function onConnectWalletButtonClick() {
+      if (activeWallet.type !== 'none') {
+        openWalletModal();
+        return;
+      }
+
+      // If not connected: directly invoke MetaMask!
+      const provider = getMetaMaskProvider();
+      if (provider) {
+        try {
+          await connectMetaMaskWallet();
+        } catch (err) {
+          console.warn("Direct MetaMask prompt error or rejected:", err);
+          openWalletModal();
+        }
+      } else {
+        openWalletModal();
+      }
+    }
+
+    function openWalletModal() {
+      const overlay = document.getElementById('wallet-modal-overlay');
+      if (!overlay) return;
+      overlay.classList.add('active');
+      if (activeWallet.type !== 'none') {
+        openWalletDetailsView();
+      } else {
+        openWalletSelectView();
+      }
+    }
+
+    function closeWalletModal() {
+      const overlay = document.getElementById('wallet-modal-overlay');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    function onWalletModalOverlayClick(e) {
+      if (e.target.id === 'wallet-modal-overlay') {
+        closeWalletModal();
+      }
+    }
+
+    function openWalletSelectView() {
+      const sel = document.getElementById('wallet-view-select');
+      const det = document.getElementById('wallet-view-connected');
+      if (sel) sel.style.display = 'block';
+      if (det) det.style.display = 'none';
+    }
+
+    function openWalletDetailsView() {
+      const sel = document.getElementById('wallet-view-select');
+      const det = document.getElementById('wallet-view-connected');
+      if (sel) sel.style.display = 'none';
+      if (det) det.style.display = 'block';
+
+      const icon = document.getElementById('connected-wallet-icon');
+      const title = document.getElementById('connected-wallet-title');
+      const bal = document.getElementById('connected-wallet-balance');
+      const evmEl = document.getElementById('connected-address-evm');
+      const mycEl = document.getElementById('connected-address-myc');
+
+      if (activeWallet.type === 'metamask') {
+        if (icon) icon.innerText = '🦊';
+        if (title) title.innerText = 'MetaMask (Chain 108)';
+      } else {
+        if (icon) icon.innerText = '🍄';
+        if (title) title.innerText = 'MYCA Sovereign Native';
+      }
+
+      if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
+      if (evmEl) evmEl.innerText = getActiveEvmAddress();
+      if (mycEl) mycEl.innerText = getActiveWalletAddress();
+    }
+
+    async function connectMetaMaskWallet() {
+      const provider = getMetaMaskProvider();
+      if (!provider) {
+        showToast('MetaMask Bulunamadı', 'Tarayıcınızda MetaMask eklentisi bulunamadı. Lütfen kurun.', 'error');
+        openWalletModal();
+        return;
+      }
+      try {
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        if (!accounts || accounts.length === 0) {
+          throw new Error('Cüzdan hesabı seçilmedi');
+        }
+        const evm = accounts[0];
+        const myc = toMycAddress(evm);
+        activeWallet = {
+          type: 'metamask',
+          evmAddress: evm,
+          mycAddress: myc
+        };
+
+        try { localStorage.setItem('myca_wallet_type', 'metamask'); } catch (e) {}
+
+        updateWalletUI();
+        closeWalletModal();
+        showToast('MetaMask Bağlandı! 🦊', `${evm.slice(0, 6)}...${evm.slice(-4)} hesabı aktif.`, 'success');
+
+        await addMycNetworkToMetaMask();
+
+        fetchBalances();
+        fetchStakeInfo();
+      } catch (err) {
+        console.warn('MetaMask connect failed:', err);
+        showToast('Bağlantı İptal Edildi', err.message || 'Kullanıcı bağlantıyı reddetti', 'error');
+        throw err;
+      }
+    }
+
+    function connectNativeWallet() {
+      let savedMyc = null;
+      try { savedMyc = localStorage.getItem('myca_native_address'); } catch (e) {}
+      if (!savedMyc) {
+        const rand = Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+        savedMyc = 'myc1' + rand;
+        try { localStorage.setItem('myca_native_address', savedMyc); } catch (e) {}
+      }
+      activeWallet = {
+        type: 'native',
+        evmAddress: toEvmAddress(savedMyc),
+        mycAddress: savedMyc
+      };
+      try { localStorage.setItem('myca_wallet_type', 'native'); } catch (e) {}
+      updateWalletUI();
+      closeWalletModal();
+      showToast('MYCA Native Cüzdan Aktif! 🍄', `${savedMyc.slice(0, 8)}...${savedMyc.slice(-4)} (Sıfır Gas)`, 'success');
+      fetchBalances();
+      fetchStakeInfo();
+    }
+
+    function disconnectWallet() {
+      activeWallet = {
+        type: 'none',
+        evmAddress: null,
+        mycAddress: DEFAULT_WALLET
+      };
+      try { localStorage.removeItem('myca_wallet_type'); } catch (e) {}
+      updateWalletUI();
+      closeWalletModal();
+      showToast('Cüzdan Bağlantısı Kesildi', 'Varsayılan cüzdan moduna dönüldü.', 'info');
+      fetchBalances();
+      fetchStakeInfo();
+    }
+
+    function updateWalletUI() {
+      const btn = document.getElementById('btn-connect-wallet');
+      const label = document.getElementById('wallet-btn-label');
+      const icon = document.getElementById('wallet-btn-icon');
+      if (!btn || !label || !icon) return;
+
+      if (activeWallet.type === 'metamask') {
+        btn.classList.add('connected');
+        icon.innerText = '🦊';
+        const addr = activeWallet.evmAddress;
+        label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
+      } else if (activeWallet.type === 'native') {
+        btn.classList.add('connected');
+        icon.innerText = '🍄';
+        const addr = activeWallet.mycAddress;
+        label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Native MYCA';
+      } else {
+        btn.classList.remove('connected');
+        icon.innerText = '⚡';
+        const lang = (function() {
+          try { return localStorage.getItem('myca_lang') || 'en'; } catch (e) { return 'en'; }
+        })();
+        label.innerText = lang === 'tr' ? 'Cüzdan Bağla' : 'Connect Wallet';
+      }
+
+      // Pre-fill recipient inputs across Hub
+      const recipient = document.getElementById('metamask-inbound-myc-recipient');
+      if (recipient && activeWallet.type !== 'none') {
+        recipient.value = getActiveWalletAddress();
+      }
+      const faucetAddr = document.getElementById('faucet-address-input');
+      if (faucetAddr && (!faucetAddr.value || faucetAddr.value === DEFAULT_WALLET)) {
+        faucetAddr.value = getActiveWalletAddress();
+      }
+    }
+
+    async function addMycNetworkToMetaMask() {
+      const provider = getMetaMaskProvider();
+      if (!provider) {
+        showToast('MetaMask Bulunamadı', 'Lütfen MetaMask eklentisini açın', 'error');
+        return;
+      }
+      const rpcEndpoint = (window.location.protocol === 'https:' ? window.location.origin : 'http://127.0.0.1:4040') + '/rpc';
+      try {
+        await provider.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x6c', // 108 in hex
+            chainName: 'MYC Sovereign Network',
+            nativeCurrency: {
+              name: 'MYCA Coin',
+              symbol: 'MYC',
+              decimals: 18
+            },
+            rpcUrls: [
+              rpcEndpoint,
+              'https://rpc.mycai.pro',
+              'https://victory-andy-newcastle-lindsay.trycloudflare.com/rpc'
+            ],
+            blockExplorerUrls: [window.location.origin + '/explorer']
+          }]
+        });
+        showToast('Ağ Eklendi! 🌐', 'MetaMask Chain ID 108 (MYC Sovereign Network) ağına geçirildi.', 'success');
+      } catch (err) {
+        if (err.code === 4001) {
+          showToast('İptal Edildi', 'Ağ ekleme kullanıcı tarafından reddedildi', 'info');
+        } else {
+          try {
+            await provider.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x6c' }]
+            });
+            showToast('Ağ Değiştirildi', 'MYC Sovereign Network (Chain 108) aktif.', 'success');
+          } catch (e) {
+            console.warn('Network add/switch warning:', e);
+          }
+        }
+      }
+    }
+
+    function copyWalletAddress(type) {
+      const text = type === 'evm' ? getActiveEvmAddress() : getActiveWalletAddress();
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Kopyalandı! 📋', text, 'success');
+        const btn = document.getElementById(type === 'evm' ? 'btn-copy-evm' : 'btn-copy-myc');
+        if (btn) {
+          const old = btn.innerText;
+          btn.innerText = '✅ Kopyalandı';
+          setTimeout(() => btn.innerText = old, 1500);
+        }
+      }).catch(() => {
+        showToast('Adres', text, 'info');
+      });
+    }
 
     function recordTransaction(tx) {
       try {
@@ -2290,6 +2875,9 @@
         autoDetectConnectedMetaMask();
       } else if (tabName === 'staking') {
         fetchStakeInfo();
+      } else if (tabName === 'agents') {
+        fetchLiveAgentsList();
+        updateMintOwnerAddress();
       }
 
       window.scrollTo({ top: 380, behavior: 'smooth' });
@@ -2302,20 +2890,215 @@
       else if (path.includes('bridge')) switchHubTab('bridge');
       else if (path.includes('staking')) switchHubTab('staking');
       else if (path.includes('faucet')) switchHubTab('faucet');
+      else if (path.includes('agents')) switchHubTab('agents');
       else {
         const hash = (window.location.hash || '').replace('#', '').toLowerCase();
-        if (['discover', 'swap', 'bridge', 'staking', 'faucet'].includes(hash)) {
+        if (['discover', 'swap', 'bridge', 'staking', 'faucet', 'agents'].includes(hash)) {
           switchHubTab(hash);
         }
       }
     });
 
     // ═══════════════════════════════════════════════════════════════════
+    // AUTONOMOUS AGENTS (OPENCLAW & HERMES) INTEGRATION
+    // ═══════════════════════════════════════════════════════════════════
+    let selectedAgentArchetype = 'OPENCLAW';
+
+    function setAgentArchetype(type) {
+      selectedAgentArchetype = type;
+      const btnOpenclaw = document.getElementById('archetype-btn-openclaw');
+      const btnHermes = document.getElementById('archetype-btn-hermes');
+      const nameInput = document.getElementById('mint-agent-name');
+      
+      if (type === 'OPENCLAW') {
+        if (btnOpenclaw) btnOpenclaw.classList.add('active');
+        if (btnHermes) btnHermes.classList.remove('active');
+        if (nameInput) nameInput.value = `My OpenClaw Sentinel #${Math.floor(Math.random()*900 + 100)}`;
+      } else {
+        if (btnHermes) btnHermes.classList.add('active');
+        if (btnOpenclaw) btnOpenclaw.classList.remove('active');
+        if (nameInput) nameInput.value = `My Hermes Dispatcher #${Math.floor(Math.random()*900 + 100)}`;
+      }
+    }
+
+    function updateMintOwnerAddress() {
+      const ownerInput = document.getElementById('mint-agent-owner');
+      if (ownerInput) {
+        ownerInput.value = getActiveWalletAddress();
+      }
+    }
+
+    async function fetchLiveAgentsList() {
+      try {
+        const res = await fetch(`${API_BASE}/api/agents`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.agents)) {
+          renderAgentsTable(data.agents);
+          updateAgentSelectOptions(data.agents);
+        }
+      } catch (err) {
+        console.error("Agents fetch error:", err);
+      }
+    }
+
+    function renderAgentsTable(agents) {
+      const tbody = document.getElementById('live-agents-tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = agents.map(ag => {
+        const id = ag.agentId || ag.id || 'agent';
+        const name = ag.name || id;
+        const kernel = id.includes('openclaw') ? 'Bare-Metal C99 (4.95µs Safe-Sign)' : (id.includes('hermes') ? 'Sovereign FHRR Cross-Chain' : 'Dual-PoR Cognitive Node');
+        const caps = (ag.capabilities || []).slice(0, 3).map(c => `<span style="display:inline-block; font-size:10.5px; background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px; margin:2px;">${c}</span>`).join('');
+        const rep = ag.reputation || 98;
+        return `
+          <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+            <td style="padding: 10px 12px;">
+              <div style="font-weight: 700; color: #fff;">${name}</div>
+              <div style="font-size: 11px; color: var(--text-faint); font-family: 'JetBrains Mono', monospace;">${id}</div>
+            </td>
+            <td style="padding: 10px 12px; color: ${id.includes('openclaw') ? '#f87171' : (id.includes('hermes') ? '#38bdf8' : 'var(--emerald)')}; font-weight: 600; font-size: 12px;">
+              ${kernel}
+            </td>
+            <td style="padding: 10px 12px;">${caps}</td>
+            <td style="padding: 10px 12px; font-weight: 700; color: var(--teal-accent);">${rep} / 100</td>
+            <td style="padding: 10px 12px;">
+              <span style="display:inline-flex; align-items:center; gap:4px; font-size:11px; color:var(--emerald); background:rgba(16,185,129,0.1); padding:2px 8px; border-radius:100px;">
+                <span style="width:6px; height:6px; border-radius:50%; background:var(--emerald);"></span> ACTIVE
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function updateAgentSelectOptions(agents) {
+      const select = document.getElementById('dispatch-target-agent');
+      if (!select) return;
+      const currentVal = select.value;
+      select.innerHTML = agents.map(ag => {
+        const id = ag.agentId || ag.id;
+        const name = ag.name || id;
+        const emoji = id.includes('openclaw') ? '🦀' : (id.includes('hermes') ? '⚡' : '🤖');
+        return `<option value="${id}">${emoji} ${name} (${id})</option>`;
+      }).join('');
+      if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    async function executeMintAgent() {
+      const btn = document.getElementById('btn-mint-agent');
+      const statusDiv = document.getElementById('mint-agent-status');
+      const nameInput = document.getElementById('mint-agent-name');
+      const name = nameInput ? nameInput.value : '';
+      const owner = getActiveWalletAddress();
+
+      btn.disabled = true;
+      btn.innerText = 'Minting On-Chain (Zero Gas)...';
+      statusDiv.innerHTML = `<span style="color: #c084fc;">Cryptographic PUF DID üretiliyor ve DAG'a işleniyor...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/agents/mint`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            archetype: selectedAgentArchetype,
+            name: name,
+            ownerAddress: owner
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.agent) {
+          statusDiv.innerHTML = `
+            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 12px; color: #fff;">
+              <div style="font-weight: 700; color: var(--emerald); margin-bottom: 4px;">🎉 Ajan Başarıyla Mint Edildi!</div>
+              <div style="font-size: 11.5px; font-family: 'JetBrains Mono', monospace; line-height: 1.5;">
+                • ID: <span style="color:#38bdf8;">${data.agent.id}</span><br>
+                • W3C DID: <span style="color:var(--text-muted);">${data.agent.did}</span><br>
+                • Kernel: <span style="color:#f87171;">${data.agent.hardwareKernel}</span><br>
+                • Gaz Ücreti: <span style="color:var(--emerald);">0.00 MYC (Free Testnet)</span><br>
+                • DAG Tx: <span style="color:var(--teal-accent);">${data.txHash ? data.txHash.slice(0, 20) + '...' : 'Confirmed'}</span>
+              </div>
+            </div>
+          `;
+          fetchLiveAgentsList();
+        } else {
+          statusDiv.innerHTML = `<span style="color: #ef4444;">❌ Mint Başarısız: ${data.error || 'Bilinmeyen hata'}</span>`;
+        }
+      } catch (err) {
+        statusDiv.innerHTML = `<span style="color: #ef4444;">❌ Bağlantı Hatası: ${err.message}</span>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Zincirde Ajanı Oluştur (Free Mint)';
+      }
+    }
+
+    async function executeDispatchAgentTask() {
+      const btn = document.getElementById('btn-dispatch-agent');
+      const outputDiv = document.getElementById('dispatch-agent-output');
+      const select = document.getElementById('dispatch-target-agent');
+      const promptInput = document.getElementById('dispatch-task-prompt');
+      const targetAgent = select ? select.value : 'openclaw-sentinel';
+      const prompt = promptInput ? promptInput.value : 'START TURBINE 1';
+
+      btn.disabled = true;
+      btn.innerText = 'Executing Deterministic Task...';
+      outputDiv.style.display = 'block';
+      outputDiv.innerHTML = `<span style="color: #38bdf8;">Executing C99 / Dual-PoR inference...</span>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/agents/dispatch`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agentId: targetAgent,
+            prompt: prompt
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.execution) {
+          const ex = data.execution;
+          outputDiv.innerHTML = `
+            <div style="color: var(--emerald); font-weight: 700; margin-bottom: 6px;">
+              ✅ ${ex.status} (${ex.latencyUs ? ex.latencyUs + ' µs' : ex.latencyMs + ' ms'})
+            </div>
+            <div style="color: var(--text-muted); line-height: 1.6;">
+              • Ajan: <span style="color: #fff;">${ex.agentId}</span> [${ex.archetype}]<br>
+              • Çekirdek: <span style="color: #f87171;">${ex.kernel || ex.runtime}</span><br>
+              • Dinamik Bellek: <span style="color: var(--emerald);">${ex.memoryAllocated || 'malloc = 0 B'}</span><br>
+              ${ex.action ? `• Karar: <span style="color: #38bdf8; font-weight:700;">${ex.action}</span> (Cihaz: ${ex.device}, ${ex.voltage})<br>` : ''}
+              ${ex.targetChain ? `• Hedef Ağ: <span style="color: #38bdf8;">${ex.targetChain}</span><br>` : ''}
+              • DAG Kanıtı: <span style="color: var(--teal-accent);">${ex.executionProof ? ex.executionProof.slice(0, 24) + '...' : ''}</span><br>
+              • Gaz Maliyeti: <span style="color: var(--emerald);">0.00000000 MYC (Zero-Gas Invariant)</span>
+            </div>
+          `;
+        } else {
+          outputDiv.innerHTML = `<span style="color: #ef4444;">❌ Hata: ${data.error || 'İşlem başarısız'}</span>`;
+        }
+      } catch (err) {
+        outputDiv.innerHTML = `<span style="color: #ef4444;">❌ Bağlantı Hatası: ${err.message}</span>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "🚀 Görevi Yürüt & DAG'a İşle (0.00 Gas)";
+      }
+    }
+
+    function quickTestAgent(agentId, prompt) {
+      switchHubTab('agents');
+      const select = document.getElementById('dispatch-target-agent');
+      const input = document.getElementById('dispatch-task-prompt');
+      if (select) select.value = agentId;
+      if (input) input.value = prompt;
+      executeDispatchAgentTask();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
     // BALANCE & OVERVIEW FETCH
     // ═══════════════════════════════════════════════════════════════════
     async function fetchBalances() {
       try {
-        const res = await fetch(`${API_BASE}/api/wallet/balance?address=${DEFAULT_WALLET}`);
+        const res = await fetch(`${API_BASE}/api/wallet/balance?address=${getActiveWalletAddress()}`);
         const data = await res.json();
         if (data.success) {
           currentBalances = {
@@ -2333,6 +3116,8 @@
     function updateBalancesUI() {
       const elNav = document.getElementById('nav-wallet-balance');
       if (elNav) elNav.innerText = Math.floor(currentBalances.MYC).toLocaleString() + " MYC";
+      const connBal = document.getElementById('connected-wallet-balance');
+      if (connBal) connBal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + " MYC";
 
       // Swap balances
       const fromTok = document.getElementById('swap-from-token')?.value || 'MYC';
@@ -2443,7 +3228,7 @@
             from,
             to,
             amount,
-            userAddress: DEFAULT_WALLET
+            userAddress: getActiveWalletAddress()
           })
         });
         const data = await res.json();
@@ -2454,7 +3239,7 @@
             hash: txHash,
             type: 'SWAP',
             module: 'Mycelial Swap',
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             recipient: '0x0000000000000000000000000000000000dEx108 (Resonance AMM)',
             amount: `${amount} ${from} ➔ ${outAmt.toFixed(4)} ${to}`,
             rawAmount: amount,
@@ -2548,7 +3333,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            senderOnMyc: DEFAULT_WALLET,
+            senderOnMyc: getActiveWalletAddress(),
             targetChain,
             recipientOnEvm,
             asset,
@@ -2563,7 +3348,7 @@
             hash: txHash,
             type: 'BRIDGE_LOCK',
             module: 'Hyphae Bridge',
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             recipient: `0x8453B02919Ff77A7cEc5cE8924b172a370e00001 (${targetChain})`,
             amount: `${amount} ${asset}`,
             rawAmount: amount,
@@ -2575,7 +3360,7 @@
           recordTransaction(txRecord);
           recordBridgeTransaction({
             bridgeId,
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             targetChain,
             recipientRemote: recipientOnEvm,
             amount,
@@ -2939,6 +3724,17 @@
         if (accounts && accounts.length > 0) {
           const userAccount = accounts[0];
           window.connectedMetaMaskAccount = userAccount;
+          const savedType = (function() {
+            try { return localStorage.getItem('myca_wallet_type'); } catch(e) { return null; }
+          })();
+          if (savedType === 'metamask' || (!savedType && activeWallet.type === 'none')) {
+            activeWallet = {
+              type: 'metamask',
+              evmAddress: userAccount,
+              mycAddress: toMycAddress(userAccount)
+            };
+            updateWalletUI();
+          }
           const btn = document.getElementById('btn-header-metamask');
           if (btn) {
             btn.style.background = 'rgba(16, 185, 129, 0.15)';
@@ -2950,6 +3746,28 @@
           if (recipientInput && (!recipientInput.value || recipientInput.value.startsWith('0x742d35Cc6634C0532925a3b844Bc454e4438f44e'))) {
             recipientInput.value = userAccount;
           }
+        }
+
+        if (provider && !provider._mycaListenersAttached && typeof provider.on === 'function') {
+          provider._mycaListenersAttached = true;
+          provider.on('accountsChanged', (newAccounts) => {
+            if (newAccounts && newAccounts.length > 0) {
+              activeWallet = {
+                type: 'metamask',
+                evmAddress: newAccounts[0],
+                mycAddress: toMycAddress(newAccounts[0])
+              };
+              updateWalletUI();
+              fetchBalances();
+              fetchStakeInfo();
+            } else {
+              disconnectWallet();
+            }
+          });
+          provider.on('chainChanged', () => {
+            fetchBalances();
+            fetchStakeInfo();
+          });
         }
       } catch (e) {}
     }
@@ -2980,7 +3798,7 @@
       const net = EVM_NETWORKS[chainKey] || EVM_NETWORKS.BASE;
       const amount = parseFloat(document.getElementById('metamask-inbound-amount').value) || 50;
       const asset = document.getElementById('metamask-inbound-asset').value || 'USDT';
-      const recipientOnMyc = document.getElementById('metamask-inbound-myc-recipient')?.value.trim() || DEFAULT_WALLET;
+      const recipientOnMyc = document.getElementById('metamask-inbound-myc-recipient')?.value.trim() || getActiveWalletAddress();
       const btn = document.getElementById('btn-metamask-inbound-deposit');
       const statusEl = document.getElementById('metamask-inbound-status');
 
@@ -3213,7 +4031,7 @@
     // FAUCET LOGIC
     // ═══════════════════════════════════════════════════════════════════
     async function executeHubFaucetClaim() {
-      const addr = document.getElementById('faucet-address-input').value || DEFAULT_WALLET;
+      const addr = document.getElementById('faucet-address-input').value || getActiveWalletAddress();
       const tw = document.getElementById('faucet-twitter-input').value;
       const btn = document.getElementById('btn-claim-faucet');
       const msg = document.getElementById('faucet-status-msg');
@@ -3226,7 +4044,11 @@
         const res = await fetch(`${API_BASE}/api/faucet`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: addr })
+          body: JSON.stringify({
+            address: addr,
+            twitter: tw || '@myc_developer',
+            verifiedFollow: true
+          })
         });
         const data = await res.json();
         if (data.success) {
@@ -3345,7 +4167,7 @@
 
     async function fetchStakeInfo() {
       try {
-        const res = await fetch(`${API_BASE}/api/stake/info?address=${DEFAULT_WALLET}`);
+        const res = await fetch(`${API_BASE}/api/stake/info?address=${getActiveWalletAddress()}`);
         const data = await res.json();
         if (data.success) {
           currentStakeState = {
@@ -3428,7 +4250,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            address: DEFAULT_WALLET,
+            address: getActiveWalletAddress(),
             amount: amt,
             strategy: selectedStakeStrategy
           })
@@ -3440,7 +4262,7 @@
             hash: txHash,
             type: 'STAKE_DEPOSIT',
             module: 'NeuroYield Staking',
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             recipient: '0x000000000000000000000000000000000057a810 (NeuroVault)',
             amount: `${amt} MYC`,
             rawAmount: amt,
@@ -3481,7 +4303,7 @@
         const res = await fetch(`${API_BASE}/api/stake/claim`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: DEFAULT_WALLET })
+          body: JSON.stringify({ address: getActiveWalletAddress() })
         });
         const data = await res.json();
         if (data.success) {
@@ -3492,7 +4314,7 @@
             type: 'STAKE_HARVEST',
             module: 'NeuroYield Staking',
             sender: '0x000000000000000000000000000000000057a810 (NeuroVault)',
-            recipient: DEFAULT_WALLET,
+            recipient: getActiveWalletAddress(),
             amount: `+${harvested} MYC`,
             rawAmount: parseFloat(harvested),
             gasFee: '0.00000000 MYC',
@@ -3531,7 +4353,7 @@
         const res = await fetch(`${API_BASE}/api/stake/compound`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: DEFAULT_WALLET })
+          body: JSON.stringify({ address: getActiveWalletAddress() })
         });
         const data = await res.json();
         if (data.success) {
@@ -3541,7 +4363,7 @@
             hash: txHash,
             type: 'STAKE_COMPOUND',
             module: 'NeuroYield Staking',
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             recipient: '0x000000000000000000000000000000000057a810 (NeuroVault)',
             amount: `${comp} MYC (Re-Staked)`,
             rawAmount: parseFloat(comp),
@@ -3590,7 +4412,7 @@
         const res = await fetch(`${API_BASE}/api/stake/unstake`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: DEFAULT_WALLET, amount: amt })
+          body: JSON.stringify({ address: getActiveWalletAddress(), amount: amt })
         });
         const data = await res.json();
         if (data.success) {
@@ -3656,6 +4478,27 @@
           btnEn.classList.remove('active');
         }
       }
+
+      // Localize Wallet elements if not connected
+      const wBtnLabel = document.getElementById('wallet-btn-label');
+      const mTitle = document.getElementById('modal-title-select');
+      const mDesc = document.getElementById('modal-desc-select');
+      const metaSub = document.getElementById('wallet-meta-sub');
+      const nativeSub = document.getElementById('wallet-native-sub');
+
+      if (lang === 'tr') {
+        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Cüzdan Bağla';
+        if (mTitle) mTitle.innerText = 'MYCA Ağına Bağlan';
+        if (mDesc) mDesc.innerText = 'Sovereign Lattice (Chain ID 108) ağına bağlantı yönteminizi seçin';
+        if (metaSub) metaSub.innerText = 'Tarayıcı eklentisiyle bağlanın & Chain 108\'e otomatik geçin.';
+        if (nativeSub) nativeSub.innerText = 'myc1... formatında anlık sıfır-gas tarayıcı cüzdanı.';
+      } else {
+        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Connect Wallet';
+        if (mTitle) mTitle.innerText = 'Connect to MYCA Network';
+        if (mDesc) mDesc.innerText = 'Select your gateway to Sovereign Lattice (Chain ID 108)';
+        if (metaSub) metaSub.innerText = 'Connect browser extension & auto-switch to Chain 108.';
+        if (nativeSub) nativeSub.innerText = 'Instant browser keypair with native myc1... address.';
+      }
     }
 
     // INITIALIZATION
@@ -3680,6 +4523,115 @@
       }
     });
   </script>
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CONNECT WALLET MODAL (METAMASK & NATIVE LATTICE WALLET)
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div id="wallet-modal-overlay" class="wallet-modal-overlay" onclick="onWalletModalOverlayClick(event)">
+    <div class="wallet-modal-card">
+      <button class="wallet-modal-close" onclick="closeWalletModal()">✕</button>
+
+      <!-- VIEW 1: SELECT WALLET -->
+      <div id="wallet-view-select">
+        <div style="text-align: center; margin-bottom: 22px;">
+          <div style="font-size: 34px; margin-bottom: 6px;">🍄</div>
+          <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px;" id="modal-title-select">Connect to MYCA Network</h3>
+          <p style="font-size: 12.5px; color: var(--text-muted);" id="modal-desc-select">Select your gateway to Sovereign Lattice (Chain ID 108)</p>
+        </div>
+
+        <!-- Option 1: MetaMask -->
+        <div class="wallet-option-card" onclick="connectMetaMaskWallet()">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="wallet-option-icon" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3);">
+              🦊
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span>MetaMask</span>
+                <span class="wallet-badge-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">EVM Web3</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="wallet-meta-sub">
+                Connect browser extension & auto-switch to Chain 108.
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 16px; color: #94a3b8;">➔</div>
+        </div>
+
+        <!-- Option 2: MYCA Native Sovereign Wallet -->
+        <div class="wallet-option-card" onclick="connectNativeWallet()">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="wallet-option-icon" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3);">
+              🍄
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span>MYCA Native Wallet</span>
+                <span class="wallet-badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Zero-Gas Native</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="wallet-native-sub">
+                Instant browser keypair with native myc1... address.
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 16px; color: #94a3b8;">➔</div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center; font-size: 11.5px; color: #64748b; line-height: 1.5;">
+          🔒 Zero gas fees on MYCA Sovereign Network.<br>Transactions executed with mathematical determinism.
+        </div>
+      </div>
+
+      <!-- VIEW 2: CONNECTED WALLET DETAILS -->
+      <div id="wallet-view-connected" style="display: none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="connected-wallet-icon" style="font-size: 26px;">🦊</span>
+            <div>
+              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">MetaMask Connected</div>
+              <div style="font-size: 11.5px; color: var(--teal-accent); display: flex; align-items: center; gap: 5px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 6px var(--teal-accent);"></span>
+                <span>MYC Sovereign Network (Chain 108)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance Display -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px;">Active Account Balance</div>
+          <div id="connected-wallet-balance" style="font-size: 24px; font-weight: 800; color: #fff; font-family: var(--f-mono);">5,000 MYC</div>
+        </div>
+
+        <!-- Address Display (Dual Format: EVM 0x & MYC myc1) -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">EVM Address (MetaMask):</span>
+            <button onclick="copyWalletAddress('evm')" id="btn-copy-evm" style="background: transparent; border: none; color: var(--cyan-accent); cursor: pointer; font-size: 11px;">📋 Copy</button>
+          </div>
+          <div id="connected-address-evm" style="font-family: var(--f-mono); color: #cbd5e1; word-break: break-all; margin-bottom: 10px;">0x...</div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+            <span style="color: var(--text-muted);">MYC Sovereign Address:</span>
+            <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Copy</button>
+          </div>
+          <div id="connected-address-myc" style="font-family: var(--f-mono); color: var(--teal-accent); word-break: break-all;">myc1...</div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button id="btn-add-chain-mm" onclick="addMycNetworkToMetaMask()" style="width: 100%; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🦊 Add / Switch Network on MetaMask
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            🔄 Switch / Change Wallet
+          </button>
+          <button onclick="disconnectWallet()" style="width: 100%; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            🔌 Disconnect
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 <script src="/i18n.js"></script>
 </body>
 </html>
