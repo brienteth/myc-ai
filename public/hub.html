@@ -1190,6 +1190,8 @@
       .hub-title { font-size: 32px; }
       .quorum-grid { grid-template-columns: repeat(2, 1fr); }
       .stake-strat-grid { grid-template-columns: 1fr; }
+    }
+
     /* Connect Wallet Button */
     .myca-wallet-btn {
       background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(16, 185, 129, 0.15));
@@ -1197,10 +1199,10 @@
       color: #00f0ff;
       padding: 6px 14px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
-      display: inline-flex;
+      display: inline-flex !important;
       align-items: center;
       gap: 6px;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1386,8 +1388,8 @@
           <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
           <span id="nav-wallet-balance">5,000 MYC</span>
         </div>
-        <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn">
-          <span id="wallet-btn-icon">⚡</span>
+        <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn" style="display: inline-flex !important; align-items: center; gap: 8px; z-index: 100;">
+          <span id="wallet-btn-icon" style="font-size: 14px;">🦊</span>
           <span id="wallet-btn-label">Connect Wallet</span>
         </button>
         <a href="/hub#faucet" class="myca-btn-primary">
@@ -1426,6 +1428,9 @@
         </div>
 
         <div class="myc-quick-actions">
+          <button onclick="openWalletModal()" class="btn-quick" style="background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4); display: inline-flex; align-items: center; gap: 6px;">
+            <span>🦊</span> Connect Wallet
+          </button>
           <button onclick="switchHubTab('swap')" class="btn-quick btn-quick-primary">🔄 Swap $MYC</button>
           <button onclick="switchHubTab('bridge')" class="btn-quick btn-quick-outline">🌉 Bridge Assets</button>
           <button onclick="switchHubTab('faucet')" class="btn-quick btn-quick-outline">🎁 Claim 5 $MYC</button>
