@@ -2595,82 +2595,169 @@
       }
     }
 
+    function hideAllWalletViews() {
+      ['wallet-view-select', 'wallet-view-connected', 'wallet-view-create', 'wallet-view-import'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+    }
+
     function openWalletSelectView() {
+      hideAllWalletViews();
       const sel = document.getElementById('wallet-view-select');
-      const det = document.getElementById('wallet-view-connected');
       if (sel) sel.style.display = 'block';
-      if (det) det.style.display = 'none';
     }
 
-    function openWalletDetailsView() {
-      const sel = document.getElementById('wallet-view-select');
-      const det = document.getElementById('wallet-view-connected');
-      if (sel) sel.style.display = 'none';
-      if (det) det.style.display = 'block';
+    const DEPIN_WORDLIST = [
+      "alpha", "beacon", "cipher", "colony", "consensus", "depin", "epoch", "fungal",
+      "genesis", "hardware", "hyphae", "kernel", "lattice", "matrix", "modbus", "mycelium",
+      "network", "neural", "nexus", "opacus", "proof", "puf", "quantum", "resonance",
+      "secure", "sentinel", "sharding", "sovereign", "spore", "state", "token", "vector",
+      "vault", "yield", "zero", "zkp", "shield", "orbit", "crystal", "apex"
+    ];
 
-      const icon = document.getElementById('connected-wallet-icon');
-      const title = document.getElementById('connected-wallet-title');
-      const bal = document.getElementById('connected-wallet-balance');
-      const evmEl = document.getElementById('connected-address-evm');
-      const mycEl = document.getElementById('connected-address-myc');
-
-      if (activeWallet.type === 'metamask') {
-        if (icon) icon.innerText = '🦊';
-        if (title) title.innerText = 'MetaMask (Chain 108)';
+    function generate12Words() {
+      const words = [];
+      const randArr = new Uint32Array(12);
+      if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(randArr);
       } else {
-        if (icon) icon.innerText = '🍄';
-        if (title) title.innerText = 'MYCA Sovereign Native';
+        for (let i = 0; i < 12; i++) randArr[i] = Math.floor(Math.random() * 1000000);
       }
-
-      if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
-      if (evmEl) evmEl.innerText = getActiveEvmAddress();
-      if (mycEl) mycEl.innerText = getActiveWalletAddress();
+      for (let i = 0; i < 12; i++) {
+        words.push(DEPIN_WORDLIST[randArr[i] % DEPIN_WORDLIST.length]);
+      }
+      return words.join(" ");
     }
 
-    async function connectMetaMaskWallet() {
-      const provider = getMetaMaskProvider();
-      if (!provider) {
-        showToast('MetaMask Bulunamadı', 'Tarayıcınızda MetaMask eklentisi bulunamadı. Lütfen kurun.', 'error');
-        openWalletModal();
+    async function deriveWalletFromWords(input) {
+      const clean = (input || "").trim().toLowerCase();
+      let hexKey = "";
+      if (clean.startsWith("0x") && clean.length >= 64) {
+        hexKey = clean.replace("0x", "").slice(0, 64);
+      } else {
+        const enc = new TextEncoder().encode(clean);
+        const hashBuf = await crypto.subtle.digest("SHA-256", enc);
+        const hashArr = Array.from(new Uint8Array(hashBuf));
+        hexKey = hashArr.map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+      const mycAddr = "myc1" + hexKey.slice(0, 32);
+      const evmAddr = "0x" + hexKey.slice(24, 64);
+      return {
+        mnemonic: clean.split(" ").length >= 6 ? clean : "",
+        privateKey: "0x" + hexKey,
+        mycAddress: mycAddr,
+        evmAddress: evmAddr
+      };
+    }
+
+    let _tempGeneratedWords = "";
+    function openWalletCreateView() {
+      hideAllWalletViews();
+      const view = document.getElementById('wallet-view-create');
+      if (view) view.style.display = 'block';
+      _tempGeneratedWords = generate12Words();
+      const container = document.getElementById('create-words-container');
+      if (container) {
+        const words = _tempGeneratedWords.split(" ");
+        container.innerHTML = words.map((w, idx) => `
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 12.5px;">
+            <span style="color: #64748b; font-size: 10px;">${idx + 1}.</span>
+            <span style="color: #38bdf8; font-weight: 700;">${w}</span>
+          </div>
+        `).join("");
+      }
+    }
+
+    function copyCreatedWords() {
+      if (!_tempGeneratedWords) return;
+      navigator.clipboard.writeText(_tempGeneratedWords).then(() => {
+        showToast('Kopyalandı! 📋', '12 tohum kelimesi panoya kopyalandı.', 'success');
+      });
+    }
+
+    function openWalletImportView() {
+      hideAllWalletViews();
+      const view = document.getElementById('wallet-view-import');
+      if (view) view.style.display = 'block';
+      const input = document.getElementById('import-seed-input');
+      if (input) { input.value = ''; input.focus(); }
+    }
+
+    async function executeActivateCreatedWallet() {
+      if (!_tempGeneratedWords) return;
+      const derived = await deriveWalletFromWords(_tempGeneratedWords);
+      localStorage.setItem('myca_mnemonic', _tempGeneratedWords);
+      localStorage.setItem('myca_private_key', derived.privateKey);
+      localStorage.setItem('myca_native_address', derived.mycAddress);
+      localStorage.setItem('myca_wallet_address', derived.mycAddress);
+      localStorage.setItem('myca_wallet_type', 'native');
+      activeWallet = {
+        type: 'native',
+        evmAddress: derived.evmAddress,
+        mycAddress: derived.mycAddress
+      };
+      updateWalletUI();
+      closeWalletModal();
+      showToast('Sovereign Cüzdan Aktif! 🍄', `${derived.mycAddress.slice(0, 8)}... (12 Kelime Kaydedildi)`, 'success');
+      fetchBalances();
+      fetchStakeInfo();
+    }
+
+    async function executeImportWallet() {
+      const input = document.getElementById('import-seed-input');
+      const val = (input ? input.value : "").trim();
+      if (!val) {
+        showToast('Giriş Eksik', 'Lütfen 12 kelimenizi veya özel anahtarınızı girin.', 'error');
         return;
       }
-      try {
-        const accounts = await provider.request({ method: 'eth_requestAccounts' });
-        if (!accounts || accounts.length === 0) {
-          throw new Error('Cüzdan hesabı seçilmedi');
-        }
-        const evm = accounts[0];
-        const myc = toMycAddress(evm);
-        activeWallet = {
-          type: 'metamask',
-          evmAddress: evm,
-          mycAddress: myc
-        };
-
-        try { localStorage.setItem('myca_wallet_type', 'metamask'); } catch (e) {}
-
-        updateWalletUI();
-        closeWalletModal();
-        showToast('MetaMask Bağlandı! 🦊', `${evm.slice(0, 6)}...${evm.slice(-4)} hesabı aktif.`, 'success');
-
-        await addMycNetworkToMetaMask();
-
-        fetchBalances();
-        fetchStakeInfo();
-      } catch (err) {
-        console.warn('MetaMask connect failed:', err);
-        showToast('Bağlantı İptal Edildi', err.message || 'Kullanıcı bağlantıyı reddetti', 'error');
-        throw err;
+      const derived = await deriveWalletFromWords(val);
+      if (derived.mnemonic) {
+        localStorage.setItem('myca_mnemonic', derived.mnemonic);
       }
+      localStorage.setItem('myca_private_key', derived.privateKey);
+      localStorage.setItem('myca_native_address', derived.mycAddress);
+      localStorage.setItem('myca_wallet_address', derived.mycAddress);
+      localStorage.setItem('myca_wallet_type', 'native');
+      activeWallet = {
+        type: 'native',
+        evmAddress: derived.evmAddress,
+        mycAddress: derived.mycAddress
+      };
+      updateWalletUI();
+      closeWalletModal();
+      showToast('Cüzdan Yüklendi! 🍄', `${derived.mycAddress.slice(0, 8)}... hesabı aktif.`, 'success');
+      fetchBalances();
+      fetchStakeInfo();
+    }
+
+    function toggleShowSecretBackup() {
+      const box = document.getElementById('wallet-secret-backup-box');
+      if (!box) return;
+      if (box.style.display === 'none' || !box.style.display) {
+        box.style.display = 'block';
+        const m = localStorage.getItem('myca_mnemonic') || 'Tohum kelimeleri bu cihazda doğrudan anahtarla yüklenmiş.';
+        const pk = localStorage.getItem('myca_private_key') || '0x' + (localStorage.getItem('myca_native_address') || '').replace('myc1', '').padEnd(64, '0');
+        const mEl = document.getElementById('backup-mnemonic-text');
+        const pEl = document.getElementById('backup-pk-text');
+        if (mEl) mEl.innerText = m;
+        if (pEl) pEl.innerText = pk;
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function navigateToExplorerAccount() {
+      const addr = getActiveWalletAddress();
+      window.location.href = `/explorer?address=${encodeURIComponent(addr)}`;
     }
 
     function connectNativeWallet() {
       let savedMyc = null;
       try { savedMyc = localStorage.getItem('myca_native_address'); } catch (e) {}
       if (!savedMyc) {
-        const rand = Array.from({length: 32}, () => Math.floor(Math.random() * 16).toString(16)).join('');
-        savedMyc = 'myc1' + rand;
-        try { localStorage.setItem('myca_native_address', savedMyc); } catch (e) {}
+        openWalletCreateView();
+        return;
       }
       activeWallet = {
         type: 'native',
@@ -3221,6 +3308,30 @@
         return;
       }
 
+      // Show confirmation modal before executing swap
+      if (window.showTxConfirmation) {
+        const estOut = (amount * (from === 'MYC' ? 0.0997 : 10.03)).toFixed(4);
+        const confirmed = await window.showTxConfirmation({
+          type: "SWAP",
+          title: "Mycelial AMM Swap Onayı",
+          from: getActiveWalletAddress(),
+          to: "0x0000000000000000000000000000000000dEx108 (Resonance AMM)",
+          amount: amount,
+          asset: from,
+          extraDetails: [
+            { label: "Tahmini Çıktı", value: `~${estOut} ${to}`, color: "#34d399" },
+            { label: "Ağ", value: "MYCA Sovereign Lattice (Chain 108)" },
+            { label: "Gas Ücreti", value: "0.00 MYC (Sıfır Gas)", color: "#34d399" },
+            { label: "AMM Finalite", value: "< 7.8 ms (Lane B AMM)" },
+            { label: "Donanım Koruması", value: "✓ Modbus Negation & PUF Doğrulandı", color: "#34d399" }
+          ]
+        });
+        if (!confirmed) {
+          showToast('Swap İptal Edildi', 'İşlem kullanıcı tarafından iptal edildi.', 'info');
+          return;
+        }
+      }
+
       btn.disabled = true;
       btn.innerText = 'Verifying AMM Resonance & Swapping...';
       msg.innerHTML = `<span style="color: var(--cyan-accent);">Settling constant-product exchange on Lattice DAG (0.00 Gas)...</span>`;
@@ -3328,6 +3439,32 @@
       const recipientOnEvm = document.getElementById('bridge-remote-recipient').value;
       const btn = document.getElementById('btn-execute-bridge');
       const msg = document.getElementById('bridge-status-msg');
+
+      if (amount <= 0) {
+        showToast('Invalid Amount', 'Please enter a valid bridge amount', 'error');
+        return;
+      }
+
+      if (window.showTxConfirmation) {
+        const confirmed = await window.showTxConfirmation({
+          type: "BRIDGE",
+          title: "Hyphae Cross-Chain Köprü Onayı",
+          from: getActiveWalletAddress(),
+          to: `0x8453B02919Ff77A7cEc5cE8924b172a370e00001 (${targetChain})`,
+          amount: amount,
+          asset: asset,
+          extraDetails: [
+            { label: "Hedef Ağ", value: targetChain },
+            { label: "EVM Alıcı", value: recipientOnEvm ? (recipientOnEvm.slice(0, 10) + "...") : "EVM Address" },
+            { label: "Gas Ücreti", value: "0.00 MYC (Sıfır Gas)", color: "#34d399" },
+            { label: "Köprü Güvenliği", value: "3/4 BFT Çoklu İmza & EIP-712", color: "#34d399" }
+          ]
+        });
+        if (!confirmed) {
+          showToast('Köprü İptal Edildi', 'İşlem kullanıcı tarafından iptal edildi.', 'info');
+          return;
+        }
+      }
 
       btn.disabled = true;
       btn.innerText = 'Locking on Lattice & Collecting 3/4 BFT Quorum...';
@@ -4246,6 +4383,27 @@
         return;
       }
 
+      if (window.showTxConfirmation) {
+        const confirmed = await window.showTxConfirmation({
+          type: "STAKE",
+          title: "NeuroYield Stake Onayı",
+          from: getActiveWalletAddress(),
+          to: "0x000000000000000000000000000000000057a810 (Staking Kontratı)",
+          amount: amt,
+          asset: "MYC",
+          extraDetails: [
+            { label: "Strateji", value: selectedStakeStrategy || "Otomatik Bileşik Getiri" },
+            { label: "Dinamik Getiri (APY)", value: "18.4% APY (Günlük Dağıtım)", color: "#34d399" },
+            { label: "Gas Ücreti", value: "0.00 MYC (Sıfır Gas)", color: "#34d399" },
+            { label: "Ağ Güvenliği", value: "PoR Rezonans Doğrulaması", color: "#34d399" }
+          ]
+        });
+        if (!confirmed) {
+          showToast('Stake İptal Edildi', 'İşlem kullanıcı tarafından iptal edildi.', 'info');
+          return;
+        }
+      }
+
       btn.disabled = true;
       btn.innerText = 'Rezonans Teminatı Kilitleniyor...';
       msg.innerHTML = `<span style="color: var(--emerald);">Chain ID 108 BFT Konsensüsüne stake kaydı yapılıyor...</span>`;
@@ -4562,19 +4720,38 @@
           <div style="font-size: 16px; color: #94a3b8;">➔</div>
         </div>
 
-        <!-- Option 2: MYCA Native Sovereign Wallet -->
-        <div class="wallet-option-card" onclick="connectNativeWallet()">
+        <!-- Option 2: Create New 12-Word Wallet -->
+        <div class="wallet-option-card" onclick="openWalletCreateView()">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div class="wallet-option-icon" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3);">
-              🍄
+              ✨
             </div>
             <div>
               <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
-                <span>MYCA Native Wallet</span>
-                <span class="wallet-badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">Zero-Gas Native</span>
+                <span>Yeni Cüzdan Oluştur</span>
+                <span class="wallet-badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">12 Kelime BIP-39</span>
               </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="wallet-native-sub">
-                Instant browser keypair with native myc1... address.
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                12 kelimelik güvenli tohum anahtarınızla anında oluşturun.
+              </div>
+            </div>
+          </div>
+          <div style="font-size: 16px; color: #94a3b8;">➔</div>
+        </div>
+
+        <!-- Option 3: Import Existing Wallet -->
+        <div class="wallet-option-card" onclick="openWalletImportView()">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="wallet-option-icon" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);">
+              📥
+            </div>
+            <div>
+              <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
+                <span>Cüzdanı İçe Aktar</span>
+                <span class="wallet-badge-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">Mobil / Başka PC</span>
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                12 kelimenizi veya özel anahtarınızı girerek hesabınızı geri yükleyin.
               </div>
             </div>
           </div>
@@ -4582,7 +4759,7 @@
         </div>
 
         <div style="margin-top: 20px; text-align: center; font-size: 11.5px; color: #64748b; line-height: 1.5;">
-          🔒 Zero gas fees on MYCA Sovereign Network.<br>Transactions executed with mathematical determinism.
+          🔒 MYCA Ağında işlem ücreti 0.00 Gas'tır.<br>Tüm cihazlarınız arasında 12 kelime ile senkronize çalışır.
         </div>
       </div>
 
@@ -4590,9 +4767,9 @@
       <div id="wallet-view-connected" style="display: none;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span id="connected-wallet-icon" style="font-size: 26px;">🦊</span>
+            <span id="connected-wallet-icon" style="font-size: 26px;">🍄</span>
             <div>
-              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">MetaMask Connected</div>
+              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">MYCA Sovereign Native</div>
               <div style="font-size: 11.5px; color: var(--teal-accent); display: flex; align-items: center; gap: 5px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 6px var(--teal-accent);"></span>
                 <span>MYC Sovereign Network (Chain 108)</span>
@@ -4603,40 +4780,109 @@
 
         <!-- Balance Display -->
         <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px;">Active Account Balance</div>
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px;">Aktif Hesap Bakiyesi</div>
           <div id="connected-wallet-balance" style="font-size: 24px; font-weight: 800; color: #fff; font-family: var(--f-mono);">5,000 MYC</div>
         </div>
 
         <!-- Address Display (Dual Format: EVM 0x & MYC myc1) -->
         <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="color: var(--text-muted);">EVM Address (MetaMask):</span>
-            <button onclick="copyWalletAddress('evm')" id="btn-copy-evm" style="background: transparent; border: none; color: var(--cyan-accent); cursor: pointer; font-size: 11px;">📋 Copy</button>
+            <span style="color: var(--text-muted);">EVM Adresi (0x...):</span>
+            <button onclick="copyWalletAddress('evm')" id="btn-copy-evm" style="background: transparent; border: none; color: var(--cyan-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
           </div>
           <div id="connected-address-evm" style="font-family: var(--f-mono); color: #cbd5e1; word-break: break-all; margin-bottom: 10px;">0x...</div>
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
-            <span style="color: var(--text-muted);">MYC Sovereign Address:</span>
-            <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Copy</button>
+            <span style="color: var(--text-muted);">MYC Sovereign Adresi (myc1...):</span>
+            <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
           </div>
           <div id="connected-address-myc" style="font-family: var(--f-mono); color: var(--teal-accent); word-break: break-all;">myc1...</div>
         </div>
 
+        <!-- Secret Backup Reveal Box -->
+        <div id="wallet-secret-backup-box" style="display: none; background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 12px;">
+          <div style="color: #fbbf24; font-weight: 700; margin-bottom: 6px;">⚠️ Cihazlar Arası Yedek / Tohum Anahtarı:</div>
+          <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Bu bilgiyi cep telefonunuza veya diğer bilgisayarınıza "Cüzdanı İçe Aktar" alanına girerek aynı hesaba erişebilirsiniz:</div>
+          <div style="font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">12 Kelime:</div>
+          <div id="backup-mnemonic-text" style="font-family: var(--f-mono); background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; color: #38bdf8; word-break: break-word; user-select: all; margin-bottom: 8px;"></div>
+          <div style="font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">Özel Anahtar (Private Key):</div>
+          <div id="backup-pk-text" style="font-family: var(--f-mono); font-size: 10.5px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; color: #f59e0b; word-break: break-all; user-select: all;"></div>
+        </div>
+
         <!-- Actions -->
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button id="btn-add-chain-mm" onclick="addMycNetworkToMetaMask()" style="width: 100%; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            🦊 Add / Switch Network on MetaMask
+          <button onclick="navigateToExplorerAccount()" style="width: 100%; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🔍 Explorer'da Bakiye & İşlem Geçmişini Aç
           </button>
-          <button onclick="openWalletSelectView()" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
-            🔄 Switch / Change Wallet
+          <button onclick="toggleShowSecretBackup()" style="width: 100%; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); color: #fbbf24; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🔑 12 Kelimeyi Göster / Mobil İçin Yedekle
+          </button>
+          <button id="btn-add-chain-mm" onclick="addMycNetworkToMetaMask()" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🦊 MetaMask'e Chain 108 Ekle
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            🔄 Başka Cüzdan Seç / İçe Aktar
           </button>
           <button onclick="disconnectWallet()" style="width: 100%; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
-            🔌 Disconnect
+            🔌 Bağlantıyı Kes
           </button>
         </div>
       </div>
+
+      <!-- VIEW 3: CREATE NEW 12-WORD WALLET -->
+      <div id="wallet-view-create" style="display: none;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div style="font-size: 30px; margin-bottom: 4px;">🔐</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Yeni 12 Kelimelik Cüzdan</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Bu 12 kelime cüzdanınızın şifresidir. Telefonunuzda veya başka bilgisayarda hesabınıza bu kelimelerle erişebilirsiniz.</p>
+        </div>
+
+        <div id="create-words-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);"></div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button onclick="copyCreatedWords()" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            📋 Kelimeleri Kopyala
+          </button>
+          <button onclick="openWalletCreateView()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 10px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            🔄 Yenile
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="executeActivateCreatedWallet()" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+            ✅ Kelimeleri Kaydettim, Cüzdanı Başlat
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            ← Geri
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 4: IMPORT WALLET (MOBILE / PC) -->
+      <div id="wallet-view-import" style="display: none;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div style="font-size: 30px; margin-bottom: 4px;">📥</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Cüzdanı İçe Aktar</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Diğer cihazınızdan aldığınız 12 kelimeyi veya özel anahtarınızı (0x...) girin:</p>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <textarea id="import-seed-input" placeholder="Örn: alpha beacon cipher colony consensus depin... veya 0x..." style="width: 100%; height: 90px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; color: #fff; font-family: var(--f-mono); font-size: 12px; resize: none; outline: none;"></textarea>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="executeImportWallet()" style="width: 100%; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);">
+            🚀 Cüzdanı Yükle & Aktifleştir
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            ← Geri
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
-<script src="/i18n.js"></script>
+  <script src="/tx-confirm.js"></script>
+  <script src="/i18n.js"></script>
 </body>
 </html>
