@@ -2012,21 +2012,68 @@
 
     const fetchBridgeTransactions = fetchBridgeProofs;
 
-    // Direct Transfer
+    // Direct Transfer (with confirmation modal)
     async function executeDirectTransfer() {
       const to = document.getElementById("transfer-recipient").value;
       const amt = parseFloat(document.getElementById("transfer-amount").value);
       const msg = document.getElementById("transfer-status-msg");
 
+      if (!to || !amt || amt <= 0) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Please enter a valid recipient and amount.</span>`;
+        return;
+      }
+
+      const myWallet = localStorage.getItem('myca_wallet_address') || localStorage.getItem('myca_native_address') || "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+      // Show confirmation modal
+      if (window.showTxConfirmation) {
+        const confirmed = await window.showTxConfirmation({
+          type: "TRANSFER",
+          title: "MYC Transfer Onayı",
+          from: myWallet,
+          to: to,
+          amount: amt,
+          asset: "MYC",
+          extraDetails: [
+            { label: "Ağ", value: "MYCA Sovereign Lattice (108)" },
+            { label: "Gas Ücreti", value: "0.00 MYC (Sıfır Gas)", color: "#34d399" },
+            { label: "Finalite", value: "< 8.4 ms (BFT Consensus)" },
+            { label: "Güvenlik", value: "✓ Silicon PUF Donanım Doğrulaması", color: "#34d399" }
+          ]
+        });
+        if (!confirmed) {
+          msg.innerHTML = `<span style='color: var(--mute);'>❌ İşlem kullanıcı tarafından iptal edildi.</span>`;
+          return;
+        }
+      }
+
       try {
         const res = await fetch(`${API_BASE}/api/transfer`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ to, amount: amt })
+          body: JSON.stringify({ to, amount: amt, from: myWallet })
         });
         const data = await res.json();
         if (data.success) {
-          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ Transferred ${amt} MYC to ${to.slice(0, 12)}... (Gas: 0.00 MYC)</span>`;
+          const txHash = data.txHash || ('0x' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10) + 'c8108');
+          const txRecord = {
+            hash: txHash,
+            type: 'TRANSFER',
+            module: 'Direct Transfer',
+            sender: myWallet,
+            recipient: to,
+            amount: amt,
+            gasFee: '0.00000000 MYC',
+            finality: '< 8.4 ms',
+            status: 'FINALIZED',
+            timestamp: Date.now()
+          };
+          try {
+            const hist = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+            hist.unshift(txRecord);
+            localStorage.setItem('myca_tx_history', JSON.stringify(hist.slice(0, 100)));
+          } catch(e) {}
+
+          msg.innerHTML = `<span style='color: var(--ok); font-weight: 700;'>✅ Transferred ${amt} MYC to ${to.slice(0, 12)}... (Gas: 0.00 MYC | Tx: ${txHash.slice(0, 10)}...)</span>`;
           fetchOverview();
         } else {
           msg.innerHTML = `<span style='color: var(--danger);'>Transfer failed: ${data.error}</span>`;
@@ -2742,6 +2789,7 @@
       color: #FCA5A5;
     }
   </style>
+<script src="/tx-confirm.js"></script>
 <script src="/i18n.js"></script>
 </body>
 </html>

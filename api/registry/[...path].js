@@ -1,3 +1,4 @@
+import { ledger, toEvmAddress, toMycAddress, normalizeAddress } from './ledger.js';
 // Vercel Serverless Function for Opacus H3 Signaling (In-Memory fallback with approval)
 let _h3_agents = {};
 let _h3_signals = {};
@@ -320,19 +321,9 @@ export default function handler(req, res) {
 
   // Route: /api/wallet/balance
   if (parsedUrl.pathname.includes('wallet/balance') || (parsedUrl.pathname.includes('balance') && !parsedUrl.pathname.includes('explorer'))) {
-    const address = parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
-    return res.status(200).json({
-      success: true,
-      address,
-      balance: 5000,
-      mycBalance: 5000,
-      usdtBalance: 1250,
-      usdcBalance: 1250,
-      stakedMyc: 2500,
-      unclaimedRewards: 48.75,
-      zeroGasAllowance: 'Unlimited (Silicon PUF Verified)',
-      nonce: 142
-    });
+    const address = parsedUrl.searchParams?.get('address') || parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    const bal = ledger.getBalance(address);
+    return res.status(200).json(bal);
   }
 
   // Route: /api/swap/quote
@@ -370,8 +361,8 @@ export default function handler(req, res) {
   if (parsedUrl.pathname.includes('explorer/transactions')) {
     return res.status(200).json({
       success: true,
-      count: _global_transactions.length,
-      transactions: _global_transactions
+      count: ledger.state.transactions.length,
+      transactions: ledger.state.transactions
     });
   }
 
@@ -387,72 +378,38 @@ export default function handler(req, res) {
   // Route: /api/swap (POST)
   if (parsedUrl.pathname.includes('swap') && method === 'POST') {
     const body = req.body || {};
-    const from = body.from || 'MYC';
-    const to = body.to || 'USDT';
-    const amount = parseFloat(body.amount) || 100;
-    const rate = from === 'MYC' ? 0.0997 : (1 / 0.0997);
-    const amountOut = Math.round((amount * rate) * 10000) / 10000;
-    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'a7f0108';
+    const userAddress = body.userAddress || body.sender || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    try {
+      const result = ledger.executeSwap(userAddress, body.from || 'MYC', body.to || 'USDT', body.amount || 100);
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(400).json({ success: false, error: err.message });
+    }
+  }
 
-    const tx = {
-      hash: txHash,
-      type: 'SWAP',
-      module: 'Mycelial Swap',
-      sender: body.userAddress || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002',
-      recipient: '0x0000000000000000000000000000000000dEx108 (Resonance AMM)',
-      amount: `${amount} ${from} ➔ ${amountOut} ${to}`,
-      rawAmount: amount,
-      gasFee: '0.00000000 MYC (Lane B AMM)',
-      finality: '< 7.8 ms (BFT)',
-      status: 'FINALIZED',
-      timestamp: Date.now()
-    };
-    _global_transactions.unshift(tx);
-    if (_global_transactions.length > 100) _global_transactions.pop();
-
-    return res.status(200).json({
-      success: true,
-      txHash,
-      transaction: tx,
-      swap: { amountIn: amount, amountOut, from, to },
-      status: 'FINALIZED',
-      blockNumber: 21204500 + Math.floor(Math.random() * 100),
-      gasPaid: '0.00000000 MYC',
-      message: 'Resonance AMM Swap executed successfully with zero gas fee.'
-    });
+  // Route: /api/transfer (POST)
+  if (parsedUrl.pathname.includes('transfer') && method === 'POST') {
+    const body = req.body || {};
+    const sender = body.from || body.sender || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    const recipient = body.to || body.recipient || '';
+    try {
+      const result = ledger.executeTransfer(sender, recipient, body.amount || 10, body.asset || 'MYC');
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(400).json({ success: false, error: err.message });
+    }
   }
 
   // Route: /api/faucet
   if (parsedUrl.pathname.includes('faucet')) {
     const body = req.body || {};
-    const recipient = body.address || parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
-    const txHash = '0x' + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + Math.floor(Math.random() * 0xffffffff).toString(16).padStart(8, '0') + 'f7c108';
-
-    const tx = {
-      hash: txHash,
-      type: 'FAUCET_DISPENSE',
-      module: 'Spore Faucet',
-      sender: 'myc1faucet_spore_distributor',
-      recipient,
-      amount: '1,000 MYC • 500 USDT • 500 USDC',
-      rawAmount: 1000,
-      gasFee: '0.00000000 MYC (PoQR Quota)',
-      finality: '< 4.2 ms (Instant)',
-      status: 'FINALIZED',
-      timestamp: Date.now()
-    };
-    _global_transactions.unshift(tx);
-    if (_global_transactions.length > 100) _global_transactions.pop();
-
-    return res.status(200).json({
-      success: true,
-      amount: 1000,
-      token: 'MYC',
-      txHash,
-      transaction: tx,
-      recipient,
-      message: '1,000 Spore MYC dispensed successfully to your native session wallet.'
-    });
+    const recipient = body.address || parsedUrl.searchParams?.get('address') || parsedUrl.query?.address || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002';
+    try {
+      const result = ledger.dispenseFaucet(recipient);
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(400).json({ success: false, error: err.message });
+    }
   }
 
   // Route: /api/stake/info
@@ -788,53 +745,9 @@ export default function handler(req, res) {
 
   // Route: /api/explorer/search (GET)
   if (parsedUrl.pathname.includes("explorer/search")) {
-    const q = (parsedUrl.searchParams?.get("q") || "").trim().toLowerCase();
-    
-    // 1. Search Transactions
-    const matchTx = _global_transactions.find(t => (t.hash && t.hash.toLowerCase() === q) || (t.hash && t.hash.toLowerCase().includes(q)));
-    if (matchTx) {
-      return res.status(200).json({ type: "TRANSACTION", match: matchTx, chainId: 108, gasFee: "0.00000000 MYC", consensus: "Proof-of-Quantum-Resonance (PoQR)" });
-    }
-
-    // 2. Search Contracts
-    const matchContract = _global_contracts.find(c => (c.address && c.address.toLowerCase() === q) || (c.name && c.name.toLowerCase().includes(q)));
-    if (matchContract) {
-      return res.status(200).json({ type: "SMART_CONTRACT", match: matchContract, chainId: 108, gasModel: "Zero-Gas Sovereign VM", verified: true });
-    }
-
-    // 3. Search Devices
-    const matchDev = _global_devices.find(d => (d.did && d.did.toLowerCase().includes(q)) || (d.deviceType && d.deviceType.toLowerCase().includes(q)));
-    if (matchDev) {
-      return res.status(200).json({ type: "DEPIN_DEVICE", match: matchDev, pufAttestation: "VALIDATED_NIST_FIPS_204", interlock: "0-Byte Negation Active" });
-    }
-
-    // 4. Search Tasks
-    const matchTask = _global_tasks.find(t => (t.taskId && t.taskId.toLowerCase().includes(q)) || (t.taskType && t.taskType.toLowerCase().includes(q)));
-    if (matchTask) {
-      return res.status(200).json({ type: "COGNITIVE_TASK", match: matchTask, swarmExecutor: "Colony Prime TPU Swarm" });
-    }
-
-    // 5. Search Account Address
-    if (q.startsWith("myc1")) {
-      const userTxs = _global_transactions.filter(t => (t.sender && t.sender.toLowerCase().includes(q)) || (t.recipient && t.recipient.toLowerCase().includes(q)));
-      return res.status(200).json({
-        type: "ACCOUNT",
-        address: q,
-        balance: 5000,
-        zeroGasStatus: "Active (Silicon PUF Whitelisted)",
-        totalTxs: userTxs.length,
-        recentTxs: userTxs.slice(0, 5)
-      });
-    }
-
-    // 6. Generic block search or search hit
-    return res.status(200).json({
-      type: "QUERY_RESULT",
-      query: q,
-      network: "MYC-LATTICE-MAINNET (Chain ID: 108)",
-      message: `Entity found on Sovereign Lattice DAG with zero-gas proof.`,
-      timestamp: Date.now()
-    });
+    const q = (parsedUrl.searchParams?.get("q") || "").trim();
+    const result = ledger.search(q);
+    return res.status(200).json(result);
   }
 
   // Route: /api/contracts

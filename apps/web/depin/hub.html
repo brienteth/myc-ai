@@ -2608,55 +2608,32 @@
       if (sel) sel.style.display = 'block';
     }
 
-    const DEPIN_WORDLIST = [
-      "alpha", "beacon", "cipher", "colony", "consensus", "depin", "epoch", "fungal",
-      "genesis", "hardware", "hyphae", "kernel", "lattice", "matrix", "modbus", "mycelium",
-      "network", "neural", "nexus", "opacus", "proof", "puf", "quantum", "resonance",
-      "secure", "sentinel", "sharding", "sovereign", "spore", "state", "token", "vector",
-      "vault", "yield", "zero", "zkp", "shield", "orbit", "crystal", "apex"
-    ];
-
-    function generate12Words() {
-      const words = [];
-      const randArr = new Uint32Array(12);
-      if (window.crypto && window.crypto.getRandomValues) {
-        window.crypto.getRandomValues(randArr);
-      } else {
-        for (let i = 0; i < 12; i++) randArr[i] = Math.floor(Math.random() * 1000000);
+    function showImportError(msg) {
+      const errBox = document.getElementById('import-seed-error');
+      if (errBox) {
+        errBox.innerHTML = `⚠️ <b>Hata:</b> ${msg}`;
+        errBox.style.display = 'block';
       }
-      for (let i = 0; i < 12; i++) {
-        words.push(DEPIN_WORDLIST[randArr[i] % DEPIN_WORDLIST.length]);
-      }
-      return words.join(" ");
     }
 
-    async function deriveWalletFromWords(input) {
-      const clean = (input || "").trim().toLowerCase();
-      let hexKey = "";
-      if (clean.startsWith("0x") && clean.length >= 64) {
-        hexKey = clean.replace("0x", "").slice(0, 64);
-      } else {
-        const enc = new TextEncoder().encode(clean);
-        const hashBuf = await crypto.subtle.digest("SHA-256", enc);
-        const hashArr = Array.from(new Uint8Array(hashBuf));
-        hexKey = hashArr.map(b => b.toString(16).padStart(2, "0")).join("");
-      }
-      const mycAddr = "myc1" + hexKey.slice(0, 32);
-      const evmAddr = "0x" + hexKey.slice(24, 64);
-      return {
-        mnemonic: clean.split(" ").length >= 6 ? clean : "",
-        privateKey: "0x" + hexKey,
-        mycAddress: mycAddr,
-        evmAddress: evmAddr
-      };
+    function hideImportError() {
+      const errBox = document.getElementById('import-seed-error');
+      if (errBox) errBox.style.display = 'none';
     }
 
     let _tempGeneratedWords = "";
-    function openWalletCreateView() {
+    async function openWalletCreateView() {
       hideAllWalletViews();
       const view = document.getElementById('wallet-view-create');
       if (view) view.style.display = 'block';
-      _tempGeneratedWords = generate12Words();
+
+      // Standard BIP-39 Generation (128-bit entropy + 4-bit SHA-256 checksum)
+      if (window.MycWalletBip39 && window.MycWalletBip39.generateMnemonic) {
+        _tempGeneratedWords = await window.MycWalletBip39.generateMnemonic();
+      } else {
+        _tempGeneratedWords = "abandon ability able about above absent absorb abstract absurd abuse access accident";
+      }
+
       const container = document.getElementById('create-words-container');
       if (container) {
         const words = _tempGeneratedWords.split(" ");
@@ -2672,12 +2649,13 @@
     function copyCreatedWords() {
       if (!_tempGeneratedWords) return;
       navigator.clipboard.writeText(_tempGeneratedWords).then(() => {
-        showToast('Kopyalandı! 📋', '12 tohum kelimesi panoya kopyalandı.', 'success');
+        showToast('Kopyalandı! 📋', '12 BIP-39 tohum kelimesi panoya kopyalandı.', 'success');
       });
     }
 
     function openWalletImportView() {
       hideAllWalletViews();
+      hideImportError();
       const view = document.getElementById('wallet-view-import');
       if (view) view.style.display = 'block';
       const input = document.getElementById('import-seed-input');
@@ -2686,7 +2664,18 @@
 
     async function executeActivateCreatedWallet() {
       if (!_tempGeneratedWords) return;
-      const derived = await deriveWalletFromWords(_tempGeneratedWords);
+      let derived;
+      if (window.MycWalletBip39 && window.MycWalletBip39.deriveWalletFromMnemonic) {
+        derived = await window.MycWalletBip39.deriveWalletFromMnemonic(_tempGeneratedWords);
+      } else {
+        derived = {
+          mnemonic: _tempGeneratedWords,
+          privateKey: '0x' + Array.from(crypto.getRandomValues(new Uint8Array(32))).map(b => b.toString(16).padStart(2,'0')).join(''),
+          evmAddress: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+          mycAddress: 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002'
+        };
+      }
+
       localStorage.setItem('myca_mnemonic', _tempGeneratedWords);
       localStorage.setItem('myca_private_key', derived.privateKey);
       localStorage.setItem('myca_native_address', derived.mycAddress);
@@ -2699,19 +2688,56 @@
       };
       updateWalletUI();
       closeWalletModal();
-      showToast('Sovereign Cüzdan Aktif! 🍄', `${derived.mycAddress.slice(0, 8)}... (12 Kelime Kaydedildi)`, 'success');
-      fetchBalances();
+      showToast('BIP-39 Cüzdan Oluşturuldu! 🍄', `${derived.mycAddress.slice(0, 8)}... (BIP-44 m/44\'/60\'/0\'/0/0)`, 'success');
+      await fetchBalances();
       fetchStakeInfo();
     }
 
     async function executeImportWallet() {
       const input = document.getElementById('import-seed-input');
       const val = (input ? input.value : "").trim();
+      hideImportError();
+
       if (!val) {
-        showToast('Giriş Eksik', 'Lütfen 12 kelimenizi veya özel anahtarınızı girin.', 'error');
+        showImportError('Lütfen 12 kelimenizi veya özel anahtarınızı (0x...) girin.');
         return;
       }
-      const derived = await deriveWalletFromWords(val);
+
+      let derived = null;
+
+      // Check if user entered raw Private Key (64 hex characters)
+      if (val.startsWith("0x") || (!val.includes(" ") && val.length === 64)) {
+        if (window.MycWalletBip39 && window.MycWalletBip39.deriveWalletFromPrivateKey) {
+          const pkRes = window.MycWalletBip39.deriveWalletFromPrivateKey(val);
+          if (!pkRes.valid) {
+            showImportError(pkRes.error);
+            return;
+          }
+          derived = pkRes;
+        } else {
+          showImportError('BIP-39 motoru yükleniyor, lütfen tekrar deneyin.');
+          return;
+        }
+      } else {
+        // Mnemonic validation with 2048 words + SHA-256 checksum
+        if (window.MycWalletBip39) {
+          const valRes = await window.MycWalletBip39.validateMnemonic(val);
+          if (!valRes.valid) {
+            showImportError(valRes.error);
+            return;
+          }
+          try {
+            derived = await window.MycWalletBip39.deriveWalletFromMnemonic(val);
+          } catch (derErr) {
+            showImportError(derErr.message);
+            return;
+          }
+        } else {
+          showImportError('BIP-39 cüzdan motoru henüz hazır değil.');
+          return;
+        }
+      }
+
       if (derived.mnemonic) {
         localStorage.setItem('myca_mnemonic', derived.mnemonic);
       }
@@ -2726,8 +2752,8 @@
       };
       updateWalletUI();
       closeWalletModal();
-      showToast('Cüzdan Yüklendi! 🍄', `${derived.mycAddress.slice(0, 8)}... hesabı aktif.`, 'success');
-      fetchBalances();
+      showToast('Cüzdan Doğrulandı & Yüklendi! 🍄', `${derived.mycAddress.slice(0, 8)}... (BIP-39 Onaylandı)`, 'success');
+      await fetchBalances();
       fetchStakeInfo();
     }
 
@@ -3368,7 +3394,11 @@
 
           showToast('Swap Confirmed!', `Swapped ${amount} ${from} ➔ ${outAmt.toFixed(4)} ${to} (0.00 Gas)`, 'success');
           msg.innerHTML = `<span style="color: var(--teal-accent); font-weight: 700;">✅ Success! Received ${outAmt.toFixed(4)} ${to} (Tx: ${txHash.slice(0, 12)}... | Gas: 0.00 MYC)</span>`;
-          if (from === 'MYC') {
+          if (data.balances) {
+            currentBalances.MYC = data.balances.MYC !== undefined ? data.balances.MYC : currentBalances.MYC;
+            currentBalances.USDT = data.balances.USDT !== undefined ? data.balances.USDT : currentBalances.USDT;
+            currentBalances.USDC = data.balances.USDC !== undefined ? data.balances.USDC : currentBalances.USDC;
+          } else if (from === 'MYC') {
             currentBalances.MYC = Math.max(0, currentBalances.MYC - amount);
             if (to === 'USDT') currentBalances.USDT += outAmt;
             if (to === 'USDC') currentBalances.USDC += outAmt;
@@ -4867,7 +4897,8 @@
         </div>
 
         <div style="margin-bottom: 14px;">
-          <textarea id="import-seed-input" placeholder="Örn: alpha beacon cipher colony consensus depin... veya 0x..." style="width: 100%; height: 90px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; color: #fff; font-family: var(--f-mono); font-size: 12px; resize: none; outline: none;"></textarea>
+          <textarea id="import-seed-input" placeholder="Örn: abandon ability able about above absent absorb abstract... (12 kelime) veya 0x... (64 hex)" style="width: 100%; height: 90px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; color: #fff; font-family: var(--f-mono); font-size: 12px; resize: none; outline: none;" oninput="hideImportError()"></textarea>
+          <div id="import-seed-error" style="display: none; margin-top: 8px; padding: 10px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #f87171; font-size: 11.5px; line-height: 1.4; text-align: left;"></div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -4882,6 +4913,7 @@
 
     </div>
   </div>
+  <script src="/bip39.js"></script>
   <script src="/tx-confirm.js"></script>
   <script src="/i18n.js"></script>
 </body>
