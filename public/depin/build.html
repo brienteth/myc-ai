@@ -1053,6 +1053,23 @@
       try {
         var result = {};
         if (method === 'transfer') {
+          if (window.showTxConfirmation) {
+            var confirmed = await window.showTxConfirmation({
+              type: 'TRANSFER',
+              from: currentWallet || 'Connected Wallet',
+              to: p1,
+              amount: parseFloat(p2) || 10,
+              asset: 'MYC'
+            });
+            if (!confirmed) {
+              badge.innerText = 'CANCELLED';
+              badge.style.background = 'rgba(234, 179, 8, 0.2)';
+              badge.style.color = '#FACC15';
+              btn.disabled = false;
+              consoleOut.textContent = '// Transfer cancelled by user';
+              return;
+            }
+          }
           var res = await fetch(API_BASE + '/api/transfer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

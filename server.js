@@ -3164,6 +3164,86 @@ const server = http.createServer((req, res) => {
   }
 
   // ------------------------------------------------------------------------
+  // N-1. GET /api/explorer/address/:addr (Wallet Profile Detail API)
+  // Returns full wallet profile: balances, staking, tx history, stats
+  // ------------------------------------------------------------------------
+  if (url.pathname.startsWith("/api/explorer/address/") && req.method === "GET") {
+    let addr = url.pathname.replace("/api/explorer/address/", "").split("/")[0].trim().toLowerCase();
+
+    // Normalize 0x EVM addresses to myc1 format
+    if (addr.startsWith("0x") && addr.length >= 10) {
+      const hex = addr.slice(2).replace(/^0+/, "").slice(0, 34);
+      addr = "myc1" + hex.padEnd(34, "0");
+    }
+
+    // Gather balances
+    const mycBalance = token.balanceOf(addr);
+    const usdtBalance = usdtToken.balanceOf(addr);
+    const usdcBalance = usdcToken.balanceOf(addr);
+
+    // Staking info
+    let stakeInfo = { amount: 0, startTime: 0, rewards: 0 };
+    try {
+      stakeInfo = deployed.instances.staking ? deployed.instances.staking.getStakeInfo(addr) : stakeInfo;
+    } catch (e) {}
+
+    // Collect transactions involving this address (from transactionRegistry)
+    const txsForAddr = transactionRegistry.get(addr);
+    const txHistory = Array.isArray(txsForAddr) ? txsForAddr : [];
+
+    // Compute stats
+    let totalReceived = 0, totalSent = 0, firstTxTime = null, lastTxTime = null;
+    txHistory.forEach(tx => {
+      const amt = typeof tx.amount === "number" ? tx.amount : parseFloat(tx.amount) || 0;
+      if (tx.sender && tx.sender.toLowerCase() === addr) totalSent += amt;
+      if (tx.recipient && tx.recipient.toLowerCase() === addr) totalReceived += amt;
+      const ts = tx.timestamp || tx.ts || tx.createdAt;
+      if (ts) {
+        if (!firstTxTime || ts < firstTxTime) firstTxTime = ts;
+        if (!lastTxTime || ts > lastTxTime) lastTxTime = ts;
+      }
+    });
+
+    // Determine if this is genesis or known wallet
+    const isGenesis = addr === token.genesisAddress?.toLowerCase();
+    const isConnectedWallet = addr === wallet.address?.toLowerCase();
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({
+      success: true,
+      type: "ACCOUNT",
+      address: addr,
+      balances: {
+        MYC: mycBalance,
+        USDT: usdtBalance,
+        USDC: usdcBalance
+      },
+      staking: {
+        stakedMYC: stakeInfo.amount || 0,
+        rewards: stakeInfo.rewards || 0,
+        startTime: stakeInfo.startTime || 0,
+        deviceQuota: Math.floor((stakeInfo.amount || 0) / 1000)
+      },
+      stats: {
+        totalTransactions: txHistory.length,
+        totalReceived,
+        totalSent,
+        firstTransaction: firstTxTime,
+        lastTransaction: lastTxTime
+      },
+      transactions: txHistory.slice(0, 50),
+      flags: {
+        isGenesis,
+        isConnectedWallet,
+        isContract: false
+      },
+      network: "MYC-TESTNET-SPHEROID-1",
+      chainId: 108
+    }));
+    return;
+  }
+
+  // ------------------------------------------------------------------------
   // N. GET /api/explorer/search (Omnisearch Engine)
   // ------------------------------------------------------------------------
   if (url.pathname === "/api/explorer/search" && req.method === "GET") {
@@ -3193,7 +3273,7 @@ const server = http.createServer((req, res) => {
       // 3. Check Transaction Hash
       if (results.type === "NOT_FOUND") {
         const tx = deployed.chain.getTransaction(q) || transactionRegistry.get(q);
-        if (tx) {
+        if (tx && !Array.isArray(tx)) {
           results.type = "TRANSACTION";
           results.match = tx;
         }
@@ -3218,13 +3298,38 @@ const server = http.createServer((req, res) => {
         }
       }
 
-      // 6. Check Address
-      if (results.type === "NOT_FOUND" && q.startsWith("myc1")) {
-        const bal = deployed.chain.state.getBalance(q);
-        const nonce = deployed.chain.state.getNonce(q);
-        const stake = deployed.instances.staking ? deployed.instances.staking.getStakeInfo(q) : { amount: 0 };
+      // 6. Check Address (myc1... or 0x...)
+      if (results.type === "NOT_FOUND" && (q.startsWith("myc1") || q.startsWith("0x"))) {
+        let addr = q;
+        if (q.startsWith("0x") && q.length >= 10) {
+          const hex = q.slice(2).replace(/^0+/, "").slice(0, 34);
+          addr = "myc1" + hex.padEnd(34, "0");
+        }
+        const mycBal = token.balanceOf(addr);
+        const usdtBal = usdtToken.balanceOf(addr);
+        const usdcBal = usdcToken.balanceOf(addr);
+        let stakeInfo = { amount: 0, rewards: 0 };
+        try {
+          stakeInfo = deployed.instances.staking ? deployed.instances.staking.getStakeInfo(addr) : stakeInfo;
+        } catch (e) {}
+        const txsForAddr = transactionRegistry.get(addr);
+        const txHistory = Array.isArray(txsForAddr) ? txsForAddr : [];
+
+        let totalReceived = 0, totalSent = 0;
+        txHistory.forEach(tx => {
+          const amt = typeof tx.amount === "number" ? tx.amount : parseFloat(tx.amount) || 0;
+          if (tx.sender && tx.sender.toLowerCase() === addr) totalSent += amt;
+          if (tx.recipient && tx.recipient.toLowerCase() === addr) totalReceived += amt;
+        });
+
         results.type = "ACCOUNT";
-        results.match = { address: q, balance: bal, nonce, stake };
+        results.match = {
+          address: addr,
+          balances: { MYC: mycBal, USDT: usdtBal, USDC: usdcBal },
+          staking: { stakedMYC: stakeInfo.amount || 0, rewards: stakeInfo.rewards || 0 },
+          stats: { totalTransactions: txHistory.length, totalReceived, totalSent },
+          transactions: txHistory.slice(0, 20)
+        };
       }
     }
 

@@ -2012,11 +2012,31 @@
 
     const fetchBridgeTransactions = fetchBridgeProofs;
 
-    // Direct Transfer
+    // Direct Transfer (with confirmation modal)
     async function executeDirectTransfer() {
       const to = document.getElementById("transfer-recipient").value;
       const amt = parseFloat(document.getElementById("transfer-amount").value);
       const msg = document.getElementById("transfer-status-msg");
+
+      if (!to || !amt || amt <= 0) {
+        msg.innerHTML = `<span style='color: var(--danger);'>Please enter a valid recipient and amount.</span>`;
+        return;
+      }
+
+      // Show confirmation modal if available
+      if (window.showTxConfirmation) {
+        const confirmed = await window.showTxConfirmation({
+          type: "TRANSFER",
+          from: "Connected Wallet",
+          to: to,
+          amount: amt,
+          asset: "MYC"
+        });
+        if (!confirmed) {
+          msg.innerHTML = `<span style='color: var(--mute);'>❌ Transfer cancelled by user.</span>`;
+          return;
+        }
+      }
 
       try {
         const res = await fetch(`${API_BASE}/api/transfer`, {
