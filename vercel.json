@@ -3,6 +3,86 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/depin",
+      "destination": "/depin/index.html"
+    },
+    {
+      "source": "/depin/",
+      "destination": "/depin/index.html"
+    },
+    {
+      "source": "/depin/docs",
+      "destination": "/depin/docs.html"
+    },
+    {
+      "source": "/depin/dev-docs",
+      "destination": "/depin/dev-docs.html"
+    },
+    {
+      "source": "/depin/hub",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/discover",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/mint",
+      "destination": "/depin/mint.html"
+    },
+    {
+      "source": "/depin/marketplace",
+      "destination": "/depin/marketplace.html"
+    },
+    {
+      "source": "/depin/market",
+      "destination": "/depin/marketplace.html"
+    },
+    {
+      "source": "/depin/x-card",
+      "destination": "/depin/x-card.html"
+    },
+    {
+      "source": "/depin/arcade",
+      "destination": "/depin/arcade.html"
+    },
+    {
+      "source": "/depin/game",
+      "destination": "/depin/arcade.html"
+    },
+    {
+      "source": "/depin/contracts",
+      "destination": "/depin/contracts.html"
+    },
+    {
+      "source": "/depin/explorer",
+      "destination": "/depin/explorer.html"
+    },
+    {
+      "source": "/depin/build",
+      "destination": "/depin/build.html"
+    },
+    {
+      "source": "/depin/swap",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/bridge",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/faucet",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/staking",
+      "destination": "/depin/hub.html"
+    },
+    {
+      "source": "/depin/streampay",
+      "destination": "/depin/hub.html"
+    },
+    {
       "source": "/mindcast-node",
       "destination": "/mindcast-node.html"
     },
@@ -19,24 +99,8 @@
       "destination": "/mindcast-node.html"
     },
     {
-      "source": "/depin/mindcast-node",
-      "destination": "/depin/mindcast-node.html"
-    },
-    {
-      "source": "/depin/mindcast-node.html",
-      "destination": "/depin/mindcast-node.html"
-    },
-    {
       "source": "/dist/:match*",
       "destination": "/downloads/:match*"
-    },
-    {
-      "source": "/depin",
-      "destination": "/depin/index.html"
-    },
-    {
-      "source": "/depin/",
-      "destination": "/depin/index.html"
     },
     {
       "source": "/explorer",
@@ -44,14 +108,6 @@
     },
     {
       "source": "/explorer.html",
-      "destination": "/depin/explorer.html"
-    },
-    {
-      "source": "/depin/explorer",
-      "destination": "/depin/explorer.html"
-    },
-    {
-      "source": "/depin/explorer.html",
       "destination": "/depin/explorer.html"
     },
     {
@@ -63,27 +119,11 @@
       "destination": "/depin/nexus.html"
     },
     {
-      "source": "/depin/nexus",
-      "destination": "/depin/nexus.html"
-    },
-    {
-      "source": "/depin/nexus.html",
-      "destination": "/depin/nexus.html"
-    },
-    {
       "source": "/docs",
       "destination": "/depin/docs.html"
     },
     {
       "source": "/docs.html",
-      "destination": "/depin/docs.html"
-    },
-    {
-      "source": "/depin/docs",
-      "destination": "/depin/docs.html"
-    },
-    {
-      "source": "/depin/docs.html",
       "destination": "/depin/docs.html"
     },
     {
@@ -95,27 +135,11 @@
       "destination": "/depin/dev-docs.html"
     },
     {
-      "source": "/depin/dev-docs",
-      "destination": "/depin/dev-docs.html"
-    },
-    {
-      "source": "/depin/dev-docs.html",
-      "destination": "/depin/dev-docs.html"
-    },
-    {
       "source": "/hub",
       "destination": "/depin/hub.html"
     },
     {
       "source": "/hub.html",
-      "destination": "/depin/hub.html"
-    },
-    {
-      "source": "/depin/hub",
-      "destination": "/depin/hub.html"
-    },
-    {
-      "source": "/depin/hub.html",
       "destination": "/depin/hub.html"
     },
     {
@@ -127,19 +151,7 @@
       "destination": "/depin/hub.html"
     },
     {
-      "source": "/depin/discover",
-      "destination": "/depin/hub.html"
-    },
-    {
-      "source": "/depin/discover.html",
-      "destination": "/depin/hub.html"
-    },
-    {
       "source": "/swap",
-      "destination": "/depin/hub.html"
-    },
-    {
-      "source": "/depin/swap",
       "destination": "/depin/hub.html"
     },
     {
@@ -147,15 +159,7 @@
       "destination": "/depin/hub.html"
     },
     {
-      "source": "/depin/bridge",
-      "destination": "/depin/hub.html"
-    },
-    {
       "source": "/faucet",
-      "destination": "/depin/hub.html"
-    },
-    {
-      "source": "/depin/faucet",
       "destination": "/depin/hub.html"
     },
     {
@@ -163,15 +167,7 @@
       "destination": "/depin/hub.html"
     },
     {
-      "source": "/depin/staking",
-      "destination": "/depin/hub.html"
-    },
-    {
       "source": "/streampay",
-      "destination": "/depin/hub.html"
-    },
-    {
-      "source": "/depin/streampay",
       "destination": "/depin/hub.html"
     },
     {
@@ -183,27 +179,11 @@
       "destination": "/depin/mint.html"
     },
     {
-      "source": "/depin/mint",
-      "destination": "/depin/mint.html"
-    },
-    {
-      "source": "/depin/mint.html",
-      "destination": "/depin/mint.html"
-    },
-    {
       "source": "/marketplace",
       "destination": "/depin/marketplace.html"
     },
     {
       "source": "/marketplace.html",
-      "destination": "/depin/marketplace.html"
-    },
-    {
-      "source": "/depin/marketplace",
-      "destination": "/depin/marketplace.html"
-    },
-    {
-      "source": "/depin/marketplace.html",
       "destination": "/depin/marketplace.html"
     },
     {
@@ -215,27 +195,11 @@
       "destination": "/depin/marketplace.html"
     },
     {
-      "source": "/depin/market",
-      "destination": "/depin/marketplace.html"
-    },
-    {
-      "source": "/depin/market.html",
-      "destination": "/depin/marketplace.html"
-    },
-    {
       "source": "/arcade",
       "destination": "/depin/arcade.html"
     },
     {
       "source": "/arcade.html",
-      "destination": "/depin/arcade.html"
-    },
-    {
-      "source": "/depin/arcade",
-      "destination": "/depin/arcade.html"
-    },
-    {
-      "source": "/depin/arcade.html",
       "destination": "/depin/arcade.html"
     },
     {
@@ -247,27 +211,11 @@
       "destination": "/depin/arcade.html"
     },
     {
-      "source": "/depin/game",
-      "destination": "/depin/arcade.html"
-    },
-    {
-      "source": "/depin/game.html",
-      "destination": "/depin/arcade.html"
-    },
-    {
       "source": "/contracts",
       "destination": "/depin/contracts.html"
     },
     {
       "source": "/contracts.html",
-      "destination": "/depin/contracts.html"
-    },
-    {
-      "source": "/depin/contracts",
-      "destination": "/depin/contracts.html"
-    },
-    {
-      "source": "/depin/contracts.html",
       "destination": "/depin/contracts.html"
     },
     {
@@ -279,27 +227,11 @@
       "destination": "/depin/build.html"
     },
     {
-      "source": "/depin/build",
-      "destination": "/depin/build.html"
-    },
-    {
-      "source": "/depin/build.html",
-      "destination": "/depin/build.html"
-    },
-    {
       "source": "/x-card",
       "destination": "/depin/x-card.html"
     },
     {
       "source": "/x-card.html",
-      "destination": "/depin/x-card.html"
-    },
-    {
-      "source": "/depin/x-card",
-      "destination": "/depin/x-card.html"
-    },
-    {
-      "source": "/depin/x-card.html",
       "destination": "/depin/x-card.html"
     },
     {

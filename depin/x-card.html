@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MYCA Resonance Asset — Social Card for X (Twitter)</title>
+  <!-- Google Fonts for crisp typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- html2canvas for 1-click ultra-HD PNG export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #070B09;
+      --card-bg: rgba(14, 22, 18, 0.85);
+      --card-border: rgba(46, 107, 69, 0.35);
+      --text-main: #F0FDF4;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      
+      --c-seed: #10B981;
+      --c-seed-glow: rgba(16, 185, 129, 0.25);
+      --c-res: #F59E0B;
+      --c-res-glow: rgba(245, 158, 11, 0.25);
+      --c-sov: #A855F7;
+      --c-sov-glow: rgba(168, 85, 247, 0.25);
+      
+      --c-cyan: #06B6D4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #030504;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    /* Top Action Bar (hidden in screenshot) */
+    .controls-bar {
+      width: 1200px;
+      max-width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background: #0E1612;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .controls-group { display: flex; gap: 10px; align-items: center; }
+    .ctrl-btn {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--c-seed);
+      color: #A7F3D0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .ctrl-btn:hover {
+      background: var(--c-seed);
+      color: #030504;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+    .lang-toggle {
+      background: #080D0A;
+      border: 1px solid #1E293B;
+      padding: 4px;
+      border-radius: 8px;
+      display: flex;
+      gap: 4px;
+    }
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .lang-btn.active {
+      background: var(--c-seed);
+      color: #030504;
+    }
+
+    /* ============================================================
+       THE 1200x675 X (TWITTER) SOCIAL CARD (16:9 RATIO)
+       ============================================================ */
+    #xCardTarget {
+      width: 1200px;
+      height: 675px;
+      background: radial-gradient(120% 80% at 50% 0%, #0F2318 0%, #08100C 50%, #040705 100%);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 36px 18px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 40px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Ambient Bioluminescent Backdrops */
+    .ambient-glow-top {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(6, 182, 212, 0.15) 50%, transparent 80%);
+      filter: blur(50px);
+      pointer-events: none;
+    }
+
+    /* 1. Header Section */
+    .card-header {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      z-index: 2;
+    }
+    .mushroom-canopy-svg {
+      width: 140px;
+      height: 48px;
+      margin-bottom: 2px;
+      filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.6));
+    }
+    .card-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, #FFFFFF 20%, #A7F3D0 60%, #34D399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .card-subtitle {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #94A3B8;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-subtitle .dot {
+      width: 4px;
+      height: 4px;
+      background: var(--c-seed);
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .card-subtitle .highlight {
+      color: #34D399;
+      font-weight: 700;
+    }
+
+    /* 2. Three Tier Grid */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      position: relative;
+      z-index: 2;
+      margin: 8px 0;
+    }
+
+    .tier-card {
+      background: rgba(10, 18, 14, 0.85);
+      border-radius: 14px;
+      padding: 14px 16px;
+      position: relative;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s;
+    }
+    .tier-card.seed {
+      --border-color: rgba(16, 185, 129, 0.45);
+      --badge-bg: rgba(16, 185, 129, 0.15);
+      --badge-color: #34D399;
+    }
+    .tier-card.resonant {
+      --border-color: rgba(245, 158, 11, 0.45);
+      --badge-bg: rgba(245, 158, 11, 0.15);
+      --badge-color: #FBBF24;
+    }
+    .tier-card.sovereign {
+      --border-color: rgba(168, 85, 247, 0.45);
+      --badge-bg: rgba(168, 85, 247, 0.15);
+      --badge-color: #C084FC;
+    }
+
+    .tier-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .tier-name-box { display: flex; align-items: center; gap: 6px; }
+    .tier-icon { font-size: 14px; }
+    .tier-name {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--badge-color);
+    }
+    .tier-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 17px;
+      font-weight: 800;
+      color: #FFFFFF;
+      background: var(--badge-bg);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Key-Value Metrics List (Zero Overlapping Text) */
+    .metric-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      line-height: 1.2;
+    }
+    .metric-label {
+      color: #94A3B8;
+      font-weight: 500;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #F8FAFC;
+    }
+    .metric-val.highlight {
+      color: var(--badge-color);
+    }
+
+    /* Payback & Role Footer within Card */
+    .tier-footer-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .tier-role {
+      font-size: 11px;
+      font-weight: 600;
+      color: #CBD5E1;
+      text-align: center;
+    }
+    .tier-payback {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--badge-color);
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 3. Pipeline Flow (Mint -> Node -> Task -> Earn -> Level Up) */
+    .flow-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: rgba(14, 24, 19, 0.9);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 10px;
+      padding: 7px 18px;
+      position: relative;
+      z-index: 2;
+    }
+    .flow-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #34D399;
+      margin-right: 6px;
+    }
+    .flow-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #E2E8F0;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .flow-step .num {
+      width: 16px;
+      height: 16px;
+      background: #10B981;
+      color: #022C22;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 800;
+    }
+    .flow-arrow {
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* 4. Four Theoretical & Engineering Pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      position: relative;
+      z-index: 2;
+      margin-top: 6px;
+    }
+    .pillar-card {
+      background: rgba(10, 18, 14, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .pillar-card:nth-child(1) { border-left: 3px solid #10B981; }
+    .pillar-card:nth-child(2) { border-left: 3px solid #F59E0B; }
+    .pillar-card:nth-child(3) { border-left: 3px solid #06B6D4; }
+    .pillar-card:nth-child(4) { border-left: 3px solid #A855F7; }
+
+    .pillar-name {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #F1F5F9;
+    }
+    .pillar-desc {
+      font-size: 9.5px;
+      color: #94A3B8;
+      line-height: 1.35;
+    }
+
+    /* 5. Footer Bar */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 2;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: #64748B;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .footer-left .brand-tag {
+      color: #34D399;
+      font-weight: 700;
+    }
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #94A3B8;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px;
+      color: #34D399;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .status-pulse {
+      width: 6px;
+      height: 6px;
+      background: #10B981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #10B981;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Bar -->
+  <div class="controls-bar">
+    <div class="controls-group">
+      <span style="font-weight: 700; font-size: 14px; color: #34D399;">X (Twitter) Card Generator</span>
+      <span style="font-size: 12px; color: #64748B;">• 1200 x 675 (Standard 16:9 Summary Large Card)</span>
+    </div>
+    <div class="controls-group">
+      <div class="lang-toggle">
+        <button id="btnTR" class="lang-btn" onclick="setLang('tr')">Türkçe</button>
+        <button id="btnEN" class="lang-btn active" onclick="setLang('en')">English</button>
+      </div>
+      <button class="ctrl-btn" onclick="downloadImage()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Download High-Res PNG
+      </button>
+      <a href="/depin/docs" class="ctrl-btn" style="text-decoration: none; border-color: #64748B; color: #CBD5E1;">
+        Back to Docs
+      </a>
+    </div>
+  </div>
+
+  <!-- The Actual 1200x675 X Card Target -->
+  <div id="xCardTarget">
+    <div class="ambient-glow-top"></div>
+
+    <!-- 1. Header with Bioluminescent Mycelial Dome -->
+    <div class="card-header">
+      <!-- High-tech Mycelial Network Canopy SVG -->
+      <svg class="mushroom-canopy-svg" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Dome Arch -->
+        <path d="M10 46 C30 10, 150 10, 170 46 C150 42, 30 42, 10 46 Z" fill="url(#canopyGrad)" stroke="#10B981" stroke-width="2"/>
+        <!-- Neural Constellation Lines -->
+        <line x1="90" y1="12" x2="35" y2="38" stroke="#34D399" stroke-width="1.2" stroke-opacity="0.8"/>
+        <line x1="90" y1="12" x2="65" y2="24" stroke="#34D399" stroke-width="1.2" stroke-opacity="0.8"/>
+        <line x1="90" y1="12" x2="115" y2="24" stroke="#34D399" stroke-width="1.2" stroke-opacity="0.8"/>
+        <line x1="90" y1="12" x2="145" y2="38" stroke="#34D399" stroke-width="1.2" stroke-opacity="0.8"/>
+        <line x1="65" y1="24" x2="35" y2="38" stroke="#06B6D4" stroke-width="1"/>
+        <line x1="65" y1="24" x2="115" y2="24" stroke="#06B6D4" stroke-width="1"/>
+        <line x1="115" y1="24" x2="145" y2="38" stroke="#06B6D4" stroke-width="1"/>
+        <!-- Nodes -->
+        <circle cx="90" cy="12" r="3.5" fill="#F0FDF4" stroke="#10B981" stroke-width="1.5"/>
+        <circle cx="65" cy="24" r="3" fill="#34D399"/>
+        <circle cx="115" cy="24" r="3" fill="#34D399"/>
+        <circle cx="35" cy="38" r="2.5" fill="#06B6D4"/>
+        <circle cx="145" cy="38" r="2.5" fill="#06B6D4"/>
+        <!-- Stem & Root Node -->
+        <rect x="85" y="44" width="10" height="12" rx="3" fill="#132E20" stroke="#10B981" stroke-width="1.5"/>
+        <defs>
+          <linearGradient id="canopyGrad" x1="90" y1="10" x2="90" y2="46" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#065F46" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#022C22" stop-opacity="0.98"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1 class="card-title">MYCA RESONANCE ASSET</h1>
+      <div class="card-subtitle">
+        <span id="txtSubtitle">Colony Node NFT</span>
+        <span class="dot"></span>
+        <span>ERC-721R</span>
+        <span class="dot"></span>
+        <span class="highlight">Chain ID 108</span>
+        <span class="dot"></span>
+        <span style="color: #38BDF8;">Strictly Zero-Gas</span>
+        <span class="dot"></span>
+        <span style="color: #F59E0B;">12,200 Hard Cap</span>
+      </div>
+    </div>
+
+    <!-- 2. Three Tier Architecture Grid -->
+    <div class="tier-grid">
+      
+      <!-- SEED TIER -->
+      <div class="tier-card seed">
+        <div class="tier-head">
+          <div class="tier-name-box">
+            <span class="tier-icon">🌱</span>
+            <span class="tier-name">SEED TIER</span>
+          </div>
+          <div class="tier-price">50 USDC</div>
+        </div>
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-label" id="lblSeedSupply">Max Supply</span>
+            <span class="metric-val">10,000</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblSeedEnergy">Starting Energy</span>
+            <span class="metric-val">500 E <span style="font-size:9.5px; color:#64748B;">(0-2,999)</span></span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblSeedTasks">Concurrent Tasks</span>
+            <span class="metric-val">1 Task</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblSeedYield">Daily Estimated Yield</span>
+            <span class="metric-val highlight">2 – 5 USDC</span>
+          </div>
+        </div>
+        <div class="tier-footer-box">
+          <div class="tier-role" id="lblSeedRole">Telemetry • IoT Sensing • Light Inference</div>
+          <div class="tier-payback">
+            <span id="lblSeedPaybackText">Est. Payback:</span>
+            <strong>~15 – 25 Days</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESONANT TIER -->
+      <div class="tier-card resonant">
+        <div class="tier-head">
+          <div class="tier-name-box">
+            <span class="tier-icon">⚡</span>
+            <span class="tier-name">RESONANT TIER</span>
+          </div>
+          <div class="tier-price">500 USDC</div>
+        </div>
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-label" id="lblResSupply">Max Supply</span>
+            <span class="metric-val">2,000</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblResEnergy">Starting Energy</span>
+            <span class="metric-val">3,500 E <span style="font-size:9.5px; color:#64748B;">(3k-7,999)</span></span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblResTasks">Concurrent Tasks</span>
+            <span class="metric-val">5 Tasks</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblResYield">Daily Estimated Yield</span>
+            <span class="metric-val highlight">10 – 20 USDC</span>
+          </div>
+        </div>
+        <div class="tier-footer-box">
+          <div class="tier-role" id="lblResRole">Edge AI (Hermes-3) • DePIN • M2M Mesh</div>
+          <div class="tier-payback">
+            <span id="lblResPaybackText">Est. Payback:</span>
+            <strong>~35 – 50 Days</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOVEREIGN TIER -->
+      <div class="tier-card sovereign">
+        <div class="tier-head">
+          <div class="tier-name-box">
+            <span class="tier-icon">👑</span>
+            <span class="tier-name">SOVEREIGN TIER</span>
+          </div>
+          <div class="tier-price">5,000 USDC</div>
+        </div>
+        <div class="metric-list">
+          <div class="metric-row">
+            <span class="metric-label" id="lblSovSupply">Max Supply</span>
+            <span class="metric-val">200</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblSovEnergy">Starting Energy</span>
+            <span class="metric-val">9,000 E <span style="font-size:9.5px; color:#64748B;">(8,000+)</span></span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblSovTasks">Concurrent Tasks</span>
+            <span class="metric-val">20 Tasks</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label" id="lblSovYield">Daily Estimated Yield</span>
+            <span class="metric-val highlight">30 – 60 USDC</span>
+          </div>
+        </div>
+        <div class="tier-footer-box">
+          <div class="tier-role" id="lblSovRole">BFT Validator • Escrow Arbiter • Governance</div>
+          <div class="tier-payback">
+            <span id="lblSovPaybackText">Est. Payback:</span>
+            <strong>~83 – 167 Days</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 3. Lifecycle Flow -->
+    <div class="flow-bar">
+      <span class="flow-title" id="txtFlowTitle">Node Lifecycle:</span>
+      <div class="flow-step"><span class="num">1</span> <span id="flowStep1">Mint (USDC)</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-step"><span class="num">2</span> <span id="flowStep2">Colony Register</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-step"><span class="num">3</span> <span id="flowStep3">Execute Tasks</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-step"><span class="num">4</span> <span id="flowStep4">Earn Real USDC</span></div>
+      <span class="flow-arrow">➔</span>
+      <div class="flow-step" style="border-color: #34D399;"><span class="num" style="background:#34D399;">5</span> <span id="flowStep5">Level Up Tier</span></div>
+    </div>
+
+    <!-- 4. Four Physics & Social Pillars -->
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-name" style="color:#34D399;" id="txtPil1Title">1. Einstein Layer</div>
+        <div class="pillar-desc" id="txtPil1Desc">Utility = Energy = Value • Inactivity decays vitality • Active compute elevates tier</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name" style="color:#FBBF24;" id="txtPil2Title">2. Tesla Layer</div>
+        <div class="pillar-desc" id="txtPil2Desc">8D Frequency DNA • Coherent NFTs bond together (C ≥ 0.65) • Mutual yield boost</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name" style="color:#38BDF8;" id="txtPil3Title">3. Heisenberg Layer</div>
+        <div class="pillar-desc" id="txtPil3Desc">Observation transforms asset • 10 observers ➔ DISCOVERED • +500 Energy bonus</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name" style="color:#C084FC;" id="txtPil4Title">4. Atatürk Layer</div>
+        <div class="pillar-desc" id="txtPil4Desc">DAO collective ownership • Fractional bps equity (10,000 bps) • Eternal IP commons</div>
+      </div>
+    </div>
+
+    <!-- 5. Footer -->
+    <div class="card-footer">
+      <div class="footer-left">
+        <span class="brand-tag">myc.network</span>
+        <span>•</span>
+        <span>Chain ID 108</span>
+        <span>•</span>
+        <span>0.00000000 MYC Gas</span>
+        <span>•</span>
+        <span>ERC-721R Living Machine</span>
+      </div>
+      <div class="footer-right">
+        <span>Treasury Split: <strong>95% Node / 5% Protocol</strong></span>
+        <div class="status-badge">
+          <div class="status-pulse"></div>
+          <span>COLONY PROTOCOL ACTIVE</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        subtitle: "Colony Node NFT",
+        seedSupply: "Max Supply",
+        seedEnergy: "Starting Energy",
+        seedTasks: "Concurrent Tasks",
+        seedYield: "Daily Estimated Yield",
+        seedRole: "Telemetry • IoT Sensing • Light Inference",
+        seedPayback: "Est. Payback:",
+        resSupply: "Max Supply",
+        resEnergy: "Starting Energy",
+        resTasks: "Concurrent Tasks",
+        resYield: "Daily Estimated Yield",
+        resRole: "Edge AI (Hermes-3) • DePIN • M2M Mesh",
+        resPayback: "Est. Payback:",
+        sovSupply: "Max Supply",
+        sovEnergy: "Starting Energy",
+        sovTasks: "Concurrent Tasks",
+        sovYield: "Daily Estimated Yield",
+        sovRole: "BFT Validator • Escrow Arbiter • Governance",
+        sovPayback: "Est. Payback:",
+        flowTitle: "Node Lifecycle:",
+        flow1: "Mint (USDC)",
+        flow2: "Colony Register",
+        flow3: "Execute Tasks",
+        flow4: "Earn Real USDC",
+        flow5: "Level Up Tier",
+        pil1Title: "1. Einstein Layer",
+        pil1Desc: "Utility = Energy = Value • Inactivity decays vitality • Active compute elevates tier",
+        pil2Title: "2. Tesla Layer",
+        pil2Desc: "8D Frequency DNA • Coherent NFTs bond together (C ≥ 0.65) • Mutual yield boost",
+        pil3Title: "3. Heisenberg Layer",
+        pil3Desc: "Observation transforms asset • 10 observers ➔ DISCOVERED • +500 Energy bonus",
+        pil4Title: "4. Atatürk Layer",
+        pil4Desc: "DAO collective ownership • Fractional bps equity (10,000 bps) • Eternal IP commons"
+      },
+      tr: {
+        subtitle: "Colony Node NFT'si",
+        seedSupply: "Adet Sınırı",
+        seedEnergy: "Başlangıç Enerji",
+        seedTasks: "Eşzamanlı Görev",
+        seedYield: "Günlük Kazanç Tahmini",
+        seedRole: "Telemetri • IoT Algılama • Hafif Inference",
+        seedPayback: "Geri Dönüş:",
+        resSupply: "Adet Sınırı",
+        resEnergy: "Başlangıç Enerji",
+        resTasks: "Eşzamanlı Görev",
+        resYield: "Günlük Kazanç Tahmini",
+        resRole: "Uçta AI (Hermes-3) • DePIN • M2M Mesh",
+        resPayback: "Geri Dönüş:",
+        sovSupply: "Adet Sınırı",
+        sovEnergy: "Başlangıç Enerji",
+        sovTasks: "Eşzamanlı Görev",
+        sovYield: "Günlük Kazanç Tahmini",
+        sovRole: "BFT Validatör • Escrow Hakemi • Yönetişim",
+        sovPayback: "Geri Dönüş:",
+        flowTitle: "Döngü:",
+        flow1: "Mint Et (USDC)",
+        flow2: "Node Kayıt",
+        flow3: "Görev Al",
+        flow4: "USDC Kazan",
+        flow5: "Tier Yükselt",
+        pil1Title: "1. Einstein Katmanı",
+        pil1Desc: "Kullanım = Enerji = Değer • Pasif tutmak enerjiyi eritir • Çalışmak tier yükseltir",
+        pil2Title: "2. Tesla Katmanı",
+        pil2Desc: "8-boyutlu frekans DNA'sı • Uyumlu NFT'ler birleşir (C ≥ 0.65) • Rezonans bonusu",
+        pil3Title: "3. Heisenberg Katmanı",
+        pil3Desc: "Gözlem varlığı değiştirir • 10 gözlemci ➔ DISCOVERED • +500 enerji bonusu",
+        pil4Title: "4. Atatürk Katmanı",
+        pil4Desc: "DAO kolektif sahiplik • Hisse bazlı yönetişim (10.000 bps) • Kuşaklararası mülkiyet"
+      }
+    };
+
+    function setLang(lang) {
+      document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+      document.getElementById('btnTR').classList.toggle('active', lang === 'tr');
+      const t = translations[lang];
+
+      document.getElementById('txtSubtitle').innerText = t.subtitle;
+      document.getElementById('lblSeedSupply').innerText = t.seedSupply;
+      document.getElementById('lblSeedEnergy').innerText = t.seedEnergy;
+      document.getElementById('lblSeedTasks').innerText = t.seedTasks;
+      document.getElementById('lblSeedYield').innerText = t.seedYield;
+      document.getElementById('lblSeedRole').innerText = t.seedRole;
+      document.getElementById('lblSeedPaybackText').innerText = t.seedPayback;
+
+      document.getElementById('lblResSupply').innerText = t.resSupply;
+      document.getElementById('lblResEnergy').innerText = t.resEnergy;
+      document.getElementById('lblResTasks').innerText = t.resTasks;
+      document.getElementById('lblResYield').innerText = t.resYield;
+      document.getElementById('lblResRole').innerText = t.resRole;
+      document.getElementById('lblResPaybackText').innerText = t.resPayback;
+
+      document.getElementById('lblSovSupply').innerText = t.sovSupply;
+      document.getElementById('lblSovEnergy').innerText = t.sovEnergy;
+      document.getElementById('lblSovTasks').innerText = t.sovTasks;
+      document.getElementById('lblSovYield').innerText = t.sovYield;
+      document.getElementById('lblSovRole').innerText = t.sovRole;
+      document.getElementById('lblSovPaybackText').innerText = t.sovPayback;
+
+      document.getElementById('txtFlowTitle').innerText = t.flowTitle;
+      document.getElementById('flowStep1').innerText = t.flow1;
+      document.getElementById('flowStep2').innerText = t.flow2;
+      document.getElementById('flowStep3').innerText = t.flow3;
+      document.getElementById('flowStep4').innerText = t.flow4;
+      document.getElementById('flowStep5').innerText = t.flow5;
+
+      document.getElementById('txtPil1Title').innerText = t.pil1Title;
+      document.getElementById('txtPil1Desc').innerText = t.pil1Desc;
+      document.getElementById('txtPil2Title').innerText = t.pil2Title;
+      document.getElementById('txtPil2Desc').innerText = t.pil2Desc;
+      document.getElementById('txtPil3Title').innerText = t.pil3Title;
+      document.getElementById('txtPil3Desc').innerText = t.pil3Desc;
+      document.getElementById('txtPil4Title').innerText = t.pil4Title;
+      document.getElementById('txtPil4Desc').innerText = t.pil4Desc;
+    }
+
+    async function downloadImage() {
+      const card = document.getElementById('xCardTarget');
+      const canvas = await html2canvas(card, {
+        scale: 2, // 2400 x 1350 Ultra Crisp Retina Output
+        backgroundColor: '#040705',
+        useCORS: true
+      });
+      const link = document.createElement('a');
+      link.download = 'MYCA_Resonance_Asset_X_Card.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+<script src="/i18n.js"></script>
+</body>
+</html>

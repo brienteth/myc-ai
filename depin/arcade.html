@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous AI Arcade & 0-Gas Gaming Substrate | MYCA Network</title>
+  <meta name="description" content="Experience sovereign autonomous on-chain gaming: Living NPCs with silicon PUF identities, 0-gas action ticks, and sub-millisecond M2M economies on Mycelium Network.">
+
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/depin/brand.css">
+  <link rel="icon" type="image/png" href="/depin/mycai_logo.png">
+
+  <style>
+    :root {
+      --bg-dark: #070a0e;
+      --bg-surface: #0b1118;
+      --bg-card: rgba(13, 20, 32, 0.75);
+      --bg-card-hover: rgba(18, 28, 46, 0.90);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-card-glow: rgba(16, 185, 129, 0.35);
+
+      --emerald: #10b981;
+      --emerald-light: #34d399;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --cyan: #06b6d4;
+      --cyan-light: #38bdf8;
+      --amber: #f59e0b;
+      --crimson: #ef4444;
+      --blue: #3b82f6;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+
+      --f-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+      --f-display: 'Outfit', var(--f-sans);
+      --f-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.12), transparent 70%),
+        radial-gradient(circle at 85% 90%, rgba(6, 182, 212, 0.05), transparent 60%),
+        radial-gradient(circle at 10% 70%, rgba(16, 185, 129, 0.04), transparent 50%);
+      color: var(--text-main);
+      font-family: var(--f-sans);
+      min-height: 100vh;
+      padding-top: 86px;
+      padding-bottom: 60px;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--emerald); }
+
+    /* Top Floating Capsule Navbar */
+    .myca-header-wrapper {
+      position: fixed;
+      top: 14px;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      pointer-events: none;
+    }
+    .myca-navbar {
+      pointer-events: auto;
+      max-width: 1320px;
+      width: 100%;
+      background: rgba(10, 16, 26, 0.85);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.08);
+    }
+    .myca-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .myca-brand-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+    }
+    .myca-brand-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .myca-brand-name {
+      font-family: var(--f-display);
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .myca-brand-accent {
+      color: var(--emerald-light);
+    }
+    .myca-chain-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+      letter-spacing: 0.05em;
+    }
+
+    .myca-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-item {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 13px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+    }
+    .nav-item:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .nav-item.active {
+      color: #fff;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-weight: 600;
+    }
+
+    .myca-nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-lang {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-lang:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .btn-sdk-doc {
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #042f20;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 6px 15px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-sdk-doc:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.5);
+      background: linear-gradient(135deg, var(--emerald-light) 0%, var(--emerald) 100%);
+    }
+
+    /* Hero Section */
+    .arcade-hero {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px 20px 16px;
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(13, 20, 32, 0.85) 0%, rgba(9, 14, 22, 0.95) 100%);
+      border: 1px solid var(--border-card);
+      border-radius: 24px;
+      padding: 32px 36px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-content {
+      max-width: 720px;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--emerald-light);
+      box-shadow: 0 0 10px var(--emerald-light);
+      animation: pulseAnim 1.6s infinite ease-in-out;
+    }
+    @keyframes pulseAnim {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.35); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+    .hero-title {
+      font-family: var(--f-display);
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 60%, var(--emerald-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      color: var(--text-muted);
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+    .hero-desc code {
+      color: var(--emerald-light);
+      background: rgba(16, 185, 129, 0.12);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--f-mono);
+      font-size: 12.5px;
+    }
+
+    /* Metric Cards in Hero */
+    .hero-metrics {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .metric-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 14px 20px;
+      min-width: 140px;
+      transition: all 0.2s ease;
+    }
+    .metric-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(16, 185, 129, 0.25);
+      transform: translateY(-2px);
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-faint);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-family: var(--f-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--emerald-light);
+      text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Main Grid Layout */
+    .arcade-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 24px;
+    }
+    @media (max-width: 1040px) {
+      .arcade-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left: Arena Viewport */
+    .arena-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(16, 185, 129, 0.04);
+      backdrop-filter: blur(16px);
+      transition: border-color 0.3s ease;
+    }
+    .arena-card:hover {
+      border-color: var(--border-card-glow);
+    }
+    .arena-topbar {
+      padding: 14px 22px;
+      background: rgba(9, 14, 22, 0.85);
+      border-bottom: 1px solid var(--border-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .arena-top-title {
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      letter-spacing: 0.04em;
+      color: #e2e8f0;
+    }
+    .arena-clock-chip {
+      font-family: var(--f-mono);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    /* Canvas Frame */
+    .canvas-viewport {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      background: #060b0e;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+    canvas#gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .canvas-hud-overlay {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .hud-badge {
+      background: rgba(8, 14, 23, 0.85);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    .hud-badge strong {
+      color: var(--emerald-light);
+    }
+
+    /* Arena Controls Bar */
+    .arena-controls {
+      padding: 16px 22px;
+      background: rgba(9, 14, 22, 0.95);
+      border-top: 1px solid var(--border-card);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn-cluster {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-action {
+      border: 1px solid transparent;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: var(--f-sans);
+    }
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #042f20;
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.25);
+    }
+    .btn-action-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.45);
+      background: linear-gradient(135deg, var(--emerald-light) 0%, var(--emerald) 100%);
+    }
+    .btn-action-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+    .btn-action-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+    .btn-action-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    .btn-action-danger:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fecaca;
+    }
+
+    .hint-label {
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    /* Right Sidebar */
+    .arcade-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 22px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .glass-card-header h3 {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-family: var(--f-mono);
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--emerald-light);
+    }
+
+    /* NPC Card Items */
+    .npc-card {
+      background: rgba(10, 16, 26, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-left: 3px solid var(--emerald);
+      border-radius: 12px;
+      padding: 13px 15px;
+      margin-bottom: 10px;
+      transition: all 0.2s ease;
+    }
+    .npc-card:hover {
+      background: rgba(18, 28, 46, 0.8);
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateX(2px);
+    }
+    .npc-card:last-child {
+      margin-bottom: 0;
+    }
+    .npc-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .npc-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .npc-role-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+    }
+    .npc-id {
+      font-size: 11px;
+      font-family: var(--f-mono);
+      color: var(--text-faint);
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .npc-stat-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .stat-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .stat-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Live Action Ledger Terminal */
+    .ledger-terminal {
+      background: #05090d;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 12px;
+      padding: 12px;
+      height: 230px;
+      overflow-y: auto;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .ledger-row {
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .ledger-row:last-child {
+      border-bottom: none;
+    }
+    .tx-hash {
+      color: var(--cyan-light);
+    }
+    .tx-action {
+      color: var(--emerald-light);
+      font-weight: 600;
+    }
+    .tx-actor {
+      color: #cbd5e1;
+    }
+    .tx-gas {
+      color: #86efac;
+    }
+    .tx-coherence {
+      color: var(--amber);
+    }
+    .tx-rejected {
+      color: var(--crimson);
+      font-weight: 700;
+    }
+
+    /* Floating Toast System */
+    #arcade-toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast-card {
+      pointer-events: auto;
+      background: rgba(13, 20, 32, 0.95);
+      border: 1px solid var(--border-card-glow);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 0 0 20px rgba(16, 185, 129, 0.15);
+      border-radius: 12px;
+      padding: 12px 18px;
+      color: #fff;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(16px);
+      animation: slideToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      max-width: 360px;
+    }
+    @keyframes slideToast {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="arcade-toast-container"></div>
+
+  <!-- Unified Dark Capsule Navigation Bar -->
+    <!-- UNIFIED MASTER HEADER -->
+  <div class="myca-header-wrapper">
+    <nav class="myca-navbar">
+      <!-- Left: Brand Logo -->
+      <a href="/depin" class="myca-brand">
+        <img src="/depin/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
+        <div class="myca-brand-text">
+          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
+          <span class="myca-chain-tag">CHAIN 108</span>
+        </div>
+      </a>
+
+      <!-- Center: 7 Pillar Core Links -->
+      <div class="myca-nav-center">
+        <a href="/depin/hub" class="myca-nav-link">🌐 Hub</a>
+        <a href="/depin/explorer" class="myca-nav-link">🧭 Explorer</a>
+        <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
+        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
+        <a href="/depin/build" class="myca-nav-link">🛠️ Build</a>
+        <a href="/depin/marketplace" class="myca-nav-link active">🏪 Market</a>
+        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
+          <a href="/depin/docs" class="myca-nav-link " style="display: flex; align-items: center; gap: 4px;">
+            <span>📚 Docs</span>
+            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </a>
+          <div class="myca-dropdown-panel" style="min-width: 290px; padding: 6px; top: 100%;">
+            <a href="/depin/docs#myca-os" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🖥️</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #fff;">Myca OS Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">Local AI runtime, desktop app & device mesh</div>
+              </div>
+            </a>
+            <a href="/depin/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🤖</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00e87a;">DePIN Network Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">Proof-of-Resonance (PoR) & Lattice DAG</div>
+              </div>
+            </a>
+            <a href="/depin/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
+              <div style="font-size: 16px;">🧬</div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">C99 Core Docs</div>
+                <div style="font-size: 11px; color: #94a3b8;">240B kernel, 6-Lock Safe-Sign & Modbus SDK</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Actions & Live State -->
+      <div class="myca-nav-right">
+        <div class="lang-selector">
+          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
+          <span class="lang-divider">/</span>
+          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
+        </div>
+        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+          <span>5,000 MYC</span>
+        </div>
+        <a href="/depin/hub#faucet" class="myca-btn-primary">
+          <span>🎁 Faucet</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Hero Header -->
+  <header class="arcade-hero">
+    <div class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-tag">
+          <span class="pulse-dot"></span>
+          <span id="heroTagText">0-GAS DETERMINISTIC GAMING SUBSTRATE</span>
+        </div>
+        <h1 class="hero-title" id="heroTitle">Autonomous AI Arcade & Living NPC Arena</h1>
+        <p class="hero-desc" id="heroDesc">
+          Witness true autonomous on-chain gaming: living AI NPCs equipped with silicon PUF credentials (<code>did:myc:puf</code>),
+          making independent tactical moves, trading resources via sub-second <strong>MycStreamPay</strong> channels, and broadcasting state ticks at <strong>0.00000000 MYC gas</strong>.
+        </p>
+      </div>
+
+      <div class="hero-metrics">
+        <div class="metric-card">
+          <div class="metric-label" id="lblTickGas">Action Tick Fee</div>
+          <div class="metric-value">0.0000 MYC</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label" id="lblLatticeTps">Lattice Ticks/s</div>
+          <div class="metric-value" id="valTps">1,840</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label" id="lblStateFinality">Tick Finality</div>
+          <div class="metric-value">&lt; 34.8 µs</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Arcade Layout -->
+  <main class="arcade-container">
+    
+    <!-- Left: Canvas Arena & Interactive Controls -->
+    <section class="arena-card">
+      <div class="arena-topbar">
+        <div class="arena-top-title">
+          <span class="pulse-dot"></span>
+          <span id="arenaTitle">LIVING LATTICE 2D ARENA: AUTONOMOUS WARDS & RESOURCE MINES</span>
+        </div>
+        <span class="arena-clock-chip" id="arenaClock">TICK #104,912</span>
+      </div>
+
+      <!-- Canvas Viewport -->
+      <div class="canvas-viewport" id="canvasContainer">
+        <canvas id="gameCanvas"></canvas>
+        <div class="canvas-hud-overlay">
+          <div class="hud-badge">DAG SUBSTRATE: <strong>ONLINE (Chain ID 108)</strong></div>
+          <div class="hud-badge">PROOF-OF-RESONANCE: <strong>COHERENCE &ge; 0.50</strong></div>
+          <div class="hud-badge">M2M PAYMENT RAILS: <strong>MycStreamPay ACTIVE</strong></div>
+        </div>
+      </div>
+
+      <!-- Controls & Commands -->
+      <div class="arena-controls">
+        <div class="btn-cluster">
+          <button class="btn-action btn-action-primary" onclick="triggerPlayerTick()">
+            <span>⚡</span> <span id="btnSpawnAction">Broadcast 0-Gas Action</span>
+          </button>
+          <button class="btn-action btn-action-secondary" onclick="triggerStreamPayTrade()">
+            <span>💸</span> <span id="btnStreamTrade">P2P StreamPay Trade (0-Gas)</span>
+          </button>
+          <button class="btn-action btn-action-danger" onclick="triggerAntiCheatTest()">
+            <span>🛡️</span> <span id="btnTestCheat">Test Anti-Cheat (Reject Tamper)</span>
+          </button>
+        </div>
+
+        <div class="hint-label">
+          <span id="hintClick">💡 Click on the arena to place a resource beacon for the bots</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right: Living NPCs Registry & Action Ledger -->
+    <aside class="arcade-sidebar">
+      
+      <!-- Living NPCs -->
+      <div class="glass-card">
+        <div class="glass-card-header">
+          <h3 id="sidebarNpcTitle">
+            <span>🧠 Living Sovereign NPCs</span>
+          </h3>
+          <span class="card-badge">4 ACTIVE</span>
+        </div>
+
+        <!-- NPC 1: Scout -->
+        <div class="npc-card" style="border-left-color: var(--emerald);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: var(--emerald-light);">🟢 AGENT_KAIROS</span>
+            <span class="npc-role-tag" style="background: rgba(16,185,129,0.15); color: var(--emerald-light);">SCOUT</span>
+          </div>
+          <div class="npc-id">did:myc:puf:0x4f81...a3e9</div>
+          <div class="npc-stat-bar">
+            <span>Energy</span>
+            <div class="stat-track"><div class="stat-fill" id="barKairos" style="width: 88%; background: var(--emerald);"></div></div>
+            <span id="valKairos">88%</span>
+          </div>
+        </div>
+
+        <!-- NPC 2: Auto Battler -->
+        <div class="npc-card" style="border-left-color: var(--crimson);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: #f87171;">🔴 AGENT_VORTEX</span>
+            <span class="npc-role-tag" style="background: rgba(239,68,68,0.15); color: #fca5a5;">AUTO-BATTLER</span>
+          </div>
+          <div class="npc-id">did:myc:puf:0x89c2...b714</div>
+          <div class="npc-stat-bar">
+            <span>Hull</span>
+            <div class="stat-track"><div class="stat-fill" id="barVortex" style="width: 72%; background: var(--crimson);"></div></div>
+            <span id="valVortex">72%</span>
+          </div>
+        </div>
+
+        <!-- NPC 3: Merchant -->
+        <div class="npc-card" style="border-left-color: var(--amber);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: #fbbf24;">🟡 NPC_AURELIA</span>
+            <span class="npc-role-tag" style="background: rgba(245,158,11,0.15); color: #fde68a;">MERCHANT</span>
+          </div>
+          <div class="npc-id">did:myc:puf:0xd3e5...19f2</div>
+          <div class="npc-stat-bar">
+            <span>Stock</span>
+            <div class="stat-track"><div class="stat-fill" id="barAurelia" style="width: 94%; background: var(--amber);"></div></div>
+            <span id="valAurelia">94/100</span>
+          </div>
+        </div>
+
+        <!-- NPC 4: Turret -->
+        <div class="npc-card" style="border-left-color: var(--blue);">
+          <div class="npc-card-header">
+            <span class="npc-title" style="color: #60a5fa;">🔵 TURRET_AEGIS</span>
+            <span class="npc-role-tag" style="background: rgba(59,130,246,0.15); color: #93c5fd;">DEFENSE</span>
+          </div>
+          <div class="npc-id">did:myc:puf:0x17a0...84c1</div>
+          <div class="npc-stat-bar">
+            <span>Shield</span>
+            <div class="stat-track"><div class="stat-fill" id="barAegis" style="width: 100%; background: var(--blue);"></div></div>
+            <span id="valAegis">100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Action Ledger -->
+      <div class="glass-card">
+        <div class="glass-card-header">
+          <h3 id="sidebarLedgerTitle">
+            <span>📜 Live DAG Action Ticks</span>
+          </h3>
+          <span class="card-badge" style="color:#34d399;">0-GAS COMMITS</span>
+        </div>
+        <div class="ledger-terminal" id="ledgerBox">
+          <!-- Live updates inserted via JS -->
+        </div>
+      </div>
+
+    </aside>
+  </main>
+
+  <!-- Interactive Simulation Script -->
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const ledgerBox = document.getElementById('ledgerBox');
+    let tickCount = 104912;
+    let currentLang = 'en';
+
+    // Bots configuration with PUF DIDs
+    const bots = [
+      {
+        id: 'KAIROS',
+        name: 'AGENT_KAIROS',
+        type: 'scout',
+        color: '#10b981',
+        did: 'did:myc:puf:0x4f81...a3e9',
+        x: 120, y: 140,
+        vx: 1.8, vy: 1.2,
+        radius: 12,
+        energy: 88,
+        target: null,
+        radarAngle: 0
+      },
+      {
+        id: 'VORTEX',
+        name: 'AGENT_VORTEX',
+        type: 'battler',
+        color: '#ef4444',
+        did: 'did:myc:puf:0x89c2...b714',
+        x: 480, y: 380,
+        vx: -1.5, vy: -1.1,
+        radius: 14,
+        hull: 72,
+        target: null,
+        radarAngle: 1.2
+      },
+      {
+        id: 'AURELIA',
+        name: 'NPC_AURELIA',
+        type: 'merchant',
+        color: '#f59e0b',
+        did: 'did:myc:puf:0xd3e5...19f2',
+        x: 320, y: 220,
+        vx: 0.8, vy: -0.9,
+        radius: 13,
+        inv: 94,
+        target: null,
+        radarAngle: 2.4
+      },
+      {
+        id: 'AEGIS',
+        name: 'TURRET_AEGIS',
+        type: 'turret',
+        color: '#3b82f6',
+        did: 'did:myc:puf:0x17a0...84c1',
+        x: 620, y: 160,
+        vx: 0, vy: 0,
+        radius: 16,
+        shield: 100,
+        target: null,
+        radarAngle: 0
+      }
+    ];
+
+    let crystals = [
+      { x: 180, y: 320, val: 50, pulse: 0 },
+      { x: 520, y: 120, val: 80, pulse: 1.5 },
+      { x: 380, y: 440, val: 65, pulse: 3.0 },
+      { x: 260, y: 100, val: 40, pulse: 4.2 }
+    ];
+
+    let laserBeams = [];
+    let beacons = [];
+
+    function resizeCanvas() {
+      const container = document.getElementById('canvasContainer');
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function showToast(icon, title, desc) {
+      const container = document.getElementById('arcade-toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast-card';
+      toast.innerHTML = `
+        <span style="font-size: 18px;">${icon}</span>
+        <div>
+          <div style="font-weight: 700; font-size: 13px;">${title}</div>
+          <div style="font-size: 11.5px; color: var(--text-muted);">${desc}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      beacons.push({ x, y, radius: 1, maxRadius: 36, alpha: 1.0 });
+      crystals.push({ x, y, val: 100, pulse: 0 });
+      const hash = '0x' + Math.random().toString(16).substr(2, 6);
+      addLedgerEntry('BEACON_MINT', hash, 'USER_WALLET', '0.0000 MYC', 0.99);
+      showToast('📍', 'Resource Beacon Minted', `DAG Tick #${hash} committed with strictly 0 gas fee`);
+    });
+
+    function addLedgerEntry(action, hash, actor, gas, coherence, rejected = false) {
+      const row = document.createElement('div');
+      row.className = 'ledger-row';
+      if (rejected) {
+        row.innerHTML = `
+          <span class="tx-hash">#${hash}</span>
+          <span class="tx-rejected">REJECTED [C=${coherence.toFixed(2)} &lt; 0.50]</span>
+          <span class="tx-rejected">TAMPER DROPPED</span>
+        `;
+      } else {
+        row.innerHTML = `
+          <span class="tx-hash">#${hash}</span>
+          <span class="tx-action">${action}</span>
+          <span class="tx-gas">${gas}</span>
+          <span class="tx-coherence">C=${coherence.toFixed(2)}</span>
+        `;
+      }
+      ledgerBox.insertBefore(row, ledgerBox.firstChild);
+      if (ledgerBox.children.length > 25) {
+        ledgerBox.removeChild(ledgerBox.lastChild);
+      }
+    }
+
+    function updateGame() {
+      tickCount++;
+      document.getElementById('arenaClock').textContent = `TICK #${tickCount.toLocaleString()}`;
+
+      bots.forEach(bot => {
+        bot.radarAngle += 0.03;
+
+        if (bot.type !== 'turret') {
+          bot.x += bot.vx;
+          bot.y += bot.vy;
+
+          if (bot.x - bot.radius < 0 || bot.x + bot.radius > canvas.width) bot.vx *= -1;
+          if (bot.y - bot.radius < 0 || bot.y + bot.radius > canvas.height) bot.vy *= -1;
+
+          if (Math.random() < 0.02) {
+            bot.vx += (Math.random() - 0.5) * 0.8;
+            bot.vy += (Math.random() - 0.5) * 0.8;
+            const speed = Math.hypot(bot.vx, bot.vy);
+            if (speed > 2.5) {
+              bot.vx = (bot.vx / speed) * 2.5;
+              bot.vy = (bot.vy / speed) * 2.5;
+            }
+          }
+        }
+
+        if (bot.type === 'turret' && Math.random() < 0.04) {
+          const battler = bots.find(b => b.type === 'battler');
+          if (battler) {
+            laserBeams.push({
+              x1: bot.x, y1: bot.y,
+              x2: battler.x, y2: battler.y,
+              life: 14,
+              color: '#38bdf8'
+            });
+            addLedgerEntry('TURRET_FIRE', '0x' + Math.random().toString(16).substr(2, 6), bot.id, '0.0000 MYC', 0.98);
+          }
+        }
+
+        if (bot.type === 'scout' && Math.random() < 0.03) {
+          addLedgerEntry('ORE_HARVEST', '0x' + Math.random().toString(16).substr(2, 6), bot.id, '0.0000 MYC', 0.95);
+        }
+
+        if (bot.type === 'merchant' && Math.random() < 0.025) {
+          addLedgerEntry('STREAMPAY_TRADE', '0x' + Math.random().toString(16).substr(2, 6), bot.id, '0.0000 MYC', 0.97);
+        }
+      });
+
+      for (let i = laserBeams.length - 1; i >= 0; i--) {
+        laserBeams[i].life--;
+        if (laserBeams[i].life <= 0) laserBeams.splice(i, 1);
+      }
+
+      for (let i = beacons.length - 1; i >= 0; i--) {
+        beacons[i].radius += 1.2;
+        beacons[i].alpha -= 0.025;
+        if (beacons[i].alpha <= 0) beacons.splice(i, 1);
+      }
+
+      if (Math.random() < 0.1) {
+        document.getElementById('valTps').textContent = (1800 + Math.floor(Math.random() * 90)).toLocaleString();
+      }
+    }
+
+    function renderGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Subtle Cyber Grid
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.06)';
+      ctx.lineWidth = 1;
+      const step = 42;
+      for (let x = 0; x < canvas.width; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      // Render Crystals
+      crystals.forEach(c => {
+        c.pulse += 0.04;
+        const glow = 8 + Math.sin(c.pulse) * 4;
+        ctx.save();
+        ctx.fillStyle = '#10b981';
+        ctx.shadowColor = '#34d399';
+        ctx.shadowBlur = glow;
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Render Beacons
+      beacons.forEach(b => {
+        ctx.save();
+        ctx.strokeStyle = `rgba(52, 211, 153, ${b.alpha})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Render Lasers
+      laserBeams.forEach(l => {
+        ctx.save();
+        ctx.strokeStyle = l.color;
+        ctx.lineWidth = 2.5;
+        ctx.shadowColor = l.color;
+        ctx.shadowBlur = 14;
+        ctx.beginPath();
+        ctx.moveTo(l.x1, l.y1);
+        ctx.lineTo(l.x2, l.y2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Render Bots
+      bots.forEach(bot => {
+        ctx.save();
+        
+        // Radar Sweep
+        ctx.beginPath();
+        ctx.arc(bot.x, bot.y, 50, bot.radarAngle, bot.radarAngle + 0.6);
+        ctx.lineTo(bot.x, bot.y);
+        ctx.fillStyle = `rgba(${bot.color === '#10b981' ? '16,185,129' : bot.color === '#ef4444' ? '239,68,68' : bot.color === '#f59e0b' ? '245,158,11' : '59,130,246'}, 0.08)`;
+        ctx.fill();
+
+        // Outer Aura
+        ctx.fillStyle = bot.color;
+        ctx.shadowColor = bot.color;
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.arc(bot.x, bot.y, bot.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Inner Core
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 0;
+        ctx.beginPath();
+        ctx.arc(bot.x, bot.y, bot.radius * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Monospace Name Tag
+        ctx.fillStyle = '#f1f5f9';
+        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.fillText(bot.name, bot.x - 32, bot.y - bot.radius - 8);
+
+        ctx.restore();
+      });
+    }
+
+    function loop() {
+      updateGame();
+      renderGame();
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    addLedgerEntry('INITIALIZE_NODE', '0x108f9c', 'GENESIS', '0.0000 MYC', 1.0);
+    addLedgerEntry('DID_REGISTER', '0x4f81a3', 'AGENT_KAIROS', '0.0000 MYC', 0.99);
+    addLedgerEntry('DID_REGISTER', '0x89c2b7', 'AGENT_VORTEX', '0.0000 MYC', 0.99);
+    addLedgerEntry('STREAMPAY_OPEN', '0xd3e519', 'NPC_AURELIA', '0.0000 MYC', 0.98);
+
+    function triggerPlayerTick() {
+      const hash = '0x' + Math.random().toString(16).substr(2, 6);
+      addLedgerEntry('PLAYER_ACTION_TICK', hash, 'USER_CONTROLLER', '0.0000 MYC', 0.99);
+      const scout = bots[0];
+      laserBeams.push({
+        x1: scout.x, y1: scout.y,
+        x2: scout.x + (Math.random() - 0.5) * 180,
+        y2: scout.y + (Math.random() - 0.5) * 180,
+        life: 14,
+        color: '#34d399'
+      });
+      showToast('⚡', '0-Gas Action Dispatched', `Lattice Vertex #${hash} sealed in 31.2 µs without gas.`);
+    }
+
+    function triggerStreamPayTrade() {
+      const hash = '0x' + Math.random().toString(16).substr(2, 6);
+      addLedgerEntry('M2M_STREAMPAY_TRADE', hash, 'NPC_AURELIA -> AGENT_KAIROS', '0.0000 MYC', 0.96);
+      const b1 = bots[0];
+      const b2 = bots[2];
+      laserBeams.push({
+        x1: b1.x, y1: b1.y,
+        x2: b2.x, y2: b2.y,
+        life: 18,
+        color: '#fbbf24'
+      });
+      showToast('💸', 'M2M StreamPay Settlement', `5.00 MYC streamed P2P between Living NPCs at 0 gas.`);
+    }
+
+    function triggerAntiCheatTest() {
+      const hash = '0x' + Math.random().toString(16).substr(2, 6);
+      addLedgerEntry('SPEED_HACK_INJECT', hash, 'UNKNOWN_INTRUDER', '0.0000 MYC', 0.24, true);
+      showToast('🛡️', 'Anti-Cheat Triggered', `Tampered tick rejected: Coherence C=0.24 < 0.50 threshold.`);
+    }
+
+    const i18n = {
+      en: {
+        heroTagText: "0-GAS DETERMINISTIC GAMING SUBSTRATE",
+        heroTitle: "Autonomous AI Arcade & Living NPC Arena",
+        heroDesc: "Witness true autonomous on-chain gaming: living AI NPCs equipped with silicon PUF credentials (did:myc:puf), making independent tactical moves, trading resources via sub-second MycStreamPay channels, and broadcasting state ticks at 0.00000000 MYC gas.",
+        lblTickGas: "Action Tick Fee",
+        lblLatticeTps: "Lattice Ticks/s",
+        lblStateFinality: "Tick Finality",
+        arenaTitle: "LIVING LATTICE 2D ARENA: AUTONOMOUS WARDS & RESOURCE MINES",
+        btnSpawnAction: "Broadcast 0-Gas Action",
+        btnStreamTrade: "P2P StreamPay Trade (0-Gas)",
+        btnTestCheat: "Test Anti-Cheat (Reject Tamper)",
+        hintClick: "💡 Click on the arena to place a resource beacon for the bots",
+        sidebarNpcTitle: "🧠 Living Sovereign NPCs",
+        sidebarLedgerTitle: "📜 Live DAG Action Ticks"
+      },
+      tr: {
+        heroTagText: "0-GAZ DETERMINİSTİK OYUN ALTYAPISI",
+        heroTitle: "Otonom Yapay Zeka Arenası & Yaşayan NPC Dünyası",
+        heroDesc: "Gerçek otonom blokzincir oyununu deneyimleyin: silikon PUF kimliklerine (did:myc:puf) sahip yaşayan yapay zeka NPC'leri; bağımsız taktiksel hamleler yapar, saniye-altı MycStreamPay ile kaynak takas eder ve kesinlikle 0.00000000 MYC gaz ile ağa işlenir.",
+        lblTickGas: "Hamle Gaz Ücreti",
+        lblLatticeTps: "Kafes Hamle/sn",
+        lblStateFinality: "Hamle Kesinliği",
+        arenaTitle: "LIVING LATTICE 2B ARENA: OTONOM BÖLGELER VE KRİSTAL MADENLERİ",
+        btnSpawnAction: "0-Gaz Hamle Gönder",
+        btnStreamTrade: "P2P StreamPay Takas (0-Gaz)",
+        btnTestCheat: "Hile Korumasını Test Et (Reddedilir)",
+        hintClick: "💡 Botların toplanması için arenaya tıklayarak kaynak sinyali bırakın",
+        sidebarNpcTitle: "🧠 Yaşayan Egemen NPC'ler",
+        sidebarLedgerTitle: "📜 Canlı DAG Hamle Akışı"
+      }
+    };
+
+    function toggleArcadeLang() {
+      currentLang = currentLang === 'en' ? 'tr' : 'en';
+      const d = i18n[currentLang];
+      document.getElementById('heroTagText').textContent = d.heroTagText;
+      document.getElementById('heroTitle').textContent = d.heroTitle;
+      document.getElementById('heroDesc').textContent = d.heroDesc;
+      document.getElementById('lblTickGas').textContent = d.lblTickGas;
+      document.getElementById('lblLatticeTps').textContent = d.lblLatticeTps;
+      document.getElementById('lblStateFinality').textContent = d.lblStateFinality;
+      document.getElementById('arenaTitle').textContent = d.arenaTitle;
+      document.getElementById('btnSpawnAction').textContent = d.btnSpawnAction;
+      document.getElementById('btnStreamTrade').textContent = d.btnStreamTrade;
+      document.getElementById('btnTestCheat').textContent = d.btnTestCheat;
+      document.getElementById('hintClick').textContent = d.hintClick;
+      document.getElementById('sidebarNpcTitle').innerHTML = `<span>${d.sidebarNpcTitle}</span>`;
+      document.getElementById('sidebarLedgerTitle').innerHTML = `<span>${d.sidebarLedgerTitle}</span>`;
+    }
+  </script>
+<script src="/i18n.js"></script>
+</body>
+</html>
