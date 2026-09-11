@@ -43,16 +43,334 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      background-image:
-        radial-gradient(ellipse 75% 45% at 50% -10%, rgba(16, 185, 129, 0.07), transparent 70%),
-        radial-gradient(circle at 85% 90%, rgba(16, 185, 129, 0.03), transparent 60%);
+      background-color: #070a0e;
       color: var(--text-main);
       font-family: var(--f-sans);
-      padding-top: 84px;
-      padding-bottom: 80px;
+      margin: 0;
+      padding: 0;
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    /* Top Fixed Header Bar */
+    .hub-header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(7, 10, 14, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 1000;
+    }
+
+    .hub-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .hub-brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .hub-brand-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hub-brand-text .accent {
+      color: #10b981;
+    }
+
+    .hub-brand-tag {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: var(--f-mono);
+    }
+
+    .hub-header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hub-net-selector {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .hub-net-selector:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* High Visibility Connect Wallet Button */
+    .myca-wallet-btn-pill {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 8px 22px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .myca-wallet-btn-pill:hover {
+      background: #1f2937;
+      border-color: #10b981;
+      color: #34d399;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .myca-wallet-btn-pill.connected {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    /* Left Vertical Sidebar */
+    .hub-left-sidebar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      bottom: 0;
+      width: 230px;
+      z-index: 990;
+      background: rgba(7, 10, 14, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 14px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .sidebar-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .sidebar-btn.active {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      color: #ffffff;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-icon {
+      font-size: 16px;
+      width: 20px;
+      display: inline-flex;
+      justify-content: center;
+    }
+
+    .sidebar-badge-new {
+      background: rgba(99, 102, 241, 0.25);
+      color: #818cf8;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-left: auto;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .sidebar-icon-ext {
+      font-size: 12px;
+      color: #64748b;
+      margin-left: auto;
+    }
+
+    .sidebar-socials-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sidebar-socials-row a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .sidebar-socials-row a:hover {
+      color: #10b981;
+    }
+
+    /* Main Content Body Area */
+    .hub-main-area {
+      margin-top: 64px;
+      margin-left: 230px;
+      padding: 36px 40px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Hero Card in Discover */
+    .discover-hero-card {
+      position: relative;
+      border-radius: 24px;
+      padding: 56px 44px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: radial-gradient(ellipse at 75% 25%, rgba(168, 85, 247, 0.22) 0%, rgba(16, 185, 129, 0.12) 45%, rgba(7, 10, 14, 0.95) 100%), #0a0f18;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .discover-hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .discover-hero-subtitle {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.1em;
+      font-family: var(--f-mono);
+      text-transform: uppercase;
+    }
+
+    /* Spotlight Section */
+    .spotlight-header {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .spotlight-card {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #111827;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spotlight-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+
+    .spotlight-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .spotlight-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .spotlight-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 10, 14, 0.95) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px;
+    }
+
+    .spotlight-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(147, 51, 234, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     /* Modern Dark Capsule Navbar */
@@ -2608,6 +2926,30 @@
       if (sel) sel.style.display = 'block';
     }
 
+    function openWalletDetailsView() {
+      hideAllWalletViews();
+      const det = document.getElementById('wallet-view-connected');
+      if (det) det.style.display = 'block';
+
+      const icon = document.getElementById('connected-wallet-icon');
+      const title = document.getElementById('connected-wallet-title');
+      const bal = document.getElementById('connected-wallet-balance');
+      const evmEl = document.getElementById('connected-address-evm');
+      const mycEl = document.getElementById('connected-address-myc');
+
+      if (activeWallet.type === 'metamask') {
+        if (icon) icon.innerText = '🦊';
+        if (title) title.innerText = 'MetaMask (Chain 108)';
+      } else {
+        if (icon) icon.innerText = '🍄';
+        if (title) title.innerText = 'Spore Wallet';
+      }
+
+      if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
+      if (evmEl) evmEl.innerText = getActiveEvmAddress();
+      if (mycEl) mycEl.innerText = getActiveWalletAddress();
+    }
+
     function showImportError(msg) {
       const errBox = document.getElementById('import-seed-error');
       if (errBox) {
@@ -2793,7 +3135,7 @@
       try { localStorage.setItem('myca_wallet_type', 'native'); } catch (e) {}
       updateWalletUI();
       closeWalletModal();
-      showToast('MYCA Native Cüzdan Aktif! 🍄', `${savedMyc.slice(0, 8)}...${savedMyc.slice(-4)} (Sıfır Gas)`, 'success');
+      showToast('Spore Wallet Aktif! 🍄', `${savedMyc.slice(0, 8)}...${savedMyc.slice(-4)} (Sıfır Gas)`, 'success');
       fetchBalances();
       fetchStakeInfo();
     }
@@ -2827,7 +3169,7 @@
         btn.classList.add('connected');
         icon.innerText = '🍄';
         const addr = activeWallet.mycAddress;
-        label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Native MYCA';
+        label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
       } else {
         btn.classList.remove('connected');
         icon.innerText = '⚡';
@@ -4680,15 +5022,15 @@
       const nativeSub = document.getElementById('wallet-native-sub');
 
       if (lang === 'tr') {
-        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Cüzdan Bağla';
-        if (mTitle) mTitle.innerText = 'MYCA Ağına Bağlan';
-        if (mDesc) mDesc.innerText = 'Sovereign Lattice (Chain ID 108) ağına bağlantı yönteminizi seçin';
+        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Spore Wallet Bağla';
+        if (mTitle) mTitle.innerText = 'Spore Wallet\'a Bağlan';
+        if (mDesc) mDesc.innerText = 'Spore Network (Chain ID 108) cüzdan modunu seçin';
         if (metaSub) metaSub.innerText = 'Tarayıcı eklentisiyle bağlanın & Chain 108\'e otomatik geçin.';
         if (nativeSub) nativeSub.innerText = 'myc1... formatında anlık sıfır-gas tarayıcı cüzdanı.';
       } else {
-        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Connect Wallet';
-        if (mTitle) mTitle.innerText = 'Connect to MYCA Network';
-        if (mDesc) mDesc.innerText = 'Select your gateway to Sovereign Lattice (Chain ID 108)';
+        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Connect Spore Wallet';
+        if (mTitle) mTitle.innerText = 'Connect to Spore Wallet';
+        if (mDesc) mDesc.innerText = 'Select your gateway to Spore Network (Chain ID 108)';
         if (metaSub) metaSub.innerText = 'Connect browser extension & auto-switch to Chain 108.';
         if (nativeSub) nativeSub.innerText = 'Instant browser keypair with native myc1... address.';
       }
@@ -4727,8 +5069,8 @@
       <div id="wallet-view-select">
         <div style="text-align: center; margin-bottom: 22px;">
           <div style="font-size: 34px; margin-bottom: 6px;">🍄</div>
-          <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px;" id="modal-title-select">Connect to MYCA Network</h3>
-          <p style="font-size: 12.5px; color: var(--text-muted);" id="modal-desc-select">Select your gateway to Sovereign Lattice (Chain ID 108)</p>
+          <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px;" id="modal-title-select">Connect to Spore Wallet</h3>
+          <p style="font-size: 12.5px; color: var(--text-muted);" id="modal-desc-select">Select your gateway to Spore Network (Chain ID 108)</p>
         </div>
 
         <!-- Option 1: MetaMask -->
@@ -4799,7 +5141,7 @@
           <div style="display: flex; align-items: center; gap: 10px;">
             <span id="connected-wallet-icon" style="font-size: 26px;">🍄</span>
             <div>
-              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">MYCA Sovereign Native</div>
+              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">Spore Wallet</div>
               <div style="font-size: 11.5px; color: var(--teal-accent); display: flex; align-items: center; gap: 5px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 6px var(--teal-accent);"></span>
                 <span>MYC Sovereign Network (Chain 108)</span>
@@ -4823,7 +5165,7 @@
           <div id="connected-address-evm" style="font-family: var(--f-mono); color: #cbd5e1; word-break: break-all; margin-bottom: 10px;">0x...</div>
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
-            <span style="color: var(--text-muted);">MYC Sovereign Adresi (myc1...):</span>
+            <span style="color: var(--text-muted);">Spore Adresi (myc1...):</span>
             <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
           </div>
           <div id="connected-address-myc" style="font-family: var(--f-mono); color: var(--teal-accent); word-break: break-all;">myc1...</div>
