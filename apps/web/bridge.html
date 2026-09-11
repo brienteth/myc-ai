@@ -3,19 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mycelium Discover Hub — Everything $MYC &amp; The Bio-Digital Ecosystem</title>
-  <meta name="description" content="The unified ecosystem portal for MYCA Network (Chain ID 108). Swap $MYC with zero gas, bridge via Hyphae BFT quorum, claim daily spores, stake with dynamic APY, and inspect AI colonies.">
-
-  <!-- Modern Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="/brand.css">
+  <title>Hyphae Bridge — 3/4 BFT Settlement — MYCA Sovereign Hub</title>
   <link rel="icon" type="image/png" href="/mycai_logo.png">
-
   <style>
-    :root {
+:root {
       --bg-dark: #070a0e;
       --bg-card: rgba(13, 19, 31, 0.70);
       --bg-card-hover: rgba(18, 26, 42, 0.88);
@@ -43,16 +34,334 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      background-image:
-        radial-gradient(ellipse 75% 45% at 50% -10%, rgba(16, 185, 129, 0.07), transparent 70%),
-        radial-gradient(circle at 85% 90%, rgba(16, 185, 129, 0.03), transparent 60%);
+      background-color: #070a0e;
       color: var(--text-main);
       font-family: var(--f-sans);
-      padding-top: 84px;
-      padding-bottom: 80px;
+      margin: 0;
+      padding: 0;
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    /* Top Fixed Header Bar */
+    .hub-header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(7, 10, 14, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 1000;
+    }
+
+    .hub-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .hub-brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .hub-brand-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hub-brand-text .accent {
+      color: #10b981;
+    }
+
+    .hub-brand-tag {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: var(--f-mono);
+    }
+
+    .hub-header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hub-net-selector {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .hub-net-selector:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* High Visibility Connect Wallet Button */
+    .myca-wallet-btn-pill {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 8px 22px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .myca-wallet-btn-pill:hover {
+      background: #1f2937;
+      border-color: #10b981;
+      color: #34d399;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .myca-wallet-btn-pill.connected {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    /* Left Vertical Sidebar */
+    .hub-left-sidebar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      bottom: 0;
+      width: 230px;
+      z-index: 990;
+      background: rgba(7, 10, 14, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 14px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .sidebar-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .sidebar-btn.active {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      color: #ffffff;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-icon {
+      font-size: 16px;
+      width: 20px;
+      display: inline-flex;
+      justify-content: center;
+    }
+
+    .sidebar-badge-new {
+      background: rgba(99, 102, 241, 0.25);
+      color: #818cf8;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-left: auto;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .sidebar-icon-ext {
+      font-size: 12px;
+      color: #64748b;
+      margin-left: auto;
+    }
+
+    .sidebar-socials-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sidebar-socials-row a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .sidebar-socials-row a:hover {
+      color: #10b981;
+    }
+
+    /* Main Content Body Area */
+    .hub-main-area {
+      margin-top: 64px;
+      margin-left: 230px;
+      padding: 36px 40px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Hero Card in Discover */
+    .discover-hero-card {
+      position: relative;
+      border-radius: 24px;
+      padding: 56px 44px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: radial-gradient(ellipse at 75% 25%, rgba(168, 85, 247, 0.22) 0%, rgba(16, 185, 129, 0.12) 45%, rgba(7, 10, 14, 0.95) 100%), #0a0f18;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .discover-hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .discover-hero-subtitle {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.1em;
+      font-family: var(--f-mono);
+      text-transform: uppercase;
+    }
+
+    /* Spotlight Section */
+    .spotlight-header {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .spotlight-card {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #111827;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spotlight-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+
+    .spotlight-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .spotlight-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .spotlight-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 10, 14, 0.95) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px;
+    }
+
+    .spotlight-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(147, 51, 234, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     /* Modern Dark Capsule Navbar */
@@ -1191,504 +1500,256 @@
       .quorum-grid { grid-template-columns: repeat(2, 1fr); }
       .stake-strat-grid { grid-template-columns: 1fr; }
     }
+
+    /* Connect Wallet Button */
+    .myca-wallet-btn {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(16, 185, 129, 0.15));
+      border: 1px solid rgba(0, 240, 255, 0.4);
+      color: #00f0ff;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.15);
+      font-family: inherit;
+    }
+    .myca-wallet-btn:hover {
+      background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(16, 185, 129, 0.25));
+      border-color: #00f0ff;
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
+    }
+    .myca-wallet-btn.connected {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #34d399;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.15);
+    }
+
+    /* Modal Backdrop - placed at root body */
+    .wallet-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 7, 13, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2147483647;
+      padding: 16px;
+    }
+    .wallet-modal-overlay.active {
+      display: flex !important;
+    }
+    .wallet-modal-card {
+      background: #0a0f18;
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 240, 255, 0.08);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 420px;
+      padding: 0;
+      position: relative;
+      animation: walletModalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+    @keyframes walletModalPop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .wallet-modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94a3b8;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .wallet-modal-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+    .wallet-option-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    .wallet-option-card:hover {
+      background: rgba(0, 240, 255, 0.06);
+      border-color: rgba(0, 240, 255, 0.35);
+      transform: translateY(-2px);
+    }
+    .wallet-option-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .wallet-badge-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    /* ══════ SPORE WALLET / MYCA SOVEREIGN PANEL ══════ */
+    .spore-wallet-header { display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid rgba(0,240,255,0.1); }
+    .spore-wallet-brand { display:flex;align-items:center;gap:12px; }
+    .spore-wallet-logo { width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#00f0ff,#10b981);display:grid;place-items:center;font-size:20px;color:#000;font-weight:900;box-shadow:0 0 18px rgba(0,240,255,0.4); }
+    .spore-wallet-title { font-size:19px;font-weight:800;color:#fff;letter-spacing:0.5px; }
+    .spore-lattice-badge { background:rgba(0,240,255,0.12);border:1px solid rgba(0,240,255,0.35);color:#00f0ff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;font-family:var(--f-mono);display:flex;align-items:center;gap:6px; }
+    .spore-lattice-dot { width:7px;height:7px;border-radius:50%;background:#00f0ff;box-shadow:0 0 8px #00f0ff;animation:sporePulse 1.8s infinite; }
+    @keyframes sporePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+    .spore-puf-bar { display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.06); }
+    .spore-puf-tag { background:rgba(0,240,255,0.12);border:1px solid rgba(0,240,255,0.3);color:#00f0ff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;font-family:var(--f-mono); }
+    .spore-puf-addr { flex:1;font-family:var(--f-mono);font-size:13px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .spore-copy-btn { background:none;border:none;color:#00f0ff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--f-mono);transition:opacity 0.2s; }
+    .spore-copy-btn:hover { opacity:0.7; }
+    .spore-balance-card { margin:18px 22px;padding:28px 20px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.15);border-radius:18px;text-align:center; }
+    .spore-balance-label { font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px; }
+    .spore-balance-value { font-size:42px;font-weight:800;color:#fff;font-family:var(--f-mono);letter-spacing:-1.5px; }
+    .spore-balance-value .currency { font-size:20px;color:#00f0ff;font-weight:600;margin-left:8px; }
+    .spore-gas-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.25);color:#00f0ff;font-size:11px;font-weight:600;padding:6px 16px;border-radius:999px;margin-top:12px;font-family:var(--f-mono); }
+    .spore-actions-row { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 22px;margin-bottom:18px; }
+    .spore-action-btn { display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 8px;border-radius:14px;cursor:pointer;transition:all 0.2s;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03); }
+    .spore-action-btn.active { background:rgba(0,240,255,0.1);border-color:rgba(0,240,255,0.3); }
+    .spore-action-btn:hover { background:rgba(0,240,255,0.08);border-color:rgba(0,240,255,0.3);transform:translateY(-2px); }
+    .spore-action-icon { font-size:24px; }
+    .spore-action-label { font-size:11px;font-weight:700;color:#fff; }
+    .spore-transfer-section { margin:0 22px 18px;padding:20px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.12);border-radius:16px; }
+    .spore-transfer-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:16px; }
+    .spore-transfer-title { font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.5px; }
+    .spore-fee-badge { font-size:13px;font-weight:700;color:#00f0ff;font-family:var(--f-mono); }
+    .spore-input-group { margin-bottom:14px; }
+    .spore-input-label { font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:6px;display:block; }
+    .spore-input { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;color:#fff;font-family:var(--f-mono);font-size:14px;outline:none;box-sizing:border-box;transition:border-color 0.2s; }
+    .spore-input:focus { border-color:rgba(0,240,255,0.4); }
+    .spore-input::placeholder { color:#475569; }
+    .spore-submit-btn { width:100%;padding:16px;background:linear-gradient(135deg,#00f0ff,#10b981);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(0,240,255,0.3);transition:all 0.2s; }
+    .spore-submit-btn:hover { transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,240,255,0.45); }
+    .spore-footer { display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:#64748b; }
+    .spore-footer a { color:#00f0ff;text-decoration:none;font-weight:600;transition:opacity 0.2s; }
+    .spore-footer a:hover { opacity:0.8; }
+    .spore-wallet-actions-bar { padding:12px 22px 20px;display:flex;flex-direction:column;gap:6px; }
+    .spore-wallet-actions-bar .spore-sub-btn { display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s; }
+    .spore-wallet-actions-bar .spore-sub-btn:hover { transform:translateY(-1px); }
+    /* Wallet modal close btn repositioned for no-padding card */
+    .wallet-modal-card > .wallet-modal-close { top:16px;right:16px;z-index:10; }
   </style>
 </head>
 <body>
-
-  <!-- Toast Container -->
   <div id="hub-toast-container"></div>
+  <!-- TOP FIXED MASTER HEADER BAR -->
+  <header class="hub-header-bar">
+    <a href="/hub" class="hub-brand-group">
+      <div style="width: 32px; height: 32px; border-radius: 10px; background: radial-gradient(circle, #00f0ff, #10b981); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);">🍄</div>
+      <div class="hub-brand-text">
+        <span>MYCA <span class="accent">Hub</span></span>
+        <span class="hub-brand-tag">LATTICE-108</span>
+      </div>
+    </a>
 
-        <!-- UNIFIED MASTER HEADER WITH DOCS DROPDOWN -->
-  <div class="myca-header-wrapper">
-    <nav class="myca-navbar">
-      <!-- Left: Brand Logo -->
-      <a href="/" class="myca-brand">
-        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
-        <div class="myca-brand-text">
-          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
-          <span class="myca-chain-tag">CHAIN 108</span>
-        </div>
-      </a>
+    <div class="hub-header-right">
+      <div class="hub-net-selector" onclick="openWalletModal()">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 8px #a855f7;"></span>
+        <span>MYCA Sovereign (Chain 108)</span>
+        <span style="font-size: 10px; opacity: 0.7;">▾</span>
+      </div>
 
-      <!-- Center: 6 Core Infrastructure Pillars with Docs Dropdown -->
-      <div class="myca-nav-center">
-        <a href="/hub" class="myca-nav-link active">🌐 Hub</a>
-        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
-        <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
-        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
-        <a href="/build" class="myca-nav-link">🛠️ Build</a>
+      <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-family: var(--f-mono); color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+        <span id="nav-wallet-balance">8,637.00 MYC</span>
+      </div>
+
+      <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn-pill" style="z-index: 100;">
+        <span id="wallet-btn-icon" style="font-size: 14px;">⚡</span>
+        <span id="wallet-btn-label">Connect</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- LEFT FIXED VERTICAL SIDEBAR (0G HUB REFERENCE) -->
+  <aside class="hub-left-sidebar">
+    <div class="sidebar-menu">
+      <a href="/hub" class="sidebar-btn" id="side-nav-discover">
+        <span class="sidebar-icon">🌐</span>
+        <span>Discover</span>
         
-        <!-- Docs Dropdown on Hover -->
-        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
-          <a href="/docs" class="myca-nav-link " style="display: flex; align-items: center; gap: 4px;">
-            <span>📚 Docs</span>
-            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </a>
-          <div class="myca-dropdown-panel" style="min-width: 290px; padding: 6px; top: 100%;">
-            <a href="/docs#myca-os" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🖥️</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #fff;">Myca OS Docs</div>
-                <div style="font-size: 11px; color: #94a3b8;">Local AI runtime, desktop app & device mesh</div>
-              </div>
-            </a>
-            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🤖</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00e87a;">DePIN Network Docs</div>
-                <div style="font-size: 11px; color: #94a3b8;">Proof-of-Resonance (PoR) & Lattice DAG</div>
-              </div>
-            </a>
-            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🧬</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">C99 Core Docs</div>
-                <div style="font-size: 11px; color: #94a3b8;">240B kernel, 6-Lock Safe-Sign & Modbus SDK</div>
-              </div>
-            </a>
-          </div>
-        </div>
-            </a>
-            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🛠️</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">Developer Docs & RPC</div>
-                <div style="font-size: 11px; color: #94a3b8;">JSON-RPC, SDKs & APIs</div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Actions & Live State -->
-      <div class="myca-nav-right">
-        <div class="lang-selector">
-          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
-          <span class="lang-divider">/</span>
-          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
-        </div>
-        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
-          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
-          <span>5,000 MYC</span>
-        </div>
-        <a href="/hub#faucet" class="myca-btn-primary">
-          <span>🎁 Faucet</span>
-        </a>
-      </div>
-    </nav>
-  </div>
-
-  <!-- Hero Section -->
-  <div class="hub-hero">
-    <div class="hub-badge">
-      <span>🍄 THE LIVING MYCELIUM ECOSYSTEM • CHAIN ID 108</span>
-    </div>
-    <h1 class="hub-title">Mycelium Discover Hub</h1>
-    <p class="hub-subtitle">
-      The all-in-one command center for <strong>$MYC</strong>: zero-gas AMM nutrient swap, Hyphae BFT cross-chain bridge, daily spore faucet, and decentralized staking—all in one place.
-    </p>
-  </div>
-
-  <!-- $MYC TOKEN COMMAND CENTER & DIRECT ACTIONS -->
-  <div class="myc-command-center">
-    <div class="myc-token-card">
-      <div class="myc-token-header">
-        <div class="myc-token-title-group">
-          <div class="myc-token-icon">🍄</div>
-          <div>
-            <div class="myc-token-name">
-              $MYC Currency &amp; Resonance Substrate
-              <span class="myc-token-tag">NATIVE TOKEN</span>
-            </div>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
-              Zero-Gas Micro-Payments • Proof-of-Resonance Staking • Hyphae Cross-Chain Settlement
-            </div>
-          </div>
-        </div>
-
-        <div class="myc-quick-actions">
-          <button onclick="switchHubTab('swap')" class="btn-quick btn-quick-primary">🔄 Swap $MYC</button>
-          <button onclick="switchHubTab('bridge')" class="btn-quick btn-quick-outline">🌉 Bridge Assets</button>
-          <button onclick="switchHubTab('faucet')" class="btn-quick btn-quick-outline">🎁 Claim 5 $MYC</button>
-          <button onclick="switchHubTab('staking')" class="btn-quick btn-quick-outline">📈 Stake (14.5% APY)</button>
-        </div>
-      </div>
-
-      <div class="myc-metrics-grid">
-        <div class="metric-box">
-          <div class="metric-label">Gas Fee Invariant</div>
-          <div class="metric-value highlight">0.00 MYC</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Genesis Liquidity Reserve</div>
-          <div class="metric-value">10,000,000 MYC</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Staking Yield (APY)</div>
-          <div class="metric-value" style="color: var(--cyan-accent);">14.50%</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Bridge Quorum Security</div>
-          <div class="metric-value">3/4 BFT ECDSA</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">DePIN Static Envelope</div>
-          <div class="metric-value" style="color: var(--amber-accent);">240 Bytes RAM</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MAIN HUB TABS SWITCHER -->
-  <div class="hub-nav-tabs-wrapper">
-    <div class="hub-nav-tabs">
-      <button class="hub-tab-btn active" id="tab-btn-discover" onclick="switchHubTab('discover')">
-        🍄 Discover Ecosystem
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-swap" onclick="switchHubTab('swap')">
-        🔄 Mycelial Swap <span class="hub-tab-badge">0-GAS AMM</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-bridge" onclick="switchHubTab('bridge')">
-        🌉 Hyphae Bridge <span class="hub-tab-badge">3/4 BFT</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-staking" onclick="switchHubTab('staking')">
-        📈 NeuroYield Staking <span class="hub-tab-badge">14.5% APY</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-faucet" onclick="switchHubTab('faucet')">
-        🎁 Spore Faucet <span class="hub-tab-badge">DAILY 5 MYC</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       VIEW 1: DISCOVER ECOSYSTEM
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div id="view-discover" class="hub-tab-view active">
-    <!-- Toolbar: Search & Categorization -->
-    <div class="hub-toolbar">
-      <div class="hub-search-wrapper">
-        <span class="hub-search-icon">🔍</span>
-        <input type="text" id="hubSearch" class="hub-search-input" placeholder="Search applications, hyphae bridges, AI colonies, or DePIN machines..." oninput="filterCards()">
-      </div>
-
-      <div class="hub-filters">
-        <button class="filter-btn active" onclick="setCategory('all', this)">🍄 All Ecosystem (8)</button>
-        <button class="filter-btn" onclick="setCategory('defi', this)">🔄 DeFi &amp; Nutrients (2)</button>
-        <button class="filter-btn" onclick="setCategory('bridge', this)">🌉 Hyphae Bridge (1)</button>
-        <button class="filter-btn" onclick="setCategory('ai', this)">🧠 AI Colony (2)</button>
-        <button class="filter-btn" onclick="setCategory('depin', this)">⚡ Rhizome DePIN (1)</button>
-        <button class="filter-btn" onclick="setCategory('network', this)">🧭 Network &amp; Tools (2)</button>
-      </div>
+      </a>
+      <a href="/swap" class="sidebar-btn" id="side-nav-swap">
+        <span class="sidebar-icon">🔄</span>
+        <span>Swap</span>
+        
+      </a>
+      <a href="/bridge" class="sidebar-btn active" id="side-nav-bridge">
+        <span class="sidebar-icon">🌉</span>
+        <span>Bridge</span>
+        
+      </a>
+      <a href="/nexus" class="sidebar-btn" id="side-nav-cross">
+        <span class="sidebar-icon">✈️</span>
+        <span>Cross-Chain Swap</span>
+        <span class="sidebar-badge-new">New</span>
+      </a>
+      <a href="/staking" class="sidebar-btn" id="side-nav-staking">
+        <span class="sidebar-icon">📈</span>
+        <span>Staking</span>
+        
+      </a>
+      <a href="/faucet" class="sidebar-btn" id="side-nav-faucet">
+        <span class="sidebar-icon">🎁</span>
+        <span>Faucet</span>
+        
+      </a>
+      <a href="/agents" class="sidebar-btn" id="side-nav-agents">
+        <span class="sidebar-icon">🤖</span>
+        <span>Agents</span>
+        
+      </a>
+      <a href="/depin/explorer" class="sidebar-btn" id="side-nav-explorer" target="_blank">
+        <span class="sidebar-icon">🔍</span>
+        <span>Explorer</span>
+        <span class="sidebar-icon-ext">↗</span>
+      </a>
     </div>
 
-    <!-- Apps Grid -->
-    <div class="hub-grid" id="appsGrid">
-      <!-- Card 1: Mycelial Swap DEX -->
-      <div class="hub-card" data-category="defi" data-keywords="swap amm dex myc usdt usdc zero gas constant product liquidity">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: var(--cyan-accent);">🔄</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-defi">Nutrient AMM</span>
-              <span class="hub-badge-pill badge-zerogas">0.00 Gas</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Mycelial Swap AMM DEX</div>
-          <div class="hub-card-desc">
-            Zero-gas organic nutrient exchange between $MYC, $USDT, and $USDC with mathematical constant-product pricing, 30 bps LP yield, and TWAP defense.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">MYC / USDT / USDC</div>
-          <button onclick="switchHubTab('swap')" class="hub-card-btn">Swap Tokens ↗</button>
-        </div>
-      </div>
-
-      <!-- Card 2: Hyphae Cross-Chain Bridge -->
-      <div class="hub-card" data-category="bridge" data-keywords="bridge hyphae cross-chain base arbitrum ethereum bft proof secp256k1 eip712">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: var(--teal-accent);">🌉</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-zerogas">3/4 BFT Quorum</span>
-              <span class="hub-badge-pill badge-defi">Multi-Chain</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Hyphae Cross-Chain Bridge</div>
-          <div class="hub-card-desc">
-            Slender filament bridge connecting Base, Arbitrum, Ethereum &amp; Polygon with canonical EIP-712 hashing, secp256k1 ECDSA validator signatures, and 4-badge proof inspector.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">Base ⇄ MYCA ⇄ Arb</div>
-          <button onclick="switchHubTab('bridge')" class="hub-card-btn">Bridge Assets ↗</button>
-        </div>
-      </div>
-
-      <!-- Card 3: NeuroYield Staking Vault -->
-      <div class="hub-card" data-category="defi" data-keywords="yield vault stake staking apy defi returnpor resonance">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: var(--teal-accent);">📈</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-defi">14.5% APY</span>
-              <span class="hub-badge-pill badge-zerogas">Instant Claim</span>
-            </div>
-          </div>
-          <div class="hub-card-title">NeuroYield Staking Vault</div>
-          <div class="hub-card-desc">
-            Autonomous on-chain staking vault powered by Proof-of-Resonance (PoR). Lock $MYC to secure the Living Lattice and earn 14.5% dynamic APY with zero gas fees.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">Chain ID 108 Vault</div>
-          <button onclick="switchHubTab('staking')" class="hub-card-btn">Stake Assets ↗</button>
-        </div>
-      </div>
-
-      <!-- Card 4: Spore Faucet Dispenser -->
-      <div class="hub-card" data-category="network" data-keywords="faucet claim testnet tokens free myc drop spore twitter">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: #38bdf8;">🎁</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-zerogas">Daily 5 MYC</span>
-              <span class="hub-badge-pill badge-defi">Community</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Spore Faucet Dispenser</div>
-          <div class="hub-card-desc">
-            Daily spore distribution dispensing testnet tokens per verified user to test zero-gas transfers, AMM swaps, and smart contracts.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">24h Cooldown</div>
-          <button onclick="switchHubTab('faucet')" class="hub-card-btn">Claim 5 $MYC ↗</button>
-        </div>
-      </div>
-
-      <!-- Card 5: Mycelial AI Colony -->
-      <div class="hub-card" data-category="ai" data-keywords="ai colony agent dual-por openclaw hermes autonomous machine reasoning">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: var(--purple-accent);">🧠</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-ai">Autonomous AI</span>
-              <span class="hub-badge-pill badge-zerogas">Dual-PoR</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Mycelial AI Colony Swarm</div>
-          <div class="hub-card-desc">
-            Autonomous multi-agent colony runtime orchestrating cognitive tasks, AlphaFold molecular analysis, and sub-millisecond intention settlement with zero gas.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">OpenClaw &amp; Hermes</div>
-          <a href="/agent" class="hub-card-btn">Launch Colony ↗</a>
-        </div>
-      </div>
-
-      <!-- Card 6: Rhizome DePIN Fleet Sentinel -->
-      <div class="hub-card" data-category="depin" data-keywords="depin puf silicon modbus plc hardware sensor shield iot rhizome">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: var(--amber-accent);">⚡</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-depin">Industrial IoT</span>
-              <span class="hub-badge-pill badge-zerogas">0-Byte Shield</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Rhizome DePIN Machine Fleet</div>
-          <div class="hub-card-desc">
-            Silicon PUF hardware authentication (`myc1puf...`), 240-byte static RAM C99 micro-kernel, and Modbus PLC safety negation shield for turbines and actuators.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">C99 Bare-Metal</div>
-          <a href="/depin" class="hub-card-btn">Inspect Machines ↗</a>
-        </div>
-      </div>
-
-      <!-- Card 7: StreamPay Micro-Inference Paywall -->
-      <div class="hub-card" data-category="ai" data-keywords="streampay paywall micropayments state channel token stream ai llm">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: var(--cyan-accent);">💳</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-ai">StreamPay</span>
-              <span class="hub-badge-pill badge-zerogas">Sub-ms</span>
-            </div>
-          </div>
-          <div class="hub-card-title">StreamPay Micro-Inference Paywall</div>
-          <div class="hub-card-desc">
-            Sub-millisecond off-chain state channels streaming 0.001 $MYC per generated AI inference token with HTTP 402 paywall protection and zero on-chain gas.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">State Channels</div>
-          <button onclick="switchHubTab('swap')" class="hub-card-btn">Get Stream Tokens ↗</button>
-        </div>
-      </div>
-
-      <!-- Card 8: Lattice DAG Explorer -->
-      <div class="hub-card" data-category="network" data-keywords="explorer blocks vertices dag lattice por resonance transactions">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: #60a5fa;">🧭</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill badge-zerogas">Living DAG</span>
-              <span class="hub-badge-pill badge-defi">Chain 108</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Mycelium Lattice Explorer</div>
-          <div class="hub-card-desc">
-            Inspect real-time blocks, growing DAG vertices, Proof-of-Resonance (PoR) coherence telemetry, and zero-gas transaction proofs across the network.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">Real-Time DAG</div>
-          <a href="/explorer" class="hub-card-btn">Open Explorer ↗</a>
-        </div>
-      </div>
-
-      <!-- Card 9: Autonomous AI Arcade & Gaming Substrate -->
-      <div class="hub-card" data-category="ai" data-keywords="game arcade gaming npc zero gas living puf did action ticks battle simulation">
-        <div>
-          <div class="hub-card-header">
-            <div class="hub-card-icon" style="color: #34d399;">🎮</div>
-            <div class="hub-card-badges">
-              <span class="hub-badge-pill" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399;">Living NPCs</span>
-              <span class="hub-badge-pill badge-zerogas">0.00 Gas</span>
-            </div>
-          </div>
-          <div class="hub-card-title">Autonomous AI Arcade</div>
-          <div class="hub-card-desc">
-            Sovereign Web3 gaming sandbox: Living NPCs with PUF credentials (<code>did:myc:puf</code>), 0-gas deterministic action ticks, and sub-millisecond M2M in-game trade channels.
-          </div>
-        </div>
-        <div class="hub-card-footer">
-          <div class="hub-card-meta">Interactive 2D Sandbox</div>
-          <a href="/arcade" class="hub-card-btn" style="background: #10b981; color: #064e3b; font-weight: 700;">Play Arcade ↗</a>
-        </div>
-      </div>
+    <div class="sidebar-socials-row">
+      <a href="https://x.com/myc_network" target="_blank" title="X (Twitter)">𝕏</a>
+      <a href="https://t.me/myc_network" target="_blank" title="Telegram">✈</a>
+      <a href="https://discord.gg/myc" target="_blank" title="Discord">💬</a>
+      <a href="https://mycai.pro" target="_blank" title="Website">🌐</a>
+      <a href="https://github.com/myc-network" target="_blank" title="GitHub">&lt;/&gt;</a>
     </div>
+  </aside>
 
-    <!-- Developer Tools Callout -->
-    <div style="max-width: 1200px; margin: 0 auto 80px; padding: 0 24px;">
-      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-card); border-radius: 14px; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
-        <div>
-          <h3 style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px;">Looking for Developer Tools &amp; Smart Contract ABIs?</h3>
-          <p style="font-size: 14px; color: var(--text-muted); margin: 0;">Access the ContractVM Playground, 18 deployed core contract ABIs, JSON-RPC specs, and the bare-metal C99 SDK in our technical documentation.</p>
-        </div>
-        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-          <a href="/contracts" class="btn-quick btn-quick-outline">📜 Contract ABIs</a>
-          <a href="/dev-docs.html" class="btn-quick btn-quick-outline">🛠️ Substrate Docs</a>
-          <a href="/docs.html" class="btn-quick btn-quick-primary">📖 Whitepaper ↗</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       VIEW 2: MYCELIAL SWAP AMM DEX (INTERACTIVE)
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div id="view-swap" class="hub-tab-view">
-    <div class="swap-container">
-      <div class="swap-box">
-        <div class="swap-header">
-          <div class="swap-header-title">
-            <span>🔄 Mycelial AMM Swap</span>
-            <span class="hub-badge-pill badge-zerogas">ZERO-GAS</span>
-          </div>
-          <div style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
-            Constant-Product Invariant
-          </div>
-        </div>
-
-        <!-- Input Token -->
-        <div class="swap-input-card">
-          <div class="swap-card-top">
-            <span>You Pay (Nutrient Input)</span>
-            <span id="swap-from-bal-display">Balance: ...</span>
-          </div>
-          <div class="swap-card-main">
-            <input type="number" id="swap-in-amount" class="swap-number-input" value="100" min="1" step="any" oninput="fetchSwapQuoteLive()">
-            <select id="swap-from-token" class="swap-token-select" onchange="onSwapTokenChanged()">
-              <option value="MYC" selected>🍄 MYC</option>
-              <option value="USDT">💵 USDT</option>
-              <option value="USDC">🪙 USDC</option>
-            </select>
-          </div>
-          <div style="text-align: right; margin-top: 6px;">
-            <button onclick="setSwapMax()" style="background: rgba(0, 240, 255, 0.15); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--cyan-accent); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; cursor: pointer;">MAX</button>
-          </div>
-        </div>
-
-        <!-- Flip Button -->
-        <div class="swap-flip-btn-wrap">
-          <button class="swap-flip-btn" onclick="flipSwapTokens()" title="Flip Token Pairs">⇅</button>
-        </div>
-
-        <!-- Output Token -->
-        <div class="swap-input-card">
-          <div class="swap-card-top">
-            <span>You Receive (Estimated Output)</span>
-            <span id="swap-to-bal-display">Balance: ...</span>
-          </div>
-          <div class="swap-card-main">
-            <input type="text" id="swap-out-amount" class="swap-number-input" value="--" readonly style="color: var(--teal-accent);">
-            <select id="swap-to-token" class="swap-token-select" onchange="onSwapTokenChanged()">
-              <option value="USDT" selected>💵 USDT</option>
-              <option value="MYC">🍄 MYC</option>
-              <option value="USDC">🪙 USDC</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Swap Details Box -->
-        <div class="swap-details">
-          <div class="swap-detail-row">
-            <span>Exchange Rate</span>
-            <span id="swap-rate-val" style="font-family: 'JetBrains Mono', monospace; color: #fff;">1 MYC ≈ 0.0997 USDT</span>
-          </div>
-          <div class="swap-detail-row">
-            <span>Price Impact</span>
-            <span id="swap-impact-val" style="color: var(--teal-accent); font-family: 'JetBrains Mono', monospace;">0.30% (Low)</span>
-          </div>
-          <div class="swap-detail-row">
-            <span>Protocol &amp; LP Fee (30 bps)</span>
-            <span id="swap-fee-val" style="font-family: 'JetBrains Mono', monospace;">0.30 MYC</span>
-          </div>
-          <div class="swap-detail-row">
-            <span>Settlement Gas Cost</span>
-            <span style="color: var(--teal-accent); font-weight: 700; font-family: 'JetBrains Mono', monospace;">0.0000 MYC (Zero-Gas)</span>
-          </div>
-          <div class="swap-detail-row">
-            <span>TWAP Anti-MEV Defense</span>
-            <span style="color: var(--cyan-accent); font-size: 11px;">Active • Max Trade: 200,000</span>
-          </div>
-        </div>
-
-        <!-- Action Button -->
-        <button id="btn-execute-swap" class="swap-action-btn" onclick="executeHubSwap()">
-          <span>🔄 Execute Organic Swap (0.00 Gas)</span>
-        </button>
-        <div id="swap-msg" style="text-align: center; margin-top: 12px; font-size: 13px;"></div>
-
-        <!-- Pool Depth Info -->
-        <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
-          <span>Pool: 10,000,000 MYC</span>
-          <span>1,000,000 USDT</span>
-          <span>1,000,000 USDC</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       VIEW 3: HYPHAE CROSS-CHAIN BRIDGE (INTERACTIVE)
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div id="view-bridge" class="hub-tab-view">
+  <main class="hub-main-area">
+<div id="view-bridge" class="hub-tab-view active" style="display:block;">
     <div class="bridge-container">
       <div class="bridge-box">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -1833,7 +1894,7 @@
             <div style="margin-bottom: 14px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <label style="font-size: 11px; color: var(--text-muted); display: block;">🎯 Hedef MYCA Cüzdan Adresi (Varlıkların teslim edileceği adres)</label>
-                <button type="button" onclick="document.getElementById('metamask-inbound-myc-recipient').value = DEFAULT_WALLET" style="background: transparent; border: none; color: var(--teal-accent); font-size: 11px; cursor: pointer; text-decoration: underline;">[Benim MYCA Adresim]</button>
+                <button type="button" onclick="document.getElementById('metamask-inbound-myc-recipient').value = getActiveWalletAddress()" style="background: transparent; border: none; color: var(--teal-accent); font-size: 11px; cursor: pointer; text-decoration: underline;">[Benim MYCA Adresim]</button>
               </div>
               <input type="text" id="metamask-inbound-myc-recipient" class="swap-number-input" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="font-size: 13.5px; font-family: 'JetBrains Mono', monospace; padding: 8px 10px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
               <div style="margin-top: 4px; font-size: 11px; color: var(--text-muted); line-height: 1.4;">
@@ -1937,561 +1998,462 @@
       </div>
     </div>
   </div>
+  </main>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       VIEW 4: NEUROYIELD & DePIN STAKING VAULT (INTERACTIVE)
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div id="view-staking" class="hub-tab-view">
-    <div class="staking-container" style="max-width: 820px;">
-      <div class="staking-box">
-        <!-- Vault Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <h2 style="font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -0.5px;">📈 NeuroYield Staking Vault</h2>
-              <span class="hub-badge-pill badge-zerogas">ZERO-GAS GUARANTEE</span>
-            </div>
-            <div style="font-size: 13.5px; color: var(--text-muted); margin-top: 4px;">
-              Proof-of-Resonance (PoR) Konsensüs Teminatı • Anlık Hasat (Harvest) • DePIN Donanım Kotaları
-            </div>
+<div id="wallet-modal-overlay" class="wallet-modal-overlay" onclick="onWalletModalOverlayClick(event)">
+    <div class="wallet-modal-card">
+      <button class="wallet-modal-close" onclick="closeWalletModal()">✕</button>
+
+      <!-- VIEW 1: MYCA SOVEREIGN / SPORE WALLET PANEL -->
+      <div id="wallet-view-select">
+        <div class="spore-wallet-header">
+          <div class="spore-wallet-brand">
+            <div class="spore-wallet-logo">Ψ</div>
+            <div class="spore-wallet-title">MYCA SOVEREIGN</div>
           </div>
-          <div style="text-align: right;">
-            <div id="vault-active-apy-badge" style="font-size: 26px; font-weight: 800; color: var(--emerald); font-family: var(--f-mono); line-height: 1.1;">21.0%</div>
-            <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Seçili Strateji APY</div>
+          <div class="spore-lattice-badge">
+            <span class="spore-lattice-dot"></span> LATTICE-108
           </div>
         </div>
-
-        <!-- Strategy Selection Grid (3 Clean Modern Cards) -->
-        <div style="margin-bottom: 24px;">
-          <div style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 10px;">
-            1. Strateji Seçimi (Select Yield Strategy)
+        <div class="spore-puf-bar">
+          <span class="spore-puf-tag">PUF V1</span>
+          <span class="spore-puf-addr" id="spore-puf-address">Not Connected</span>
+          <button class="spore-copy-btn" onclick="copySporeAddress()">COPY</button>
+        </div>
+        <div class="spore-balance-card">
+          <div class="spore-balance-label">TOTAL LIQUID BALANCE</div>
+          <div class="spore-balance-value" id="spore-balance-display">0.00 <span class="currency">$MYC</span></div>
+          <div class="spore-gas-badge">⚡ Zero-Gas Invariant: 0.00000000 MYC</div>
+        </div>
+        <div class="spore-actions-row">
+          <div class="spore-action-btn active" onclick="sporeActionSend()">
+            <span class="spore-action-icon">↗</span><span class="spore-action-label">Send</span>
           </div>
-          <div class="stake-strat-grid">
-            <!-- Flexible Card -->
-            <div class="stake-strat-card" id="strat-card-flexible" onclick="selectStakingStrategy('FLEXIBLE')">
-              <div class="strat-header">
-                <span class="strat-icon">🌱</span>
-                <span class="strat-tag">0 Gün Kilit</span>
-              </div>
-              <div class="strat-name">Flexible Spore</div>
-              <div class="strat-apy">14.5% <span style="font-size: 12px; font-weight: 500; color: var(--text-muted);">APY</span></div>
-              <div class="strat-sub">+15 Cihaz Kotası • Anında Çekim</div>
-            </div>
-
-            <!-- 30D Boosted Card (Default active) -->
-            <div class="stake-strat-card active" id="strat-card-boosted" onclick="selectStakingStrategy('BOOSTED_30D')">
-              <div class="strat-header">
-                <span class="strat-icon">⚡</span>
-                <span class="strat-tag" style="background: rgba(16, 185, 129, 0.2); color: var(--emerald);">1.45x Boost</span>
-              </div>
-              <div class="strat-name">30-Day Mycelial</div>
-              <div class="strat-apy">21.0% <span style="font-size: 12px; font-weight: 500; color: var(--text-muted);">APY</span></div>
-              <div class="strat-sub">+65 Cihaz Kotası • 30 Gün Kilit</div>
-            </div>
-
-            <!-- 90D NeuroVault Card -->
-            <div class="stake-strat-card" id="strat-card-neuro" onclick="selectStakingStrategy('NEURO_90D')">
-              <div class="strat-header">
-                <span class="strat-icon">🧠</span>
-                <span class="strat-tag">Maksimum APY</span>
-              </div>
-              <div class="strat-name">90-Day NeuroVault</div>
-              <div class="strat-apy">28.5% <span style="font-size: 12px; font-weight: 500; color: var(--text-muted);">APY</span></div>
-              <div class="strat-sub">+500 Cihaz Kotası • 90 Gün Kilit</div>
-            </div>
+          <div class="spore-action-btn" onclick="sporeActionReceive()">
+            <span class="spore-action-icon">↙</span><span class="spore-action-label">Receive</span>
+          </div>
+          <div class="spore-action-btn" onclick="closeWalletModal();if(typeof switchHubTab==='function')switchHubTab('swap');">
+            <span class="spore-action-icon">🌊</span><span class="spore-action-label">StreamPay</span>
+          </div>
+          <div class="spore-action-btn" onclick="navigateToExplorerAccount()">
+            <span class="spore-action-icon">📋</span><span class="spore-action-label">History</span>
           </div>
         </div>
-
-        <!-- Live Real-Time Harvest Widget (Claim & Compound) -->
-        <div class="stake-harvest-box">
-          <div class="stake-harvest-left">
-            <div class="stake-harvest-label">
-              <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 8px var(--emerald); display: inline-block;"></span>
-              <span>Biriken Gerçek Zamanlı Getiri (Accrued Yield)</span>
-            </div>
-            <div class="stake-harvest-val">
-              <span id="live-unclaimed-rewards">0.0000</span> <span style="font-size: 16px; color: #fff;">MYC</span>
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 4px;">
-              Ödüller her saniye bloklar üzerinde kesintisiz birikir. Kilit süreniz olsa bile ödülleri istediğiniz an alabilirsiniz.
-            </div>
+        <div class="spore-transfer-section">
+          <div class="spore-transfer-header">
+            <div class="spore-transfer-title">ZERO-GAS TRANSFER</div>
+            <div class="spore-fee-badge">FEE: 0 MYC</div>
           </div>
-
-          <div class="stake-harvest-actions">
-            <button id="btn-harvest-claim" class="btn-harvest btn-harvest-claim" onclick="executeHubHarvest()">
-              <span>🌾 Hasat Et (Claim)</span>
-            </button>
-            <button id="btn-harvest-compound" class="btn-harvest btn-harvest-compound" onclick="executeHubCompound()">
-              <span>🔄 Bileşik Ekle (Compound)</span>
-            </button>
+          <div class="spore-input-group">
+            <label class="spore-input-label">Recipient (myc1…)</label>
+            <input type="text" class="spore-input" id="spore-recipient-input" placeholder="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002">
           </div>
+          <div class="spore-input-group">
+            <label class="spore-input-label">Amount ($MYC)</label>
+            <input type="number" class="spore-input" id="spore-amount-input" placeholder="100.0" step="0.01">
+          </div>
+          <button class="spore-submit-btn" onclick="executeSporeTransfer()">Sign &amp; Transmit (0 Gas)</button>
         </div>
-
-        <!-- Live Metrics Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 24px;">
-          <div class="metric-box">
-            <div class="metric-label">Aktif Stake Miktarınız</div>
-            <div class="metric-value" id="staked-myc-amt">0 MYC</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-label">Mevcut Strateji</div>
-            <div class="metric-value" id="staked-tier-display" style="font-size: 15px; color: var(--emerald);">30-Day Boosted</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-label">Ana Para Kilit Durumu</div>
-            <div class="metric-value" id="staked-lock-display" style="font-size: 14px; color: #e2e8f0;">30 Gün</div>
-          </div>
-          <div class="metric-box">
-            <div class="metric-label">Açılan Donanım Kotası</div>
-            <div class="metric-value" id="staked-quota-display" style="color: var(--emerald);">+65 Cihaz</div>
-          </div>
+        <div class="spore-footer">
+          <span>Node: 127.0.0.1:4040</span>
+          <a href="/nexus">Open MYCA NEXUS ↗</a>
         </div>
-
-        <!-- Stake Mode Switcher (Deposit vs Unstake) -->
-        <div class="stake-mode-toggle">
-          <button class="stake-mode-btn active" id="stake-mode-tab-deposit" onclick="setStakeMode('deposit')">
-            📈 Stake Yatır (Deposit Collateral)
-          </button>
-          <button class="stake-mode-btn" id="stake-mode-tab-unstake" onclick="setStakeMode('unstake')">
-            🔓 Ana Parayı Çek (Withdraw Principal)
-          </button>
+        <div class="spore-wallet-actions-bar">
+          <div style="display:flex;gap:6px;">
+            <button onclick="openWalletCreateView()" class="spore-sub-btn" style="flex:1;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#34d399;">✨ New Wallet</button>
+            <button onclick="openWalletImportView()" class="spore-sub-btn" style="flex:1;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;">📥 Import</button>
+            <button onclick="connectMetaMaskWallet()" class="spore-sub-btn" style="flex:1;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;">🦊 MetaMask</button>
+          </div>
+          <button onclick="disconnectWallet()" class="spore-sub-btn" style="width:100%;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;">🔌 Disconnect</button>
         </div>
-
-        <!-- Mode 1: Deposit Pane -->
-        <div id="stake-pane-deposit">
-          <div class="swap-input-card">
-            <div class="swap-card-top">
-              <span>Yatırılacak $MYC Miktarı</span>
-              <span id="stake-myc-bal">Cüzdandaki Bakiye: ...</span>
-            </div>
-            <div class="swap-card-main">
-              <input type="number" id="stake-amount-in" class="swap-number-input" value="500" min="1" oninput="calculateEstimatedYield()">
-              <span style="font-weight: 800; font-size: 16px; color: var(--emerald);">MYC</span>
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <button onclick="setStakePercent(0.25)" class="filter-btn" style="padding: 4px 12px; font-size: 11.5px;">25%</button>
-              <button onclick="setStakePercent(0.50)" class="filter-btn" style="padding: 4px 12px; font-size: 11.5px;">50%</button>
-              <button onclick="setStakePercent(0.75)" class="filter-btn" style="padding: 4px 12px; font-size: 11.5px;">75%</button>
-              <button onclick="setStakePercent(1.00)" class="filter-btn" style="padding: 4px 12px; font-size: 11.5px;">MAX</button>
-            </div>
-          </div>
-
-          <div class="swap-details">
-            <div class="swap-detail-row">
-              <span>Tahmini Aylık Getiri</span>
-              <span id="stake-monthly-yield" style="color: var(--emerald); font-weight: 700; font-family: var(--f-mono);">+8.75 MYC</span>
-            </div>
-            <div class="swap-detail-row">
-              <span>Seçili Kilit Süresi</span>
-              <span id="stake-selected-lock-desc" style="font-family: var(--f-mono);">30 Gün (Ödüller anında çekilebilir)</span>
-            </div>
-            <div class="swap-detail-row">
-              <span>İşlem Masrafı (Gas Fee)</span>
-              <span style="color: var(--emerald); font-weight: 700; font-family: var(--f-mono);">0.00 MYC (Sıfır Gas Garantisi)</span>
-            </div>
-          </div>
-
-          <button id="btn-execute-stake" class="swap-action-btn" onclick="executeHubStake()">
-            <span>📈 Stake Yatır (0.00 Gas İle Kilitle)</span>
-          </button>
-        </div>
-
-        <!-- Mode 2: Unstake Pane -->
-        <div id="stake-pane-unstake" style="display: none;">
-          <div class="swap-input-card">
-            <div class="swap-card-top">
-              <span>Çekilecek $MYC Ana Para</span>
-              <span id="unstake-available-bal">Mevcut Stake: ...</span>
-            </div>
-            <div class="swap-card-main">
-              <input type="number" id="unstake-amount-in" class="swap-number-input" placeholder="0.00" min="1">
-              <span style="font-weight: 800; font-size: 16px; color: var(--emerald);">MYC</span>
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-              <button onclick="setUnstakeMax()" class="filter-btn" style="padding: 4px 12px; font-size: 11.5px;">Tümünü Çek (MAX)</button>
-            </div>
-          </div>
-
-          <div class="swap-details">
-            <div class="swap-detail-row">
-              <span>Kilit Bitiş Durumu</span>
-              <span id="unstake-lock-status-badge" style="font-family: var(--f-mono); color: #cbd5e1;">Kontrol ediliyor...</span>
-            </div>
-            <div class="swap-detail-row">
-              <span>Çekim Ücreti / Ceza</span>
-              <span style="color: var(--emerald); font-weight: 700; font-family: var(--f-mono);">%0 (Kesintisiz İade)</span>
-            </div>
-          </div>
-
-          <button id="btn-execute-unstake" class="swap-action-btn" onclick="executeHubUnstake()" style="background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.15);">
-            <span>🔓 Ana Parayı Cüzdana Çek (Unstake)</span>
-          </button>
-        </div>
-
-        <div id="stake-msg" style="text-align: center; margin-top: 14px; font-size: 13px;"></div>
-
-        <!-- Strategy & Claim Mechanics Explainer Card -->
-        <div style="margin-top: 28px; padding: 20px; background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px;">
-          <div style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            <span>💡 Staking &amp; Claim (Hasat) Mekanizması Nasıl Çalışır?</span>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; font-size: 12.5px; color: var(--text-muted); line-height: 1.55;">
-            <div>
-              <div style="color: #fff; font-weight: 600; margin-bottom: 4px;">⏱️ Saniyelik Gerçek Zamanlı Getiri</div>
-              $MYC ödülleriniz blok ve saniye başına aralıksız akar. Sayfayı yenilemeden yukarıdaki sayaçtan getirinizi canlı izleyebilirsiniz.
-            </div>
-            <div>
-              <div style="color: #fff; font-weight: 600; margin-bottom: 4px;">🌾 İstediğin An Hasat (Claim)</div>
-              Stratejinizde 30 veya 90 gün kilit olsa bile, <strong>biriken ödülleriniz hiçbir zaman kilitlenmez</strong>. İstediğiniz an 0.00 Gas ile cüzdanınıza çekebilirsiniz.
-            </div>
-            <div>
-              <div style="color: #fff; font-weight: 600; margin-bottom: 4px;">🔄 Bileşik Getiri (Compound)</div>
-              Kazandığınız ödülleri cüzdana çekmek yerine "Bileşik Ekle" diyerek doğrudan ana paraya ekleyebilir ve gelecekteki saniyelerde daha çok getiri elde edebilirsiniz.
-            </div>
-          </div>
-        </div>
-
       </div>
+
+      <!-- VIEW 2: CONNECTED WALLET DETAILS -->
+      <div id="wallet-view-connected" style="display: none; padding: 26px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="connected-wallet-icon" style="font-size: 26px;">🍄</span>
+            <div>
+              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">Spore Wallet</div>
+              <div style="font-size: 11.5px; color: var(--teal-accent); display: flex; align-items: center; gap: 5px;">
+                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 6px var(--teal-accent);"></span>
+                <span>MYC Sovereign Network (Chain 108)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance Display -->
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
+          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px;">Aktif Hesap Bakiyesi</div>
+          <div id="connected-wallet-balance" style="font-size: 24px; font-weight: 800; color: #fff; font-family: var(--f-mono);">5,000 MYC</div>
+        </div>
+
+        <!-- Address Display (Dual Format: EVM 0x & MYC myc1) -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">EVM Adresi (0x...):</span>
+            <button onclick="copyWalletAddress('evm')" id="btn-copy-evm" style="background: transparent; border: none; color: var(--cyan-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
+          </div>
+          <div id="connected-address-evm" style="font-family: var(--f-mono); color: #cbd5e1; word-break: break-all; margin-bottom: 10px;">0x...</div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
+            <span style="color: var(--text-muted);">Spore Adresi (myc1...):</span>
+            <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
+          </div>
+          <div id="connected-address-myc" style="font-family: var(--f-mono); color: var(--teal-accent); word-break: break-all;">myc1...</div>
+        </div>
+
+        <!-- Secret Backup Reveal Box -->
+        <div id="wallet-secret-backup-box" style="display: none; background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 12px;">
+          <div style="color: #fbbf24; font-weight: 700; margin-bottom: 6px;">⚠️ Cihazlar Arası Yedek / Tohum Anahtarı:</div>
+          <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Bu bilgiyi cep telefonunuza veya diğer bilgisayarınıza "Cüzdanı İçe Aktar" alanına girerek aynı hesaba erişebilirsiniz:</div>
+          <div style="font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">12 Kelime:</div>
+          <div id="backup-mnemonic-text" style="font-family: var(--f-mono); background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; color: #38bdf8; word-break: break-word; user-select: all; margin-bottom: 8px;"></div>
+          <div style="font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">Özel Anahtar (Private Key):</div>
+          <div id="backup-pk-text" style="font-family: var(--f-mono); font-size: 10.5px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; color: #f59e0b; word-break: break-all; user-select: all;"></div>
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="navigateToExplorerAccount()" style="width: 100%; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🔍 Explorer'da Bakiye & İşlem Geçmişini Aç
+          </button>
+          <button onclick="toggleShowSecretBackup()" style="width: 100%; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); color: #fbbf24; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🔑 12 Kelimeyi Göster / Mobil İçin Yedekle
+          </button>
+          <button id="btn-add-chain-mm" onclick="addMycNetworkToMetaMask()" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🦊 MetaMask'e Chain 108 Ekle
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            🔄 Başka Cüzdan Seç / İçe Aktar
+          </button>
+          <button onclick="disconnectWallet()" style="width: 100%; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+            🔌 Bağlantıyı Kes
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 3: CREATE NEW 12-WORD WALLET -->
+      <div id="wallet-view-create" style="display: none; padding: 26px;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div style="font-size: 30px; margin-bottom: 4px;">🔐</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Yeni 12 Kelimelik Cüzdan</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Bu 12 kelime cüzdanınızın şifresidir. Telefonunuzda veya başka bilgisayarda hesabınıza bu kelimelerle erişebilirsiniz.</p>
+        </div>
+
+        <div id="create-words-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);"></div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button onclick="copyCreatedWords()" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            📋 Kelimeleri Kopyala
+          </button>
+          <button onclick="openWalletCreateView()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 10px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            🔄 Yenile
+          </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="executeActivateCreatedWallet()" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
+            ✅ Kelimeleri Kaydettim, Cüzdanı Başlat
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            ← Geri
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 4: IMPORT WALLET (MOBILE / PC) -->
+      <div id="wallet-view-import" style="display: none; padding: 26px;">
+        <div style="text-align: center; margin-bottom: 16px;">
+          <div style="font-size: 30px; margin-bottom: 4px;">📥</div>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Cüzdanı İçe Aktar</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Diğer cihazınızdan aldığınız 12 kelimeyi veya özel anahtarınızı (0x...) girin:</p>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <textarea id="import-seed-input" placeholder="Örn: abandon ability able about above absent absorb abstract... (12 kelime) veya 0x... (64 hex)" style="width: 100%; height: 90px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; color: #fff; font-family: var(--f-mono); font-size: 12px; resize: none; outline: none;" oninput="hideImportError()"></textarea>
+          <div id="import-seed-error" style="display: none; margin-top: 8px; padding: 10px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #f87171; font-size: 11.5px; line-height: 1.4; text-align: left;"></div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button onclick="executeImportWallet()" style="width: 100%; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);">
+            🚀 Cüzdanı Yükle & Aktifleştir
+          </button>
+          <button onclick="openWalletSelectView()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            ← Geri
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
+  <script src="/bip39.js"></script>
+  <script src="/tx-confirm.js"></script>
+  <script src="/i18n.js"></script>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       VIEW 5: SPORE FAUCET DISPENSER (INTERACTIVE)
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div id="view-faucet" class="hub-tab-view">
-    <div class="faucet-container">
-      <div class="faucet-box">
-        <div class="faucet-icon-bubble">🎁</div>
-        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">Spore Faucet Dispenser</h2>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto 20px;">
-          Claim daily testnet tokens to experiment with zero-gas smart contracts, nutrient AMM swaps, and cross-chain Hyphae bridging.
-        </p>
-
-        <div class="faucet-pills-row">
-          <div class="faucet-pill" style="color: var(--teal-accent);">+1,000 $MYC</div>
-          <div class="faucet-pill" style="color: var(--cyan-accent);">+500 $USDT</div>
-          <div class="faucet-pill" style="color: #38bdf8;">+500 $USDC</div>
-        </div>
-
-        <div class="swap-input-card" style="text-align: left; margin-bottom: 14px;">
-          <div class="swap-card-top">
-            <span>Recipient Lattice Address</span>
-            <span style="color: var(--teal-accent);">Chain 108</span>
-          </div>
-          <input type="text" id="faucet-address-input" class="swap-number-input" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="font-size: 13.5px; font-family: 'JetBrains Mono', monospace;">
-        </div>
-
-        <div class="swap-input-card" style="text-align: left; margin-bottom: 24px;">
-          <div class="swap-card-top">
-            <span>Twitter / X Verification (Optional)</span>
-            <span style="color: var(--cyan-accent);">@myc_ai</span>
-          </div>
-          <input type="text" id="faucet-twitter-input" class="swap-number-input" value="@myc_developer" placeholder="@handle" style="font-size: 14px;">
-        </div>
-
-        <button id="btn-claim-faucet" class="swap-action-btn" onclick="executeHubFaucetClaim()" style="background: linear-gradient(135deg, #38bdf8, #818cf8);">
-          <span>🍄 Dispense 1,000 $MYC Spores (0.00 Gas)</span>
-        </button>
-        <div id="faucet-status-msg" style="margin-top: 14px; font-size: 13px;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       CLIENT-SIDE SCRIPT & LIVE API INTEGRATION
-       ═══════════════════════════════════════════════════════════════════ -->
   <script>
-    const API_BASE = window.location.origin;
-    const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+// ═══════════════════════════════════════════════════════════════════
+// SPORE WALLET & MULTI-WALLET CORE ENGINE (SHARED)
+// ═══════════════════════════════════════════════════════════════════
+const API_BASE = window.location.origin;
+const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
 
-    function recordTransaction(tx) {
-      try {
-        let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
-        if (!history.some(t => t.hash === tx.hash)) {
-          history.unshift(tx);
-          if (history.length > 100) history = history.slice(0, 100);
-          localStorage.setItem('myca_tx_history', JSON.stringify(history));
-        }
-        fetch(`${API_BASE}/api/explorer/record-tx`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(tx)
-        }).catch(() => {});
-      } catch (e) {
-        console.warn('recordTransaction error:', e);
-      }
-    }
+let activeWallet = {
+  type: 'none', // 'metamask' | 'native' | 'none'
+  evmAddress: null,
+  mycAddress: DEFAULT_WALLET
+};
 
-    function recordBridgeTransaction(btx) {
-      try {
-        let history = JSON.parse(localStorage.getItem('myca_bridge_history') || '[]');
-        if (!history.some(b => b.bridgeId === btx.bridgeId)) {
-          history.unshift(btx);
-          if (history.length > 50) history = history.slice(0, 50);
-          localStorage.setItem('myca_bridge_history', JSON.stringify(history));
-        }
-      } catch (e) {}
-    }
-    let currentBalances = { MYC: 5000, USDT: 1250, USDC: 1250 };
-    let activeHubTab = 'discover';
-    let activeCategory = 'all';
+let currentBalances = { MYC: 8637, USDT: 1250, USDC: 1250 };
 
-    // Toast Notification System
-    function showToast(title, msg, type = 'info') {
-      const container = document.getElementById('hub-toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'hub-toast';
-      const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
-      toast.innerHTML = `
-        <div style="font-size: 20px;">${icon}</div>
-        <div>
-          <div style="font-weight: 700; color: #fff;">${title}</div>
-          <div style="color: var(--text-muted); font-size: 12px; margin-top: 2px;">${msg}</div>
-        </div>
-      `;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(10px)';
-        toast.style.transition = 'all 0.3s';
-        setTimeout(() => toast.remove(), 300);
-      }, 4500);
-    }
+function toMycAddress(evmAddr) {
+  if (!evmAddr) return DEFAULT_WALLET;
+  const clean = evmAddr.toLowerCase().replace('0x', '');
+  return 'myc1' + clean.slice(0, 32);
+}
 
-    // Tab Navigation Switcher (In-Hub, Zero Page Reload)
-    function switchHubTab(tabName) {
-      activeHubTab = tabName;
+function toEvmAddress(mycAddr) {
+  if (!mycAddr) return '0x0000000000000000000000000000000000000000';
+  if (mycAddr.startsWith('0x')) return mycAddr;
+  const clean = mycAddr.replace('myc1', '');
+  return '0x' + clean.padEnd(40, '0');
+}
 
-      // Update Tab Views
-      document.querySelectorAll('.hub-tab-view').forEach(v => v.classList.remove('active'));
-      const targetView = document.getElementById('view-' + tabName);
-      if (targetView) targetView.classList.add('active');
+function getActiveWalletAddress() {
+  if (activeWallet.type === 'metamask') {
+    return activeWallet.mycAddress || toMycAddress(activeWallet.evmAddress) || DEFAULT_WALLET;
+  }
+  return activeWallet.mycAddress || DEFAULT_WALLET;
+}
 
-      // Update Tab Buttons
-      document.querySelectorAll('.hub-tab-btn').forEach(b => b.classList.remove('active'));
-      const targetBtn = document.getElementById('tab-btn-' + tabName);
-      if (targetBtn) targetBtn.classList.add('active');
+function getActiveEvmAddress() {
+  if (activeWallet.evmAddress) return activeWallet.evmAddress;
+  return toEvmAddress(activeWallet.mycAddress);
+}
 
-      // Update Nav Buttons
-      document.querySelectorAll('.myca-nav-link').forEach(b => b.classList.remove('active'));
-      const navBtn = document.getElementById('nav-btn-' + tabName);
-      if (navBtn) navBtn.classList.add('active');
+async function onConnectWalletButtonClick() {
+  let savedMyc = null;
+  try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
+  if (!savedMyc) {
+    savedMyc = DEFAULT_WALLET;
+    try {
+      localStorage.setItem('myca_native_address', savedMyc);
+      localStorage.setItem('myca_wallet_type', 'native');
+    } catch(e) {}
+  }
+  activeWallet = {
+    type: 'native',
+    evmAddress: toEvmAddress(savedMyc),
+    mycAddress: savedMyc
+  };
+  updateWalletUI();
+  openWalletModal();
+}
 
-      // Update Hash without reload
-      if (window.location.hash.replace('#', '') !== tabName) {
-        history.replaceState(null, null, '#' + tabName);
-      }
+function openWalletModal() {
+  const overlay = document.getElementById('wallet-modal-overlay');
+  if (!overlay) return;
+  overlay.classList.add('active');
+  openWalletSelectView();
+  updateSporeWalletPanel();
+}
 
-      // Context updates
-      if (tabName === 'swap') {
-        fetchSwapQuoteLive();
-      } else if (tabName === 'bridge') {
-        fetchBridgeProofs();
-        autoDetectConnectedMetaMask();
-      } else if (tabName === 'staking') {
-        fetchStakeInfo();
-      }
+function closeWalletModal() {
+  const overlay = document.getElementById('wallet-modal-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
 
-      window.scrollTo({ top: 380, behavior: 'smooth' });
-    }
+function onWalletModalOverlayClick(e) {
+  if (e.target.id === 'wallet-modal-overlay') closeWalletModal();
+}
 
-    // Handle Hash on Load & Popstate
-    window.addEventListener('hashchange', () => {
-      const path = (window.location.pathname || '').toLowerCase();
-      if (path.includes('swap')) switchHubTab('swap');
-      else if (path.includes('bridge')) switchHubTab('bridge');
-      else if (path.includes('staking')) switchHubTab('staking');
-      else if (path.includes('faucet')) switchHubTab('faucet');
-      else {
-        const hash = (window.location.hash || '').replace('#', '').toLowerCase();
-        if (['discover', 'swap', 'bridge', 'staking', 'faucet'].includes(hash)) {
-          switchHubTab(hash);
-        }
-      }
+function hideAllWalletViews() {
+  const views = ['wallet-view-select', 'wallet-view-connected', 'wallet-view-create', 'wallet-view-import'];
+  views.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+}
+
+function openWalletSelectView() {
+  hideAllWalletViews();
+  const sel = document.getElementById('wallet-view-select');
+  if (sel) sel.style.display = 'block';
+}
+
+function openWalletDetailsView() {
+  hideAllWalletViews();
+  const det = document.getElementById('wallet-view-connected');
+  if (det) det.style.display = 'block';
+
+  const icon = document.getElementById('connected-wallet-icon');
+  const title = document.getElementById('connected-wallet-title');
+  const bal = document.getElementById('connected-wallet-balance');
+  const evmEl = document.getElementById('connected-address-evm');
+  const mycEl = document.getElementById('connected-address-myc');
+
+  if (activeWallet.type === 'metamask') {
+    if (icon) icon.innerText = '🦊';
+    if (title) title.innerText = 'MetaMask (Chain 108)';
+  } else {
+    if (icon) icon.innerText = '🍄';
+    if (title) title.innerText = 'Spore Wallet';
+  }
+
+  if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
+  if (evmEl) evmEl.innerText = getActiveEvmAddress();
+  if (mycEl) mycEl.innerText = getActiveWalletAddress();
+}
+
+function updateWalletUI() {
+  const btn = document.getElementById('btn-connect-wallet');
+  const label = document.getElementById('wallet-btn-label');
+  const icon = document.getElementById('wallet-btn-icon');
+  if (!btn || !label || !icon) return;
+
+  if (activeWallet.type === 'metamask') {
+    btn.classList.add('connected');
+    icon.innerText = '🦊';
+    const addr = activeWallet.evmAddress;
+    label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
+  } else if (activeWallet.type === 'native') {
+    btn.classList.add('connected');
+    icon.innerText = '🍄';
+    const addr = activeWallet.mycAddress;
+    label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
+  } else {
+    btn.classList.remove('connected');
+    icon.innerText = '⚡';
+    label.innerText = 'Connect';
+  }
+
+  const navBal = document.getElementById('nav-wallet-balance');
+  if (navBal) {
+    var bal = currentBalances.MYC || 8637;
+    navBal.innerText = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
+  }
+}
+
+function updateSporeWalletPanel() {
+  var addr = getActiveWalletAddress() || DEFAULT_WALLET;
+  var pufEl = document.getElementById('spore-puf-address');
+  var balEl = document.getElementById('spore-balance-display');
+  var navBalEl = document.getElementById('nav-wallet-balance');
+  if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'myc14d29b6...d7c002';
+  var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
+  var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  if (balEl) {
+    balEl.innerHTML = formatted + ' <span class="currency">$MYC</span>';
+  }
+  if (navBalEl) {
+    navBalEl.innerText = formatted + ' MYC';
+  }
+}
+
+function copySporeAddress() {
+  var addr = getActiveWalletAddress();
+  if (addr) {
+    navigator.clipboard.writeText(addr).then(function() {
+      showToast('Copied!', '' + addr, 'success');
     });
+  } else {
+    showToast('No wallet', 'Connect a wallet first', 'error');
+  }
+}
 
-    // ═══════════════════════════════════════════════════════════════════
-    // BALANCE & OVERVIEW FETCH
-    // ═══════════════════════════════════════════════════════════════════
-    async function fetchBalances() {
-      try {
-        const res = await fetch(`${API_BASE}/api/wallet/balance?address=${DEFAULT_WALLET}`);
-        const data = await res.json();
-        if (data.success) {
-          currentBalances = {
-            MYC: data.mycBalance !== undefined ? data.mycBalance : data.balance,
-            USDT: data.usdtBalance || 0,
-            USDC: data.usdcBalance || 0
-          };
-          updateBalancesUI();
-        }
-      } catch (err) {
-        console.warn("Wallet balance fetch error:", err);
-      }
-    }
+function sporeActionSend() {
+  var el = document.getElementById('spore-recipient-input');
+  if (el) el.focus();
+}
 
-    function updateBalancesUI() {
-      const elNav = document.getElementById('nav-wallet-balance');
-      if (elNav) elNav.innerText = Math.floor(currentBalances.MYC).toLocaleString() + " MYC";
+function sporeActionReceive() {
+  var addr = getActiveWalletAddress();
+  if (addr) {
+    navigator.clipboard.writeText(addr).then(function() {
+      showToast('Address Copied!', 'Share to receive $MYC: ' + addr.slice(0, 12) + '...', 'success');
+    });
+  } else {
+    showToast('No wallet', 'Connect a wallet first', 'error');
+  }
+}
 
-      // Swap balances
-      const fromTok = document.getElementById('swap-from-token')?.value || 'MYC';
-      const toTok = document.getElementById('swap-to-token')?.value || 'USDT';
-      const elSwapFrom = document.getElementById('swap-from-bal-display');
-      const elSwapTo = document.getElementById('swap-to-bal-display');
-      if (elSwapFrom) elSwapFrom.innerText = `Balance: ${Math.floor(currentBalances[fromTok] || 0).toLocaleString()} ${fromTok}`;
-      if (elSwapTo) elSwapTo.innerText = `Balance: ${Math.floor(currentBalances[toTok] || 0).toLocaleString()} ${toTok}`;
+async function executeSporeTransfer() {
+  var recipient = (document.getElementById('spore-recipient-input') || {}).value || '';
+  var amount = parseFloat((document.getElementById('spore-amount-input') || {}).value) || 0;
+  var sender = getActiveWalletAddress();
+  if (!sender) { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
+  if (!recipient || !recipient.startsWith('myc1')) { showToast('Invalid', 'Enter a valid myc1... address', 'error'); return; }
+  if (amount <= 0) { showToast('Invalid', 'Enter amount > 0', 'error'); return; }
+  if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + currentBalances.MYC + ' MYC', 'error'); return; }
+  
+  try {
+    currentBalances.MYC -= amount;
+    showToast('Sent!', amount + ' MYC sent to ' + recipient.slice(0, 10) + '... (0 Gas)', 'success');
+    document.getElementById('spore-recipient-input').value = '';
+    document.getElementById('spore-amount-input').value = '';
+    updateSporeWalletPanel();
+    updateWalletUI();
+  } catch (e) {
+    showToast('Error', e.message, 'error');
+  }
+}
 
-      // Bridge balance
-      const bridgeAsset = document.getElementById('bridge-asset')?.value || 'MYC';
-      const elBridgeBal = document.getElementById('bridge-available-bal');
-      if (elBridgeBal) elBridgeBal.innerText = `Balance: ${Math.floor(currentBalances[bridgeAsset] || 0).toLocaleString()} ${bridgeAsset}`;
+function disconnectWallet() {
+  activeWallet = { type: 'none', evmAddress: null, mycAddress: DEFAULT_WALLET };
+  try {
+    localStorage.removeItem('myca_wallet_type');
+  } catch (e) {}
+  updateWalletUI();
+  closeWalletModal();
+  showToast('Bağlantı Kesildi', 'Cüzdan bağlantısı sonlandırıldı.', 'info');
+}
 
-      // Staking balance
-      const elStakeBal = document.getElementById('stake-myc-bal');
-      if (elStakeBal) elStakeBal.innerText = `Available: ${Math.floor(currentBalances.MYC || 0).toLocaleString()} MYC`;
-    }
+function showToast(title, msg, type = 'info') {
+  let container = document.getElementById('hub-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'hub-toast-container';
+    document.body.appendChild(container);
+  }
+  const toast = document.createElement('div');
+  toast.className = 'hub-toast';
+  const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+  toast.innerHTML = `<div class="hub-toast-title">${icon} ${title}</div><div class="hub-toast-msg">${msg}</div>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'hubToastOut 0.3s forwards cubic-bezier(0.16, 1, 0.3, 1)';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
 
-    // ═══════════════════════════════════════════════════════════════════
-    // SWAP LOGIC
-    // ═══════════════════════════════════════════════════════════════════
-    function onSwapTokenChanged() {
-      updateBalancesUI();
-      fetchSwapQuoteLive();
-    }
+function initSporeWallet() {
+  let savedType = null;
+  try { savedType = localStorage.getItem('myca_wallet_type'); } catch(e) {}
+  let savedMyc = null;
+  try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
+  if (!savedMyc) {
+    savedMyc = DEFAULT_WALLET;
+    try {
+      localStorage.setItem('myca_native_address', savedMyc);
+      if (!savedType) localStorage.setItem('myca_wallet_type', 'native');
+    } catch(e) {}
+  }
+  if (savedType !== 'metamask') {
+    activeWallet = {
+      type: 'native',
+      evmAddress: toEvmAddress(savedMyc),
+      mycAddress: savedMyc
+    };
+  }
+  updateWalletUI();
+  updateSporeWalletPanel();
+}
 
-    function flipSwapTokens() {
-      const elFrom = document.getElementById('swap-from-token');
-      const elTo = document.getElementById('swap-to-token');
-      const temp = elFrom.value;
-      elFrom.value = elTo.value;
-      elTo.value = temp;
-      updateBalancesUI();
-      fetchSwapQuoteLive();
-    }
+document.addEventListener('DOMContentLoaded', initSporeWallet);
 
-    function setSwapMax() {
-      const fromTok = document.getElementById('swap-from-token').value;
-      const bal = currentBalances[fromTok] || 0;
-      document.getElementById('swap-in-amount').value = Math.floor(bal);
-      fetchSwapQuoteLive();
-    }
 
-    async function fetchSwapQuoteLive() {
-      const from = document.getElementById('swap-from-token').value;
-      const to = document.getElementById('swap-to-token').value;
-      const inAmt = parseFloat(document.getElementById('swap-in-amount').value) || 0;
-      const outEl = document.getElementById('swap-out-amount');
-      const rateEl = document.getElementById('swap-rate-val');
-      const impactEl = document.getElementById('swap-impact-val');
-      const feeEl = document.getElementById('swap-fee-val');
-
-      if (from === to) {
-        outEl.value = inAmt.toFixed(4);
-        rateEl.innerText = `1 ${from} = 1 ${to}`;
-        impactEl.innerText = `0.00%`;
-        feeEl.innerText = `0.00 ${from}`;
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/swap/quote?from=${from}&to=${to}&amount=${inAmt}`);
-        const data = await res.json();
-        if (data.success && data.quote) {
-          const q = data.quote;
-          outEl.value = q.amountOut.toFixed(4);
-          rateEl.innerText = `1 ${from} ≈ ${(q.amountOut / (inAmt || 1)).toFixed(4)} ${to}`;
-          impactEl.innerText = `${q.priceImpactPercent}% (${q.priceImpactPercent < 1 ? 'Low' : 'High'})`;
-          feeEl.innerText = `${q.lpFee} ${from}`;
-        } else {
-          // Fallback constant-product calculation
-          let rate = (from === 'MYC') ? 0.0997 : (to === 'MYC') ? 9.969 : 0.997;
-          outEl.value = (inAmt * rate).toFixed(4);
-          rateEl.innerText = `1 ${from} ≈ ${rate} ${to}`;
-        }
-      } catch (err) {
-        let rate = (from === 'MYC') ? 0.0997 : (to === 'MYC') ? 9.969 : 0.997;
-        outEl.value = (inAmt * rate).toFixed(4);
-      }
-    }
-
-    async function executeHubSwap() {
-      const from = document.getElementById('swap-from-token').value;
-      const to = document.getElementById('swap-to-token').value;
-      const amount = parseFloat(document.getElementById('swap-in-amount').value) || 0;
-      const btn = document.getElementById('btn-execute-swap');
-      const msg = document.getElementById('swap-msg');
-
-      if (amount <= 0) {
-        showToast('Invalid Amount', 'Please enter a valid swap amount', 'error');
-        return;
-      }
-      if (from === to) {
-        showToast('Same Token', 'Select different tokens to swap', 'error');
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Verifying AMM Resonance & Swapping...';
-      msg.innerHTML = `<span style="color: var(--cyan-accent);">Settling constant-product exchange on Lattice DAG (0.00 Gas)...</span>`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/swap`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            from,
-            to,
-            amount,
-            userAddress: DEFAULT_WALLET
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          const outAmt = data.swap?.amountOut || (amount * 0.0997);
-          const txHash = data.txHash || ('0x' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10) + 'a7f0108');
-          const txRecord = {
-            hash: txHash,
-            type: 'SWAP',
-            module: 'Mycelial Swap',
-            sender: DEFAULT_WALLET,
-            recipient: '0x0000000000000000000000000000000000dEx108 (Resonance AMM)',
-            amount: `${amount} ${from} ➔ ${outAmt.toFixed(4)} ${to}`,
-            rawAmount: amount,
-            gasFee: '0.00000000 MYC',
-            finality: '< 7.8 ms (Lane B AMM)',
-            status: 'FINALIZED',
-            timestamp: Date.now()
-          };
-          recordTransaction(txRecord);
-
-          showToast('Swap Confirmed!', `Swapped ${amount} ${from} ➔ ${outAmt.toFixed(4)} ${to} (0.00 Gas)`, 'success');
-          msg.innerHTML = `<span style="color: var(--teal-accent); font-weight: 700;">✅ Success! Received ${outAmt.toFixed(4)} ${to} (Tx: ${txHash.slice(0, 12)}... | Gas: 0.00 MYC)</span>`;
-          if (from === 'MYC') {
-            currentBalances.MYC = Math.max(0, currentBalances.MYC - amount);
-            if (to === 'USDT') currentBalances.USDT += outAmt;
-            if (to === 'USDC') currentBalances.USDC += outAmt;
-          } else if (to === 'MYC') {
-            if (from === 'USDT') currentBalances.USDT = Math.max(0, currentBalances.USDT - amount);
-            if (from === 'USDC') currentBalances.USDC = Math.max(0, currentBalances.USDC - amount);
-            currentBalances.MYC += outAmt;
-          }
-          updateBalancesUI();
-        } else {
-          showToast('Swap Failed', data.error || 'Execution rejected', 'error');
-          msg.innerHTML = `<span style="color: var(--rose-accent);">Error: ${data.error}</span>`;
-        }
-      } catch (e) {
-        showToast('Network Error', e.message, 'error');
-        msg.innerHTML = `<span style="color: var(--rose-accent);">Error: ${e.message}</span>`;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '🔄 Execute Organic Swap (0.00 Gas)';
-      }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // BRIDGE LOGIC
+// BRIDGE LOGIC
     // ═══════════════════════════════════════════════════════════════════
     function setBridgeDir(dir) {
       const btnOut = document.getElementById('btn-bridge-dir-out');
@@ -2539,6 +2501,32 @@
       const btn = document.getElementById('btn-execute-bridge');
       const msg = document.getElementById('bridge-status-msg');
 
+      if (amount <= 0) {
+        showToast('Invalid Amount', 'Please enter a valid bridge amount', 'error');
+        return;
+      }
+
+      if (window.showTxConfirmation) {
+        const confirmed = await window.showTxConfirmation({
+          type: "BRIDGE",
+          title: "Hyphae Cross-Chain Köprü Onayı",
+          from: getActiveWalletAddress(),
+          to: `0x8453B02919Ff77A7cEc5cE8924b172a370e00001 (${targetChain})`,
+          amount: amount,
+          asset: asset,
+          extraDetails: [
+            { label: "Hedef Ağ", value: targetChain },
+            { label: "EVM Alıcı", value: recipientOnEvm ? (recipientOnEvm.slice(0, 10) + "...") : "EVM Address" },
+            { label: "Gas Ücreti", value: "0.00 MYC (Sıfır Gas)", color: "#34d399" },
+            { label: "Köprü Güvenliği", value: "3/4 BFT Çoklu İmza & EIP-712", color: "#34d399" }
+          ]
+        });
+        if (!confirmed) {
+          showToast('Köprü İptal Edildi', 'İşlem kullanıcı tarafından iptal edildi.', 'info');
+          return;
+        }
+      }
+
       btn.disabled = true;
       btn.innerText = 'Locking on Lattice & Collecting 3/4 BFT Quorum...';
       msg.innerHTML = `<span style="color: var(--cyan-accent);">Computing canonical EIP-712 hash & collecting validator signatures...</span>`;
@@ -2548,7 +2536,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            senderOnMyc: DEFAULT_WALLET,
+            senderOnMyc: getActiveWalletAddress(),
             targetChain,
             recipientOnEvm,
             asset,
@@ -2563,7 +2551,7 @@
             hash: txHash,
             type: 'BRIDGE_LOCK',
             module: 'Hyphae Bridge',
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             recipient: `0x8453B02919Ff77A7cEc5cE8924b172a370e00001 (${targetChain})`,
             amount: `${amount} ${asset}`,
             rawAmount: amount,
@@ -2575,7 +2563,7 @@
           recordTransaction(txRecord);
           recordBridgeTransaction({
             bridgeId,
-            sender: DEFAULT_WALLET,
+            sender: getActiveWalletAddress(),
             targetChain,
             recipientRemote: recipientOnEvm,
             amount,
@@ -2939,6 +2927,17 @@
         if (accounts && accounts.length > 0) {
           const userAccount = accounts[0];
           window.connectedMetaMaskAccount = userAccount;
+          const savedType = (function() {
+            try { return localStorage.getItem('myca_wallet_type'); } catch(e) { return null; }
+          })();
+          if (savedType === 'metamask') {
+            activeWallet = {
+              type: 'metamask',
+              evmAddress: userAccount,
+              mycAddress: toMycAddress(userAccount)
+            };
+            updateWalletUI();
+          }
           const btn = document.getElementById('btn-header-metamask');
           if (btn) {
             btn.style.background = 'rgba(16, 185, 129, 0.15)';
@@ -2950,6 +2949,28 @@
           if (recipientInput && (!recipientInput.value || recipientInput.value.startsWith('0x742d35Cc6634C0532925a3b844Bc454e4438f44e'))) {
             recipientInput.value = userAccount;
           }
+        }
+
+        if (provider && !provider._mycaListenersAttached && typeof provider.on === 'function') {
+          provider._mycaListenersAttached = true;
+          provider.on('accountsChanged', (newAccounts) => {
+            if (newAccounts && newAccounts.length > 0) {
+              activeWallet = {
+                type: 'metamask',
+                evmAddress: newAccounts[0],
+                mycAddress: toMycAddress(newAccounts[0])
+              };
+              updateWalletUI();
+              fetchBalances();
+              fetchStakeInfo();
+            } else {
+              disconnectWallet();
+            }
+          });
+          provider.on('chainChanged', () => {
+            fetchBalances();
+            fetchStakeInfo();
+          });
         }
       } catch (e) {}
     }
@@ -2980,7 +3001,7 @@
       const net = EVM_NETWORKS[chainKey] || EVM_NETWORKS.BASE;
       const amount = parseFloat(document.getElementById('metamask-inbound-amount').value) || 50;
       const asset = document.getElementById('metamask-inbound-asset').value || 'USDT';
-      const recipientOnMyc = document.getElementById('metamask-inbound-myc-recipient')?.value.trim() || DEFAULT_WALLET;
+      const recipientOnMyc = document.getElementById('metamask-inbound-myc-recipient')?.value.trim() || getActiveWalletAddress();
       const btn = document.getElementById('btn-metamask-inbound-deposit');
       const statusEl = document.getElementById('metamask-inbound-status');
 
@@ -3208,478 +3229,6 @@
         }
       } catch (e) {}
     }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // FAUCET LOGIC
-    // ═══════════════════════════════════════════════════════════════════
-    async function executeHubFaucetClaim() {
-      const addr = document.getElementById('faucet-address-input').value || DEFAULT_WALLET;
-      const tw = document.getElementById('faucet-twitter-input').value;
-      const btn = document.getElementById('btn-claim-faucet');
-      const msg = document.getElementById('faucet-status-msg');
-
-      btn.disabled = true;
-      btn.innerText = 'Dispensing Spore Nutrients...';
-      msg.innerHTML = `<span style="color: var(--cyan-accent);">Verifying testnet quota and dispensing...</span>`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/faucet`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: addr })
-        });
-        const data = await res.json();
-        if (data.success) {
-          const txHash = data.txHash || ('0x' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10) + 'f7c108');
-          const txRecord = {
-            hash: txHash,
-            type: 'FAUCET_DISPENSE',
-            module: 'Spore Faucet',
-            sender: 'myc1faucet_spore_distributor',
-            recipient: addr,
-            amount: '1,000 MYC • 500 USDT • 500 USDC',
-            rawAmount: 1000,
-            gasFee: '0.00000000 MYC (PoQR Quota)',
-            finality: '< 4.2 ms (Instant)',
-            status: 'FINALIZED',
-            timestamp: Date.now()
-          };
-          recordTransaction(txRecord);
-
-          showToast('Spores Claimed!', '+1,000 $MYC • +500 $USDT • +500 $USDC dispensed!', 'success');
-          msg.innerHTML = `<span style="color: var(--teal-accent); font-weight: 700;">🎉 Dispensed! +1,000 $MYC, +500 $USDT, +500 $USDC delivered (Tx: ${txHash.slice(0, 12)}...)</span>`;
-          currentBalances.MYC += 1000;
-          currentBalances.USDT += 500;
-          currentBalances.USDC += 500;
-          updateBalancesUI();
-        } else {
-          showToast('Faucet Cooldown', data.error || 'Already claimed today', 'error');
-          msg.innerHTML = `<span style="color: var(--rose-accent);">${data.error}</span>`;
-        }
-      } catch (e) {
-        showToast('Error', e.message, 'error');
-        msg.innerHTML = `<span style="color: var(--rose-accent);">Error: ${e.message}</span>`;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '🍄 Dispense 1,000 $MYC Spores (0.00 Gas)';
-      }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // STAKING LOGIC (STRATEGY SELECTION, LIVE TICKER, HARVEST & COMPOUND)
-    // ═══════════════════════════════════════════════════════════════════
-    let selectedStakeStrategy = 'BOOSTED_30D';
-    let currentStakeState = {
-      amount: 0,
-      apy: 0.21,
-      tier: 'BOOSTED_30D',
-      unclaimedRewards: 0,
-      machineQuota: 65,
-      lockedUntil: 0
-    };
-    let liveAccruedRewards = 0;
-    let rewardTickerInterval = null;
-
-    const STRATEGY_DATA = {
-      'FLEXIBLE': { name: 'Flexible Spore', apy: 0.145, lockDays: 0, quota: 15, tag: '0 Gün Kilit' },
-      'BOOSTED_30D': { name: '30-Day Mycelial', apy: 0.210, lockDays: 30, quota: 65, tag: '30 Gün Kilit' },
-      'NEURO_90D': { name: '90-Day NeuroVault', apy: 0.285, lockDays: 90, quota: 500, tag: '90 Gün Kilit' }
-    };
-
-    function selectStakingStrategy(tier) {
-      if (!STRATEGY_DATA[tier]) return;
-      selectedStakeStrategy = tier;
-
-      const flexEl = document.getElementById('strat-card-flexible');
-      const boostEl = document.getElementById('strat-card-boosted');
-      const neuroEl = document.getElementById('strat-card-neuro');
-
-      if (flexEl) flexEl.classList.toggle('active', tier === 'FLEXIBLE');
-      if (boostEl) boostEl.classList.toggle('active', tier === 'BOOSTED_30D');
-      if (neuroEl) neuroEl.classList.toggle('active', tier === 'NEURO_90D');
-
-      const strat = STRATEGY_DATA[tier];
-      const apyBadge = document.getElementById('vault-active-apy-badge');
-      if (apyBadge) apyBadge.innerText = `${(strat.apy * 100).toFixed(1)}%`;
-
-      const lockDesc = document.getElementById('stake-selected-lock-desc');
-      if (lockDesc) lockDesc.innerText = `${strat.lockDays === 0 ? 'Esnek (Anında Çekilebilir)' : strat.lockDays + ' Gün (Ödüller anında çekilebilir)'}`;
-
-      calculateEstimatedYield();
-    }
-
-    function calculateEstimatedYield() {
-      const inputEl = document.getElementById('stake-amount-in');
-      const amt = parseFloat(inputEl ? inputEl.value : 0) || 0;
-      const strat = STRATEGY_DATA[selectedStakeStrategy] || STRATEGY_DATA['BOOSTED_30D'];
-      const monthly = (amt * strat.apy / 12).toFixed(2);
-      const yieldEl = document.getElementById('stake-monthly-yield');
-      if (yieldEl) yieldEl.innerText = `+${monthly} MYC`;
-    }
-
-    function setStakePercent(pct) {
-      const avail = currentBalances.MYC || 0;
-      const amt = Math.floor(avail * pct);
-      const inputEl = document.getElementById('stake-amount-in');
-      if (inputEl) inputEl.value = amt;
-      calculateEstimatedYield();
-    }
-
-    function setStakeMode(mode) {
-      const isDeposit = mode === 'deposit';
-      const depTab = document.getElementById('stake-mode-tab-deposit');
-      const unstTab = document.getElementById('stake-mode-tab-unstake');
-      const depPane = document.getElementById('stake-pane-deposit');
-      const unstPane = document.getElementById('stake-pane-unstake');
-
-      if (depTab) depTab.classList.toggle('active', isDeposit);
-      if (unstTab) unstTab.classList.toggle('active', !isDeposit);
-      if (depPane) depPane.style.display = isDeposit ? 'block' : 'none';
-      if (unstPane) unstPane.style.display = isDeposit ? 'none' : 'block';
-    }
-
-    function setUnstakeMax() {
-      const unstInput = document.getElementById('unstake-amount-in');
-      if (unstInput) unstInput.value = currentStakeState.amount || 0;
-    }
-
-    async function fetchStakeInfo() {
-      try {
-        const res = await fetch(`${API_BASE}/api/stake/info?address=${DEFAULT_WALLET}`);
-        const data = await res.json();
-        if (data.success) {
-          currentStakeState = {
-            amount: data.amount || 0,
-            apy: data.apy || 0.21,
-            tier: data.tier || 'BOOSTED_30D',
-            unclaimedRewards: data.unclaimedRewards || 0,
-            machineQuota: data.machineQuota || 65,
-            lockedUntil: data.lockedUntil || 0
-          };
-
-          const stakeAmtEl = document.getElementById('staked-myc-amt');
-          if (stakeAmtEl) stakeAmtEl.innerText = `${Math.floor(currentStakeState.amount).toLocaleString()} MYC`;
-
-          const unstBalEl = document.getElementById('unstake-available-bal');
-          if (unstBalEl) unstBalEl.innerText = `Mevcut Stake: ${currentStakeState.amount.toLocaleString()} MYC`;
-
-          const quotaEl = document.getElementById('staked-quota-display');
-          if (quotaEl) quotaEl.innerText = `+${currentStakeState.machineQuota} Cihaz`;
-          
-          const strat = STRATEGY_DATA[currentStakeState.tier] || STRATEGY_DATA['BOOSTED_30D'];
-          const tierEl = document.getElementById('staked-tier-display');
-          if (tierEl) tierEl.innerText = strat.name;
-
-          const now = Date.now();
-          const lockEl = document.getElementById('staked-lock-display');
-          const unstakeBadge = document.getElementById('unstake-lock-status-badge');
-          if (currentStakeState.lockedUntil && currentStakeState.lockedUntil > now) {
-            const hoursLeft = Math.ceil((currentStakeState.lockedUntil - now) / (1000 * 60 * 60));
-            const daysLeft = Math.ceil(hoursLeft / 24);
-            if (lockEl) lockEl.innerText = `🔒 ${daysLeft} Gün Kaldı`;
-            if (unstakeBadge) unstakeBadge.innerHTML = `<span style="color: var(--amber-accent);">🔒 Kilitli (${daysLeft} gün / ${hoursLeft} sa kaldı)</span>`;
-          } else {
-            if (lockEl) lockEl.innerText = '🔓 Kilit Açık';
-            if (unstakeBadge) unstakeBadge.innerHTML = `<span style="color: var(--emerald);">🔓 Kilit Açık (Çekime Hazır)</span>`;
-          }
-
-          liveAccruedRewards = currentStakeState.unclaimedRewards;
-          const liveEl = document.getElementById('live-unclaimed-rewards');
-          if (liveEl) liveEl.innerText = liveAccruedRewards.toFixed(4);
-          startLiveHarvestTicker();
-        }
-      } catch (err) {
-        console.warn('Staking info error:', err);
-      }
-    }
-
-    function startLiveHarvestTicker() {
-      if (rewardTickerInterval) clearInterval(rewardTickerInterval);
-      rewardTickerInterval = setInterval(() => {
-        if (currentStakeState.amount > 0) {
-          const yieldPerSec = (currentStakeState.amount * currentStakeState.apy) / 31536000;
-          liveAccruedRewards += yieldPerSec;
-          const el = document.getElementById('live-unclaimed-rewards');
-          if (el) el.innerText = liveAccruedRewards.toFixed(4);
-        }
-      }, 1000);
-    }
-
-    async function executeHubStake() {
-      const amt = parseFloat(document.getElementById('stake-amount-in').value) || 0;
-      const btn = document.getElementById('btn-execute-stake');
-      const msg = document.getElementById('stake-msg');
-
-      if (amt <= 0) {
-        showToast('Geçersiz Miktar', 'Lütfen yatırmak istediğiniz $MYC miktarını girin', 'error');
-        return;
-      }
-      if (amt > (currentBalances.MYC || 0)) {
-        showToast('Yetersiz Bakiye', 'Cüzdanınızda yeterli liquid $MYC bulunmuyor', 'error');
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Rezonans Teminatı Kilitleniyor...';
-      msg.innerHTML = `<span style="color: var(--emerald);">Chain ID 108 BFT Konsensüsüne stake kaydı yapılıyor...</span>`;
-
-      try {
-        const res = await fetch(`${API_BASE}/api/stake`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            address: DEFAULT_WALLET,
-            amount: amt,
-            strategy: selectedStakeStrategy
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          const txHash = data.txHash || ('0x' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10) + '90a108');
-          const txRecord = {
-            hash: txHash,
-            type: 'STAKE_DEPOSIT',
-            module: 'NeuroYield Staking',
-            sender: DEFAULT_WALLET,
-            recipient: '0x000000000000000000000000000000000057a810 (NeuroVault)',
-            amount: `${amt} MYC`,
-            rawAmount: amt,
-            gasFee: '0.00000000 MYC',
-            finality: '< 6.8 ms (BFT Lock)',
-            status: 'FINALIZED',
-            timestamp: Date.now()
-          };
-          recordTransaction(txRecord);
-
-          showToast('Stake Başarılı!', `${amt} MYC teminata eklendi!`, 'success');
-          msg.innerHTML = `<span style="color: var(--emerald); font-weight: 700;">✅ ${amt} MYC başarıyla stake edildi! (Tx: ${txHash.slice(0, 12)}... | 0.00 Gas)</span>`;
-          currentBalances.MYC = Math.max(0, currentBalances.MYC - amt);
-          currentStakeState.amount += amt;
-          updateBalancesUI();
-          fetchStakeInfo();
-        } else {
-          showToast('Stake Hatası', data.error || 'İşlem başarısız', 'error');
-          msg.innerHTML = `<span style="color: var(--rose-accent);">Hata: ${data.error}</span>`;
-        }
-      } catch (e) {
-        showToast('Ağ Hatası', e.message, 'error');
-        msg.innerHTML = `<span style="color: var(--rose-accent);">Ağ Hatası: ${e.message}</span>`;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '📈 Stake Yatır (0.00 Gas İle Kilitle)';
-      }
-    }
-
-    async function executeHubHarvest() {
-      const btn = document.getElementById('btn-harvest-claim');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<span>Hasat Ediliyor...</span>`;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/stake/claim`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: DEFAULT_WALLET })
-        });
-        const data = await res.json();
-        if (data.success) {
-          const harvested = data.claimedAmount ? parseFloat(data.claimedAmount).toFixed(4) : (liveAccruedRewards > 0 ? liveAccruedRewards.toFixed(4) : '48.7500');
-          const txHash = data.txHash || ('0x' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10) + '90a108');
-          const txRecord = {
-            hash: txHash,
-            type: 'STAKE_HARVEST',
-            module: 'NeuroYield Staking',
-            sender: '0x000000000000000000000000000000000057a810 (NeuroVault)',
-            recipient: DEFAULT_WALLET,
-            amount: `+${harvested} MYC`,
-            rawAmount: parseFloat(harvested),
-            gasFee: '0.00000000 MYC',
-            finality: '< 5.2 ms',
-            status: 'FINALIZED',
-            timestamp: Date.now()
-          };
-          recordTransaction(txRecord);
-
-          showToast('Hasat Tamamlandı! 🌾', `+${harvested} MYC sıfır gas ile cüzdanınıza aktarıldı!`, 'success');
-          liveAccruedRewards = 0;
-          currentBalances.MYC += parseFloat(harvested);
-          updateBalancesUI();
-          fetchStakeInfo();
-        } else {
-          showToast('Hasat Başarısız', data.error || 'Ödül bulunamadı', 'error');
-        }
-      } catch (e) {
-        showToast('Hata', e.message, 'error');
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span>🌾 Hasat Et (Claim)</span>`;
-        }
-      }
-    }
-
-    async function executeHubCompound() {
-      const btn = document.getElementById('btn-harvest-compound');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<span>Bileşik Ekleniyor...</span>`;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/stake/compound`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: DEFAULT_WALLET })
-        });
-        const data = await res.json();
-        if (data.success) {
-          const comp = data.compoundedAmount ? parseFloat(data.compoundedAmount).toFixed(4) : (liveAccruedRewards > 0 ? liveAccruedRewards.toFixed(4) : '48.7500');
-          const txHash = data.txHash || ('0x' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10) + '90a108');
-          const txRecord = {
-            hash: txHash,
-            type: 'STAKE_COMPOUND',
-            module: 'NeuroYield Staking',
-            sender: DEFAULT_WALLET,
-            recipient: '0x000000000000000000000000000000000057a810 (NeuroVault)',
-            amount: `${comp} MYC (Re-Staked)`,
-            rawAmount: parseFloat(comp),
-            gasFee: '0.00000000 MYC',
-            finality: '< 6.1 ms',
-            status: 'FINALIZED',
-            timestamp: Date.now()
-          };
-          recordTransaction(txRecord);
-
-          showToast('Bileşik Eklendi! 🔄', `+${comp} MYC ana para bakiyenize yeniden yatırıldı.`, 'success');
-          liveAccruedRewards = 0;
-          currentStakeState.amount += parseFloat(comp);
-          fetchStakeInfo();
-        } else {
-          showToast('Bileşik Hatası', data.error || 'Re-stake yapılamadı', 'error');
-        }
-      } catch (e) {
-        showToast('Hata', e.message, 'error');
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span>🔄 Bileşik Ekle (Compound)</span>`;
-        }
-      }
-    }
-
-    async function executeHubUnstake() {
-      const amt = parseFloat(document.getElementById('unstake-amount-in').value) || 0;
-      const btn = document.getElementById('btn-execute-unstake');
-      const msg = document.getElementById('stake-msg');
-
-      if (amt <= 0) {
-        showToast('Geçersiz Miktar', 'Lütfen çekmek istediğiniz ana para miktarını girin', 'error');
-        return;
-      }
-      if (amt > currentStakeState.amount) {
-        showToast('Yetersiz Stake', `Maksimum çekebileceğiniz tutar: ${currentStakeState.amount} MYC`, 'error');
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerText = 'Ana Para Çözülüyor...';
-
-      try {
-        const res = await fetch(`${API_BASE}/api/stake/unstake`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address: DEFAULT_WALLET, amount: amt })
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast('Ana Para İade Edildi! 🔓', `${amt} MYC cüzdanınıza iade edildi.`, 'success');
-          msg.innerHTML = `<span style="color: var(--emerald); font-weight: 700;">✅ ${amt} MYC sıfır kesinti ile cüzdanınıza aktarıldı.</span>`;
-          document.getElementById('unstake-amount-in').value = '';
-          fetchStakeInfo();
-          fetchBalances();
-        } else {
-          showToast('Çekim Engellendi', data.error || 'Kilit süresi henüz dolmadı', 'error');
-          msg.innerHTML = `<span style="color: var(--rose-accent);">Kilit Uyarısı: ${data.error}</span>`;
-        }
-      } catch (e) {
-        showToast('Hata', e.message, 'error');
-        msg.innerHTML = `<span style="color: var(--rose-accent);">Hata: ${e.message}</span>`;
-      } finally {
-        btn.disabled = false;
-        btn.innerText = '🔓 Ana Parayı Cüzdana Çek (Unstake)';
-      }
-    }
-
-    // ═══════════════════════════════════════════════════════════════════
-    // DISCOVER ECOSYSTEM SEARCH & FILTERS
-    // ═══════════════════════════════════════════════════════════════════
-    function setCategory(cat, btn) {
-      activeCategory = cat;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      filterCards();
-    }
-
-    function filterCards() {
-      const q = (document.getElementById('hubSearch').value || '').toLowerCase().trim();
-      const cards = document.querySelectorAll('.hub-card');
-
-      cards.forEach(card => {
-        const cat = card.getAttribute('data-category');
-        const keywords = card.getAttribute('data-keywords') || '';
-        const title = card.querySelector('.hub-card-title').innerText.toLowerCase();
-        const desc = card.querySelector('.hub-card-desc').innerText.toLowerCase();
-
-        const matchesCat = activeCategory === 'all' || cat === activeCategory;
-        const matchesQuery = !q || title.includes(q) || desc.includes(q) || keywords.includes(q);
-
-        if (matchesCat && matchesQuery) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    }
-
-    function setLanguage(lang) {
-      try { localStorage.setItem('myca_lang', lang); } catch (e) {}
-      const btnEn = document.getElementById('langBtnEn');
-      const btnTr = document.getElementById('langBtnTr');
-      if (btnEn && btnTr) {
-        if (lang === 'en') {
-          btnEn.classList.add('active');
-          btnTr.classList.remove('active');
-        } else {
-          btnTr.classList.add('active');
-          btnEn.classList.remove('active');
-        }
-      }
-    }
-
-    // INITIALIZATION
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedLang = (function() {
-        try { return localStorage.getItem('myca_lang') || 'en'; } catch (e) { return 'en'; }
-      })();
-      setLanguage(savedLang);
-      fetchBalances();
-      fetchStakeInfo();
-      autoDetectConnectedMetaMask();
-      const path = (window.location.pathname || '').toLowerCase();
-      if (path.includes('swap')) switchHubTab('swap');
-      else if (path.includes('bridge')) switchHubTab('bridge');
-      else if (path.includes('staking')) switchHubTab('staking');
-      else if (path.includes('faucet')) switchHubTab('faucet');
-      else {
-        const hash = (window.location.hash || '').replace('#', '').toLowerCase();
-        if (['discover', 'swap', 'bridge', 'staking', 'faucet'].includes(hash)) {
-          switchHubTab(hash);
-        }
-      }
-    });
   </script>
-<script src="/i18n.js"></script>
 </body>
 </html>

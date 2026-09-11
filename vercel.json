@@ -64,19 +64,19 @@
     },
     {
       "source": "/depin/swap",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/swap.html"
     },
     {
       "source": "/depin/bridge",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/bridge.html"
     },
     {
       "source": "/depin/faucet",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/faucet.html"
     },
     {
       "source": "/depin/staking",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/staking.html"
     },
     {
       "source": "/depin/streampay",
@@ -152,19 +152,19 @@
     },
     {
       "source": "/swap",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/swap.html"
     },
     {
       "source": "/bridge",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/bridge.html"
     },
     {
       "source": "/faucet",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/faucet.html"
     },
     {
       "source": "/staking",
-      "destination": "/depin/hub.html"
+      "destination": "/depin/staking.html"
     },
     {
       "source": "/streampay",
@@ -261,6 +261,34 @@
     {
       "source": "/api/:match*",
       "destination": "/api/registry/[...path]"
+    },
+    {
+      "source": "/swap.html",
+      "destination": "/depin/swap.html"
+    },
+    {
+      "source": "/bridge.html",
+      "destination": "/depin/bridge.html"
+    },
+    {
+      "source": "/staking.html",
+      "destination": "/depin/staking.html"
+    },
+    {
+      "source": "/faucet.html",
+      "destination": "/depin/faucet.html"
+    },
+    {
+      "source": "/agents",
+      "destination": "/depin/agents.html"
+    },
+    {
+      "source": "/agents.html",
+      "destination": "/depin/agents.html"
+    },
+    {
+      "source": "/depin/agents",
+      "destination": "/depin/agents.html"
     }
   ]
 }
