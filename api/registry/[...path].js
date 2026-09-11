@@ -543,78 +543,19 @@ export default function handler(req, res) {
 
   // CANONICAL EXPLORER & BLOCKCHAIN CONTINUOUS STATE ENGINE
   // =========================================================================
+
+  // Route: /api/explorer/address/:addr
+  if (parsedUrl.pathname.includes("explorer/address")) {
+    const parts = parsedUrl.pathname.split('/');
+    const addrIdx = parts.findIndex(p => p === 'address');
+    const targetAddr = (addrIdx !== -1 && parts[addrIdx + 1]) ? decodeURIComponent(parts[addrIdx + 1]) : (parsedUrl.searchParams?.get('address') || 'myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002');
+    const profile = ledger.getAccountProfile(targetAddr);
+    return res.status(200).json(profile);
+  }
+
   if (parsedUrl.pathname.includes("explorer/overview")) {
-    const GENESIS_BLOCK = 492100;
-    const GENESIS_TS = 1736942400000;
-    const BLOCK_INTERVAL = 2500;
-    const blockHeight = GENESIS_BLOCK + Math.floor((now - GENESIS_TS) / BLOCK_INTERVAL);
-    const totalTransactions = 1250000 + (blockHeight * 9);
-
-    const recentBlocks = [];
-    for (let i = 0; i < 15; i++) {
-      const bNum = blockHeight - i;
-      const bTs = now - (i * BLOCK_INTERVAL);
-      const bHash = "0x" + ((bNum * 99991) % 0xffffffff).toString(16).padStart(8, "0") + ((bNum * 1234567) % 0xffffffff).toString(16).padStart(8, "0") + "f7c8108";
-      const validators = ["myc1val_quantum_alpha", "myc1val_sentinel_puf", "myc1val_resonance_mesh", "myc1val_colony_prime"];
-      recentBlocks.push({
-        number: bNum,
-        hash: bHash,
-        validator: validators[bNum % validators.length] + " (did:puf)",
-        txCount: 4 + (bNum % 14),
-        timestamp: bTs
-      });
-    }
-
-    const txTypes = ["TRANSFER", "POQR_REWARD", "STAKE_COMPOUND", "PUF_ATTEST", "STREAM_PAY"];
-    const recentActivity = [];
-    for (let j = 0; j < 15; j++) {
-      const txNum = blockHeight * 10 + j;
-      const txHash = "0x" + ((txNum * 88883) % 0xffffffff).toString(16).padStart(8, "0") + ((txNum * 234567) % 0xffffffff).toString(16).padStart(8, "0");
-      recentActivity.push({
-        hash: txHash,
-        type: txTypes[j % txTypes.length],
-        sender: "myc1" + ((txNum * 13) % 0xffffffff).toString(16).padEnd(10, "0"),
-        recipient: "myc1" + ((txNum * 29) % 0xffffffff).toString(16).padEnd(10, "0"),
-        amount: Math.round(((j * 17.5) % 150 + 2.5) * 100) / 100,
-        finality: "< 9.79 ms",
-        gasFee: "0.00000000 MYC (Zero-Gas)"
-      });
-    }
-
-    return res.status(200).json({
-      network: "MYC-LATTICE-MAINNET",
-      chainId: 108,
-      blockHeight,
-      latestBlockHash: recentBlocks[0].hash,
-      parentHash: recentBlocks[1].hash,
-      validator: recentBlocks[0].validator,
-      totalTransactions,
-      recentActivity: [..._global_transactions, ...recentActivity],
-      recentBlocks,
-      dexReserves: { MYC: 4500000, USDT: 250000, USDC: 250000 },
-      totalStaked: 14200000,
-      deviceQuotas: 14200,
-      dynamicApy: { dynamicApyPercent: 18.4, rawApyPercent: 18.4, isCapped: true, annualizedRevenue: 1840000 },
-      bridgeSecurity: {
-        totalLocked: { MYC: 2500000, USDT: 150000, USDC: 150000 },
-        totalLockedMYC: 2500000,
-        requiredQuorum: 3,
-        totalValidators: 4,
-        quorumRule: "2/3 + 1 Supermajority",
-        singleTransferLimit: 50000,
-        isPaused: false,
-        replayProtection: "Active (transferId hash lock)"
-      },
-      consensus: {
-        epoch: Math.floor(now / 86400000),
-        status: "PHASE_COHERENT",
-        pllLocked: true,
-        phaseCoherence: 0.942,
-        activeNodes: 10000,
-        tps: 15147.51,
-        gasModel: "Zero-Gas ($0.00000000)"
-      }
-    });
+    const overview = ledger.getOverview();
+    return res.status(200).json(overview);
   }
 
   // Route: /api/contract/deploy (POST)
