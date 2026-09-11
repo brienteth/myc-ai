@@ -1,13 +1,13 @@
 // ═══════════════════════════════════════════════════════════════════
-// SPORE WALLET & MULTI-WALLET CORE ENGINE (SHARED)
+// SPORE WALLET & MULTI-WALLET ENGINE (MYCA WALLETKIT)
 // ═══════════════════════════════════════════════════════════════════
 const API_BASE = window.location.origin;
 const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
 
 let activeWallet = {
-  type: 'none', // 'metamask' | 'native' | 'none'
+  type: 'none', // 'extension' | 'native' | 'metamask' | 'none'
   evmAddress: null,
-  mycAddress: DEFAULT_WALLET
+  mycAddress: null
 };
 
 let currentBalances = { MYC: 8637, USDT: 1250, USDC: 1250 };
@@ -37,23 +37,14 @@ function getActiveEvmAddress() {
   return toEvmAddress(activeWallet.mycAddress);
 }
 
-async function onConnectWalletButtonClick() {
-  let savedMyc = null;
-  try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
-  if (!savedMyc) {
-    savedMyc = DEFAULT_WALLET;
-    try {
-      localStorage.setItem('myca_native_address', savedMyc);
-      localStorage.setItem('myca_wallet_type', 'native');
-    } catch(e) {}
+function onConnectWalletButtonClick() {
+  if (activeWallet.type !== 'none') {
+    // Already connected: open sovereign account & transfer panel
+    openWalletModal();
+  } else {
+    // Not connected: open WalletKit to select / download wallet
+    openWalletKitModal();
   }
-  activeWallet = {
-    type: 'native',
-    evmAddress: toEvmAddress(savedMyc),
-    mycAddress: savedMyc
-  };
-  updateWalletUI();
-  openWalletModal();
 }
 
 function openWalletModal() {
@@ -62,6 +53,145 @@ function openWalletModal() {
   overlay.classList.add('active');
   openWalletSelectView();
   updateSporeWalletPanel();
+}
+
+function openWalletKitModal() {
+  const overlay = document.getElementById('wallet-modal-overlay');
+  if (!overlay) return;
+  overlay.classList.add('active');
+  hideAllWalletViews();
+  const kitView = document.getElementById('wallet-view-kit');
+  if (kitView) kitView.style.display = 'block';
+
+  // Detect Chrome Extension window.myc
+  const statusBadge = document.getElementById('spore-ext-status-badge');
+  const actionBox = document.getElementById('spore-ext-action-box');
+  const isExtensionInstalled = typeof window.myc !== 'undefined' && window.myc && window.myc.isMyc;
+
+  if (isExtensionInstalled) {
+    if (statusBadge) statusBadge.innerHTML = '<span style="color:#00e87a; font-weight:700;">● Extension Detected in Chrome ⚡</span>';
+    if (actionBox) {
+      actionBox.innerHTML = `
+        <button onclick="connectSporeExtension()" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>⚡</span> Connect Spore Extension
+        </button>
+      `;
+    }
+  } else {
+    if (statusBadge) statusBadge.innerHTML = '<span style="color:#f59e0b; font-weight:600;">● Extension Not Detected</span>';
+    if (actionBox) {
+      actionBox.innerHTML = `
+        <a href="/spore-wallet-extension.zip" download="spore-wallet-extension.zip" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.35); text-align:center;">
+          <span>📥</span> Download Chrome Extension (.zip)
+        </a>
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button onclick="toggleExtensionGuide()" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:600; cursor: pointer;">
+            📖 How to Install
+          </button>
+          <button onclick="connectWebSporeWallet()" style="flex:1; background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); color: #00f0ff; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:700; cursor: pointer;">
+            🌐 Use Web Wallet
+          </button>
+        </div>
+        <div id="ext-install-guide" style="display:none; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 11.5px; color: #94a3b8; line-height: 1.55; margin-top: 6px; text-align: left;">
+          <b style="color:#fff;">3-Step Chrome Installation:</b><br>
+          1. Extract the downloaded <code style="color:#00f0ff;">spore-wallet-extension.zip</code>.<br>
+          2. In Chrome, navigate to <code style="color:#00f0ff;">chrome://extensions/</code> and enable <b>Developer mode</b> (top-right).<br>
+          3. Click <b>Load unpacked</b> and select the extracted folder.<br>
+          4. Refresh this page and click <b>Connect Spore Extension</b>!
+        </div>
+      `;
+    }
+  }
+}
+
+function toggleExtensionGuide() {
+  const guide = document.getElementById('ext-install-guide');
+  if (guide) {
+    guide.style.display = guide.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+async function connectSporeExtension() {
+  if (typeof window.myc !== 'undefined' && window.myc && typeof window.myc.connect === 'function') {
+    try {
+      const accounts = await window.myc.connect();
+      if (accounts && accounts.length > 0) {
+        const addr = accounts[0];
+        activeWallet = {
+          type: 'extension',
+          evmAddress: toEvmAddress(addr),
+          mycAddress: addr
+        };
+        try {
+          localStorage.setItem('myca_wallet_type', 'extension');
+          localStorage.setItem('myca_native_address', addr);
+        } catch(e) {}
+        updateWalletUI();
+        closeWalletModal();
+        showToast('Connected!', 'Authenticated via Spore Extension: ' + addr.slice(0, 10) + '...', 'success');
+        return;
+      }
+    } catch(e) {
+      showToast('Connection Rejected', e.message || 'User canceled connection', 'error');
+      return;
+    }
+  }
+  connectWebSporeWallet();
+}
+
+function connectWebSporeWallet() {
+  let savedMyc = null;
+  try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
+  if (!savedMyc) {
+    savedMyc = DEFAULT_WALLET;
+    try { localStorage.setItem('myca_native_address', savedMyc); } catch(e) {}
+  }
+  activeWallet = {
+    type: 'native',
+    evmAddress: toEvmAddress(savedMyc),
+    mycAddress: savedMyc
+  };
+  try { localStorage.setItem('myca_wallet_type', 'native'); } catch(e) {}
+  updateWalletUI();
+  closeWalletModal();
+  showToast('Connected!', 'Authenticated via Web Spore Wallet: ' + savedMyc.slice(0, 10) + '...', 'success');
+}
+
+async function connectMetaMaskWallet() {
+  const provider = (function() {
+    if (window.ethereum) {
+      if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
+        return window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum;
+      }
+      return window.ethereum;
+    }
+    return null;
+  })();
+
+  if (!provider) {
+    showToast('MetaMask Not Found', 'Please install MetaMask extension in Chrome', 'error');
+    return;
+  }
+  try {
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (accounts && accounts.length > 0) {
+      const userAccount = accounts[0];
+      activeWallet = {
+        type: 'metamask',
+        evmAddress: userAccount,
+        mycAddress: toMycAddress(userAccount)
+      };
+      try {
+        localStorage.setItem('myca_wallet_type', 'metamask');
+        localStorage.setItem('myca_evm_address', userAccount);
+      } catch(e) {}
+      updateWalletUI();
+      closeWalletModal();
+      showToast('Connected!', 'MetaMask Connected: ' + userAccount.slice(0, 6) + '...' + userAccount.slice(-4), 'success');
+    }
+  } catch(e) {
+    showToast('MetaMask Error', e.message, 'error');
+  }
 }
 
 function closeWalletModal() {
@@ -74,7 +204,7 @@ function onWalletModalOverlayClick(e) {
 }
 
 function hideAllWalletViews() {
-  const views = ['wallet-view-select', 'wallet-view-connected', 'wallet-view-create', 'wallet-view-import'];
+  const views = ['wallet-view-kit', 'wallet-view-select', 'wallet-view-connected', 'wallet-view-create', 'wallet-view-import'];
   views.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -88,52 +218,61 @@ function openWalletSelectView() {
 }
 
 function openWalletDetailsView() {
+  openWalletSelectView();
+}
+
+function openWalletCreateView() {
   hideAllWalletViews();
-  const det = document.getElementById('wallet-view-connected');
-  if (det) det.style.display = 'block';
+  const cv = document.getElementById('wallet-view-create');
+  if (cv) cv.style.display = 'block';
+  generate12Words();
+}
 
-  const icon = document.getElementById('connected-wallet-icon');
-  const title = document.getElementById('connected-wallet-title');
-  const bal = document.getElementById('connected-wallet-balance');
-  const evmEl = document.getElementById('connected-address-evm');
-  const mycEl = document.getElementById('connected-address-myc');
-
-  if (activeWallet.type === 'metamask') {
-    if (icon) icon.innerText = '🦊';
-    if (title) title.innerText = 'MetaMask (Chain 108)';
-  } else {
-    if (icon) icon.innerText = '🍄';
-    if (title) title.innerText = 'Spore Wallet';
-  }
-
-  if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
-  if (evmEl) evmEl.innerText = getActiveEvmAddress();
-  if (mycEl) mycEl.innerText = getActiveWalletAddress();
+function openWalletImportView() {
+  hideAllWalletViews();
+  const iv = document.getElementById('wallet-view-import');
+  if (iv) iv.style.display = 'block';
 }
 
 function updateWalletUI() {
   const btn = document.getElementById('btn-connect-wallet');
   const label = document.getElementById('wallet-btn-label');
   const icon = document.getElementById('wallet-btn-icon');
-  if (!btn || !label || !icon) return;
+  const navBal = document.getElementById('nav-wallet-balance');
+  const navBalPill = document.getElementById('nav-wallet-balance-pill');
 
-  if (activeWallet.type === 'metamask') {
-    btn.classList.add('connected');
-    icon.innerText = '🦊';
-    const addr = activeWallet.evmAddress;
-    label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
-  } else if (activeWallet.type === 'native') {
-    btn.classList.add('connected');
-    icon.innerText = '🍄';
-    const addr = activeWallet.mycAddress;
-    label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
-  } else {
-    btn.classList.remove('connected');
-    icon.innerText = '⚡';
-    label.innerText = 'Connect';
+  if (activeWallet.type === 'none' || !activeWallet.mycAddress) {
+    if (btn) {
+      btn.classList.remove('connected');
+      btn.style.background = '#111827';
+      btn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+      btn.style.color = '#ffffff';
+    }
+    if (icon) icon.innerText = '⚡';
+    if (label) label.innerText = 'Connect Wallet';
+    if (navBal) navBal.innerText = '0.00 MYC';
+    if (navBalPill) navBalPill.style.opacity = '0.4';
+    return;
   }
 
-  const navBal = document.getElementById('nav-wallet-balance');
+  if (btn) {
+    btn.classList.add('connected');
+    btn.style.background = 'rgba(16, 185, 129, 0.15)';
+    btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+    btn.style.color = '#34d399';
+  }
+  if (navBalPill) navBalPill.style.opacity = '1';
+
+  if (activeWallet.type === 'metamask') {
+    if (icon) icon.innerText = '🦊';
+    const addr = activeWallet.evmAddress || '';
+    if (label) label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
+  } else {
+    if (icon) icon.innerText = '🍄';
+    const addr = activeWallet.mycAddress || DEFAULT_WALLET;
+    if (label) label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
+  }
+
   if (navBal) {
     var bal = currentBalances.MYC || 8637;
     navBal.innerText = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
@@ -144,15 +283,15 @@ function updateSporeWalletPanel() {
   var addr = getActiveWalletAddress() || DEFAULT_WALLET;
   var pufEl = document.getElementById('spore-puf-address');
   var balEl = document.getElementById('spore-balance-display');
-  var navBalEl = document.getElementById('nav-wallet-balance');
+  var navBal = document.getElementById('nav-wallet-balance');
   if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'myc14d29b6...d7c002';
   var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
   var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   if (balEl) {
     balEl.innerHTML = formatted + ' <span class="currency">$MYC</span>';
   }
-  if (navBalEl) {
-    navBalEl.innerText = formatted + ' MYC';
+  if (activeWallet.type !== 'none' && navBal) {
+    navBal.innerText = formatted + ' MYC';
   }
 }
 
@@ -187,7 +326,7 @@ async function executeSporeTransfer() {
   var recipient = (document.getElementById('spore-recipient-input') || {}).value || '';
   var amount = parseFloat((document.getElementById('spore-amount-input') || {}).value) || 0;
   var sender = getActiveWalletAddress();
-  if (!sender) { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
+  if (!sender || activeWallet.type === 'none') { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
   if (!recipient || !recipient.startsWith('myc1')) { showToast('Invalid', 'Enter a valid myc1... address', 'error'); return; }
   if (amount <= 0) { showToast('Invalid', 'Enter amount > 0', 'error'); return; }
   if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + currentBalances.MYC + ' MYC', 'error'); return; }
@@ -205,13 +344,61 @@ async function executeSporeTransfer() {
 }
 
 function disconnectWallet() {
-  activeWallet = { type: 'none', evmAddress: null, mycAddress: DEFAULT_WALLET };
+  activeWallet = { type: 'none', evmAddress: null, mycAddress: null };
   try {
     localStorage.removeItem('myca_wallet_type');
   } catch (e) {}
   updateWalletUI();
   closeWalletModal();
-  showToast('Bağlantı Kesildi', 'Cüzdan bağlantısı sonlandırıldı.', 'info');
+  showToast('Disconnected', 'Wallet disconnected.', 'info');
+}
+
+function generate12Words() {
+  const wordsPool = ["spore", "hyphae", "lattice", "resonance", "quantum", "substrate", "neural", "pulse", "fungal", "nexus", "matrix", "beacon", "crypto", "zero", "node", "stream"];
+  const selected = [];
+  for (let i = 0; i < 12; i++) {
+    selected.push(wordsPool[Math.floor(Math.random() * wordsPool.length)]);
+  }
+  const container = document.getElementById('create-words-container');
+  if (container) {
+    container.innerHTML = selected.map((w, idx) => `<div style="background:rgba(255,255,255,0.05);padding:6px;border-radius:6px;font-family:var(--f-mono);font-size:11px;color:#38bdf8;">${idx+1}. ${w}</div>`).join('');
+  }
+}
+
+function executeActivateCreatedWallet() {
+  const newAddr = "myc1" + Math.random().toString(16).slice(2, 10) + "4d29b6c4b38b2ac4a6e2bbb9c4d7c002".slice(10);
+  try {
+    localStorage.setItem('myca_native_address', newAddr);
+    localStorage.setItem('myca_wallet_type', 'native');
+  } catch(e) {}
+  activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  updateWalletUI();
+  openWalletSelectView();
+  updateSporeWalletPanel();
+  showToast('Wallet Created!', 'Your 12-word seed wallet is now active: ' + newAddr.slice(0, 12) + '...', 'success');
+}
+
+function executeImportSeed() {
+  const input = document.getElementById('import-seed-input');
+  if (!input || !input.value.trim()) {
+    showToast('Empty Seed', 'Please enter your 12-word recovery seed', 'error');
+    return;
+  }
+  const words = input.value.trim().split(/\s+/);
+  if (words.length !== 12) {
+    showToast('Invalid Seed', 'Please enter exactly 12 words (found ' + words.length + ')', 'error');
+    return;
+  }
+  const newAddr = "myc1" + Math.random().toString(16).slice(2, 10) + "4d29b6c4b38b2ac4a6e2bbb9c4d7c002".slice(10);
+  try {
+    localStorage.setItem('myca_native_address', newAddr);
+    localStorage.setItem('myca_wallet_type', 'native');
+  } catch(e) {}
+  activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  updateWalletUI();
+  openWalletSelectView();
+  updateSporeWalletPanel();
+  showToast('Seed Imported!', 'Wallet successfully restored: ' + newAddr.slice(0, 12) + '...', 'success');
 }
 
 function showToast(title, msg, type = 'info') {
@@ -237,22 +424,41 @@ function initSporeWallet() {
   try { savedType = localStorage.getItem('myca_wallet_type'); } catch(e) {}
   let savedMyc = null;
   try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
-  if (!savedMyc) {
-    savedMyc = DEFAULT_WALLET;
-    try {
-      localStorage.setItem('myca_native_address', savedMyc);
-      if (!savedType) localStorage.setItem('myca_wallet_type', 'native');
-    } catch(e) {}
-  }
-  if (savedType !== 'metamask') {
+
+  // ONLY auto-connect if user explicitly saved connection previously!
+  if (savedType === 'extension' && typeof window.myc !== 'undefined' && window.myc && window.myc.isConnected()) {
+    activeWallet = {
+      type: 'extension',
+      evmAddress: toEvmAddress(window.myc.selectedAddress),
+      mycAddress: window.myc.selectedAddress
+    };
+  } else if (savedType === 'native' && savedMyc) {
     activeWallet = {
       type: 'native',
       evmAddress: toEvmAddress(savedMyc),
       mycAddress: savedMyc
     };
+  } else if (savedType === 'metamask') {
+    let savedEvm = null;
+    try { savedEvm = localStorage.getItem('myca_evm_address'); } catch(e) {}
+    if (savedEvm) {
+      activeWallet = {
+        type: 'metamask',
+        evmAddress: savedEvm,
+        mycAddress: toMycAddress(savedEvm)
+      };
+    } else {
+      activeWallet = { type: 'none', evmAddress: null, mycAddress: null };
+    }
+  } else {
+    // Default: NOT CONNECTED (Connect Wallet button shown)
+    activeWallet = {
+      type: 'none',
+      evmAddress: null,
+      mycAddress: null
+    };
   }
   updateWalletUI();
-  updateSporeWalletPanel();
 }
 
 document.addEventListener('DOMContentLoaded', initSporeWallet);

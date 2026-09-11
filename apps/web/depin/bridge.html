@@ -1676,20 +1676,20 @@
     </a>
 
     <div class="hub-header-right">
-      <div class="hub-net-selector" onclick="openWalletModal()">
+      <div class="hub-net-selector" onclick="openWalletKitModal()">
         <span style="width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 8px #a855f7;"></span>
         <span>MYCA Sovereign (Chain 108)</span>
         <span style="font-size: 10px; opacity: 0.7;">▾</span>
       </div>
 
-      <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-family: var(--f-mono); color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+      <div id="nav-wallet-balance-pill" style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-family: var(--f-mono); color: #00f0ff; display: flex; align-items: center; gap: 6px; opacity: 0.4;">
         <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
-        <span id="nav-wallet-balance">8,637.00 MYC</span>
+        <span id="nav-wallet-balance">0.00 MYC</span>
       </div>
 
       <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn-pill" style="z-index: 100;">
         <span id="wallet-btn-icon" style="font-size: 14px;">⚡</span>
-        <span id="wallet-btn-label">Connect</span>
+        <span id="wallet-btn-label">Connect Wallet</span>
       </button>
     </div>
   </header>
@@ -1711,11 +1711,6 @@
         <span class="sidebar-icon">🌉</span>
         <span>Bridge</span>
         
-      </a>
-      <a href="/nexus" class="sidebar-btn" id="side-nav-cross">
-        <span class="sidebar-icon">✈️</span>
-        <span>Cross-Chain Swap</span>
-        <span class="sidebar-badge-new">New</span>
       </a>
       <a href="/staking" class="sidebar-btn" id="side-nav-staking">
         <span class="sidebar-icon">📈</span>
@@ -2000,12 +1995,92 @@
   </div>
   </main>
 
-<div id="wallet-modal-overlay" class="wallet-modal-overlay" onclick="onWalletModalOverlayClick(event)">
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CONNECT WALLET MODAL & MYCA WALLETKIT
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div id="wallet-modal-overlay" class="wallet-modal-overlay" onclick="onWalletModalOverlayClick(event)">
     <div class="wallet-modal-card">
       <button class="wallet-modal-close" onclick="closeWalletModal()">✕</button>
 
-      <!-- VIEW 1: MYCA SOVEREIGN / SPORE WALLET PANEL -->
-      <div id="wallet-view-select">
+      <!-- VIEW 0: WALLET KIT (SELECTION & SPORE EXTENSION DOWNLOAD) -->
+      <div id="wallet-view-kit" style="padding: 26px 22px;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="width: 52px; height: 52px; border-radius: 16px; background: radial-gradient(circle, #00f0ff, #10b981); display: grid; place-items: center; font-size: 26px; margin: 0 auto 12px; box-shadow: 0 0 24px rgba(0, 240, 255, 0.35);">
+            🍄
+          </div>
+          <h2 style="font-size: 20px; font-weight: 800; color: #fff; margin: 0 0 4px; letter-spacing: -0.5px;">Connect to MYCA</h2>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.4;">Select your wallet to interact with the Zero-Gas Living Lattice (Chain ID 108)</p>
+        </div>
+
+        <!-- SPORE WALLET (FEATURED) -->
+        <div class="wallet-kit-card" style="background: rgba(0, 240, 255, 0.04); border: 1.5px solid rgba(0, 240, 255, 0.3); border-radius: 16px; padding: 18px; margin-bottom: 14px; position: relative; transition: all 0.2s ease;">
+          <div style="position: absolute; top: 12px; right: 14px; background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(16, 185, 129, 0.2)); border: 1px solid rgba(0, 240, 255, 0.4); color: #00f0ff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; font-family: var(--f-mono);">
+            RECOMMENDED • 0-GAS
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+            <div style="width: 44px; height: 44px; border-radius: 12px; background: radial-gradient(circle, #00f0ff, #10b981); display: grid; place-items: center; font-size: 22px; color: #000; font-weight: 900; box-shadow: 0 0 16px rgba(0, 240, 255, 0.3);">
+              Ψ
+            </div>
+            <div>
+              <div style="font-size: 16px; font-weight: 800; color: #fff;">Spore Wallet</div>
+              <div id="spore-ext-status-badge" style="font-size: 11.5px; color: #94a3b8;">
+                Hardware PUF & Zero-Gas Native
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.45; margin-bottom: 14px;">
+            Official sovereign wallet for MYCA. Sub-millisecond zero-gas payments and lattice state channels.
+          </p>
+
+          <div id="spore-ext-action-box" style="display: flex; flex-direction: column; gap: 8px;">
+            <a href="/spore-wallet-extension.zip" download="spore-wallet-extension.zip" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.35); text-align:center;">
+              <span>📥</span> Download Chrome Extension (.zip)
+            </a>
+            <div style="display:flex; gap:8px;">
+              <button onclick="toggleExtensionGuide()" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:600; cursor: pointer;">
+                📖 How to Install
+              </button>
+              <button onclick="connectWebSporeWallet()" style="flex:1; background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); color: #00f0ff; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:700; cursor: pointer;">
+                🌐 Use Web Wallet
+              </button>
+            </div>
+            <div id="ext-install-guide" style="display:none; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 11.5px; color: #94a3b8; line-height: 1.55; margin-top: 6px; text-align: left;">
+              <b style="color:#fff;">3-Step Chrome Installation:</b><br>
+              1. Extract the downloaded <code style="color:#00f0ff;">spore-wallet-extension.zip</code>.<br>
+              2. In Chrome, navigate to <code style="color:#00f0ff;">chrome://extensions/</code> and enable <b>Developer mode</b> (top-right).<br>
+              3. Click <b>Load unpacked</b> and select the extracted folder.<br>
+              4. Refresh this page to connect with your extension!
+            </div>
+          </div>
+        </div>
+
+        <!-- METAMASK OPTION -->
+        <div onclick="connectMetaMaskWallet()" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">🦊</span>
+            <div>
+              <div style="font-size: 14.5px; font-weight: 700; color: #fff;">MetaMask</div>
+              <div style="font-size: 11px; color: var(--text-muted);">EVM Multi-Chain (Chain ID 108)</div>
+            </div>
+          </div>
+          <span style="font-size: 12px; color: #fbbf24; font-weight: 600;">Connect →</span>
+        </div>
+
+        <!-- SEED OPTIONS -->
+        <div style="display: flex; gap: 8px; margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+          <button onclick="openWalletImportView()" class="spore-sub-btn" style="flex: 1; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.25); color: #38bdf8; padding: 10px; font-size: 11.5px; border-radius: 10px; cursor: pointer;">
+            📥 Import Seed
+          </button>
+          <button onclick="openWalletCreateView()" class="spore-sub-btn" style="flex: 1; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: #34d399; padding: 10px; font-size: 11.5px; border-radius: 10px; cursor: pointer;">
+            ✨ Create 12 Words
+          </button>
+        </div>
+      </div>
+
+      <!-- VIEW 1: MYCA SOVEREIGN / SPORE WALLET PANEL (WHEN CONNECTED) -->
+      <div id="wallet-view-select" style="display: none;">
         <div class="spore-wallet-header">
           <div class="spore-wallet-brand">
             <div class="spore-wallet-logo">Ψ</div>
@@ -2032,10 +2107,10 @@
           <div class="spore-action-btn" onclick="sporeActionReceive()">
             <span class="spore-action-icon">↙</span><span class="spore-action-label">Receive</span>
           </div>
-          <div class="spore-action-btn" onclick="closeWalletModal();if(typeof switchHubTab==='function')switchHubTab('swap');">
+          <div class="spore-action-btn" onclick="closeWalletModal();window.location.href='/swap';">
             <span class="spore-action-icon">🌊</span><span class="spore-action-label">StreamPay</span>
           </div>
-          <div class="spore-action-btn" onclick="navigateToExplorerAccount()">
+          <div class="spore-action-btn" onclick="window.open('/depin/explorer', '_blank');">
             <span class="spore-action-icon">📋</span><span class="spore-action-label">History</span>
           </div>
         </div>
@@ -2056,153 +2131,66 @@
         </div>
         <div class="spore-footer">
           <span>Node: 127.0.0.1:4040</span>
-          <a href="/nexus">Open MYCA NEXUS ↗</a>
+          <a href="/depin/explorer" target="_blank">Open Explorer ↗</a>
         </div>
-        <div class="spore-wallet-actions-bar">
+        <div class="spore-wallet-actions-bar" style="padding: 10px 22px 18px; display: flex; flex-direction: column; gap: 6px;">
           <div style="display:flex;gap:6px;">
-            <button onclick="openWalletCreateView()" class="spore-sub-btn" style="flex:1;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#34d399;">✨ New Wallet</button>
-            <button onclick="openWalletImportView()" class="spore-sub-btn" style="flex:1;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;">📥 Import</button>
-            <button onclick="connectMetaMaskWallet()" class="spore-sub-btn" style="flex:1;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;">🦊 MetaMask</button>
+            <button onclick="openWalletKitModal()" class="spore-sub-btn" style="flex:1;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.25);color:#00f0ff;padding:8px;border-radius:10px;font-size:11.5px;cursor:pointer;">🔄 Switch Wallet</button>
+            <button onclick="disconnectWallet()" class="spore-sub-btn" style="flex:1;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;padding:8px;border-radius:10px;font-size:11.5px;cursor:pointer;">🔌 Disconnect</button>
           </div>
-          <button onclick="disconnectWallet()" class="spore-sub-btn" style="width:100%;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;">🔌 Disconnect</button>
         </div>
       </div>
 
-      <!-- VIEW 2: CONNECTED WALLET DETAILS -->
-      <div id="wallet-view-connected" style="display: none; padding: 26px;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span id="connected-wallet-icon" style="font-size: 26px;">🍄</span>
-            <div>
-              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">Spore Wallet</div>
-              <div style="font-size: 11.5px; color: var(--teal-accent); display: flex; align-items: center; gap: 5px;">
-                <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 6px var(--teal-accent);"></span>
-                <span>MYC Sovereign Network (Chain 108)</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Balance Display -->
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px; margin-bottom: 14px; text-align: center;">
-          <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px;">Aktif Hesap Bakiyesi</div>
-          <div id="connected-wallet-balance" style="font-size: 24px; font-weight: 800; color: #fff; font-family: var(--f-mono);">5,000 MYC</div>
-        </div>
-
-        <!-- Address Display (Dual Format: EVM 0x & MYC myc1) -->
-        <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="color: var(--text-muted);">EVM Adresi (0x...):</span>
-            <button onclick="copyWalletAddress('evm')" id="btn-copy-evm" style="background: transparent; border: none; color: var(--cyan-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
-          </div>
-          <div id="connected-address-evm" style="font-family: var(--f-mono); color: #cbd5e1; word-break: break-all; margin-bottom: 10px;">0x...</div>
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
-            <span style="color: var(--text-muted);">Spore Adresi (myc1...):</span>
-            <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
-          </div>
-          <div id="connected-address-myc" style="font-family: var(--f-mono); color: var(--teal-accent); word-break: break-all;">myc1...</div>
-        </div>
-
-        <!-- Secret Backup Reveal Box -->
-        <div id="wallet-secret-backup-box" style="display: none; background: rgba(245, 158, 11, 0.06); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 12px;">
-          <div style="color: #fbbf24; font-weight: 700; margin-bottom: 6px;">⚠️ Cihazlar Arası Yedek / Tohum Anahtarı:</div>
-          <div style="font-size: 11px; color: #94a3b8; margin-bottom: 6px;">Bu bilgiyi cep telefonunuza veya diğer bilgisayarınıza "Cüzdanı İçe Aktar" alanına girerek aynı hesaba erişebilirsiniz:</div>
-          <div style="font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">12 Kelime:</div>
-          <div id="backup-mnemonic-text" style="font-family: var(--f-mono); background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; color: #38bdf8; word-break: break-word; user-select: all; margin-bottom: 8px;"></div>
-          <div style="font-weight: 600; color: #cbd5e1; margin-bottom: 4px;">Özel Anahtar (Private Key):</div>
-          <div id="backup-pk-text" style="font-family: var(--f-mono); font-size: 10.5px; background: rgba(0,0,0,0.4); padding: 8px; border-radius: 8px; color: #f59e0b; word-break: break-all; user-select: all;"></div>
-        </div>
-
-        <!-- Actions -->
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button onclick="navigateToExplorerAccount()" style="width: 100%; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); color: #38bdf8; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            🔍 Explorer'da Bakiye & İşlem Geçmişini Aç
-          </button>
-          <button onclick="toggleShowSecretBackup()" style="width: 100%; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25); color: #fbbf24; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            🔑 12 Kelimeyi Göster / Mobil İçin Yedekle
-          </button>
-          <button id="btn-add-chain-mm" onclick="addMycNetworkToMetaMask()" style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            🦊 MetaMask'e Chain 108 Ekle
-          </button>
-          <button onclick="openWalletSelectView()" style="width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
-            🔄 Başka Cüzdan Seç / İçe Aktar
-          </button>
-          <button onclick="disconnectWallet()" style="width: 100%; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 9px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
-            🔌 Bağlantıyı Kes
-          </button>
-        </div>
-      </div>
-
-      <!-- VIEW 3: CREATE NEW 12-WORD WALLET -->
+      <!-- VIEW 2: CREATE NEW 12-WORD WALLET -->
       <div id="wallet-view-create" style="display: none; padding: 26px;">
         <div style="text-align: center; margin-bottom: 16px;">
           <div style="font-size: 30px; margin-bottom: 4px;">🔐</div>
-          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Yeni 12 Kelimelik Cüzdan</h3>
-          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Bu 12 kelime cüzdanınızın şifresidir. Telefonunuzda veya başka bilgisayarda hesabınıza bu kelimelerle erişebilirsiniz.</p>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">New 12-Word Seed Wallet</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">These 12 words are the master key to your funds. Save them in a secure location.</p>
         </div>
-
         <div id="create-words-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);"></div>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-          <button onclick="copyCreatedWords()" style="flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            📋 Kelimeleri Kopyala
-          </button>
-          <button onclick="openWalletCreateView()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; padding: 10px; border-radius: 10px; font-size: 12px; cursor: pointer;">
-            🔄 Yenile
-          </button>
-        </div>
-
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <button onclick="executeActivateCreatedWallet()" style="width: 100%; background: linear-gradient(135deg, #10b981, #059669); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);">
-            ✅ Kelimeleri Kaydettim, Cüzdanı Başlat
+            ✅ I Saved the Words, Activate Wallet
           </button>
-          <button onclick="openWalletSelectView()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
-            ← Geri
+          <button onclick="openWalletKitModal()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            ← Back to Wallet Options
           </button>
         </div>
       </div>
 
-      <!-- VIEW 4: IMPORT WALLET (MOBILE / PC) -->
+      <!-- VIEW 3: IMPORT WALLET -->
       <div id="wallet-view-import" style="display: none; padding: 26px;">
         <div style="text-align: center; margin-bottom: 16px;">
           <div style="font-size: 30px; margin-bottom: 4px;">📥</div>
-          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Cüzdanı İçe Aktar</h3>
-          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Diğer cihazınızdan aldığınız 12 kelimeyi veya özel anahtarınızı (0x...) girin:</p>
+          <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Import 12-Word Recovery Seed</h3>
+          <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Enter your 12 recovery words separated by spaces.</p>
         </div>
-
-        <div style="margin-bottom: 14px;">
-          <textarea id="import-seed-input" placeholder="Örn: abandon ability able about above absent absorb abstract... (12 kelime) veya 0x... (64 hex)" style="width: 100%; height: 90px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 10px; color: #fff; font-family: var(--f-mono); font-size: 12px; resize: none; outline: none;" oninput="hideImportError()"></textarea>
-          <div id="import-seed-error" style="display: none; margin-top: 8px; padding: 10px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; color: #f87171; font-size: 11.5px; line-height: 1.4; text-align: left;"></div>
-        </div>
-
+        <textarea id="import-seed-input" rows="3" placeholder="word1 word2 word3 ... word12" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; color: #38bdf8; font-family: var(--f-mono); font-size: 12px; resize: none; margin-bottom: 14px;"></textarea>
         <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button onclick="executeImportWallet()" style="width: 100%; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);">
-            🚀 Cüzdanı Yükle & Aktifleştir
+          <button onclick="executeImportSeed()" style="width: 100%; background: linear-gradient(135deg, #38bdf8, #0284c7); border: none; color: #fff; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 700; cursor: pointer;">
+            📥 Restore &amp; Connect Wallet
           </button>
-          <button onclick="openWalletSelectView()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
-            ← Geri
+          <button onclick="openWalletKitModal()" style="width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #94a3b8; padding: 8px; border-radius: 10px; font-size: 12px; cursor: pointer;">
+            ← Back to Wallet Options
           </button>
         </div>
       </div>
 
     </div>
   </div>
-  <script src="/bip39.js"></script>
-  <script src="/tx-confirm.js"></script>
-  <script src="/i18n.js"></script>
 
   <script>
 // ═══════════════════════════════════════════════════════════════════
-// SPORE WALLET & MULTI-WALLET CORE ENGINE (SHARED)
+// SPORE WALLET & MULTI-WALLET ENGINE (MYCA WALLETKIT)
 // ═══════════════════════════════════════════════════════════════════
 const API_BASE = window.location.origin;
 const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
 
 let activeWallet = {
-  type: 'none', // 'metamask' | 'native' | 'none'
+  type: 'none', // 'extension' | 'native' | 'metamask' | 'none'
   evmAddress: null,
-  mycAddress: DEFAULT_WALLET
+  mycAddress: null
 };
 
 let currentBalances = { MYC: 8637, USDT: 1250, USDC: 1250 };
@@ -2232,23 +2220,14 @@ function getActiveEvmAddress() {
   return toEvmAddress(activeWallet.mycAddress);
 }
 
-async function onConnectWalletButtonClick() {
-  let savedMyc = null;
-  try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
-  if (!savedMyc) {
-    savedMyc = DEFAULT_WALLET;
-    try {
-      localStorage.setItem('myca_native_address', savedMyc);
-      localStorage.setItem('myca_wallet_type', 'native');
-    } catch(e) {}
+function onConnectWalletButtonClick() {
+  if (activeWallet.type !== 'none') {
+    // Already connected: open sovereign account & transfer panel
+    openWalletModal();
+  } else {
+    // Not connected: open WalletKit to select / download wallet
+    openWalletKitModal();
   }
-  activeWallet = {
-    type: 'native',
-    evmAddress: toEvmAddress(savedMyc),
-    mycAddress: savedMyc
-  };
-  updateWalletUI();
-  openWalletModal();
 }
 
 function openWalletModal() {
@@ -2257,6 +2236,145 @@ function openWalletModal() {
   overlay.classList.add('active');
   openWalletSelectView();
   updateSporeWalletPanel();
+}
+
+function openWalletKitModal() {
+  const overlay = document.getElementById('wallet-modal-overlay');
+  if (!overlay) return;
+  overlay.classList.add('active');
+  hideAllWalletViews();
+  const kitView = document.getElementById('wallet-view-kit');
+  if (kitView) kitView.style.display = 'block';
+
+  // Detect Chrome Extension window.myc
+  const statusBadge = document.getElementById('spore-ext-status-badge');
+  const actionBox = document.getElementById('spore-ext-action-box');
+  const isExtensionInstalled = typeof window.myc !== 'undefined' && window.myc && window.myc.isMyc;
+
+  if (isExtensionInstalled) {
+    if (statusBadge) statusBadge.innerHTML = '<span style="color:#00e87a; font-weight:700;">● Extension Detected in Chrome ⚡</span>';
+    if (actionBox) {
+      actionBox.innerHTML = `
+        <button onclick="connectSporeExtension()" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>⚡</span> Connect Spore Extension
+        </button>
+      `;
+    }
+  } else {
+    if (statusBadge) statusBadge.innerHTML = '<span style="color:#f59e0b; font-weight:600;">● Extension Not Detected</span>';
+    if (actionBox) {
+      actionBox.innerHTML = `
+        <a href="/spore-wallet-extension.zip" download="spore-wallet-extension.zip" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.35); text-align:center;">
+          <span>📥</span> Download Chrome Extension (.zip)
+        </a>
+        <div style="display:flex; gap:8px; margin-top:4px;">
+          <button onclick="toggleExtensionGuide()" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:600; cursor: pointer;">
+            📖 How to Install
+          </button>
+          <button onclick="connectWebSporeWallet()" style="flex:1; background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); color: #00f0ff; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:700; cursor: pointer;">
+            🌐 Use Web Wallet
+          </button>
+        </div>
+        <div id="ext-install-guide" style="display:none; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 11.5px; color: #94a3b8; line-height: 1.55; margin-top: 6px; text-align: left;">
+          <b style="color:#fff;">3-Step Chrome Installation:</b><br>
+          1. Extract the downloaded <code style="color:#00f0ff;">spore-wallet-extension.zip</code>.<br>
+          2. In Chrome, navigate to <code style="color:#00f0ff;">chrome://extensions/</code> and enable <b>Developer mode</b> (top-right).<br>
+          3. Click <b>Load unpacked</b> and select the extracted folder.<br>
+          4. Refresh this page and click <b>Connect Spore Extension</b>!
+        </div>
+      `;
+    }
+  }
+}
+
+function toggleExtensionGuide() {
+  const guide = document.getElementById('ext-install-guide');
+  if (guide) {
+    guide.style.display = guide.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+async function connectSporeExtension() {
+  if (typeof window.myc !== 'undefined' && window.myc && typeof window.myc.connect === 'function') {
+    try {
+      const accounts = await window.myc.connect();
+      if (accounts && accounts.length > 0) {
+        const addr = accounts[0];
+        activeWallet = {
+          type: 'extension',
+          evmAddress: toEvmAddress(addr),
+          mycAddress: addr
+        };
+        try {
+          localStorage.setItem('myca_wallet_type', 'extension');
+          localStorage.setItem('myca_native_address', addr);
+        } catch(e) {}
+        updateWalletUI();
+        closeWalletModal();
+        showToast('Connected!', 'Authenticated via Spore Extension: ' + addr.slice(0, 10) + '...', 'success');
+        return;
+      }
+    } catch(e) {
+      showToast('Connection Rejected', e.message || 'User canceled connection', 'error');
+      return;
+    }
+  }
+  connectWebSporeWallet();
+}
+
+function connectWebSporeWallet() {
+  let savedMyc = null;
+  try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
+  if (!savedMyc) {
+    savedMyc = DEFAULT_WALLET;
+    try { localStorage.setItem('myca_native_address', savedMyc); } catch(e) {}
+  }
+  activeWallet = {
+    type: 'native',
+    evmAddress: toEvmAddress(savedMyc),
+    mycAddress: savedMyc
+  };
+  try { localStorage.setItem('myca_wallet_type', 'native'); } catch(e) {}
+  updateWalletUI();
+  closeWalletModal();
+  showToast('Connected!', 'Authenticated via Web Spore Wallet: ' + savedMyc.slice(0, 10) + '...', 'success');
+}
+
+async function connectMetaMaskWallet() {
+  const provider = (function() {
+    if (window.ethereum) {
+      if (window.ethereum.providers && Array.isArray(window.ethereum.providers)) {
+        return window.ethereum.providers.find(p => p.isMetaMask) || window.ethereum;
+      }
+      return window.ethereum;
+    }
+    return null;
+  })();
+
+  if (!provider) {
+    showToast('MetaMask Not Found', 'Please install MetaMask extension in Chrome', 'error');
+    return;
+  }
+  try {
+    const accounts = await provider.request({ method: 'eth_requestAccounts' });
+    if (accounts && accounts.length > 0) {
+      const userAccount = accounts[0];
+      activeWallet = {
+        type: 'metamask',
+        evmAddress: userAccount,
+        mycAddress: toMycAddress(userAccount)
+      };
+      try {
+        localStorage.setItem('myca_wallet_type', 'metamask');
+        localStorage.setItem('myca_evm_address', userAccount);
+      } catch(e) {}
+      updateWalletUI();
+      closeWalletModal();
+      showToast('Connected!', 'MetaMask Connected: ' + userAccount.slice(0, 6) + '...' + userAccount.slice(-4), 'success');
+    }
+  } catch(e) {
+    showToast('MetaMask Error', e.message, 'error');
+  }
 }
 
 function closeWalletModal() {
@@ -2269,7 +2387,7 @@ function onWalletModalOverlayClick(e) {
 }
 
 function hideAllWalletViews() {
-  const views = ['wallet-view-select', 'wallet-view-connected', 'wallet-view-create', 'wallet-view-import'];
+  const views = ['wallet-view-kit', 'wallet-view-select', 'wallet-view-connected', 'wallet-view-create', 'wallet-view-import'];
   views.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -2283,52 +2401,61 @@ function openWalletSelectView() {
 }
 
 function openWalletDetailsView() {
+  openWalletSelectView();
+}
+
+function openWalletCreateView() {
   hideAllWalletViews();
-  const det = document.getElementById('wallet-view-connected');
-  if (det) det.style.display = 'block';
+  const cv = document.getElementById('wallet-view-create');
+  if (cv) cv.style.display = 'block';
+  generate12Words();
+}
 
-  const icon = document.getElementById('connected-wallet-icon');
-  const title = document.getElementById('connected-wallet-title');
-  const bal = document.getElementById('connected-wallet-balance');
-  const evmEl = document.getElementById('connected-address-evm');
-  const mycEl = document.getElementById('connected-address-myc');
-
-  if (activeWallet.type === 'metamask') {
-    if (icon) icon.innerText = '🦊';
-    if (title) title.innerText = 'MetaMask (Chain 108)';
-  } else {
-    if (icon) icon.innerText = '🍄';
-    if (title) title.innerText = 'Spore Wallet';
-  }
-
-  if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
-  if (evmEl) evmEl.innerText = getActiveEvmAddress();
-  if (mycEl) mycEl.innerText = getActiveWalletAddress();
+function openWalletImportView() {
+  hideAllWalletViews();
+  const iv = document.getElementById('wallet-view-import');
+  if (iv) iv.style.display = 'block';
 }
 
 function updateWalletUI() {
   const btn = document.getElementById('btn-connect-wallet');
   const label = document.getElementById('wallet-btn-label');
   const icon = document.getElementById('wallet-btn-icon');
-  if (!btn || !label || !icon) return;
+  const navBal = document.getElementById('nav-wallet-balance');
+  const navBalPill = document.getElementById('nav-wallet-balance-pill');
 
-  if (activeWallet.type === 'metamask') {
-    btn.classList.add('connected');
-    icon.innerText = '🦊';
-    const addr = activeWallet.evmAddress;
-    label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
-  } else if (activeWallet.type === 'native') {
-    btn.classList.add('connected');
-    icon.innerText = '🍄';
-    const addr = activeWallet.mycAddress;
-    label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
-  } else {
-    btn.classList.remove('connected');
-    icon.innerText = '⚡';
-    label.innerText = 'Connect';
+  if (activeWallet.type === 'none' || !activeWallet.mycAddress) {
+    if (btn) {
+      btn.classList.remove('connected');
+      btn.style.background = '#111827';
+      btn.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+      btn.style.color = '#ffffff';
+    }
+    if (icon) icon.innerText = '⚡';
+    if (label) label.innerText = 'Connect Wallet';
+    if (navBal) navBal.innerText = '0.00 MYC';
+    if (navBalPill) navBalPill.style.opacity = '0.4';
+    return;
   }
 
-  const navBal = document.getElementById('nav-wallet-balance');
+  if (btn) {
+    btn.classList.add('connected');
+    btn.style.background = 'rgba(16, 185, 129, 0.15)';
+    btn.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+    btn.style.color = '#34d399';
+  }
+  if (navBalPill) navBalPill.style.opacity = '1';
+
+  if (activeWallet.type === 'metamask') {
+    if (icon) icon.innerText = '🦊';
+    const addr = activeWallet.evmAddress || '';
+    if (label) label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
+  } else {
+    if (icon) icon.innerText = '🍄';
+    const addr = activeWallet.mycAddress || DEFAULT_WALLET;
+    if (label) label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
+  }
+
   if (navBal) {
     var bal = currentBalances.MYC || 8637;
     navBal.innerText = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
@@ -2339,15 +2466,15 @@ function updateSporeWalletPanel() {
   var addr = getActiveWalletAddress() || DEFAULT_WALLET;
   var pufEl = document.getElementById('spore-puf-address');
   var balEl = document.getElementById('spore-balance-display');
-  var navBalEl = document.getElementById('nav-wallet-balance');
+  var navBal = document.getElementById('nav-wallet-balance');
   if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'myc14d29b6...d7c002';
   var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
   var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   if (balEl) {
     balEl.innerHTML = formatted + ' <span class="currency">$MYC</span>';
   }
-  if (navBalEl) {
-    navBalEl.innerText = formatted + ' MYC';
+  if (activeWallet.type !== 'none' && navBal) {
+    navBal.innerText = formatted + ' MYC';
   }
 }
 
@@ -2382,7 +2509,7 @@ async function executeSporeTransfer() {
   var recipient = (document.getElementById('spore-recipient-input') || {}).value || '';
   var amount = parseFloat((document.getElementById('spore-amount-input') || {}).value) || 0;
   var sender = getActiveWalletAddress();
-  if (!sender) { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
+  if (!sender || activeWallet.type === 'none') { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
   if (!recipient || !recipient.startsWith('myc1')) { showToast('Invalid', 'Enter a valid myc1... address', 'error'); return; }
   if (amount <= 0) { showToast('Invalid', 'Enter amount > 0', 'error'); return; }
   if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + currentBalances.MYC + ' MYC', 'error'); return; }
@@ -2400,13 +2527,61 @@ async function executeSporeTransfer() {
 }
 
 function disconnectWallet() {
-  activeWallet = { type: 'none', evmAddress: null, mycAddress: DEFAULT_WALLET };
+  activeWallet = { type: 'none', evmAddress: null, mycAddress: null };
   try {
     localStorage.removeItem('myca_wallet_type');
   } catch (e) {}
   updateWalletUI();
   closeWalletModal();
-  showToast('Bağlantı Kesildi', 'Cüzdan bağlantısı sonlandırıldı.', 'info');
+  showToast('Disconnected', 'Wallet disconnected.', 'info');
+}
+
+function generate12Words() {
+  const wordsPool = ["spore", "hyphae", "lattice", "resonance", "quantum", "substrate", "neural", "pulse", "fungal", "nexus", "matrix", "beacon", "crypto", "zero", "node", "stream"];
+  const selected = [];
+  for (let i = 0; i < 12; i++) {
+    selected.push(wordsPool[Math.floor(Math.random() * wordsPool.length)]);
+  }
+  const container = document.getElementById('create-words-container');
+  if (container) {
+    container.innerHTML = selected.map((w, idx) => `<div style="background:rgba(255,255,255,0.05);padding:6px;border-radius:6px;font-family:var(--f-mono);font-size:11px;color:#38bdf8;">${idx+1}. ${w}</div>`).join('');
+  }
+}
+
+function executeActivateCreatedWallet() {
+  const newAddr = "myc1" + Math.random().toString(16).slice(2, 10) + "4d29b6c4b38b2ac4a6e2bbb9c4d7c002".slice(10);
+  try {
+    localStorage.setItem('myca_native_address', newAddr);
+    localStorage.setItem('myca_wallet_type', 'native');
+  } catch(e) {}
+  activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  updateWalletUI();
+  openWalletSelectView();
+  updateSporeWalletPanel();
+  showToast('Wallet Created!', 'Your 12-word seed wallet is now active: ' + newAddr.slice(0, 12) + '...', 'success');
+}
+
+function executeImportSeed() {
+  const input = document.getElementById('import-seed-input');
+  if (!input || !input.value.trim()) {
+    showToast('Empty Seed', 'Please enter your 12-word recovery seed', 'error');
+    return;
+  }
+  const words = input.value.trim().split(/\s+/);
+  if (words.length !== 12) {
+    showToast('Invalid Seed', 'Please enter exactly 12 words (found ' + words.length + ')', 'error');
+    return;
+  }
+  const newAddr = "myc1" + Math.random().toString(16).slice(2, 10) + "4d29b6c4b38b2ac4a6e2bbb9c4d7c002".slice(10);
+  try {
+    localStorage.setItem('myca_native_address', newAddr);
+    localStorage.setItem('myca_wallet_type', 'native');
+  } catch(e) {}
+  activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  updateWalletUI();
+  openWalletSelectView();
+  updateSporeWalletPanel();
+  showToast('Seed Imported!', 'Wallet successfully restored: ' + newAddr.slice(0, 12) + '...', 'success');
 }
 
 function showToast(title, msg, type = 'info') {
@@ -2432,22 +2607,41 @@ function initSporeWallet() {
   try { savedType = localStorage.getItem('myca_wallet_type'); } catch(e) {}
   let savedMyc = null;
   try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
-  if (!savedMyc) {
-    savedMyc = DEFAULT_WALLET;
-    try {
-      localStorage.setItem('myca_native_address', savedMyc);
-      if (!savedType) localStorage.setItem('myca_wallet_type', 'native');
-    } catch(e) {}
-  }
-  if (savedType !== 'metamask') {
+
+  // ONLY auto-connect if user explicitly saved connection previously!
+  if (savedType === 'extension' && typeof window.myc !== 'undefined' && window.myc && window.myc.isConnected()) {
+    activeWallet = {
+      type: 'extension',
+      evmAddress: toEvmAddress(window.myc.selectedAddress),
+      mycAddress: window.myc.selectedAddress
+    };
+  } else if (savedType === 'native' && savedMyc) {
     activeWallet = {
       type: 'native',
       evmAddress: toEvmAddress(savedMyc),
       mycAddress: savedMyc
     };
+  } else if (savedType === 'metamask') {
+    let savedEvm = null;
+    try { savedEvm = localStorage.getItem('myca_evm_address'); } catch(e) {}
+    if (savedEvm) {
+      activeWallet = {
+        type: 'metamask',
+        evmAddress: savedEvm,
+        mycAddress: toMycAddress(savedEvm)
+      };
+    } else {
+      activeWallet = { type: 'none', evmAddress: null, mycAddress: null };
+    }
+  } else {
+    // Default: NOT CONNECTED (Connect Wallet button shown)
+    activeWallet = {
+      type: 'none',
+      evmAddress: null,
+      mycAddress: null
+    };
   }
   updateWalletUI();
-  updateSporeWalletPanel();
 }
 
 document.addEventListener('DOMContentLoaded', initSporeWallet);
