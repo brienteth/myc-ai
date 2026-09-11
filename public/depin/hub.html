@@ -43,16 +43,334 @@
     }
 
     body {
-      background-color: var(--bg-dark);
-      background-image:
-        radial-gradient(ellipse 75% 45% at 50% -10%, rgba(16, 185, 129, 0.07), transparent 70%),
-        radial-gradient(circle at 85% 90%, rgba(16, 185, 129, 0.03), transparent 60%);
+      background-color: #070a0e;
       color: var(--text-main);
       font-family: var(--f-sans);
-      padding-top: 84px;
-      padding-bottom: 80px;
+      margin: 0;
+      padding: 0;
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    /* Top Fixed Header Bar */
+    .hub-header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(7, 10, 14, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 1000;
+    }
+
+    .hub-brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .hub-brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+
+    .hub-brand-text {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hub-brand-text .accent {
+      color: #10b981;
+    }
+
+    .hub-brand-tag {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: var(--f-mono);
+    }
+
+    .hub-header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hub-net-selector {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #f1f5f9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .hub-net-selector:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* High Visibility Connect Wallet Button */
+    .myca-wallet-btn-pill {
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 8px 22px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .myca-wallet-btn-pill:hover {
+      background: #1f2937;
+      border-color: #10b981;
+      color: #34d399;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .myca-wallet-btn-pill.connected {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    /* Left Vertical Sidebar */
+    .hub-left-sidebar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      bottom: 0;
+      width: 230px;
+      z-index: 990;
+      background: rgba(7, 10, 14, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 14px;
+    }
+
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .sidebar-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .sidebar-btn.active {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+      color: #ffffff;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-icon {
+      font-size: 16px;
+      width: 20px;
+      display: inline-flex;
+      justify-content: center;
+    }
+
+    .sidebar-badge-new {
+      background: rgba(99, 102, 241, 0.25);
+      color: #818cf8;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-left: auto;
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+
+    .sidebar-icon-ext {
+      font-size: 12px;
+      color: #64748b;
+      margin-left: auto;
+    }
+
+    .sidebar-socials-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .sidebar-socials-row a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .sidebar-socials-row a:hover {
+      color: #10b981;
+    }
+
+    /* Main Content Body Area */
+    .hub-main-area {
+      margin-top: 64px;
+      margin-left: 230px;
+      padding: 36px 40px;
+      min-height: calc(100vh - 64px);
+    }
+
+    /* Hero Card in Discover */
+    .discover-hero-card {
+      position: relative;
+      border-radius: 24px;
+      padding: 56px 44px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: radial-gradient(ellipse at 75% 25%, rgba(168, 85, 247, 0.22) 0%, rgba(16, 185, 129, 0.12) 45%, rgba(7, 10, 14, 0.95) 100%), #0a0f18;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .discover-hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+
+    .discover-hero-subtitle {
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0.1em;
+      font-family: var(--f-mono);
+      text-transform: uppercase;
+    }
+
+    /* Spotlight Section */
+    .spotlight-header {
+      font-size: 28px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .spotlight-card {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #111827;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spotlight-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(16, 185, 129, 0.4);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(16, 185, 129, 0.2);
+    }
+
+    .spotlight-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .spotlight-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .spotlight-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7, 10, 14, 0.95) 0%, transparent 60%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px;
+    }
+
+    .spotlight-badge {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(147, 51, 234, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     }
 
     /* Modern Dark Capsule Navbar */
@@ -1239,15 +1557,16 @@
       display: flex !important;
     }
     .wallet-modal-card {
-      background: #0d131f;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 32px rgba(0, 240, 255, 0.12);
-      border-radius: 20px;
+      background: #0a0f18;
+      border: 1px solid rgba(0, 240, 255, 0.18);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 240, 255, 0.08);
+      border-radius: 24px;
       width: 100%;
-      max-width: 440px;
-      padding: 26px;
+      max-width: 420px;
+      padding: 0;
       position: relative;
       animation: walletModalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
     }
     @keyframes walletModalPop {
       0% { transform: scale(0.92); opacity: 0; }
@@ -1308,6 +1627,49 @@
       text-transform: uppercase;
       letter-spacing: 0.4px;
     }
+    /* ══════ SPORE WALLET / MYCA SOVEREIGN PANEL ══════ */
+    .spore-wallet-header { display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid rgba(0,240,255,0.1); }
+    .spore-wallet-brand { display:flex;align-items:center;gap:12px; }
+    .spore-wallet-logo { width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#00f0ff,#10b981);display:grid;place-items:center;font-size:20px;color:#000;font-weight:900;box-shadow:0 0 18px rgba(0,240,255,0.4); }
+    .spore-wallet-title { font-size:19px;font-weight:800;color:#fff;letter-spacing:0.5px; }
+    .spore-lattice-badge { background:rgba(0,240,255,0.12);border:1px solid rgba(0,240,255,0.35);color:#00f0ff;font-size:11px;font-weight:700;padding:5px 12px;border-radius:999px;font-family:var(--f-mono);display:flex;align-items:center;gap:6px; }
+    .spore-lattice-dot { width:7px;height:7px;border-radius:50%;background:#00f0ff;box-shadow:0 0 8px #00f0ff;animation:sporePulse 1.8s infinite; }
+    @keyframes sporePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+    .spore-puf-bar { display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.06); }
+    .spore-puf-tag { background:rgba(0,240,255,0.12);border:1px solid rgba(0,240,255,0.3);color:#00f0ff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;font-family:var(--f-mono); }
+    .spore-puf-addr { flex:1;font-family:var(--f-mono);font-size:13px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .spore-copy-btn { background:none;border:none;color:#00f0ff;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--f-mono);transition:opacity 0.2s; }
+    .spore-copy-btn:hover { opacity:0.7; }
+    .spore-balance-card { margin:18px 22px;padding:28px 20px;background:rgba(0,240,255,0.03);border:1px solid rgba(0,240,255,0.15);border-radius:18px;text-align:center; }
+    .spore-balance-label { font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px; }
+    .spore-balance-value { font-size:42px;font-weight:800;color:#fff;font-family:var(--f-mono);letter-spacing:-1.5px; }
+    .spore-balance-value .currency { font-size:20px;color:#00f0ff;font-weight:600;margin-left:8px; }
+    .spore-gas-badge { display:inline-flex;align-items:center;gap:6px;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.25);color:#00f0ff;font-size:11px;font-weight:600;padding:6px 16px;border-radius:999px;margin-top:12px;font-family:var(--f-mono); }
+    .spore-actions-row { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 22px;margin-bottom:18px; }
+    .spore-action-btn { display:flex;flex-direction:column;align-items:center;gap:7px;padding:16px 8px;border-radius:14px;cursor:pointer;transition:all 0.2s;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03); }
+    .spore-action-btn.active { background:rgba(0,240,255,0.1);border-color:rgba(0,240,255,0.3); }
+    .spore-action-btn:hover { background:rgba(0,240,255,0.08);border-color:rgba(0,240,255,0.3);transform:translateY(-2px); }
+    .spore-action-icon { font-size:24px; }
+    .spore-action-label { font-size:11px;font-weight:700;color:#fff; }
+    .spore-transfer-section { margin:0 22px 18px;padding:20px;background:rgba(0,0,0,0.3);border:1px solid rgba(0,240,255,0.12);border-radius:16px; }
+    .spore-transfer-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:16px; }
+    .spore-transfer-title { font-size:15px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.5px; }
+    .spore-fee-badge { font-size:13px;font-weight:700;color:#00f0ff;font-family:var(--f-mono); }
+    .spore-input-group { margin-bottom:14px; }
+    .spore-input-label { font-size:11px;font-weight:600;color:#94a3b8;margin-bottom:6px;display:block; }
+    .spore-input { width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;color:#fff;font-family:var(--f-mono);font-size:14px;outline:none;box-sizing:border-box;transition:border-color 0.2s; }
+    .spore-input:focus { border-color:rgba(0,240,255,0.4); }
+    .spore-input::placeholder { color:#475569; }
+    .spore-submit-btn { width:100%;padding:16px;background:linear-gradient(135deg,#00f0ff,#10b981);border:none;border-radius:14px;color:#000;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(0,240,255,0.3);transition:all 0.2s; }
+    .spore-submit-btn:hover { transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,240,255,0.45); }
+    .spore-footer { display:flex;justify-content:space-between;align-items:center;padding:14px 22px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;color:#64748b; }
+    .spore-footer a { color:#00f0ff;text-decoration:none;font-weight:600;transition:opacity 0.2s; }
+    .spore-footer a:hover { opacity:0.8; }
+    .spore-wallet-actions-bar { padding:12px 22px 20px;display:flex;flex-direction:column;gap:6px; }
+    .spore-wallet-actions-bar .spore-sub-btn { display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s; }
+    .spore-wallet-actions-bar .spore-sub-btn:hover { transform:translateY(-1px); }
+    /* Wallet modal close btn repositioned for no-padding card */
+    .wallet-modal-card > .wallet-modal-close { top:16px;right:16px;z-index:10; }
   </style>
 </head>
 <body>
@@ -1315,182 +1677,126 @@
   <!-- Toast Container -->
   <div id="hub-toast-container"></div>
 
-        <!-- UNIFIED MASTER HEADER WITH DOCS DROPDOWN -->
-  <div class="myca-header-wrapper">
-    <nav class="myca-navbar">
-      <!-- Left: Brand Logo -->
-      <a href="/" class="myca-brand">
-        <img src="/mycai_logo.png" alt="MYCA" class="myca-brand-logo">
-        <div class="myca-brand-text">
-          <span class="myca-brand-name">myc<span class="myca-brand-accent">a</span></span>
-          <span class="myca-chain-tag">CHAIN 108</span>
-        </div>
+        <!-- TOP FIXED MASTER HEADER BAR -->
+  <header class="hub-header-bar">
+    <a href="/" class="hub-brand-group">
+      <div style="width: 32px; height: 32px; border-radius: 10px; background: radial-gradient(circle, #00f0ff, #10b981); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);">🍄</div>
+      <div class="hub-brand-text">
+        <span>MYCA <span class="accent">Hub</span></span>
+        <span class="hub-brand-tag">LATTICE-108</span>
+      </div>
+    </a>
+
+    <div class="hub-header-right">
+      <div class="hub-net-selector" onclick="openWalletModal()">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #a855f7; box-shadow: 0 0 8px #a855f7;"></span>
+        <span>MYCA Sovereign (Chain 108)</span>
+        <span style="font-size: 10px; opacity: 0.7;">▾</span>
+      </div>
+
+      <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 6px 14px; font-size: 12px; font-family: var(--f-mono); color: #00f0ff; display: flex; align-items: center; gap: 6px;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
+        <span id="nav-wallet-balance">8,637.00 MYC</span>
+      </div>
+
+      <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn-pill" style="z-index: 100;">
+        <span id="wallet-btn-icon" style="font-size: 14px;">⚡</span>
+        <span id="wallet-btn-label">Connect</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- LEFT FIXED VERTICAL SIDEBAR (0G HUB REFERENCE) -->
+  <aside class="hub-left-sidebar">
+    <div class="sidebar-menu">
+      <button class="sidebar-btn active" id="side-nav-discover" onclick="switchHubTab('discover')">
+        <span class="sidebar-icon">🌐</span>
+        <span>Discover</span>
+      </button>
+      <button class="sidebar-btn" id="side-nav-swap" onclick="switchHubTab('swap')">
+        <span class="sidebar-icon">🔄</span>
+        <span>Swap</span>
+      </button>
+      <button class="sidebar-btn" id="side-nav-bridge" onclick="switchHubTab('bridge')">
+        <span class="sidebar-icon">🌉</span>
+        <span>Bridge</span>
+      </button>
+      <a href="/nexus" class="sidebar-btn" id="side-nav-cross">
+        <span class="sidebar-icon">✈️</span>
+        <span>Cross-Chain Swap</span>
+        <span class="sidebar-badge-new">New</span>
       </a>
-
-      <!-- Center: 6 Core Infrastructure Pillars with Docs Dropdown -->
-      <div class="myca-nav-center">
-        <a href="/hub" class="myca-nav-link active">🌐 Hub</a>
-        <a href="/explorer" class="myca-nav-link">🧭 Explorer</a>
-        <a href="/depin" class="myca-nav-link">🤖 DePIN</a>
-        <a href="/agent" class="myca-nav-link">🧠 AI Colony</a>
-        <a href="/build" class="myca-nav-link">🛠️ Build</a>
-        
-        <!-- Docs Dropdown on Hover -->
-        <div class="myca-nav-dropdown" style="position: relative; display: inline-flex; align-items: center;">
-          <a href="/docs" class="myca-nav-link " style="display: flex; align-items: center; gap: 4px;">
-            <span>📚 Docs</span>
-            <svg class="myca-chevron" viewBox="0 0 16 16" style="width: 10px; height: 10px; stroke: currentColor; fill: none;"><path d="M4 6l4 4 4-4" stroke-width="1.8" stroke-linecap="round"/></svg>
-          </a>
-          <div class="myca-dropdown-panel" style="min-width: 290px; padding: 6px; top: 100%;">
-            <a href="/docs#myca-os" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🖥️</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #fff;">Myca OS Docs</div>
-                <div style="font-size: 11px; color: #94a3b8;">Local AI runtime, desktop app & device mesh</div>
-              </div>
-            </a>
-            <a href="/docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🤖</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00e87a;">DePIN Network Docs</div>
-                <div style="font-size: 11px; color: #94a3b8;">Proof-of-Resonance (PoR) & Lattice DAG</div>
-              </div>
-            </a>
-            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🧬</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">C99 Core Docs</div>
-                <div style="font-size: 11px; color: #94a3b8;">240B kernel, 6-Lock Safe-Sign & Modbus SDK</div>
-              </div>
-            </a>
-          </div>
-        </div>
-            </a>
-            <a href="/dev-docs" class="myca-dropdown-card" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px;">
-              <div style="font-size: 16px;">🛠️</div>
-              <div>
-                <div style="font-size: 13px; font-weight: 700; color: #00f0ff;">Developer Docs & RPC</div>
-                <div style="font-size: 11px; color: #94a3b8;">JSON-RPC, SDKs & APIs</div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Actions & Live State -->
-      <div class="myca-nav-right">
-        <div class="lang-selector">
-          <button class="lang-btn active" id="langBtnEn" onclick="if(window.setLanguage)setLanguage('en')">EN</button>
-          <span class="lang-divider">/</span>
-          <button class="lang-btn" id="langBtnTr" onclick="if(window.setLanguage)setLanguage('tr')">TR</button>
-        </div>
-        <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: 999px; padding: 5px 12px; font-size: 11px; font-family: 'JetBrains Mono', monospace; color: #00f0ff; display: flex; align-items: center; gap: 6px;">
-          <span style="width: 6px; height: 6px; border-radius: 50%; background: #00e87a; box-shadow: 0 0 8px #00e87a;"></span>
-          <span id="nav-wallet-balance">5,000 MYC</span>
-        </div>
-        <button id="btn-connect-wallet" onclick="onConnectWalletButtonClick()" class="myca-wallet-btn" style="display: inline-flex !important; align-items: center; gap: 8px; z-index: 100;">
-          <span id="wallet-btn-icon" style="font-size: 14px;">🦊</span>
-          <span id="wallet-btn-label">Connect Wallet</span>
-        </button>
-        <a href="/hub#faucet" class="myca-btn-primary">
-          <span>🎁 Faucet</span>
-        </a>
-      </div>
-    </nav>
-  </div>
-
-  <!-- Hero Section -->
-  <div class="hub-hero">
-    <div class="hub-badge">
-      <span>🍄 THE LIVING MYCELIUM ECOSYSTEM • CHAIN ID 108</span>
+      <button class="sidebar-btn" id="side-nav-staking" onclick="switchHubTab('staking')">
+        <span class="sidebar-icon">📈</span>
+        <span>Staking</span>
+      </button>
+      <button class="sidebar-btn" id="side-nav-faucet" onclick="switchHubTab('faucet')">
+        <span class="sidebar-icon">🎁</span>
+        <span>Faucet</span>
+      </button>
+      <button class="sidebar-btn" id="side-nav-agents" onclick="switchHubTab('agents')">
+        <span class="sidebar-icon">🤖</span>
+        <span>Agents</span>
+      </button>
+      <a href="/depin/explorer" class="sidebar-btn" target="_blank">
+        <span class="sidebar-icon">🔍</span>
+        <span>Explorer</span>
+        <span class="sidebar-icon-ext">↗</span>
+      </a>
     </div>
-    <h1 class="hub-title">Mycelium Discover Hub</h1>
-    <p class="hub-subtitle">
-      The all-in-one command center for <strong>$MYC</strong>: zero-gas AMM nutrient swap, Hyphae BFT cross-chain bridge, daily spore faucet, and decentralized staking—all in one place.
-    </p>
-  </div>
 
-  <!-- $MYC TOKEN COMMAND CENTER & DIRECT ACTIONS -->
-  <div class="myc-command-center">
-    <div class="myc-token-card">
-      <div class="myc-token-header">
-        <div class="myc-token-title-group">
-          <div class="myc-token-icon">🍄</div>
-          <div>
-            <div class="myc-token-name">
-              $MYC Currency &amp; Resonance Substrate
-              <span class="myc-token-tag">NATIVE TOKEN</span>
-            </div>
-            <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
-              Zero-Gas Micro-Payments • Proof-of-Resonance Staking • Hyphae Cross-Chain Settlement
-            </div>
+    <div class="sidebar-socials-row">
+      <a href="https://x.com/myc_network" target="_blank" title="X (Twitter)">𝕏</a>
+      <a href="https://t.me/myc_network" target="_blank" title="Telegram">✈</a>
+      <a href="https://discord.gg/myc" target="_blank" title="Discord">💬</a>
+      <a href="https://mycai.pro" target="_blank" title="Website">🌐</a>
+      <a href="https://github.com/myc-network" target="_blank" title="GitHub">&lt;/&gt;</a>
+    </div>
+  </aside>
+
+  <!-- MAIN HUB CONTENT AREA -->
+  <main class="hub-main-area">
+
+    <div id="view-discover" class="hub-tab-view active">
+    <!-- ETHEREAL HERO BANNER (0G HUB REFERENCE) -->
+    <div class="discover-hero-card" style="background-image: linear-gradient(to right, rgba(7, 10, 14, 0.82) 0%, rgba(7, 10, 14, 0.45) 55%, rgba(7, 10, 14, 0.75) 100%), url('/hub_hero_bg.jpg'); background-size: cover; background-position: center;">
+      <div style="max-width: 680px; position: relative; z-index: 2;">
+        <h1 class="discover-hero-title">Discover What's Building on MYCA</h1>
+        <p class="discover-hero-subtitle">EXPLORE THE ECOSYSTEM OF DAPPS, TOOLS AND INFRASTRUCTURE POWERING THE LIVING LATTICE</p>
+      </div>
+    </div>
+
+    <!-- SPOTLIGHT SECTION (0G HUB REFERENCE) -->
+    <div class="spotlight-section">
+      <h2 class="spotlight-header">Spotlight</h2>
+      <div class="spotlight-grid">
+        <div class="spotlight-card" onclick="switchHubTab('swap')">
+          <img src="/spotlight_1.png" alt="MYCA Nutrient AMM & DEX">
+          <div class="spotlight-card-overlay">
+            <div class="spotlight-badge" style="background: rgba(168, 85, 247, 0.9);">✨</div>
           </div>
         </div>
-
-        <div class="myc-quick-actions">
-          <button onclick="openWalletModal()" class="btn-quick" style="background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; box-shadow: 0 0 16px rgba(0, 240, 255, 0.4); display: inline-flex; align-items: center; gap: 6px;">
-            <span>🦊</span> Connect Wallet
-          </button>
-          <button onclick="switchHubTab('swap')" class="btn-quick btn-quick-primary">🔄 Swap $MYC</button>
-          <button onclick="switchHubTab('bridge')" class="btn-quick btn-quick-outline">🌉 Bridge Assets</button>
-          <button onclick="switchHubTab('faucet')" class="btn-quick btn-quick-outline">🎁 Claim 5 $MYC</button>
-          <button onclick="switchHubTab('staking')" class="btn-quick btn-quick-outline">📈 Stake (14.5% APY)</button>
+        <div class="spotlight-card" onclick="window.open('/depin/explorer', '_blank')">
+          <img src="/spotlight_2.png" alt="Living Lattice Explorer">
+          <div class="spotlight-card-overlay">
+            <div class="spotlight-badge" style="background: rgba(15, 23, 42, 0.9);">🧭</div>
+          </div>
         </div>
-      </div>
-
-      <div class="myc-metrics-grid">
-        <div class="metric-box">
-          <div class="metric-label">Gas Fee Invariant</div>
-          <div class="metric-value highlight">0.00 MYC</div>
+        <div class="spotlight-card" onclick="window.open('https://mindcast.pro', '_blank')">
+          <img src="/spotlight_3.png" alt="MindCast Sovereign Voice AI">
+          <div class="spotlight-card-overlay">
+            <div class="spotlight-badge" style="background: rgba(37, 99, 235, 0.9);">👥</div>
+          </div>
         </div>
-        <div class="metric-box">
-          <div class="metric-label">Genesis Liquidity Reserve</div>
-          <div class="metric-value">10,000,000 MYC</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Staking Yield (APY)</div>
-          <div class="metric-value" style="color: var(--cyan-accent);">14.50%</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">Bridge Quorum Security</div>
-          <div class="metric-value">3/4 BFT ECDSA</div>
-        </div>
-        <div class="metric-box">
-          <div class="metric-label">DePIN Static Envelope</div>
-          <div class="metric-value" style="color: var(--amber-accent);">240 Bytes RAM</div>
+        <div class="spotlight-card" onclick="switchHubTab('staking')">
+          <img src="/spotlight_4.png" alt="NeuroYield Staking">
+          <div class="spotlight-card-overlay">
+            <div class="spotlight-badge" style="background: rgba(236, 72, 153, 0.9);">🌸</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MAIN HUB TABS SWITCHER -->
-  <div class="hub-nav-tabs-wrapper">
-    <div class="hub-nav-tabs">
-      <button class="hub-tab-btn active" id="tab-btn-discover" onclick="switchHubTab('discover')">
-        🍄 Discover Ecosystem
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-swap" onclick="switchHubTab('swap')">
-        🔄 Mycelial Swap <span class="hub-tab-badge">0-GAS AMM</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-bridge" onclick="switchHubTab('bridge')">
-        🌉 Hyphae Bridge <span class="hub-tab-badge">3/4 BFT</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-staking" onclick="switchHubTab('staking')">
-        📈 NeuroYield Staking <span class="hub-tab-badge">14.5% APY</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-faucet" onclick="switchHubTab('faucet')">
-        🎁 Spore Faucet <span class="hub-tab-badge">DAILY 5 MYC</span>
-      </button>
-      <button class="hub-tab-btn" id="tab-btn-agents" onclick="switchHubTab('agents')">
-        🤖 Autonomous Agents <span class="hub-tab-badge" style="background: rgba(168, 85, 247, 0.18); color: #c084fc; border-color: rgba(168, 85, 247, 0.3);">OPENCLAW &amp; HERMES</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════════════
-       VIEW 1: DISCOVER ECOSYSTEM
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div id="view-discover" class="hub-tab-view active">
     <!-- Toolbar: Search & Categorization -->
     <div class="hub-toolbar">
       <div class="hub-search-wrapper">
@@ -2512,6 +2818,8 @@
     </div>
   </div>
 
+  </main>
+
   <!-- ═══════════════════════════════════════════════════════════════════
        CLIENT-SIDE SCRIPT & LIVE API INTEGRATION
        ═══════════════════════════════════════════════════════════════════ -->
@@ -2554,34 +2862,31 @@
     }
 
     async function onConnectWalletButtonClick() {
-      if (activeWallet.type !== 'none') {
-        openWalletModal();
-        return;
-      }
-
-      // If not connected: directly invoke MetaMask!
-      const provider = getMetaMaskProvider();
-      if (provider) {
+      let savedMyc = null;
+      try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
+      if (!savedMyc) {
+        savedMyc = DEFAULT_WALLET;
         try {
-          await connectMetaMaskWallet();
-        } catch (err) {
-          console.warn("Direct MetaMask prompt error or rejected:", err);
-          openWalletModal();
-        }
-      } else {
-        openWalletModal();
+          localStorage.setItem('myca_native_address', savedMyc);
+          localStorage.setItem('myca_wallet_type', 'native');
+        } catch(e) {}
       }
+      activeWallet = {
+        type: 'native',
+        evmAddress: toEvmAddress(savedMyc),
+        mycAddress: savedMyc
+      };
+      updateWalletUI();
+      openWalletModal();
     }
 
     function openWalletModal() {
       const overlay = document.getElementById('wallet-modal-overlay');
       if (!overlay) return;
       overlay.classList.add('active');
-      if (activeWallet.type !== 'none') {
-        openWalletDetailsView();
-      } else {
-        openWalletSelectView();
-      }
+      // Always open Spore Wallet / MYCA SOVEREIGN panel first
+      openWalletSelectView();
+      updateSporeWalletPanel();
     }
 
     function closeWalletModal() {
@@ -2606,6 +2911,30 @@
       hideAllWalletViews();
       const sel = document.getElementById('wallet-view-select');
       if (sel) sel.style.display = 'block';
+    }
+
+    function openWalletDetailsView() {
+      hideAllWalletViews();
+      const det = document.getElementById('wallet-view-connected');
+      if (det) det.style.display = 'block';
+
+      const icon = document.getElementById('connected-wallet-icon');
+      const title = document.getElementById('connected-wallet-title');
+      const bal = document.getElementById('connected-wallet-balance');
+      const evmEl = document.getElementById('connected-address-evm');
+      const mycEl = document.getElementById('connected-address-myc');
+
+      if (activeWallet.type === 'metamask') {
+        if (icon) icon.innerText = '🦊';
+        if (title) title.innerText = 'MetaMask (Chain 108)';
+      } else {
+        if (icon) icon.innerText = '🍄';
+        if (title) title.innerText = 'Spore Wallet';
+      }
+
+      if (bal) bal.innerText = Math.floor(currentBalances.MYC).toLocaleString() + ' MYC';
+      if (evmEl) evmEl.innerText = getActiveEvmAddress();
+      if (mycEl) mycEl.innerText = getActiveWalletAddress();
     }
 
     function showImportError(msg) {
@@ -2793,7 +3122,7 @@
       try { localStorage.setItem('myca_wallet_type', 'native'); } catch (e) {}
       updateWalletUI();
       closeWalletModal();
-      showToast('MYCA Native Cüzdan Aktif! 🍄', `${savedMyc.slice(0, 8)}...${savedMyc.slice(-4)} (Sıfır Gas)`, 'success');
+      showToast('Spore Wallet Aktif! 🍄', `${savedMyc.slice(0, 8)}...${savedMyc.slice(-4)} (Sıfır Gas)`, 'success');
       fetchBalances();
       fetchStakeInfo();
     }
@@ -2827,7 +3156,7 @@
         btn.classList.add('connected');
         icon.innerText = '🍄';
         const addr = activeWallet.mycAddress;
-        label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Native MYCA';
+        label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
       } else {
         btn.classList.remove('connected');
         icon.innerText = '⚡';
@@ -2935,7 +3264,7 @@
         }
       } catch (e) {}
     }
-    let currentBalances = { MYC: 5000, USDT: 1250, USDC: 1250 };
+    let currentBalances = { MYC: 8637, USDT: 1250, USDC: 1250 };
     let activeHubTab = 'discover';
     let activeCategory = 'all';
 
@@ -2975,10 +3304,10 @@
       const targetBtn = document.getElementById('tab-btn-' + tabName);
       if (targetBtn) targetBtn.classList.add('active');
 
-      // Update Nav Buttons
-      document.querySelectorAll('.myca-nav-link').forEach(b => b.classList.remove('active'));
-      const navBtn = document.getElementById('nav-btn-' + tabName);
-      if (navBtn) navBtn.classList.add('active');
+      // Update Sidebar Buttons
+      document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+      const sideBtn = document.getElementById('side-nav-' + tabName);
+      if (sideBtn) sideBtn.classList.add('active');
 
       // Update Hash without reload
       if (window.location.hash.replace('#', '') !== tabName) {
@@ -2998,7 +3327,7 @@
         updateMintOwnerAddress();
       }
 
-      window.scrollTo({ top: 380, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Handle Hash on Load & Popstate
@@ -3899,7 +4228,7 @@
           const savedType = (function() {
             try { return localStorage.getItem('myca_wallet_type'); } catch(e) { return null; }
           })();
-          if (savedType === 'metamask' || (!savedType && activeWallet.type === 'none')) {
+          if (savedType === 'metamask') {
             activeWallet = {
               type: 'metamask',
               evmAddress: userAccount,
@@ -4680,15 +5009,15 @@
       const nativeSub = document.getElementById('wallet-native-sub');
 
       if (lang === 'tr') {
-        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Cüzdan Bağla';
-        if (mTitle) mTitle.innerText = 'MYCA Ağına Bağlan';
-        if (mDesc) mDesc.innerText = 'Sovereign Lattice (Chain ID 108) ağına bağlantı yönteminizi seçin';
+        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Spore Wallet Bağla';
+        if (mTitle) mTitle.innerText = 'Spore Wallet\'a Bağlan';
+        if (mDesc) mDesc.innerText = 'Spore Network (Chain ID 108) cüzdan modunu seçin';
         if (metaSub) metaSub.innerText = 'Tarayıcı eklentisiyle bağlanın & Chain 108\'e otomatik geçin.';
         if (nativeSub) nativeSub.innerText = 'myc1... formatında anlık sıfır-gas tarayıcı cüzdanı.';
       } else {
-        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Connect Wallet';
-        if (mTitle) mTitle.innerText = 'Connect to MYCA Network';
-        if (mDesc) mDesc.innerText = 'Select your gateway to Sovereign Lattice (Chain ID 108)';
+        if (wBtnLabel && activeWallet.type === 'none') wBtnLabel.innerText = 'Connect Spore Wallet';
+        if (mTitle) mTitle.innerText = 'Connect to Spore Wallet';
+        if (mDesc) mDesc.innerText = 'Select your gateway to Spore Network (Chain ID 108)';
         if (metaSub) metaSub.innerText = 'Connect browser extension & auto-switch to Chain 108.';
         if (nativeSub) nativeSub.innerText = 'Instant browser keypair with native myc1... address.';
       }
@@ -4700,6 +5029,27 @@
         try { return localStorage.getItem('myca_lang') || 'en'; } catch (e) { return 'en'; }
       })();
       setLanguage(savedLang);
+      // Ensure Spore Native Wallet is initialized by default
+      let savedType = null;
+      try { savedType = localStorage.getItem('myca_wallet_type'); } catch(e) {}
+      let savedMyc = null;
+      try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
+      if (!savedMyc) {
+        savedMyc = DEFAULT_WALLET;
+        try {
+          localStorage.setItem('myca_native_address', savedMyc);
+          if (!savedType) localStorage.setItem('myca_wallet_type', 'native');
+        } catch(e) {}
+      }
+      if (savedType !== 'metamask') {
+        activeWallet = {
+          type: 'native',
+          evmAddress: toEvmAddress(savedMyc),
+          mycAddress: savedMyc
+        };
+      }
+      updateWalletUI();
+      updateSporeWalletPanel();
       fetchBalances();
       fetchStakeInfo();
       autoDetectConnectedMetaMask();
@@ -4715,6 +5065,102 @@
         }
       }
     });
+
+    // ══════════════════════════════════════════════════════
+    // SPORE WALLET / MYCA SOVEREIGN HELPER FUNCTIONS
+    // ══════════════════════════════════════════════════════
+    function updateSporeWalletPanel() {
+      var addr = getActiveWalletAddress() || DEFAULT_WALLET;
+      var pufEl = document.getElementById('spore-puf-address');
+      var balEl = document.getElementById('spore-balance-display');
+      var navBalEl = document.getElementById('nav-wallet-balance');
+      if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'myc14d29b6...d7c002';
+      var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
+      var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      if (balEl) {
+        balEl.innerHTML = formatted + ' <span class="currency">$MYC</span>';
+      }
+      if (navBalEl) {
+        navBalEl.innerText = formatted + ' MYC';
+      }
+    }
+
+    function copySporeAddress() {
+      var addr = getActiveWalletAddress();
+      if (addr) {
+        navigator.clipboard.writeText(addr).then(function() {
+          showToast('Copied!', '' + addr, 'success');
+        });
+      } else {
+        showToast('No wallet', 'Connect a wallet first', 'error');
+      }
+    }
+
+    function sporeActionSend() {
+      // Focus the transfer section recipient input
+      var el = document.getElementById('spore-recipient-input');
+      if (el) el.focus();
+    }
+
+    function sporeActionReceive() {
+      var addr = getActiveWalletAddress();
+      if (addr) {
+        navigator.clipboard.writeText(addr).then(function() {
+          showToast('Address Copied!', 'Share to receive $MYC: ' + addr.slice(0, 12) + '...', 'success');
+        });
+      } else {
+        showToast('No wallet', 'Connect a wallet first', 'error');
+      }
+    }
+
+    async function executeSporeTransfer() {
+      var recipient = (document.getElementById('spore-recipient-input') || {}).value || '';
+      var amount = parseFloat((document.getElementById('spore-amount-input') || {}).value) || 0;
+      var sender = getActiveWalletAddress();
+      if (!sender) { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
+      if (!recipient || !recipient.startsWith('myc1')) { showToast('Invalid', 'Enter a valid myc1... address', 'error'); return; }
+      if (amount <= 0) { showToast('Invalid', 'Enter amount > 0', 'error'); return; }
+      if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + currentBalances.MYC + ' MYC', 'error'); return; }
+      // Use tx confirm modal if available
+      if (window.showTxConfirmModal) {
+        var ok = await window.showTxConfirmModal({
+          type: 'TRANSFER',
+          sender: sender,
+          recipient: recipient,
+          amount: amount + ' MYC',
+          gasFee: '0.00000000 MYC',
+          finality: '< 7.8 ms'
+        });
+        if (!ok) return;
+      }
+      try {
+        var res = await fetch(API_BASE + '/api/transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ from: sender, to: recipient, amount: amount, token: 'MYC' })
+        });
+        var data = await res.json();
+        if (data.success) {
+          showToast('Sent!', amount + ' MYC sent', 'success');
+          document.getElementById('spore-recipient-input').value = '';
+          document.getElementById('spore-amount-input').value = '';
+          await fetchBalances();
+          updateSporeWalletPanel();
+        } else {
+          showToast('Failed', data.error || 'Error', 'error');
+        }
+      } catch (e) {
+        showToast('Error', e.message, 'error');
+      }
+    }
+
+    // Wrap openWalletModal to auto-update Spore panel
+    var _origOpenWalletModal = openWalletModal;
+    openWalletModal = function() {
+      _origOpenWalletModal();
+      setTimeout(updateSporeWalletPanel, 50);
+    };
+
   </script>
   <!-- ═══════════════════════════════════════════════════════════════════
        CONNECT WALLET MODAL (METAMASK & NATIVE LATTICE WALLET)
@@ -4723,83 +5169,77 @@
     <div class="wallet-modal-card">
       <button class="wallet-modal-close" onclick="closeWalletModal()">✕</button>
 
-      <!-- VIEW 1: SELECT WALLET -->
+      <!-- VIEW 1: MYCA SOVEREIGN / SPORE WALLET PANEL -->
       <div id="wallet-view-select">
-        <div style="text-align: center; margin-bottom: 22px;">
-          <div style="font-size: 34px; margin-bottom: 6px;">🍄</div>
-          <h3 style="font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px;" id="modal-title-select">Connect to MYCA Network</h3>
-          <p style="font-size: 12.5px; color: var(--text-muted);" id="modal-desc-select">Select your gateway to Sovereign Lattice (Chain ID 108)</p>
-        </div>
-
-        <!-- Option 1: MetaMask -->
-        <div class="wallet-option-card" onclick="connectMetaMaskWallet()">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="wallet-option-icon" style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3);">
-              🦊
-            </div>
-            <div>
-              <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
-                <span>MetaMask</span>
-                <span class="wallet-badge-tag" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24;">EVM Web3</span>
-              </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="wallet-meta-sub">
-                Connect browser extension & auto-switch to Chain 108.
-              </div>
-            </div>
+        <div class="spore-wallet-header">
+          <div class="spore-wallet-brand">
+            <div class="spore-wallet-logo">Ψ</div>
+            <div class="spore-wallet-title">MYCA SOVEREIGN</div>
           </div>
-          <div style="font-size: 16px; color: #94a3b8;">➔</div>
-        </div>
-
-        <!-- Option 2: Create New 12-Word Wallet -->
-        <div class="wallet-option-card" onclick="openWalletCreateView()">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="wallet-option-icon" style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3);">
-              ✨
-            </div>
-            <div>
-              <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
-                <span>Yeni Cüzdan Oluştur</span>
-                <span class="wallet-badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">12 Kelime BIP-39</span>
-              </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                12 kelimelik güvenli tohum anahtarınızla anında oluşturun.
-              </div>
-            </div>
+          <div class="spore-lattice-badge">
+            <span class="spore-lattice-dot"></span> LATTICE-108
           </div>
-          <div style="font-size: 16px; color: #94a3b8;">➔</div>
         </div>
-
-        <!-- Option 3: Import Existing Wallet -->
-        <div class="wallet-option-card" onclick="openWalletImportView()">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div class="wallet-option-icon" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);">
-              📥
-            </div>
-            <div>
-              <div style="font-weight: 700; font-size: 15px; color: #fff; display: flex; align-items: center; gap: 8px;">
-                <span>Cüzdanı İçe Aktar</span>
-                <span class="wallet-badge-tag" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8;">Mobil / Başka PC</span>
-              </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
-                12 kelimenizi veya özel anahtarınızı girerek hesabınızı geri yükleyin.
-              </div>
-            </div>
+        <div class="spore-puf-bar">
+          <span class="spore-puf-tag">PUF V1</span>
+          <span class="spore-puf-addr" id="spore-puf-address">Not Connected</span>
+          <button class="spore-copy-btn" onclick="copySporeAddress()">COPY</button>
+        </div>
+        <div class="spore-balance-card">
+          <div class="spore-balance-label">TOTAL LIQUID BALANCE</div>
+          <div class="spore-balance-value" id="spore-balance-display">0.00 <span class="currency">$MYC</span></div>
+          <div class="spore-gas-badge">⚡ Zero-Gas Invariant: 0.00000000 MYC</div>
+        </div>
+        <div class="spore-actions-row">
+          <div class="spore-action-btn active" onclick="sporeActionSend()">
+            <span class="spore-action-icon">↗</span><span class="spore-action-label">Send</span>
           </div>
-          <div style="font-size: 16px; color: #94a3b8;">➔</div>
+          <div class="spore-action-btn" onclick="sporeActionReceive()">
+            <span class="spore-action-icon">↙</span><span class="spore-action-label">Receive</span>
+          </div>
+          <div class="spore-action-btn" onclick="closeWalletModal();if(typeof switchHubTab==='function')switchHubTab('swap');">
+            <span class="spore-action-icon">🌊</span><span class="spore-action-label">StreamPay</span>
+          </div>
+          <div class="spore-action-btn" onclick="navigateToExplorerAccount()">
+            <span class="spore-action-icon">📋</span><span class="spore-action-label">History</span>
+          </div>
         </div>
-
-        <div style="margin-top: 20px; text-align: center; font-size: 11.5px; color: #64748b; line-height: 1.5;">
-          🔒 MYCA Ağında işlem ücreti 0.00 Gas'tır.<br>Tüm cihazlarınız arasında 12 kelime ile senkronize çalışır.
+        <div class="spore-transfer-section">
+          <div class="spore-transfer-header">
+            <div class="spore-transfer-title">ZERO-GAS TRANSFER</div>
+            <div class="spore-fee-badge">FEE: 0 MYC</div>
+          </div>
+          <div class="spore-input-group">
+            <label class="spore-input-label">Recipient (myc1…)</label>
+            <input type="text" class="spore-input" id="spore-recipient-input" placeholder="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002">
+          </div>
+          <div class="spore-input-group">
+            <label class="spore-input-label">Amount ($MYC)</label>
+            <input type="number" class="spore-input" id="spore-amount-input" placeholder="100.0" step="0.01">
+          </div>
+          <button class="spore-submit-btn" onclick="executeSporeTransfer()">Sign &amp; Transmit (0 Gas)</button>
+        </div>
+        <div class="spore-footer">
+          <span>Node: 127.0.0.1:4040</span>
+          <a href="/nexus">Open MYCA NEXUS ↗</a>
+        </div>
+        <div class="spore-wallet-actions-bar">
+          <div style="display:flex;gap:6px;">
+            <button onclick="openWalletCreateView()" class="spore-sub-btn" style="flex:1;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:#34d399;">✨ New Wallet</button>
+            <button onclick="openWalletImportView()" class="spore-sub-btn" style="flex:1;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;">📥 Import</button>
+            <button onclick="connectMetaMaskWallet()" class="spore-sub-btn" style="flex:1;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;">🦊 MetaMask</button>
+          </div>
+          <button onclick="disconnectWallet()" class="spore-sub-btn" style="width:100%;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;">🔌 Disconnect</button>
         </div>
       </div>
 
       <!-- VIEW 2: CONNECTED WALLET DETAILS -->
-      <div id="wallet-view-connected" style="display: none;">
+      <div id="wallet-view-connected" style="display: none; padding: 26px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <span id="connected-wallet-icon" style="font-size: 26px;">🍄</span>
             <div>
-              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">MYCA Sovereign Native</div>
+              <div id="connected-wallet-title" style="font-size: 16px; font-weight: 700; color: #fff;">Spore Wallet</div>
               <div style="font-size: 11.5px; color: var(--teal-accent); display: flex; align-items: center; gap: 5px;">
                 <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--teal-accent); box-shadow: 0 0 6px var(--teal-accent);"></span>
                 <span>MYC Sovereign Network (Chain 108)</span>
@@ -4823,7 +5263,7 @@
           <div id="connected-address-evm" style="font-family: var(--f-mono); color: #cbd5e1; word-break: break-all; margin-bottom: 10px;">0x...</div>
 
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 8px;">
-            <span style="color: var(--text-muted);">MYC Sovereign Adresi (myc1...):</span>
+            <span style="color: var(--text-muted);">Spore Adresi (myc1...):</span>
             <button onclick="copyWalletAddress('myc')" id="btn-copy-myc" style="background: transparent; border: none; color: var(--teal-accent); cursor: pointer; font-size: 11px;">📋 Kopyala</button>
           </div>
           <div id="connected-address-myc" style="font-family: var(--f-mono); color: var(--teal-accent); word-break: break-all;">myc1...</div>
@@ -4860,7 +5300,7 @@
       </div>
 
       <!-- VIEW 3: CREATE NEW 12-WORD WALLET -->
-      <div id="wallet-view-create" style="display: none;">
+      <div id="wallet-view-create" style="display: none; padding: 26px;">
         <div style="text-align: center; margin-bottom: 16px;">
           <div style="font-size: 30px; margin-bottom: 4px;">🔐</div>
           <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Yeni 12 Kelimelik Cüzdan</h3>
@@ -4889,7 +5329,7 @@
       </div>
 
       <!-- VIEW 4: IMPORT WALLET (MOBILE / PC) -->
-      <div id="wallet-view-import" style="display: none;">
+      <div id="wallet-view-import" style="display: none; padding: 26px;">
         <div style="text-align: center; margin-bottom: 16px;">
           <div style="font-size: 30px; margin-bottom: 4px;">📥</div>
           <h3 style="font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 4px;">Cüzdanı İçe Aktar</h3>
