@@ -102,41 +102,49 @@ function openWalletKitModal() {
   const kitView = document.getElementById('wallet-view-kit');
   if (kitView) kitView.style.display = 'block';
 
-  // Detect Chrome Extension window.myc
+  // Detect Chrome Extension window.myc or global detection flag
   const statusBadge = document.getElementById('spore-ext-status-badge');
   const actionBox = document.getElementById('spore-ext-action-box');
-  const isExtensionInstalled = typeof window.myc !== 'undefined' && window.myc && window.myc.isMyc;
+  const isExtensionInstalled = (typeof window.myc !== 'undefined' && window.myc) || !!window.__MYCA_EXTENSION_DETECTED__;
 
   if (isExtensionInstalled) {
     if (statusBadge) statusBadge.innerHTML = '<span style="color:#00e87a; font-weight:700;">● Extension Detected in Chrome ⚡</span>';
     if (actionBox) {
       actionBox.innerHTML = `
-        <button onclick="connectSporeExtension()" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <button onclick="connectSporeExtension()" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 11px; border-radius: 10px; font-size: 13px; cursor: pointer; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;">
           <span>⚡</span> Connect Spore Extension
         </button>
+        <div style="display:flex; gap:6px; margin-top:2px;">
+          <a href="/spore-wallet-extension.zip" download="spore-wallet-extension.zip" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 8px; border-radius: 8px; font-size: 11px; font-weight:600; text-decoration: none; text-align:center;">
+            📥 Download Zip
+          </a>
+          <button onclick="toggleExtensionGuide()" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 8px; border-radius: 8px; font-size: 11px; font-weight:600; cursor: pointer;">
+            📖 Guide
+          </button>
+        </div>
       `;
     }
   } else {
-    if (statusBadge) statusBadge.innerHTML = '<span style="color:#f59e0b; font-weight:600;">● Extension Not Detected</span>';
+    if (statusBadge) statusBadge.innerHTML = '<span style="color:#f59e0b; font-weight:600;">● Extension Not Detected (Refresh if installed)</span>';
     if (actionBox) {
       actionBox.innerHTML = `
-        <a href="/spore-wallet-extension.zip" download="spore-wallet-extension.zip" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 12px; font-size: 13px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.35); text-align:center;">
+        <a href="/spore-wallet-extension.zip" download="spore-wallet-extension.zip" style="width: 100%; background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-weight: 800; border: none; padding: 11px; border-radius: 10px; font-size: 12.5px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 16px rgba(0, 240, 255, 0.35); text-align:center;">
           <span>📥</span> Download Chrome Extension (.zip)
         </a>
-        <div style="display:flex; gap:8px; margin-top:4px;">
-          <button onclick="toggleExtensionGuide()" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:600; cursor: pointer;">
+        <div style="display:flex; gap:6px; margin-top:2px;">
+          <button onclick="toggleExtensionGuide()" style="flex:1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 8px; border-radius: 8px; font-size: 11px; font-weight:600; cursor: pointer;">
             📖 How to Install
           </button>
-          <button onclick="connectWebSporeWallet()" style="flex:1; background: rgba(0,240,255,0.1); border: 1px solid rgba(0,240,255,0.3); color: #00f0ff; padding: 9px; border-radius: 10px; font-size: 11.5px; font-weight:700; cursor: pointer;">
-            🌐 Use Web Wallet
+          <button onclick="connectWebSporeWallet()" style="flex:1; background: rgba(0,240,255,0.08); border: 1px solid rgba(0,240,255,0.25); color: #00f0ff; padding: 8px; border-radius: 8px; font-size: 11px; font-weight:700; cursor: pointer;">
+            🌐 Web Sandbox
           </button>
         </div>
-        <div id="ext-install-guide" style="display:none; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; font-size: 11.5px; color: #94a3b8; line-height: 1.55; margin-top: 6px; text-align: left;">
+        <div id="ext-install-guide" style="display:none; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; font-size: 11px; color: #94a3b8; line-height: 1.5; margin-top: 4px; text-align: left;">
           <b style="color:#fff;">3-Step Chrome Installation:</b><br>
-          1. Extract the downloaded <code style="color:#00f0ff;">spore-wallet-extension.zip</code>.<br>
-          2. In Chrome, navigate to <code style="color:#00f0ff;">chrome://extensions/</code> and enable <b>Developer mode</b> (top-right).<br>
+          1. Extract downloaded <code style="color:#00f0ff;">spore-wallet-extension.zip</code>.<br>
+          2. Go to <code style="color:#00f0ff;">chrome://extensions/</code> and enable <b>Developer mode</b>.<br>
           3. Click <b>Load unpacked</b> and select the extracted folder.<br>
-          4. Refresh this page and click <b>Connect Spore Extension</b>!
+          4. <b>Refresh this page (F5)</b> and click Connect Spore Extension!
         </div>
       `;
     }
@@ -175,7 +183,9 @@ async function connectSporeExtension() {
       return;
     }
   }
-  connectWebSporeWallet();
+
+  // If extension is not detected, DO NOT connect web wallet silently!
+  showToast('Extension Not Detected', 'Please install Spore Wallet extension and refresh this page (F5).', 'error');
 }
 
 function connectWebSporeWallet() {
@@ -193,7 +203,7 @@ function connectWebSporeWallet() {
   try { localStorage.setItem('myca_wallet_type', 'native'); } catch(e) {}
   updateWalletUI();
   closeWalletModal();
-  showToast('Connected!', 'Authenticated via Web Spore Wallet: ' + savedMyc.slice(0, 10) + '...', 'success');
+  showToast('Connected!', 'Using Web Sandbox Wallet: ' + savedMyc.slice(0, 10) + '...', 'info');
 }
 
 async function connectMetaMaskWallet() {
@@ -308,10 +318,14 @@ function updateWalletUI() {
     if (icon) icon.innerText = '🦊';
     const addr = activeWallet.evmAddress || '';
     if (label) label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
-  } else {
+  } else if (activeWallet.type === 'extension') {
     if (icon) icon.innerText = '🍄';
     const addr = activeWallet.mycAddress;
-    if (label) label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
+    if (label) label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Extension';
+  } else {
+    if (icon) icon.innerText = '🌐';
+    const addr = activeWallet.mycAddress;
+    if (label) label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Web Sandbox';
   }
 
   if (navBal) {
@@ -323,9 +337,32 @@ function updateWalletUI() {
 function updateSporeWalletPanel() {
   var addr = getActiveWalletAddress();
   var pufEl = document.getElementById('spore-puf-address');
+  var pufBadge = document.getElementById('spore-puf-badge');
   var balEl = document.getElementById('spore-balance-display');
   var navBal = document.getElementById('nav-wallet-balance');
+  var titleEl = document.getElementById('spore-panel-title');
+  var typeEl = document.getElementById('spore-wallet-type-indicator');
+  var webBanner = document.getElementById('spore-web-wallet-banner');
+
   if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'Not Connected';
+  
+  if (activeWallet.type === 'extension') {
+    if (titleEl) titleEl.innerText = 'SPORE EXTENSION';
+    if (typeEl) typeEl.innerHTML = '<span style="color:#00e87a;">● Spore Chrome Extension Connected</span>';
+    if (pufBadge) pufBadge.innerText = 'EXT';
+    if (webBanner) webBanner.style.display = 'none';
+  } else if (activeWallet.type === 'metamask') {
+    if (titleEl) titleEl.innerText = 'METAMASK';
+    if (typeEl) typeEl.innerHTML = '<span style="color:#fbbf24;">● MetaMask EVM (Chain 108)</span>';
+    if (pufBadge) pufBadge.innerText = 'EVM';
+    if (webBanner) webBanner.style.display = 'none';
+  } else if (activeWallet.type === 'native') {
+    if (titleEl) titleEl.innerText = 'WEB SANDBOX';
+    if (typeEl) typeEl.innerHTML = '<span style="color:#f59e0b;">● Web Sandbox Wallet (Local)</span>';
+    if (pufBadge) pufBadge.innerText = 'WEB';
+    if (webBanner) webBanner.style.display = 'flex';
+  }
+
   var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
   var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   if (balEl) {
@@ -391,9 +428,12 @@ function disconnectWallet() {
     localStorage.removeItem('myca_native_address');
     localStorage.removeItem('myca_evm_address');
   } catch (e) {}
+  if (typeof window.myc !== 'undefined' && window.myc) {
+    window.myc.isConnectedState = false;
+  }
   updateWalletUI();
   closeWalletModal();
-  showToast('Disconnected', 'Wallet disconnected.', 'info');
+  showToast('Disconnected', 'Wallet successfully disconnected.', 'info');
 }
 
 function generate12Words() {
@@ -474,12 +514,13 @@ function initSporeWallet() {
   let savedMyc = null;
   try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
 
-  // ONLY auto-connect if user explicitly saved connection previously!
-  if (savedType === 'extension' && typeof window.myc !== 'undefined' && window.myc && window.myc.isConnected()) {
+  // Auto-connect ONLY if user previously saved connection
+  if (savedType === 'extension' && typeof window.myc !== 'undefined' && window.myc) {
+    const extAddr = window.myc.selectedAddress || savedMyc;
     activeWallet = {
       type: 'extension',
-      evmAddress: toEvmAddress(window.myc.selectedAddress),
-      mycAddress: window.myc.selectedAddress
+      evmAddress: toEvmAddress(extAddr),
+      mycAddress: extAddr
     };
   } else if (savedType === 'native' && savedMyc) {
     activeWallet = {
@@ -510,4 +551,15 @@ function initSporeWallet() {
   updateWalletUI();
 }
 
-document.addEventListener('DOMContentLoaded', initSporeWallet);
+document.addEventListener('DOMContentLoaded', () => {
+  initSporeWallet();
+  // If window.myc was injected slightly later, re-sync
+  window.addEventListener('myc#initialized', () => {
+    const savedType = localStorage.getItem('myca_wallet_type');
+    if (savedType === 'extension' && window.myc && window.myc.selectedAddress) {
+      activeWallet.mycAddress = window.myc.selectedAddress;
+      activeWallet.evmAddress = toEvmAddress(window.myc.selectedAddress);
+      updateWalletUI();
+    }
+  });
+});
