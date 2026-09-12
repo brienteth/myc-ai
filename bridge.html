@@ -1928,9 +1928,11 @@
               <div>
                 <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Varlık</label>
                 <select id="metamask-inbound-asset" class="swap-token-select" style="width: 100%; height: 38px;" onchange="onInboundAssetChanged()">
-                  <option value="USDC" selected>🪙 Native USDC (Circle 6 Dec)</option>
+                  <option value="mUSDC" selected>🪙 mUSDC (Circle Native USDC on Base)</option>
+                  <option value="USDC">💵 USDC</option>
                   <option value="MYC">🍄 MYC</option>
                   <option value="USDT">💵 USDT</option>
+                  <option value="ETH">💎 ETH (Base Native Gas)</option>
                 </select>
               </div>
             </div>
@@ -3708,54 +3710,69 @@ document.addEventListener('DOMContentLoaded', () => {
         await ensureEVMNetwork(provider, chainKey);
 
         let txHash;
-        if (asset === 'USDC' && net.usdcToken) {
-          // Native USDC standard ERC-20 transfer to Opacus Bridge Custody Vault
-          const vaultClean = net.vault.toLowerCase().replace('0x', '').padStart(64, '0');
-          const units = BigInt(Math.round(amount * 1e6)); // 6 decimals for native USDC
-          const amountHex = units.toString(16).padStart(64, '0');
-          // standard ERC20 transfer(address to, uint256 value) = 0xa9059cbb
-          const calldata = '0xa9059cbb' + vaultClean + amountHex;
+        try {
+          if ((asset === 'USDC' || asset === 'mUSDC') && net.usdcToken) {
+            // Native USDC standard ERC-20 transfer to Opacus Bridge Custody Vault
+            const vaultClean = net.vault.toLowerCase().replace('0x', '').padStart(64, '0');
+            const units = BigInt(Math.round(amount * 1e6)); // 6 decimals for native USDC
+            const amountHex = units.toString(16).padStart(64, '0');
+            // standard ERC20 transfer(address to, uint256 value) = 0xa9059cbb
+            const calldata = '0xa9059cbb' + vaultClean + amountHex;
 
-          statusEl.innerHTML = `<span style="color: var(--amber-accent); font-weight: 700;">🦊 MetaMask'ta ${amount} Native USDC transferini onaylayın...</span>`;
+            statusEl.innerHTML = `<span style="color: var(--amber-accent); font-weight: 700;">🦊 MetaMask'ta ${amount} ${asset} transferini onaylayın...</span>`;
 
-          txHash = await provider.request({
-            method: 'eth_sendTransaction',
-            params: [{
-              from: userAccount,
-              to: net.usdcToken,
-              data: calldata,
-              value: '0x0'
-            }]
-          });
-        } else {
-          const lockPayload = JSON.stringify({ recipient: recipientOnMyc, amount, asset, chain: chainKey, time: Date.now() });
-          const hexPayload = Array.from(new TextEncoder().encode(lockPayload)).map(b => b.toString(16).padStart(2, '0')).join('');
-          const calldata = '0x379607f5' + hexPayload;
+            txHash = await provider.request({
+              method: 'eth_sendTransaction',
+              params: [{
+                from: userAccount,
+                to: net.usdcToken,
+                data: calldata,
+                value: '0x0'
+              }]
+            });
+          } else if (asset === 'ETH') {
+            const units = BigInt(Math.round(amount * 1e18));
+            const valueHex = '0x' + units.toString(16);
+            statusEl.innerHTML = `<span style="color: var(--amber-accent); font-weight: 700;">🦊 MetaMask'ta ${amount} ETH transferini onaylayın...</span>`;
 
-          statusEl.innerHTML = `<span style="color: var(--amber-accent); font-weight: 700;">🦊 MetaMask onay penceresinde işlemi onaylayın...</span>`;
+            txHash = await provider.request({
+              method: 'eth_sendTransaction',
+              params: [{
+                from: userAccount,
+                to: net.vault,
+                value: valueHex
+              }]
+            });
+          } else {
+            const lockPayload = JSON.stringify({ recipient: recipientOnMyc, amount, asset, chain: chainKey, time: Date.now() });
+            const hexPayload = Array.from(new TextEncoder().encode(lockPayload)).map(b => b.toString(16).padStart(2, '0')).join('');
+            const calldata = '0x379607f5' + hexPayload;
 
-          txHash = await provider.request({
-            method: 'eth_sendTransaction',
-            params: [{
-              from: userAccount,
-              to: net.vault,
-              data: calldata,
-              value: '0x0'
-            }]
-          });
+            statusEl.innerHTML = `<span style="color: var(--amber-accent); font-weight: 700;">🦊 MetaMask onay penceresinde işlemi onaylayın...</span>`;
+
+            txHash = await provider.request({
+              method: 'eth_sendTransaction',
+              params: [{
+                from: userAccount,
+                to: net.vault,
+                data: calldata,
+                value: '0x0'
+              }]
+            });
+          }
         } catch (txErr) {
           if (txErr.code === 4001) {
             statusEl.innerHTML = `<span style="color: var(--rose-accent);">İşlem kullanıcı tarafından MetaMask'ta reddedildi.</span>`;
             showToast('İptal Edildi', 'İşlem iptal edildi', 'info');
             btn.disabled = false;
-            btn.innerHTML = `<span>🦊 Deposit with MetaMask on ${net.shortName} ➔ Mint on MYCA</span>`;
+            btn.innerHTML = `<span>🔵 Deposit ${asset} on ${net.shortName} ➔ Mint on MYCA</span>`;
             return;
           }
           if (txErr.code === -32002) {
             statusEl.innerHTML = `<span style="color: var(--amber-accent);">⚠️ MetaMask'ta bekleyen bir işlem var. Lütfen uzantı simgesine tıklayın.</span>`;
             showToast('MetaMask Beklemede', 'Uzantı simgesine tıklayın', 'warning');
             btn.disabled = false;
-            btn.innerHTML = `<span>🦊 Deposit with MetaMask on ${net.shortName} ➔ Mint on MYCA</span>`;
+            btn.innerHTML = `<span>🔵 Deposit ${asset} on ${net.shortName} ➔ Mint on MYCA</span>`;
             return;
           }
           throw txErr;
@@ -3790,7 +3807,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Credit Native USDC / Token on MYCA Living DAG
-        currentBalances[asset] = (currentBalances[asset] || 0) + amount;
+        if (asset === 'USDC' || asset === 'mUSDC') {
+          currentBalances['USDC'] = (currentBalances['USDC'] || 0) + amount;
+          currentBalances['mUSDC'] = (currentBalances['mUSDC'] || 0) + amount;
+        } else {
+          currentBalances[asset] = (currentBalances[asset] || 0) + amount;
+        }
         if (typeof saveUserBalances === 'function') saveUserBalances();
         if (typeof updateBalancesUI === 'function') updateBalancesUI();
         if (typeof updateSporeWalletPanel === 'function') updateSporeWalletPanel();
