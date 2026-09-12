@@ -248,11 +248,37 @@
     }
 
     /* Main Content Body Area */
-    .hub-main-area {
+    .hub-main-area,
+    .hub-main-canvas {
       margin-top: 64px;
       margin-left: 230px;
-      padding: 36px 40px;
+      padding: 24px 32px 60px;
       min-height: calc(100vh - 64px);
+      width: calc(100% - 230px);
+      box-sizing: border-box;
+      position: relative;
+      z-index: 10;
+      overflow-x: hidden;
+    }
+
+    @media (max-width: 992px) {
+      .hub-left-sidebar {
+        width: 72px;
+        padding: 16px 8px;
+      }
+      .hub-left-sidebar .sidebar-btn span:not(.sidebar-icon) {
+        display: none;
+      }
+      .hub-left-sidebar .sidebar-badge-new,
+      .hub-left-sidebar .sidebar-icon-ext {
+        display: none;
+      }
+      .hub-main-area,
+      .hub-main-canvas {
+        margin-left: 72px;
+        width: calc(100% - 72px);
+        padding: 16px 20px 40px;
+      }
     }
 
     /* Hero Card in Discover */

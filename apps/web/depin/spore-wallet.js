@@ -25,7 +25,79 @@ let activeWallet = {
   mycAddress: null
 };
 
-let currentBalances = { MYC: 8637, USDT: 1250, USDC: 1250 };
+let currentBalances = { MYC: 10000.0, USDT: 2500.0, USDC: 2500.0 };
+try {
+  const savedBal = localStorage.getItem('myca_user_balances');
+  if (savedBal) {
+    const parsed = JSON.parse(savedBal);
+    if (parsed && typeof parsed.MYC === 'number') {
+      currentBalances = Object.assign(currentBalances, parsed);
+    }
+  }
+} catch(e) {}
+
+function saveUserBalances() {
+  try {
+    localStorage.setItem('myca_user_balances', JSON.stringify(currentBalances));
+  } catch(e) {}
+}
+
+function recordTransaction(tx) {
+  try {
+    let history = JSON.parse(localStorage.getItem('myca_tx_history') || '[]');
+    if (!history.some(t => t.hash === tx.hash)) {
+      history.unshift(tx);
+      if (history.length > 100) history = history.slice(0, 100);
+      localStorage.setItem('myca_tx_history', JSON.stringify(history));
+    }
+    if (typeof window.renderTxHistory === 'function') {
+      window.renderTxHistory();
+    }
+  } catch (e) {
+    console.warn('recordTransaction error:', e);
+  }
+}
+
+function recordBridgeTransaction(btx) {
+  try {
+    let history = JSON.parse(localStorage.getItem('myca_bridge_history') || '[]');
+    if (!history.some(b => b.bridgeId === btx.bridgeId)) {
+      history.unshift(btx);
+      if (history.length > 50) history = history.slice(0, 50);
+      localStorage.setItem('myca_bridge_history', JSON.stringify(history));
+    }
+  } catch (e) {}
+}
+
+function updateBalancesUI() {
+  try {
+    const navBal = document.getElementById('nav-wallet-balance');
+    if (navBal) {
+      navBal.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
+    }
+    const sporeBal = document.getElementById('spore-balance-display');
+    if (sporeBal) {
+      sporeBal.innerHTML = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span class="currency">$MYC</span>';
+    }
+    const fromTokEl = document.getElementById('swap-from-token');
+    const toTokEl = document.getElementById('swap-to-token');
+    if (fromTokEl) {
+      const tok = fromTokEl.value;
+      const el = document.getElementById('swap-from-balance');
+      if (el) el.innerText = (currentBalances[tok] !== undefined ? currentBalances[tok].toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00') + ' ' + tok;
+    }
+    if (toTokEl) {
+      const tok = toTokEl.value;
+      const el = document.getElementById('swap-to-balance');
+      if (el) el.innerText = (currentBalances[tok] !== undefined ? currentBalances[tok].toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00') + ' ' + tok;
+    }
+    const bridgeBalEl = document.getElementById('bridge-user-balance');
+    if (bridgeBalEl) bridgeBalEl.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+    const stakeBalEl = document.getElementById('stake-available-balance');
+    if (stakeBalEl) stakeBalEl.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+  } catch(e) {}
+}
+
 let lastGeneratedWords = [];
 
 // Cryptographic helpers
