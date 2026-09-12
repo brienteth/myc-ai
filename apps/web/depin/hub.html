@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discover Ecosystem — MYCA Sovereign Hub</title>
-  <link rel="icon" type="image/png" href="/mycai_logo.png">
+  <title>Ecosystem Overview — MYCA Sovereign Hub</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
 :root {
       --bg-dark: #070a0e;
@@ -1664,7 +1667,13 @@
   </style>
 </head>
 <body>
-  <div id="hub-toast-container"></div>
+  <!-- COSMIC PARTICLES BACKGROUND -->
+  <div class="hub-bg-mesh">
+    <div class="glow-sphere s1"></div>
+    <div class="glow-sphere s2"></div>
+    <div class="glow-sphere s3"></div>
+  </div>
+
   <!-- TOP FIXED MASTER HEADER BAR -->
   <header class="hub-header-bar">
     <a href="/hub" class="hub-brand-group">
@@ -1701,33 +1710,27 @@
         <span class="sidebar-icon">🌐</span>
         <span>Discover</span>
         
-      </a>
-      <a href="/swap" class="sidebar-btn" id="side-nav-swap">
+      </a>\n      <a href="/swap" class="sidebar-btn" id="side-nav-swap">
         <span class="sidebar-icon">🔄</span>
         <span>Swap</span>
         
-      </a>
-      <a href="/bridge" class="sidebar-btn" id="side-nav-bridge">
+      </a>\n      <a href="/bridge" class="sidebar-btn" id="side-nav-bridge">
         <span class="sidebar-icon">🌉</span>
         <span>Bridge</span>
         
-      </a>
-      <a href="/staking" class="sidebar-btn" id="side-nav-staking">
+      </a>\n      <a href="/staking" class="sidebar-btn" id="side-nav-staking">
         <span class="sidebar-icon">📈</span>
         <span>Staking</span>
         
-      </a>
-      <a href="/faucet" class="sidebar-btn" id="side-nav-faucet">
+      </a>\n      <a href="/faucet" class="sidebar-btn" id="side-nav-faucet">
         <span class="sidebar-icon">🎁</span>
         <span>Faucet</span>
         
-      </a>
-      <a href="/agents" class="sidebar-btn" id="side-nav-agents">
+      </a>\n      <a href="/agents" class="sidebar-btn" id="side-nav-agents">
         <span class="sidebar-icon">🤖</span>
         <span>Agents</span>
         
-      </a>
-      <a href="/depin/explorer" class="sidebar-btn" id="side-nav-explorer" target="_blank">
+      </a>\n      <a href="/depin/explorer" class="sidebar-btn" id="side-nav-explorer" target="_blank">
         <span class="sidebar-icon">🔍</span>
         <span>Explorer</span>
         <span class="sidebar-icon-ext">↗</span>
@@ -1743,7 +1746,8 @@
     </div>
   </aside>
 
-  <main class="hub-main-area">
+  <!-- MAIN SCROLLABLE CONTENT CANVAS -->
+  <main class="hub-main-canvas" id="hub-scroll-canvas">
 <div id="view-discover" class="hub-tab-view active">
     <!-- ETHEREAL HERO BANNER (0G HUB REFERENCE) -->
     <div class="discover-hero-card" style="background-image: linear-gradient(to right, rgba(7, 10, 14, 0.82) 0%, rgba(7, 10, 14, 0.45) 55%, rgba(7, 10, 14, 0.75) 100%), url('/hub_hero_bg.jpg'); background-size: cover; background-position: center;">
@@ -2200,7 +2204,22 @@
 // SPORE WALLET & MULTI-WALLET ENGINE (MYCA WALLETKIT)
 // ═══════════════════════════════════════════════════════════════════
 const API_BASE = window.location.origin;
-const DEFAULT_WALLET = "myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002";
+
+// BIP-39 Standard Clean Wordlist
+const BIP39_WORDS = [
+  "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
+  "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",
+  "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit",
+  "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent",
+  "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol", "alert",
+  "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter",
+  "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient", "anger",
+  "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna", "antique",
+  "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch", "arctic",
+  "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange", "arrest",
+  "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault", "asset",
+  "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract", "auction"
+];
 
 let activeWallet = {
   type: 'none', // 'extension' | 'native' | 'metamask' | 'none'
@@ -2209,9 +2228,33 @@ let activeWallet = {
 };
 
 let currentBalances = { MYC: 8637, USDT: 1250, USDC: 1250 };
+let lastGeneratedWords = [];
+
+// Cryptographic helpers
+function generateRandomMycAddress() {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return 'myc1' + hex;
+}
+
+async function sha256Hex(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join("");
+}
+
+async function deriveAddressFromWords(words) {
+  const seedStr = (Array.isArray(words) ? words.join(' ') : words).trim().toLowerCase().replace(/\s+/g, ' ');
+  const privKey = await sha256Hex(seedStr);
+  const addrHash = await sha256Hex(privKey);
+  return 'myc1' + addrHash.slice(0, 32);
+}
 
 function toMycAddress(evmAddr) {
-  if (!evmAddr) return DEFAULT_WALLET;
+  if (!evmAddr) return null;
   const clean = evmAddr.toLowerCase().replace('0x', '');
   return 'myc1' + clean.slice(0, 32);
 }
@@ -2225,9 +2268,9 @@ function toEvmAddress(mycAddr) {
 
 function getActiveWalletAddress() {
   if (activeWallet.type === 'metamask') {
-    return activeWallet.mycAddress || toMycAddress(activeWallet.evmAddress) || DEFAULT_WALLET;
+    return activeWallet.mycAddress || toMycAddress(activeWallet.evmAddress) || '';
   }
-  return activeWallet.mycAddress || DEFAULT_WALLET;
+  return activeWallet.mycAddress || '';
 }
 
 function getActiveEvmAddress() {
@@ -2341,7 +2384,7 @@ function connectWebSporeWallet() {
   let savedMyc = null;
   try { savedMyc = localStorage.getItem('myca_native_address'); } catch(e) {}
   if (!savedMyc) {
-    savedMyc = DEFAULT_WALLET;
+    savedMyc = generateRandomMycAddress();
     try { localStorage.setItem('myca_native_address', savedMyc); } catch(e) {}
   }
   activeWallet = {
@@ -2374,14 +2417,16 @@ async function connectMetaMaskWallet() {
     const accounts = await provider.request({ method: 'eth_requestAccounts' });
     if (accounts && accounts.length > 0) {
       const userAccount = accounts[0];
+      const derivedMyc = toMycAddress(userAccount) || generateRandomMycAddress();
       activeWallet = {
         type: 'metamask',
         evmAddress: userAccount,
-        mycAddress: toMycAddress(userAccount)
+        mycAddress: derivedMyc
       };
       try {
         localStorage.setItem('myca_wallet_type', 'metamask');
         localStorage.setItem('myca_evm_address', userAccount);
+        localStorage.setItem('myca_native_address', derivedMyc);
       } catch(e) {}
       updateWalletUI();
       closeWalletModal();
@@ -2467,7 +2512,7 @@ function updateWalletUI() {
     if (label) label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
   } else {
     if (icon) icon.innerText = '🍄';
-    const addr = activeWallet.mycAddress || DEFAULT_WALLET;
+    const addr = activeWallet.mycAddress;
     if (label) label.innerText = addr ? `${addr.slice(0, 8)}...${addr.slice(-4)}` : 'Spore Wallet';
   }
 
@@ -2478,11 +2523,11 @@ function updateWalletUI() {
 }
 
 function updateSporeWalletPanel() {
-  var addr = getActiveWalletAddress() || DEFAULT_WALLET;
+  var addr = getActiveWalletAddress();
   var pufEl = document.getElementById('spore-puf-address');
   var balEl = document.getElementById('spore-balance-display');
   var navBal = document.getElementById('nav-wallet-balance');
-  if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'myc14d29b6...d7c002';
+  if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'Not Connected';
   var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
   var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   if (balEl) {
@@ -2545,6 +2590,8 @@ function disconnectWallet() {
   activeWallet = { type: 'none', evmAddress: null, mycAddress: null };
   try {
     localStorage.removeItem('myca_wallet_type');
+    localStorage.removeItem('myca_native_address');
+    localStorage.removeItem('myca_evm_address');
   } catch (e) {}
   updateWalletUI();
   closeWalletModal();
@@ -2552,22 +2599,27 @@ function disconnectWallet() {
 }
 
 function generate12Words() {
-  const wordsPool = ["spore", "hyphae", "lattice", "resonance", "quantum", "substrate", "neural", "pulse", "fungal", "nexus", "matrix", "beacon", "crypto", "zero", "node", "stream"];
-  const selected = [];
+  const randomIndices = new Uint8Array(12);
+  crypto.getRandomValues(randomIndices);
+  lastGeneratedWords = [];
   for (let i = 0; i < 12; i++) {
-    selected.push(wordsPool[Math.floor(Math.random() * wordsPool.length)]);
+    lastGeneratedWords.push(BIP39_WORDS[randomIndices[i] % BIP39_WORDS.length]);
   }
   const container = document.getElementById('create-words-container');
   if (container) {
-    container.innerHTML = selected.map((w, idx) => `<div style="background:rgba(255,255,255,0.05);padding:6px;border-radius:6px;font-family:var(--f-mono);font-size:11px;color:#38bdf8;">${idx+1}. ${w}</div>`).join('');
+    container.innerHTML = lastGeneratedWords.map((w, idx) => `<div style="background:rgba(255,255,255,0.05);padding:6px;border-radius:6px;font-family:var(--f-mono);font-size:11px;color:#38bdf8;">${idx+1}. ${w}</div>`).join('');
   }
 }
 
-function executeActivateCreatedWallet() {
-  const newAddr = "myc1" + Math.random().toString(16).slice(2, 10) + "4d29b6c4b38b2ac4a6e2bbb9c4d7c002".slice(10);
+async function executeActivateCreatedWallet() {
+  const newAddr = lastGeneratedWords.length === 12
+    ? await deriveAddressFromWords(lastGeneratedWords)
+    : generateRandomMycAddress();
+
   try {
     localStorage.setItem('myca_native_address', newAddr);
     localStorage.setItem('myca_wallet_type', 'native');
+    localStorage.setItem('myca_wallet_seed', lastGeneratedWords.join(' '));
   } catch(e) {}
   activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
   updateWalletUI();
@@ -2576,7 +2628,7 @@ function executeActivateCreatedWallet() {
   showToast('Wallet Created!', 'Your 12-word seed wallet is now active: ' + newAddr.slice(0, 12) + '...', 'success');
 }
 
-function executeImportSeed() {
+async function executeImportSeed() {
   const input = document.getElementById('import-seed-input');
   if (!input || !input.value.trim()) {
     showToast('Empty Seed', 'Please enter your 12-word recovery seed', 'error');
@@ -2587,10 +2639,11 @@ function executeImportSeed() {
     showToast('Invalid Seed', 'Please enter exactly 12 words (found ' + words.length + ')', 'error');
     return;
   }
-  const newAddr = "myc1" + Math.random().toString(16).slice(2, 10) + "4d29b6c4b38b2ac4a6e2bbb9c4d7c002".slice(10);
+  const newAddr = await deriveAddressFromWords(words);
   try {
     localStorage.setItem('myca_native_address', newAddr);
     localStorage.setItem('myca_wallet_type', 'native');
+    localStorage.setItem('myca_wallet_seed', words.join(' '));
   } catch(e) {}
   activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
   updateWalletUI();
