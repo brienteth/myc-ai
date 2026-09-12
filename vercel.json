@@ -3,6 +3,18 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/depin/mindcast-node",
+      "destination": "/depin/mindcast-node.html"
+    },
+    {
+      "source": "/depin/mindcast-node.html",
+      "destination": "/depin/mindcast-node.html"
+    },
+    {
+      "source": "/depin/mindcast",
+      "destination": "/depin/mindcast-node.html"
+    },
+    {
       "source": "/depin",
       "destination": "/depin/index.html"
     },
