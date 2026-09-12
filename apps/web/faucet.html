@@ -1794,9 +1794,60 @@
       <div class="faucet-box">
         <div class="faucet-icon-bubble">🎁</div>
         <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px;">Spore Faucet Dispenser</h2>
-        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto 20px;">
-          Claim daily testnet tokens to experiment with zero-gas smart contracts, nutrient AMM swaps, and cross-chain Hyphae bridging.
+        <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6; max-width: 520px; margin: 0 auto 16px;">
+          Standard wallets start with <b>0.00 MYC</b>. Claim testnet tokens from the Sovereign Lattice Faucet Contract to test zero-gas swaps, bridging, and staking.
         </p>
+
+        <!-- TOKENOMICS & SUPPLY ARCHITECTURE CARD -->
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 14px; padding: 14px 16px; margin-bottom: 20px; text-align: left;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;">
+            <span style="font-size: 12px; font-weight: 800; color: #fff; letter-spacing: 0.5px; text-transform: uppercase;">
+              ⛓️ Testnet Supply Distribution (1,000,000,000 MYC)
+            </span>
+            <span style="font-size: 11px; color: var(--teal-accent); font-family: 'JetBrains Mono', monospace; font-weight: 700;">
+              Zero-Gas Lattice 108
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 12px;">
+            <!-- Founder Wallet (20%) -->
+            <div style="background: rgba(234, 179, 8, 0.06); border: 1px solid rgba(234, 179, 8, 0.25); border-radius: 10px; padding: 10px;">
+              <div style="font-size: 11px; font-weight: 800; color: #fbbf24; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <span>👑</span> Founder Wallet (20%)
+              </div>
+              <div style="font-size: 14px; font-weight: 900; color: #fff; font-family: 'JetBrains Mono', monospace;">
+                200,000,000 <span style="font-size: 11px; color: #fbbf24;">MYC</span>
+              </div>
+              <div style="font-size: 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+                myc1af3a...5f31a
+              </div>
+            </div>
+
+            <!-- Faucet Contract Reserve (80%) -->
+            <div style="background: rgba(0, 240, 255, 0.06); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 10px; padding: 10px;">
+              <div style="font-size: 11px; font-weight: 800; color: #00f0ff; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <span>🚰</span> Faucet Contract Pool (80%)
+              </div>
+              <div style="font-size: 14px; font-weight: 900; color: #fff; font-family: 'JetBrains Mono', monospace;">
+                800,000,000 <span style="font-size: 11px; color: #00f0ff;">MYC</span>
+              </div>
+              <div style="font-size: 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+                0x00...fAUc108 (On-Chain)
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Contract Pool Bar -->
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">
+              <span>Faucet Smart Contract Reserve Status</span>
+              <span id="faucet-pool-remaining-txt" style="color: #00f0ff; font-weight: 700; font-family: 'JetBrains Mono', monospace;">799,984,000 / 800,000,000 MYC Remaining</span>
+            </div>
+            <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden;">
+              <div id="faucet-pool-bar" style="width: 99.99%; height: 100%; background: linear-gradient(90deg, #00f0ff, #10b981); border-radius: 999px;"></div>
+            </div>
+          </div>
+        </div>
 
         <div class="faucet-pills-row">
           <div class="faucet-pill" style="color: var(--teal-accent);">+1,000 $MYC</div>
@@ -1807,9 +1858,9 @@
         <div class="swap-input-card" style="text-align: left; margin-bottom: 14px;">
           <div class="swap-card-top">
             <span>Recipient Lattice Address</span>
-            <span style="color: var(--teal-accent);">Chain 108</span>
+            <span style="color: var(--teal-accent);">Chain 108 (Zero-Gas)</span>
           </div>
-          <input type="text" id="faucet-address-input" class="swap-number-input" value="myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002" style="font-size: 13.5px; font-family: 'JetBrains Mono', monospace;">
+          <input type="text" id="faucet-address-input" class="swap-number-input" placeholder="Connect wallet or enter myc1... address" style="font-size: 13px; font-family: 'JetBrains Mono', monospace;">
         </div>
 
         <div class="swap-input-card" style="text-align: left; margin-bottom: 24px;">
@@ -1820,7 +1871,7 @@
           <input type="text" id="faucet-twitter-input" class="swap-number-input" value="@myc_developer" placeholder="@handle" style="font-size: 14px;">
         </div>
 
-        <button id="btn-claim-faucet" class="swap-action-btn" onclick="executeHubFaucetClaim()" style="background: linear-gradient(135deg, #38bdf8, #818cf8);">
+        <button id="btn-claim-faucet" class="swap-action-btn" onclick="executeHubFaucetClaim()" style="background: linear-gradient(135deg, #00f0ff, #10b981);">
           <span>🍄 Dispense 1,000 $MYC Spores (0.00 Gas)</span>
         </button>
         <div id="faucet-status-msg" style="margin-top: 14px; font-size: 13px;"></div>
@@ -1892,13 +1943,25 @@
           <span style="font-size: 11.5px; color: #fbbf24; font-weight: 600;">Connect →</span>
         </div>
 
+        <!-- FOUNDER GENESIS ACCESS (20% ALLOCATION) -->
+        <div onclick="connectFounderWallet()" style="background: rgba(234, 179, 8, 0.05); border: 1px dashed rgba(234, 179, 8, 0.35); border-radius: 12px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 22px;">👑</span>
+            <div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #fbbf24;">Founder Wallet (20% Genesis)</div>
+              <div style="font-size: 10.5px; color: var(--text-muted); font-family: var(--f-mono);">myc1af3a...5f31a • 200,000,000 MYC</div>
+            </div>
+          </div>
+          <span style="font-size: 11.5px; color: #fbbf24; font-weight: 700;">Connect 👑</span>
+        </div>
+
         <!-- SEED OPTIONS -->
         <div style="display: flex; gap: 6px; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
           <button onclick="openWalletImportView()" class="spore-sub-btn" style="flex: 1; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.25); color: #38bdf8; padding: 8px; font-size: 11px; border-radius: 8px; cursor: pointer;">
             📥 Import Seed
           </button>
           <button onclick="openWalletCreateView()" class="spore-sub-btn" style="flex: 1; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: #34d399; padding: 8px; font-size: 11px; border-radius: 8px; cursor: pointer;">
-            ✨ New Seed
+            ✨ New Seed (0 MYC)
           </button>
         </div>
       </div>
@@ -1934,6 +1997,14 @@
           <button onclick="openWalletKitModal()" type="button" style="background: rgba(0, 240, 255, 0.2); border: 1px solid rgba(0, 240, 255, 0.4); color: #00f0ff; border-radius: 6px; padding: 2px 7px; font-size: 10px; font-weight: 700; cursor: pointer;">
             Switch to Extension ↗
           </button>
+        </div>
+
+        <!-- Faucet Hint Banner -->
+        <div style="margin: 8px 16px 0; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 11px; color: #94a3b8;">Need testnet tokens?</span>
+          <a href="/faucet" style="background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 6px; text-decoration: none;">
+            🎁 Claim Faucet ↗
+          </a>
         </div>
 
         <!-- Compact Balance Card -->
@@ -2051,24 +2122,83 @@ const BIP39_WORDS = [
 ];
 
 let activeWallet = {
-  type: 'none', // 'extension' | 'native' | 'metamask' | 'none'
+  type: 'none', // 'extension' | 'native' | 'metamask' | 'founder' | 'none'
   evmAddress: null,
   mycAddress: null
 };
 
-let currentBalances = { MYC: 10000.0, USDT: 2500.0, USDC: 2500.0 };
-try {
-  const savedBal = localStorage.getItem('myca_user_balances');
-  if (savedBal) {
-    const parsed = JSON.parse(savedBal);
-    if (parsed && typeof parsed.MYC === 'number') {
-      currentBalances = Object.assign(currentBalances, parsed);
-    }
+// ═══════════════════════════════════════════════════════════════════
+// TOKENOMICS & TESTNET SUPPLY SPECIFICATION
+// Total Supply: 1,000,000,000 MYC (1 Billion)
+// Founder Allocation (20%): 200,000,000 MYC (myc1af3a246683298d473cb2534a78a5f31a)
+// Faucet & AMM Contract Reserve (80%): 800,000,000 MYC (0x...fAUc108)
+// Standard Wallets: 0.00 MYC, 0.00 USDT, 0.00 USDC initial balance (Must claim from Faucet)
+// ═══════════════════════════════════════════════════════════════════
+const FOUNDER_WALLET_ADDRESS = 'myc1af3a246683298d473cb2534a78a5f31a';
+const TOTAL_TESTNET_SUPPLY = {
+  MYC: 1000000000.0,
+  USDT: 10000000.0,
+  USDC: 10000000.0
+};
+const FOUNDER_ALLOCATION = {
+  MYC: 200000000.0,
+  USDT: 2000000.0,
+  USDC: 2000000.0
+};
+const FAUCET_CONTRACT_RESERVE = {
+  MYC: 800000000.0,
+  USDT: 8000000.0,
+  USDC: 8000000.0
+};
+
+function isFounderAddress(addr) {
+  if (!addr) return false;
+  const clean = addr.toLowerCase().trim();
+  return clean === FOUNDER_WALLET_ADDRESS.toLowerCase() || 
+         clean.startsWith('myc1founder') || 
+         clean.includes('genesis_founder');
+}
+
+function getWalletBalances(addr) {
+  if (!addr) return { MYC: 0.0, USDT: 0.0, USDC: 0.0 };
+  const clean = addr.toLowerCase().trim();
+  
+  if (isFounderAddress(clean)) {
+    try {
+      const saved = localStorage.getItem('myca_balances_' + clean);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.MYC === 'number') return parsed;
+      }
+    } catch(e) {}
+    return { ...FOUNDER_ALLOCATION };
   }
-} catch(e) {}
+
+  // Standard wallet: strictly 0.00 unless claimed from Faucet
+  try {
+    const saved = localStorage.getItem('myca_balances_' + clean);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed.MYC === 'number') return parsed;
+    }
+  } catch(e) {}
+
+  return { MYC: 0.0, USDT: 0.0, USDC: 0.0 };
+}
+
+let currentBalances = { MYC: 0.0, USDT: 0.0, USDC: 0.0 };
+
+function syncActiveWalletBalances() {
+  const addr = getActiveWalletAddress();
+  currentBalances = getWalletBalances(addr);
+}
 
 function saveUserBalances() {
+  const addr = getActiveWalletAddress();
+  if (!addr) return;
   try {
+    const clean = addr.toLowerCase().trim();
+    localStorage.setItem('myca_balances_' + clean, JSON.stringify(currentBalances));
     localStorage.setItem('myca_user_balances', JSON.stringify(currentBalances));
   } catch(e) {}
 }
@@ -2102,30 +2232,41 @@ function recordBridgeTransaction(btx) {
 
 function updateBalancesUI() {
   try {
+    const mycBal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 0.0;
     const navBal = document.getElementById('nav-wallet-balance');
     if (navBal) {
-      navBal.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
+      navBal.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
     }
     const sporeBal = document.getElementById('spore-balance-display');
     if (sporeBal) {
-      sporeBal.innerHTML = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span class="currency">$MYC</span>';
+      sporeBal.innerHTML = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span class="currency">$MYC</span>';
     }
     const fromTokEl = document.getElementById('swap-from-token');
     const toTokEl = document.getElementById('swap-to-token');
     if (fromTokEl) {
       const tok = fromTokEl.value;
       const el = document.getElementById('swap-from-balance');
-      if (el) el.innerText = (currentBalances[tok] !== undefined ? currentBalances[tok].toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00') + ' ' + tok;
+      const val = (currentBalances && currentBalances[tok] !== undefined) ? currentBalances[tok] : 0.0;
+      if (el) el.innerText = val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
+      const balDisplay = document.getElementById('swap-from-bal-display');
+      if (balDisplay) balDisplay.innerText = 'Balance: ' + val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
     }
     if (toTokEl) {
       const tok = toTokEl.value;
       const el = document.getElementById('swap-to-balance');
-      if (el) el.innerText = (currentBalances[tok] !== undefined ? currentBalances[tok].toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00') + ' ' + tok;
+      const val = (currentBalances && currentBalances[tok] !== undefined) ? currentBalances[tok] : 0.0;
+      if (el) el.innerText = val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
+      const balDisplay = document.getElementById('swap-to-bal-display');
+      if (balDisplay) balDisplay.innerText = 'Balance: ' + val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
     }
     const bridgeBalEl = document.getElementById('bridge-user-balance');
-    if (bridgeBalEl) bridgeBalEl.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+    if (bridgeBalEl) bridgeBalEl.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
     const stakeBalEl = document.getElementById('stake-available-balance');
-    if (stakeBalEl) stakeBalEl.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+    if (stakeBalEl) stakeBalEl.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+
+    if (typeof checkSwapBalance === 'function') {
+      checkSwapBalance();
+    }
   } catch(e) {}
 }
 
@@ -2419,7 +2560,11 @@ function updateWalletUI() {
   }
   if (navBalPill) navBalPill.style.opacity = '1';
 
-  if (activeWallet.type === 'metamask') {
+  if (activeWallet.type === 'founder' || isFounderAddress(activeWallet.mycAddress)) {
+    if (icon) icon.innerText = '👑';
+    const addr = activeWallet.mycAddress;
+    if (label) label.innerText = addr ? `👑 ${addr.slice(0, 6)}...${addr.slice(-4)}` : 'Founder (20%)';
+  } else if (activeWallet.type === 'metamask') {
     if (icon) icon.innerText = '🦊';
     const addr = activeWallet.evmAddress || '';
     if (label) label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
@@ -2434,8 +2579,8 @@ function updateWalletUI() {
   }
 
   if (navBal) {
-    var bal = currentBalances.MYC || 8637;
-    navBal.innerText = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
+    const mycBal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 0.0;
+    navBal.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
   }
 }
 
@@ -2451,7 +2596,12 @@ function updateSporeWalletPanel() {
 
   if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'Not Connected';
   
-  if (activeWallet.type === 'extension') {
+  if (activeWallet.type === 'founder' || isFounderAddress(addr)) {
+    if (titleEl) titleEl.innerText = 'FOUNDER GENESIS NODE';
+    if (typeEl) typeEl.innerHTML = '<span style="color:#fbbf24; font-weight:700;">👑 Founder Genesis (20% Supply Allocation: 200,000,000 MYC)</span>';
+    if (pufBadge) pufBadge.innerText = 'FOUNDER 20%';
+    if (webBanner) webBanner.style.display = 'none';
+  } else if (activeWallet.type === 'extension') {
     if (titleEl) titleEl.innerText = 'SPORE EXTENSION';
     if (typeEl) typeEl.innerHTML = '<span style="color:#00e87a;">● Spore Chrome Extension Connected</span>';
     if (pufBadge) pufBadge.innerText = 'EXT';
@@ -2468,7 +2618,7 @@ function updateSporeWalletPanel() {
     if (webBanner) webBanner.style.display = 'flex';
   }
 
-  var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
+  var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 0.0;
   var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   if (balEl) {
     balEl.innerHTML = formatted + ' <span class="currency">$MYC</span>';
@@ -2512,15 +2662,17 @@ async function executeSporeTransfer() {
   if (!sender || activeWallet.type === 'none') { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
   if (!recipient || !recipient.startsWith('myc1')) { showToast('Invalid', 'Enter a valid myc1... address', 'error'); return; }
   if (amount <= 0) { showToast('Invalid', 'Enter amount > 0', 'error'); return; }
-  if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + currentBalances.MYC + ' MYC', 'error'); return; }
+  if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + (currentBalances.MYC || 0) + ' MYC. Claim from Faucet!', 'error'); return; }
   
   try {
     currentBalances.MYC -= amount;
+    saveUserBalances();
     showToast('Sent!', amount + ' MYC sent to ' + recipient.slice(0, 10) + '... (0 Gas)', 'success');
     document.getElementById('spore-recipient-input').value = '';
     document.getElementById('spore-amount-input').value = '';
     updateSporeWalletPanel();
     updateWalletUI();
+    updateBalancesUI();
   } catch (e) {
     showToast('Error', e.message, 'error');
   }
@@ -2536,9 +2688,29 @@ function disconnectWallet() {
   if (typeof window.myc !== 'undefined' && window.myc) {
     window.myc.isConnectedState = false;
   }
+  syncActiveWalletBalances();
   updateWalletUI();
+  updateBalancesUI();
   closeWalletModal();
   showToast('Disconnected', 'Wallet successfully disconnected.', 'info');
+}
+
+function connectFounderWallet() {
+  activeWallet = {
+    type: 'founder',
+    evmAddress: toEvmAddress(FOUNDER_WALLET_ADDRESS),
+    mycAddress: FOUNDER_WALLET_ADDRESS
+  };
+  try {
+    localStorage.setItem('myca_wallet_type', 'founder');
+    localStorage.setItem('myca_native_address', FOUNDER_WALLET_ADDRESS);
+  } catch(e) {}
+  syncActiveWalletBalances();
+  updateWalletUI();
+  updateSporeWalletPanel();
+  updateBalancesUI();
+  closeWalletModal();
+  showToast('Founder Genesis Active 👑', 'Connected to Founder Node (200,000,000 MYC - 20% Allocation)', 'success');
 }
 
 function generate12Words() {
@@ -2565,10 +2737,12 @@ async function executeActivateCreatedWallet() {
     localStorage.setItem('myca_wallet_seed', lastGeneratedWords.join(' '));
   } catch(e) {}
   activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  syncActiveWalletBalances();
   updateWalletUI();
   openWalletSelectView();
   updateSporeWalletPanel();
-  showToast('Wallet Created!', 'Your 12-word seed wallet is now active: ' + newAddr.slice(0, 12) + '...', 'success');
+  updateBalancesUI();
+  showToast('Wallet Created (0.00 MYC)', 'Standard wallet initialized. Please claim testnet tokens from Faucet!', 'info');
 }
 
 async function executeImportSeed() {
@@ -2579,9 +2753,10 @@ async function executeImportSeed() {
   }
   const words = input.value.trim().split(/\s+/);
   if (words.length !== 12) {
-    showToast('Invalid Seed', 'Please enter exactly 12 words (found ' + words.length + ')', 'error');
+    showToast('Invalid Seed', 'Seed must contain exactly 12 words', 'error');
     return;
   }
+
   const newAddr = await deriveAddressFromWords(words);
   try {
     localStorage.setItem('myca_native_address', newAddr);
@@ -2589,9 +2764,11 @@ async function executeImportSeed() {
     localStorage.setItem('myca_wallet_seed', words.join(' '));
   } catch(e) {}
   activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  syncActiveWalletBalances();
   updateWalletUI();
   openWalletSelectView();
   updateSporeWalletPanel();
+  updateBalancesUI();
   showToast('Seed Imported!', 'Wallet successfully restored: ' + newAddr.slice(0, 12) + '...', 'success');
 }
 
@@ -2630,7 +2807,13 @@ function initSporeWallet() {
   }
 
   // Auto-connect ONLY if user previously authenticated Spore extension or MetaMask
-  if (savedType === 'extension') {
+  if (savedType === 'founder') {
+    activeWallet = {
+      type: 'founder',
+      evmAddress: toEvmAddress(FOUNDER_WALLET_ADDRESS),
+      mycAddress: FOUNDER_WALLET_ADDRESS
+    };
+  } else if (savedType === 'extension') {
     const extAddr = (window.myc && window.myc.selectedAddress) || window.__MYCA_INITIAL_ADDRESS__ || savedMyc;
     if (extAddr) {
       activeWallet = {
@@ -2661,7 +2844,9 @@ function initSporeWallet() {
       mycAddress: null
     };
   }
+  syncActiveWalletBalances();
   updateWalletUI();
+  updateBalancesUI();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2676,8 +2861,10 @@ document.addEventListener('DOMContentLoaded', () => {
         activeWallet.mycAddress = freshAddr;
         activeWallet.evmAddress = toEvmAddress(freshAddr);
         try { localStorage.setItem('myca_native_address', freshAddr); } catch(e) {}
+        syncActiveWalletBalances();
         updateWalletUI();
         updateSporeWalletPanel();
+        updateBalancesUI();
       }
     }
   };
@@ -2705,6 +2892,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // FAUCET LOGIC
     // ═══════════════════════════════════════════════════════════════════
+    function getFaucetPoolReserve() {
+      try {
+        const saved = localStorage.getItem('myca_faucet_pool_reserve');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed.MYC === 'number') return parsed;
+        }
+      } catch(e) {}
+      return { MYC: 799984000.0, USDT: 7992000.0, USDC: 7992000.0 };
+    }
+
+    function saveFaucetPoolReserve(pool) {
+      try {
+        localStorage.setItem('myca_faucet_pool_reserve', JSON.stringify(pool));
+      } catch(e) {}
+    }
+
+    function updateFaucetUI() {
+      const activeAddr = getActiveWalletAddress();
+      const addrInput = document.getElementById('faucet-address-input');
+      if (addrInput && activeAddr && (!addrInput.value || addrInput.value.startsWith('myc14d29b6c4b38b2ac4a6e2bbb9c4d7c002'))) {
+        addrInput.value = activeAddr;
+      }
+
+      const pool = getFaucetPoolReserve();
+      const txt = document.getElementById('faucet-pool-remaining-txt');
+      const bar = document.getElementById('faucet-pool-bar');
+      if (txt) {
+        txt.innerText = `${pool.MYC.toLocaleString('en-US')} / 800,000,000 MYC Remaining`;
+      }
+      if (bar) {
+        const pct = Math.max(1, (pool.MYC / 800000000) * 100);
+        bar.style.width = pct.toFixed(2) + '%';
+      }
+    }
+
     async function executeHubFaucetClaim() {
       const addr = document.getElementById('faucet-address-input').value || getActiveWalletAddress();
       const tw = document.getElementById('faucet-twitter-input').value;
@@ -2717,8 +2940,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       btn.disabled = true;
-      btn.innerText = 'Dispensing Spore Nutrients...';
-      msg.innerHTML = `<span style="color: var(--cyan-accent);">Verifying testnet quota and dispensing...</span>`;
+      btn.innerText = 'Dispensing Spore Nutrients from Contract Pool...';
+      msg.innerHTML = `<span style="color: var(--cyan-accent);">Verifying testnet quota and transferring from 0x...fAUc108...</span>`;
 
       let txHash = '0x' + Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('') + 'f7c108';
 
@@ -2739,35 +2962,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (e) {}
 
+      // Deduct from Faucet Pool
+      const pool = getFaucetPoolReserve();
+      pool.MYC = Math.max(0, pool.MYC - 1000);
+      pool.USDT = Math.max(0, pool.USDT - 500);
+      pool.USDC = Math.max(0, pool.USDC - 500);
+      saveFaucetPoolReserve(pool);
+
+      // Add to user balance for this wallet
       currentBalances.MYC = (currentBalances.MYC || 0) + 1000;
       currentBalances.USDT = (currentBalances.USDT || 0) + 500;
       currentBalances.USDC = (currentBalances.USDC || 0) + 500;
-      if (typeof saveUserBalances === 'function') saveUserBalances();
-      if (typeof updateBalancesUI === 'function') updateBalancesUI();
-      if (typeof updateSporeWalletPanel === 'function') updateSporeWalletPanel();
-      if (typeof updateWalletUI === 'function') updateWalletUI();
+      saveUserBalances();
+      updateBalancesUI();
+      updateSporeWalletPanel();
+      updateWalletUI();
+      updateFaucetUI();
 
       const txRecord = {
         hash: txHash,
         type: 'FAUCET_DISPENSE',
         module: 'Spore Faucet',
-        sender: 'myc1faucet_spore_distributor',
+        sender: '0x0000000000000000000000000000000000fAUc108 (Faucet Contract)',
         recipient: addr,
         amount: '+1,000 MYC • +500 USDT • +500 USDC',
         rawAmount: 1000,
-        gasFee: '0.00000000 MYC (PoR Quota)',
+        gasFee: '0.00000000 MYC (Strict PoR Invariant)',
         finality: '< 4.2 ms (Instant)',
         status: 'FINALIZED',
         timestamp: Date.now()
       };
-      if (typeof recordTransaction === 'function') recordTransaction(txRecord);
+      recordTransaction(txRecord);
 
       showToast('Spores Claimed!', '+1,000 $MYC • +500 $USDT • +500 $USDC dispensed!', 'success');
-      msg.innerHTML = `<span style="color: var(--teal-accent); font-weight: 700;">🎉 Dispensed! +1,000 $MYC, +500 $USDT, +500 $USDC delivered (Tx: ${txHash.slice(0, 12)}...)</span>`;
+      msg.innerHTML = `<span style="color: var(--teal-accent); font-weight: 700;">🎉 Dispensed from Contract Pool! +1,000 $MYC, +500 $USDT, +500 $USDC delivered to ${addr.slice(0, 10)}... (Tx: ${txHash.slice(0, 12)}... | 0.00 Gas)</span>`;
 
       btn.disabled = false;
       btn.innerText = '🍄 Dispense 1,000 $MYC Spores (0.00 Gas)';
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(updateFaucetUI, 200);
+      window.addEventListener('myc#address_updated', updateFaucetUI);
+      window.addEventListener('myc#initialized', updateFaucetUI);
+    });
   </script>
 </body>
 </html>

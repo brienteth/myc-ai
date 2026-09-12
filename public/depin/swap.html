@@ -1809,7 +1809,7 @@
             <span id="swap-from-bal-display">Balance: ...</span>
           </div>
           <div class="swap-card-main">
-            <input type="number" id="swap-in-amount" class="swap-number-input" value="100" min="1" step="any" oninput="fetchSwapQuoteLive()">
+            <input type="number" id="swap-in-amount" class="swap-number-input" value="0" placeholder="0.0" min="0" step="any" oninput="fetchSwapQuoteLive()">
             <select id="swap-from-token" class="swap-token-select" onchange="onSwapTokenChanged()">
               <option value="MYC" selected>🍄 MYC</option>
               <option value="USDT">💵 USDT</option>
@@ -1946,13 +1946,25 @@
           <span style="font-size: 11.5px; color: #fbbf24; font-weight: 600;">Connect →</span>
         </div>
 
+        <!-- FOUNDER GENESIS ACCESS (20% ALLOCATION) -->
+        <div onclick="connectFounderWallet()" style="background: rgba(234, 179, 8, 0.05); border: 1px dashed rgba(234, 179, 8, 0.35); border-radius: 12px; padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; margin-bottom: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 22px;">👑</span>
+            <div>
+              <div style="font-size: 13.5px; font-weight: 800; color: #fbbf24;">Founder Wallet (20% Genesis)</div>
+              <div style="font-size: 10.5px; color: var(--text-muted); font-family: var(--f-mono);">myc1af3a...5f31a • 200,000,000 MYC</div>
+            </div>
+          </div>
+          <span style="font-size: 11.5px; color: #fbbf24; font-weight: 700;">Connect 👑</span>
+        </div>
+
         <!-- SEED OPTIONS -->
         <div style="display: flex; gap: 6px; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06);">
           <button onclick="openWalletImportView()" class="spore-sub-btn" style="flex: 1; background: rgba(56,189,248,0.08); border: 1px solid rgba(56,189,248,0.25); color: #38bdf8; padding: 8px; font-size: 11px; border-radius: 8px; cursor: pointer;">
             📥 Import Seed
           </button>
           <button onclick="openWalletCreateView()" class="spore-sub-btn" style="flex: 1; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); color: #34d399; padding: 8px; font-size: 11px; border-radius: 8px; cursor: pointer;">
-            ✨ New Seed
+            ✨ New Seed (0 MYC)
           </button>
         </div>
       </div>
@@ -1988,6 +2000,14 @@
           <button onclick="openWalletKitModal()" type="button" style="background: rgba(0, 240, 255, 0.2); border: 1px solid rgba(0, 240, 255, 0.4); color: #00f0ff; border-radius: 6px; padding: 2px 7px; font-size: 10px; font-weight: 700; cursor: pointer;">
             Switch to Extension ↗
           </button>
+        </div>
+
+        <!-- Faucet Hint Banner -->
+        <div style="margin: 8px 16px 0; background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 11px; color: #94a3b8;">Need testnet tokens?</span>
+          <a href="/faucet" style="background: linear-gradient(135deg, #00f0ff, #10b981); color: #000; font-size: 10px; font-weight: 800; padding: 3px 9px; border-radius: 6px; text-decoration: none;">
+            🎁 Claim Faucet ↗
+          </a>
         </div>
 
         <!-- Compact Balance Card -->
@@ -2105,24 +2125,83 @@ const BIP39_WORDS = [
 ];
 
 let activeWallet = {
-  type: 'none', // 'extension' | 'native' | 'metamask' | 'none'
+  type: 'none', // 'extension' | 'native' | 'metamask' | 'founder' | 'none'
   evmAddress: null,
   mycAddress: null
 };
 
-let currentBalances = { MYC: 10000.0, USDT: 2500.0, USDC: 2500.0 };
-try {
-  const savedBal = localStorage.getItem('myca_user_balances');
-  if (savedBal) {
-    const parsed = JSON.parse(savedBal);
-    if (parsed && typeof parsed.MYC === 'number') {
-      currentBalances = Object.assign(currentBalances, parsed);
-    }
+// ═══════════════════════════════════════════════════════════════════
+// TOKENOMICS & TESTNET SUPPLY SPECIFICATION
+// Total Supply: 1,000,000,000 MYC (1 Billion)
+// Founder Allocation (20%): 200,000,000 MYC (myc1af3a246683298d473cb2534a78a5f31a)
+// Faucet & AMM Contract Reserve (80%): 800,000,000 MYC (0x...fAUc108)
+// Standard Wallets: 0.00 MYC, 0.00 USDT, 0.00 USDC initial balance (Must claim from Faucet)
+// ═══════════════════════════════════════════════════════════════════
+const FOUNDER_WALLET_ADDRESS = 'myc1af3a246683298d473cb2534a78a5f31a';
+const TOTAL_TESTNET_SUPPLY = {
+  MYC: 1000000000.0,
+  USDT: 10000000.0,
+  USDC: 10000000.0
+};
+const FOUNDER_ALLOCATION = {
+  MYC: 200000000.0,
+  USDT: 2000000.0,
+  USDC: 2000000.0
+};
+const FAUCET_CONTRACT_RESERVE = {
+  MYC: 800000000.0,
+  USDT: 8000000.0,
+  USDC: 8000000.0
+};
+
+function isFounderAddress(addr) {
+  if (!addr) return false;
+  const clean = addr.toLowerCase().trim();
+  return clean === FOUNDER_WALLET_ADDRESS.toLowerCase() || 
+         clean.startsWith('myc1founder') || 
+         clean.includes('genesis_founder');
+}
+
+function getWalletBalances(addr) {
+  if (!addr) return { MYC: 0.0, USDT: 0.0, USDC: 0.0 };
+  const clean = addr.toLowerCase().trim();
+  
+  if (isFounderAddress(clean)) {
+    try {
+      const saved = localStorage.getItem('myca_balances_' + clean);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.MYC === 'number') return parsed;
+      }
+    } catch(e) {}
+    return { ...FOUNDER_ALLOCATION };
   }
-} catch(e) {}
+
+  // Standard wallet: strictly 0.00 unless claimed from Faucet
+  try {
+    const saved = localStorage.getItem('myca_balances_' + clean);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed.MYC === 'number') return parsed;
+    }
+  } catch(e) {}
+
+  return { MYC: 0.0, USDT: 0.0, USDC: 0.0 };
+}
+
+let currentBalances = { MYC: 0.0, USDT: 0.0, USDC: 0.0 };
+
+function syncActiveWalletBalances() {
+  const addr = getActiveWalletAddress();
+  currentBalances = getWalletBalances(addr);
+}
 
 function saveUserBalances() {
+  const addr = getActiveWalletAddress();
+  if (!addr) return;
   try {
+    const clean = addr.toLowerCase().trim();
+    localStorage.setItem('myca_balances_' + clean, JSON.stringify(currentBalances));
     localStorage.setItem('myca_user_balances', JSON.stringify(currentBalances));
   } catch(e) {}
 }
@@ -2156,30 +2235,41 @@ function recordBridgeTransaction(btx) {
 
 function updateBalancesUI() {
   try {
+    const mycBal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 0.0;
     const navBal = document.getElementById('nav-wallet-balance');
     if (navBal) {
-      navBal.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
+      navBal.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
     }
     const sporeBal = document.getElementById('spore-balance-display');
     if (sporeBal) {
-      sporeBal.innerHTML = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span class="currency">$MYC</span>';
+      sporeBal.innerHTML = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span class="currency">$MYC</span>';
     }
     const fromTokEl = document.getElementById('swap-from-token');
     const toTokEl = document.getElementById('swap-to-token');
     if (fromTokEl) {
       const tok = fromTokEl.value;
       const el = document.getElementById('swap-from-balance');
-      if (el) el.innerText = (currentBalances[tok] !== undefined ? currentBalances[tok].toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00') + ' ' + tok;
+      const val = (currentBalances && currentBalances[tok] !== undefined) ? currentBalances[tok] : 0.0;
+      if (el) el.innerText = val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
+      const balDisplay = document.getElementById('swap-from-bal-display');
+      if (balDisplay) balDisplay.innerText = 'Balance: ' + val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
     }
     if (toTokEl) {
       const tok = toTokEl.value;
       const el = document.getElementById('swap-to-balance');
-      if (el) el.innerText = (currentBalances[tok] !== undefined ? currentBalances[tok].toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00') + ' ' + tok;
+      const val = (currentBalances && currentBalances[tok] !== undefined) ? currentBalances[tok] : 0.0;
+      if (el) el.innerText = val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
+      const balDisplay = document.getElementById('swap-to-bal-display');
+      if (balDisplay) balDisplay.innerText = 'Balance: ' + val.toLocaleString('en-US', {minimumFractionDigits: 2}) + ' ' + tok;
     }
     const bridgeBalEl = document.getElementById('bridge-user-balance');
-    if (bridgeBalEl) bridgeBalEl.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+    if (bridgeBalEl) bridgeBalEl.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
     const stakeBalEl = document.getElementById('stake-available-balance');
-    if (stakeBalEl) stakeBalEl.innerText = parseFloat(currentBalances.MYC || 0).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+    if (stakeBalEl) stakeBalEl.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2}) + ' MYC';
+
+    if (typeof checkSwapBalance === 'function') {
+      checkSwapBalance();
+    }
   } catch(e) {}
 }
 
@@ -2473,7 +2563,11 @@ function updateWalletUI() {
   }
   if (navBalPill) navBalPill.style.opacity = '1';
 
-  if (activeWallet.type === 'metamask') {
+  if (activeWallet.type === 'founder' || isFounderAddress(activeWallet.mycAddress)) {
+    if (icon) icon.innerText = '👑';
+    const addr = activeWallet.mycAddress;
+    if (label) label.innerText = addr ? `👑 ${addr.slice(0, 6)}...${addr.slice(-4)}` : 'Founder (20%)';
+  } else if (activeWallet.type === 'metamask') {
     if (icon) icon.innerText = '🦊';
     const addr = activeWallet.evmAddress || '';
     if (label) label.innerText = addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : 'MetaMask';
@@ -2488,8 +2582,8 @@ function updateWalletUI() {
   }
 
   if (navBal) {
-    var bal = currentBalances.MYC || 8637;
-    navBal.innerText = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
+    const mycBal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 0.0;
+    navBal.innerText = parseFloat(mycBal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' MYC';
   }
 }
 
@@ -2505,7 +2599,12 @@ function updateSporeWalletPanel() {
 
   if (pufEl) pufEl.innerText = addr ? (addr.slice(0,12) + '...' + addr.slice(-6)) : 'Not Connected';
   
-  if (activeWallet.type === 'extension') {
+  if (activeWallet.type === 'founder' || isFounderAddress(addr)) {
+    if (titleEl) titleEl.innerText = 'FOUNDER GENESIS NODE';
+    if (typeEl) typeEl.innerHTML = '<span style="color:#fbbf24; font-weight:700;">👑 Founder Genesis (20% Supply Allocation: 200,000,000 MYC)</span>';
+    if (pufBadge) pufBadge.innerText = 'FOUNDER 20%';
+    if (webBanner) webBanner.style.display = 'none';
+  } else if (activeWallet.type === 'extension') {
     if (titleEl) titleEl.innerText = 'SPORE EXTENSION';
     if (typeEl) typeEl.innerHTML = '<span style="color:#00e87a;">● Spore Chrome Extension Connected</span>';
     if (pufBadge) pufBadge.innerText = 'EXT';
@@ -2522,7 +2621,7 @@ function updateSporeWalletPanel() {
     if (webBanner) webBanner.style.display = 'flex';
   }
 
-  var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 8637;
+  var bal = (currentBalances && currentBalances.MYC !== undefined) ? currentBalances.MYC : 0.0;
   var formatted = parseFloat(bal).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
   if (balEl) {
     balEl.innerHTML = formatted + ' <span class="currency">$MYC</span>';
@@ -2566,15 +2665,17 @@ async function executeSporeTransfer() {
   if (!sender || activeWallet.type === 'none') { showToast('No wallet', 'Connect a wallet first', 'error'); return; }
   if (!recipient || !recipient.startsWith('myc1')) { showToast('Invalid', 'Enter a valid myc1... address', 'error'); return; }
   if (amount <= 0) { showToast('Invalid', 'Enter amount > 0', 'error'); return; }
-  if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + currentBalances.MYC + ' MYC', 'error'); return; }
+  if (amount > (currentBalances.MYC || 0)) { showToast('Insufficient', 'Only have ' + (currentBalances.MYC || 0) + ' MYC. Claim from Faucet!', 'error'); return; }
   
   try {
     currentBalances.MYC -= amount;
+    saveUserBalances();
     showToast('Sent!', amount + ' MYC sent to ' + recipient.slice(0, 10) + '... (0 Gas)', 'success');
     document.getElementById('spore-recipient-input').value = '';
     document.getElementById('spore-amount-input').value = '';
     updateSporeWalletPanel();
     updateWalletUI();
+    updateBalancesUI();
   } catch (e) {
     showToast('Error', e.message, 'error');
   }
@@ -2590,9 +2691,29 @@ function disconnectWallet() {
   if (typeof window.myc !== 'undefined' && window.myc) {
     window.myc.isConnectedState = false;
   }
+  syncActiveWalletBalances();
   updateWalletUI();
+  updateBalancesUI();
   closeWalletModal();
   showToast('Disconnected', 'Wallet successfully disconnected.', 'info');
+}
+
+function connectFounderWallet() {
+  activeWallet = {
+    type: 'founder',
+    evmAddress: toEvmAddress(FOUNDER_WALLET_ADDRESS),
+    mycAddress: FOUNDER_WALLET_ADDRESS
+  };
+  try {
+    localStorage.setItem('myca_wallet_type', 'founder');
+    localStorage.setItem('myca_native_address', FOUNDER_WALLET_ADDRESS);
+  } catch(e) {}
+  syncActiveWalletBalances();
+  updateWalletUI();
+  updateSporeWalletPanel();
+  updateBalancesUI();
+  closeWalletModal();
+  showToast('Founder Genesis Active 👑', 'Connected to Founder Node (200,000,000 MYC - 20% Allocation)', 'success');
 }
 
 function generate12Words() {
@@ -2619,10 +2740,12 @@ async function executeActivateCreatedWallet() {
     localStorage.setItem('myca_wallet_seed', lastGeneratedWords.join(' '));
   } catch(e) {}
   activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  syncActiveWalletBalances();
   updateWalletUI();
   openWalletSelectView();
   updateSporeWalletPanel();
-  showToast('Wallet Created!', 'Your 12-word seed wallet is now active: ' + newAddr.slice(0, 12) + '...', 'success');
+  updateBalancesUI();
+  showToast('Wallet Created (0.00 MYC)', 'Standard wallet initialized. Please claim testnet tokens from Faucet!', 'info');
 }
 
 async function executeImportSeed() {
@@ -2633,9 +2756,10 @@ async function executeImportSeed() {
   }
   const words = input.value.trim().split(/\s+/);
   if (words.length !== 12) {
-    showToast('Invalid Seed', 'Please enter exactly 12 words (found ' + words.length + ')', 'error');
+    showToast('Invalid Seed', 'Seed must contain exactly 12 words', 'error');
     return;
   }
+
   const newAddr = await deriveAddressFromWords(words);
   try {
     localStorage.setItem('myca_native_address', newAddr);
@@ -2643,9 +2767,11 @@ async function executeImportSeed() {
     localStorage.setItem('myca_wallet_seed', words.join(' '));
   } catch(e) {}
   activeWallet = { type: 'native', evmAddress: toEvmAddress(newAddr), mycAddress: newAddr };
+  syncActiveWalletBalances();
   updateWalletUI();
   openWalletSelectView();
   updateSporeWalletPanel();
+  updateBalancesUI();
   showToast('Seed Imported!', 'Wallet successfully restored: ' + newAddr.slice(0, 12) + '...', 'success');
 }
 
@@ -2684,7 +2810,13 @@ function initSporeWallet() {
   }
 
   // Auto-connect ONLY if user previously authenticated Spore extension or MetaMask
-  if (savedType === 'extension') {
+  if (savedType === 'founder') {
+    activeWallet = {
+      type: 'founder',
+      evmAddress: toEvmAddress(FOUNDER_WALLET_ADDRESS),
+      mycAddress: FOUNDER_WALLET_ADDRESS
+    };
+  } else if (savedType === 'extension') {
     const extAddr = (window.myc && window.myc.selectedAddress) || window.__MYCA_INITIAL_ADDRESS__ || savedMyc;
     if (extAddr) {
       activeWallet = {
@@ -2715,7 +2847,9 @@ function initSporeWallet() {
       mycAddress: null
     };
   }
+  syncActiveWalletBalances();
   updateWalletUI();
+  updateBalancesUI();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2730,8 +2864,10 @@ document.addEventListener('DOMContentLoaded', () => {
         activeWallet.mycAddress = freshAddr;
         activeWallet.evmAddress = toEvmAddress(freshAddr);
         try { localStorage.setItem('myca_native_address', freshAddr); } catch(e) {}
+        syncActiveWalletBalances();
         updateWalletUI();
         updateSporeWalletPanel();
+        updateBalancesUI();
       }
     }
   };
@@ -2762,6 +2898,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function onSwapTokenChanged() {
       updateBalancesUI();
       fetchSwapQuoteLive();
+      checkSwapBalance();
     }
 
     function flipSwapTokens() {
@@ -2772,13 +2909,57 @@ document.addEventListener('DOMContentLoaded', () => {
       elTo.value = temp;
       updateBalancesUI();
       fetchSwapQuoteLive();
+      checkSwapBalance();
     }
 
     function setSwapMax() {
       const fromTok = document.getElementById('swap-from-token').value;
-      const bal = currentBalances[fromTok] || 0;
-      document.getElementById('swap-in-amount').value = Math.floor(bal);
+      const bal = (currentBalances && currentBalances[fromTok] !== undefined) ? currentBalances[fromTok] : 0;
+      document.getElementById('swap-in-amount').value = bal;
       fetchSwapQuoteLive();
+      checkSwapBalance();
+    }
+
+    function checkSwapBalance() {
+      const from = document.getElementById('swap-from-token')?.value || 'MYC';
+      const inAmt = parseFloat(document.getElementById('swap-in-amount')?.value) || 0;
+      const userBal = (currentBalances && currentBalances[from] !== undefined) ? currentBalances[from] : 0;
+      const btn = document.getElementById('btn-execute-swap');
+      const msg = document.getElementById('swap-msg');
+      if (!btn) return false;
+
+      if (inAmt > userBal) {
+        btn.disabled = true;
+        btn.style.opacity = '0.75';
+        btn.style.cursor = 'not-allowed';
+        btn.style.background = 'linear-gradient(135deg, #ef4444, #b91c1c)';
+        btn.innerHTML = `<span>⚠️ Insufficient ${from} Balance (${userBal.toLocaleString('en-US', {minimumFractionDigits: 2})} available)</span>`;
+        if (msg) {
+          msg.innerHTML = `
+            <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 8px; padding: 10px 14px; margin-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12.5px; color: #fca5a5;">
+              <span>❌ You need <b>${inAmt.toLocaleString('en-US')} ${from}</b>, but only have <b>${userBal.toLocaleString('en-US', {minimumFractionDigits: 2})} ${from}</b>.</span>
+              <a href="/faucet" style="background: rgba(0, 240, 255, 0.2); border: 1px solid rgba(0, 240, 255, 0.5); color: #00f0ff; padding: 4px 10px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 11.5px; white-space: nowrap;">Claim ${from} ↗</a>
+            </div>
+          `;
+        }
+        return false;
+      } else if (inAmt <= 0) {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        btn.style.background = 'rgba(255, 255, 255, 0.08)';
+        btn.innerHTML = `<span>Enter an amount</span>`;
+        if (msg) msg.innerHTML = '';
+        return false;
+      } else {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        btn.style.background = 'linear-gradient(135deg, var(--teal-accent), var(--cyan-accent))';
+        btn.innerHTML = `<span>🔄 Execute Organic Swap (0.00 Gas)</span>`;
+        if (msg) msg.innerHTML = '';
+        return true;
+      }
     }
 
     async function fetchSwapQuoteLive() {
@@ -2789,6 +2970,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const rateEl = document.getElementById('swap-rate-val');
       const impactEl = document.getElementById('swap-impact-val');
       const feeEl = document.getElementById('swap-fee-val');
+
+      checkSwapBalance();
 
       if (from === to) {
         outEl.value = inAmt.toFixed(4);
@@ -2808,7 +2991,6 @@ document.addEventListener('DOMContentLoaded', () => {
           impactEl.innerText = `${q.priceImpactPercent}% (${q.priceImpactPercent < 1 ? 'Low' : 'High'})`;
           feeEl.innerText = `${q.lpFee} ${from}`;
         } else {
-          // Fallback constant-product calculation
           let rate = (from === 'MYC') ? 0.0997 : (to === 'MYC') ? 9.969 : 0.997;
           outEl.value = (inAmt * rate).toFixed(4);
           rateEl.innerText = `1 ${from} ≈ ${rate} ${to}`;
@@ -2832,6 +3014,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (from === to) {
         showToast('Same Token', 'Select different tokens to swap', 'error');
+        return;
+      }
+
+      const userBal = (currentBalances && currentBalances[from] !== undefined) ? currentBalances[from] : 0;
+      if (amount > userBal) {
+        showToast('Insufficient Balance', `You only have ${userBal.toLocaleString('en-US', {minimumFractionDigits: 2})} ${from}. Cannot swap ${amount.toLocaleString('en-US')} ${from}. Claim tokens from Faucet!`, 'error');
+        checkSwapBalance();
         return;
       }
 
@@ -2888,7 +3077,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch (e) {}
 
-      // Settle swap
+      // Settle swap strictly deducting and adding
       currentBalances[from] = Math.max(0, (currentBalances[from] || 0) - amount);
       currentBalances[to] = (currentBalances[to] || 0) + outAmt;
       if (typeof saveUserBalances === 'function') saveUserBalances();
@@ -2914,8 +3103,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Swap Confirmed!', `Swapped ${amount} ${from} ➔ ${outAmt.toFixed(4)} ${to} (0.00 Gas)`, 'success');
       msg.innerHTML = `<span style="color: var(--teal-accent); font-weight: 700;">✅ Success! Received ${outAmt.toFixed(4)} ${to} (Tx: ${txHash.slice(0, 12)}... | Gas: 0.00 MYC)</span>`;
 
-      btn.disabled = false;
-      btn.innerText = '🔄 Execute Organic Swap (0.00 Gas)';
+      checkSwapBalance();
     }
   </script>
 </body>
