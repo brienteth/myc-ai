@@ -637,10 +637,13 @@
       <span class="brand-badge">564-Byte C99 Bio-Logic</span>
     </a>
     <div class="header-links">
+      <button id="btnOpenAnalytics" class="btn-ghost" style="color:var(--emerald); border-color:rgba(0,255,136,0.3); background:rgba(0,255,136,0.06);">
+        <span>📊 Analytics</span>
+      </button>
       <a href="https://x.com/JStefanop1" target="_blank" class="btn-ghost">
         <span>vs. HashFly (140k Fly)</span>
       </a>
-      <a href="https://mycai.pro/downloads/mycai-c99-core-benchmark-kit.zip" class="btn-ghost" download>
+      <a href="https://mycai.pro/downloads/mycai-c99-core-benchmark-kit.zip" id="btnDownloadC99" class="btn-ghost" download>
         <span>📥 Download C99 Kit</span>
       </a>
       <button id="btnShareX" class="btn-cta">
@@ -844,6 +847,80 @@ uint32_t myc_ghr_bio_nonce_step(MycBioCore *core, float stim_mv, float glucose_i
       </pre>
     </div>
   </main>
+
+  
+  <!-- Analytics Console Modal -->
+  <div class="modal-backdrop" id="analyticsModal">
+    <div class="modal-box" style="max-width: 840px;">
+      <div class="modal-title">
+        <span style="display:flex; align-items:center; gap:8px;">
+          <span>📊</span>
+          <span>Live Visitor & Interaction Analytics</span>
+        </span>
+        <button id="btnCloseAnalytics" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+      </div>
+      <div style="font-size:0.8rem; color:var(--text-muted); line-height:1.5;">
+        Real-time edge telemetry for <code style="color:var(--cyan)">mycai.pro/mycohash</code>. Records unique visitor sessions, traffic referrers (e.g. Twitter/X), geographic distribution, and exact click interactions.
+      </div>
+      
+      <!-- Metrics Grid -->
+      <div class="stats-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
+        <div class="stat-card">
+          <div class="stat-label">Unique Visitors</div>
+          <div class="stat-val cyan" id="aTotalVisitors">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Pageviews</div>
+          <div class="stat-val emerald" id="aTotalPageviews">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Hyphae Shocks</div>
+          <div class="stat-val gold" id="aTotalShocks">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Proofs Verified</div>
+          <div class="stat-val" style="color:var(--purple)" id="aTotalVerifications">0</div>
+        </div>
+      </div>
+
+      <!-- Referrers & Device Distribution -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div style="background:#020408; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; font-weight:700;">TOP REFERRAL SOURCES</div>
+          <div id="aTopReferrers" style="font-size:0.75rem; display:flex; flex-direction:column; gap:6px;">
+            <div style="color:var(--text-muted)">Scanning referrers...</div>
+          </div>
+        </div>
+        <div style="background:#020408; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; font-weight:700;">VISITOR GEOGRAPHY & DEVICES</div>
+          <div id="aTopCountries" style="font-size:0.75rem; display:flex; flex-direction:column; gap:6px;">
+            <div style="color:var(--text-muted)">Scanning locations...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Recent Activity Feed -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">RECENT VISITOR ACTIONS</span>
+          <span style="font-size:0.7rem; color:var(--emerald);" id="aLiveSyncStatus">● Live Synced</span>
+        </div>
+        <div style="max-height:160px; overflow-y:auto; background:#020408; border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:8px; font-size:0.72rem; font-family:var(--font-mono);" id="aActivityLog">
+          <div style="color:var(--text-muted); text-align:center; padding:12px;">Recording live visitor interactions...</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button id="btnRefreshAnalytics" class="btn-ghost" style="padding:8px 14px; font-size:0.75rem;">
+          🔄 Refresh Live
+        </button>
+        <button id="btnExportAnalytics" class="btn-cta" style="padding:8px 16px; font-size:0.75rem;">
+          📥 Download Raw Analytics JSON
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Cryptographic Verification Modal -->
   <div class="modal-backdrop" id="verifyModal">
@@ -1502,6 +1579,220 @@ cc @JStefanop1 @myca_network 🍄⚡`;
       }
     }
     fetchLiveMempoolTip();
+
+    /* ==========================================================================
+       MYCOHASH REAL-TIME TELEMETRY & ANALYTICS TRACKER
+       ========================================================================== */
+    let visitorId = localStorage.getItem('myco_visitor_id');
+    if (!visitorId) {
+      visitorId = 'myco_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
+      localStorage.setItem('myco_visitor_id', visitorId);
+    }
+    const sessionId = 'sess_' + Math.random().toString(36).substring(2, 9);
+    let localAnalyticsEvents = [];
+    try {
+      localAnalyticsEvents = JSON.parse(localStorage.getItem('myco_local_events') || '[]');
+    } catch (e) { localAnalyticsEvents = []; }
+
+    let cachedServerStats = null;
+
+    async function trackAnalytics(eventType, details = {}) {
+      const payload = {
+        visitorId,
+        sessionId,
+        event: eventType,
+        details,
+        referrer: document.referrer || 'Direct',
+        screen: `${window.innerWidth}x${window.innerHeight}`,
+        path: window.location.pathname,
+        timestamp: Date.now()
+      };
+
+      localAnalyticsEvents.push(payload);
+      if (localAnalyticsEvents.length > 300) localAnalyticsEvents.shift();
+      try {
+        localStorage.setItem('myco_local_events', JSON.stringify(localAnalyticsEvents));
+      } catch (e) {}
+
+      try {
+        if (navigator.sendBeacon) {
+          const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+          navigator.sendBeacon('/api/mycohash/track', blob);
+        } else {
+          fetch('/api/mycohash/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            keepalive: true
+          }).catch(() => {});
+        }
+      } catch (err) {}
+    }
+
+    trackAnalytics('PAGE_VIEW', {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      platform: navigator.platform
+    });
+
+    let activeSeconds = 0;
+    setInterval(() => {
+      activeSeconds += 45;
+      trackAnalytics('TIME_SPENT', { seconds: activeSeconds });
+    }, 45000);
+
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      trackAnalytics('CANVAS_SHOCK', { x: Math.round(e.clientX - rect.left), y: Math.round(e.clientY - rect.top) });
+    });
+
+    document.getElementById('btnShockHyphae').addEventListener('click', () => {
+      trackAnalytics('CANVAS_SHOCK', { source: 'button_pulse' });
+    });
+
+    sliderStim.addEventListener('change', (e) => {
+      trackAnalytics('SLIDER_ADJUST', { parameter: 'stim_mv', value: e.target.value });
+    });
+    sliderNutrient.addEventListener('change', (e) => {
+      trackAnalytics('SLIDER_ADJUST', { parameter: 'nutrient_percent', value: e.target.value });
+    });
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        trackAnalytics('MODE_CHANGE', { targetDiff: btn.getAttribute('data-diff') });
+      });
+    });
+
+    btnToggleMining.addEventListener('click', () => {
+      trackAnalytics('MINING_TOGGLE', { isMining });
+    });
+
+    const origOpenVerifyModal = window.openVerifyModal;
+    window.openVerifyModal = function(shareId) {
+      trackAnalytics('VERIFY_PROOF', { shareId });
+      origOpenVerifyModal(shareId);
+    };
+
+    document.getElementById('btnShareX').addEventListener('click', () => {
+      trackAnalytics('SHARE_X', { timestamp: Date.now() });
+    });
+
+    const btnDl = document.getElementById('btnDownloadC99');
+    if (btnDl) {
+      btnDl.addEventListener('click', () => {
+        trackAnalytics('DOWNLOAD_C99', { file: 'mycai-c99-core-benchmark-kit.zip' });
+      });
+    }
+
+    document.getElementById('btnCopyC99').addEventListener('click', () => {
+      trackAnalytics('COPY_C99');
+    });
+
+    async function loadAnalyticsDashboard() {
+      try {
+        const res = await fetch('/api/mycohash/stats');
+        if (res.ok) {
+          cachedServerStats = await res.json();
+        }
+      } catch (e) {
+        console.log('Using local analytics fallback');
+      }
+
+      let totalVisitors = cachedServerStats?.totalVisitors || 1;
+      let totalPageViews = cachedServerStats?.totalPageViews || localAnalyticsEvents.filter(x => x.event === 'PAGE_VIEW').length || 1;
+      let shocks = (cachedServerStats?.eventCounts?.CANVAS_SHOCK || 0) + localAnalyticsEvents.filter(x => x.event === 'CANVAS_SHOCK').length;
+      let verifs = (cachedServerStats?.eventCounts?.VERIFY_PROOF || 0) + localAnalyticsEvents.filter(x => x.event === 'VERIFY_PROOF').length;
+
+      document.getElementById('aTotalVisitors').innerText = Math.max(1, totalVisitors).toLocaleString();
+      document.getElementById('aTotalPageviews').innerText = Math.max(1, totalPageViews).toLocaleString();
+      document.getElementById('aTotalShocks').innerText = shocks.toLocaleString();
+      document.getElementById('aTotalVerifications').innerText = verifs.toLocaleString();
+
+      const refEl = document.getElementById('aTopReferrers');
+      const serverRefs = cachedServerStats?.topReferrers || [];
+      if (serverRefs.length > 0) {
+        refEl.innerHTML = serverRefs.map(([domain, count]) => `
+          <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+            <span style="color:var(--cyan);">🔗 ${domain}</span>
+            <span style="color:#fff; font-weight:700;">${count} clicks</span>
+          </div>
+        `).join('');
+      } else {
+        const localRef = document.referrer ? new URL(document.referrer).hostname : 'Direct / Twitter';
+        refEl.innerHTML = `
+          <div style="display:flex; justify-content:space-between; padding:4px 0;">
+            <span style="color:var(--cyan);">🔗 ${localRef}</span>
+            <span style="color:#fff; font-weight:700;">Active</span>
+          </div>
+        `;
+      }
+
+      const countryEl = document.getElementById('aTopCountries');
+      const serverCountries = cachedServerStats?.topCountries || [];
+      if (serverCountries.length > 0) {
+        countryEl.innerHTML = serverCountries.map(([code, count]) => `
+          <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+            <span style="color:var(--emerald);">🌍 ${code}</span>
+            <span style="color:#fff; font-weight:700;">${count} sessions</span>
+          </div>
+        `).join('');
+      } else {
+        countryEl.innerHTML = `
+          <div style="display:flex; justify-content:space-between; padding:4px 0;">
+            <span style="color:var(--emerald);">🌍 Current Session (${navigator.language})</span>
+            <span style="color:#fff; font-weight:700;">${navigator.platform}</span>
+          </div>
+        `;
+      }
+
+      const actEl = document.getElementById('aActivityLog');
+      const allEvents = (cachedServerStats?.recentEvents || []).concat(localAnalyticsEvents.slice(-20)).reverse().slice(0, 40);
+      if (allEvents.length > 0) {
+        actEl.innerHTML = allEvents.map(ev => {
+          const timeStr = new Date(ev.timestamp).toLocaleTimeString();
+          let badgeColor = 'var(--cyan)';
+          const name = ev.eventType || ev.event;
+          if (name === 'CANVAS_SHOCK') badgeColor = 'var(--gold)';
+          if (name === 'VERIFY_PROOF') badgeColor = 'var(--emerald)';
+          if (name === 'SHARE_X') badgeColor = '#00f0ff';
+          return `
+            <div style="padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.04); display:flex; justify-content:space-between;">
+              <span><span style="color:${badgeColor}; font-weight:700;">[${name}]</span> ${ev.country ? ev.country + ' • ' : ''}${ev.referrer || 'Direct'}</span>
+              <span style="color:var(--text-muted);">${timeStr}</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    document.getElementById('btnOpenAnalytics').addEventListener('click', () => {
+      document.getElementById('analyticsModal').style.display = 'flex';
+      loadAnalyticsDashboard();
+    });
+    document.getElementById('btnCloseAnalytics').addEventListener('click', () => {
+      document.getElementById('analyticsModal').style.display = 'none';
+    });
+    document.getElementById('analyticsModal').addEventListener('click', (e) => {
+      if (e.target.id === 'analyticsModal') document.getElementById('analyticsModal').style.display = 'none';
+    });
+    document.getElementById('btnRefreshAnalytics').addEventListener('click', loadAnalyticsDashboard);
+
+    document.getElementById('btnExportAnalytics').addEventListener('click', () => {
+      const exportData = {
+        serverStats: cachedServerStats,
+        localEvents: localAnalyticsEvents,
+        exportedAt: new Date().toISOString(),
+        host: window.location.host
+      };
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mycohash_analytics_report_' + Date.now() + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
   </script>
 </body>
 </html>

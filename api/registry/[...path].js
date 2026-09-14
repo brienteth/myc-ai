@@ -107,6 +107,27 @@ let _global_bridge_transactions = [
   }
 ];
 
+
+// Global in-memory MycoHash Analytics Store
+let _mycohash_analytics = {
+  totalPageViews: 0,
+  uniqueVisitors: new Set(),
+  events: [], // Last 500 events
+  eventCounts: {
+    PAGE_VIEW: 0,
+    CANVAS_SHOCK: 0,
+    MODE_CHANGE: 0,
+    VERIFY_PROOF: 0,
+    SHARE_X: 0,
+    DOWNLOAD_C99: 0,
+    COPY_C99: 0,
+    SLIDER_ADJUST: 0,
+    TIME_SPENT: 0
+  },
+  referrers: {},
+  countries: {}
+};
+
 export default function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -125,6 +146,82 @@ export default function handler(req, res) {
   const { url, method } = req;
   const now = Date.now();
   const parsedUrl = new URL(url, 'http://localhost');
+
+  // Route: /api/mycohash/track (POST or GET)
+  if (parsedUrl.pathname.includes('/mycohash/track')) {
+    try {
+      let data = {};
+      if (req.method === 'POST') {
+        data = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+      } else {
+        data = Object.fromEntries(parsedUrl.searchParams.entries());
+      }
+      
+      const visitorId = data.visitorId || 'anon_' + Math.random().toString(36).substring(2, 9);
+      const eventType = data.event || 'PAGE_VIEW';
+      const rawReferrer = data.referrer || req.headers['referer'] || 'Direct';
+      const country = req.headers['x-vercel-ip-country'] || 'US';
+      const city = req.headers['x-vercel-ip-city'] || 'Unknown';
+      
+      _mycohash_analytics.uniqueVisitors.add(visitorId);
+      if (eventType === 'PAGE_VIEW') {
+        _mycohash_analytics.totalPageViews++;
+      }
+      if (_mycohash_analytics.eventCounts[eventType] !== undefined) {
+        _mycohash_analytics.eventCounts[eventType]++;
+      } else {
+        _mycohash_analytics.eventCounts[eventType] = 1;
+      }
+
+      let refDomain = 'Direct';
+      try {
+        if (rawReferrer && rawReferrer !== 'Direct') {
+          refDomain = new URL(rawReferrer).hostname.replace('www.', '');
+        }
+      } catch (e) {
+        refDomain = String(rawReferrer).substring(0, 30);
+      }
+      _mycohash_analytics.referrers[refDomain] = (_mycohash_analytics.referrers[refDomain] || 0) + 1;
+      _mycohash_analytics.countries[country] = (_mycohash_analytics.countries[country] || 0) + 1;
+
+      const eventRecord = {
+        id: Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        visitorId,
+        eventType,
+        details: data.details || {},
+        country,
+        city,
+        referrer: refDomain,
+        timestamp: Date.now()
+      };
+      _mycohash_analytics.events.push(eventRecord);
+      if (_mycohash_analytics.events.length > 500) _mycohash_analytics.events.shift();
+
+      return res.status(200).json({
+        success: true,
+        totalVisitors: _mycohash_analytics.uniqueVisitors.size,
+        totalPageViews: _mycohash_analytics.totalPageViews,
+        eventCounts: _mycohash_analytics.eventCounts
+      });
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
+  }
+
+  // Route: /api/mycohash/stats (GET)
+  if (parsedUrl.pathname.includes('/mycohash/stats')) {
+    return res.status(200).json({
+      success: true,
+      totalVisitors: _mycohash_analytics.uniqueVisitors.size,
+      totalPageViews: _mycohash_analytics.totalPageViews,
+      eventCounts: _mycohash_analytics.eventCounts,
+      recentEvents: _mycohash_analytics.events.slice(-60).reverse(),
+      topReferrers: Object.entries(_mycohash_analytics.referrers).sort((a,b)=>b[1]-a[1]).slice(0, 10),
+      topCountries: Object.entries(_mycohash_analytics.countries).sort((a,b)=>b[1]-a[1]).slice(0, 10),
+      serverTime: Date.now()
+    });
+  }
+
 
   // Route: /api/registry/register (POST)
   if (parsedUrl.pathname.endsWith('/api/registry/register') && method === 'POST') {
