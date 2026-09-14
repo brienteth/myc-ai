@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/mycohash",
+      "destination": "/mycohash.html"
+    },
+    {
+      "source": "/mycohash.html",
+      "destination": "/mycohash.html"
+    },
+    {
       "source": "/depin/mindcast-node",
       "destination": "/depin/mindcast-node.html"
     },
