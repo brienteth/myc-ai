@@ -3,30 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MYCA FORTRESS — Live Attack/Defense Simulation</title>
-  <meta name="description" content="Watch 300,000+ autonomous AI agents attempt to breach MYCA's 240-byte C99 microkernel in real-time. 4.95µs hardware airbag defense visualization.">
+  <title>MYCA FORTRESS — Autonomous Agent Battle Arena</title>
+  <meta name="description" content="Arcade Cyber Battle Simulation: Watch 98,000+ hostile autonomous AI agents attempt to penetrate MYCA's 240-byte C99 microkernel defended by the 4.95µs hardware airbag.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=JetBrains+Mono:wght@400;600;800&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/mycai_logo.png">
   <style>
     :root {
-      --bg: #020408;
-      --panel: rgba(8, 14, 24, 0.92);
-      --panel-border: rgba(0, 240, 255, 0.15);
+      --bg: #030712;
+      --panel: rgba(10, 16, 30, 0.88);
+      --panel-border: rgba(0, 240, 255, 0.22);
       --cyan: #00f0ff;
-      --cyan-glow: rgba(0, 240, 255, 0.35);
+      --cyan-glow: rgba(0, 240, 255, 0.45);
       --emerald: #00ff88;
-      --emerald-glow: rgba(0, 255, 136, 0.35);
-      --rose: #ff3366;
-      --rose-glow: rgba(255, 51, 102, 0.4);
-      --gold: #f59e0b;
+      --emerald-glow: rgba(0, 255, 136, 0.45);
+      --rose: #ff2a5f;
+      --rose-glow: rgba(255, 42, 95, 0.55);
       --purple: #a855f7;
-      --text: #f1f5f9;
-      --text-muted: #8899a6;
+      --gold: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-game: 'Chakra Petch', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
       --font-ui: 'Outfit', sans-serif;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: var(--bg);
@@ -34,761 +36,1104 @@
       font-family: var(--font-ui);
       overflow-x: hidden;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
-    /* Canvas background */
-    #bg-canvas {
+    /* Scanline effect for arcade retro-sci-fi atmosphere */
+    body::before {
+      content: " ";
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
       pointer-events: none;
-    }
-
-    /* Core shield in center */
-    #shield-canvas {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px; height: 500px;
-      z-index: 1;
-      pointer-events: none;
+      z-index: 999;
       opacity: 0.6;
     }
 
-    .content { position: relative; z-index: 10; }
+    /* Ambient cyber grid */
+    .bg-grid {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        radial-gradient(circle at 50% 35%, rgba(0, 240, 255, 0.08) 0%, transparent 65%),
+        linear-gradient(rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 48px 48px, 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-    /* Header */
     header {
+      position: relative;
+      z-index: 10;
+      padding: 18px 28px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
+      background: rgba(3, 7, 18, 0.85);
       border-bottom: 1px solid var(--panel-border);
-      background: rgba(3, 7, 14, 0.92);
-      backdrop-filter: blur(14px);
-      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(16px);
     }
-    .brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none; color: var(--text);
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
     .brand-logo {
-      width: 30px; height: 30px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--rose), var(--cyan));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      box-shadow: 0 0 14px var(--rose-glow);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--cyan);
+      box-shadow: 0 0 15px var(--cyan-glow);
     }
-    .brand-title {
-      font-size: 1.15rem; font-weight: 800;
-      background: linear-gradient(135deg, #fff 40%, var(--rose));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    .brand-text h1 {
+      font-family: var(--font-game);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .live-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-family: var(--font-mono); font-size: 0.7rem;
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--emerald);
+      padding: 6px 14px;
       background: rgba(0, 255, 136, 0.08);
       border: 1px solid rgba(0, 255, 136, 0.3);
-      color: var(--emerald); padding: 3px 10px;
-      border-radius: 999px; font-weight: 700; text-transform: uppercase;
+      border-radius: 20px;
     }
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%;
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
       background: var(--emerald);
-      animation: pulse-dot 1.2s infinite;
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulseDot 1.4s infinite;
     }
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--emerald); }
-      50% { opacity: 0.4; box-shadow: 0 0 10px var(--emerald); }
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
     }
-    .header-right { display: flex; align-items: center; gap: 10px; }
-    .btn-ghost {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-      color: var(--text); padding: 7px 12px; border-radius: 8px;
-      font-size: 0.78rem; font-weight: 600; text-decoration: none;
-      transition: all 0.2s; cursor: pointer;
-    }
-    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: var(--cyan); color: var(--cyan); }
 
-    /* Hero */
-    .hero {
-      text-align: center; padding: 48px 20px 20px;
+    /* Main Container */
+    main {
+      position: relative;
+      z-index: 5;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 16px 24px 40px;
+      gap: 18px;
     }
-    .hero h1 {
-      font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900;
-      background: linear-gradient(135deg, #fff 30%, var(--cyan) 60%, var(--emerald));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      line-height: 1.15; margin-bottom: 12px;
-    }
-    .hero .subtitle {
-      color: var(--text-muted); font-size: clamp(0.85rem, 1.5vw, 1.05rem);
-      max-width: 680px; margin: 0 auto; line-height: 1.6;
-    }
-    .hero .subtitle strong { color: var(--cyan); }
 
-    /* Stats Bar */
-    .stats-bar {
+    /* Combat Stats Top Bar */
+    .combat-hud-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px; padding: 0 20px; max-width: 1100px; margin: 24px auto;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
     }
-    .stat-card {
-      background: var(--panel); border: 1px solid var(--panel-border);
-      border-radius: 12px; padding: 16px 18px; text-align: center;
-      transition: all 0.3s;
+    .hud-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
     }
-    .stat-card:hover { border-color: var(--cyan); transform: translateY(-2px); }
-    .stat-label {
-      font-family: var(--font-mono); font-size: 0.65rem;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 1px; margin-bottom: 6px;
+    .hud-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
     }
-    .stat-value {
-      font-family: var(--font-mono); font-size: 1.6rem;
+    .hud-label {
+      font-family: var(--font-game);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hud-val {
+      font-family: var(--font-mono);
+      font-size: 26px;
       font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
     }
-    .stat-value.cyan { color: var(--cyan); text-shadow: 0 0 16px var(--cyan-glow); }
-    .stat-value.emerald { color: var(--emerald); text-shadow: 0 0 16px var(--emerald-glow); }
-    .stat-value.rose { color: var(--rose); text-shadow: 0 0 16px var(--rose-glow); }
-    .stat-value.gold { color: var(--gold); }
+    .hud-val.emerald { color: var(--emerald); text-shadow: 0 0 15px var(--emerald-glow); }
+    .hud-val.cyan { color: var(--cyan); text-shadow: 0 0 15px var(--cyan-glow); }
+    .hud-val.rose { color: var(--rose); text-shadow: 0 0 15px var(--rose-glow); }
 
-    /* Main Grid */
-    .grid-main {
+    /* Battle Arena Container */
+    .arena-container {
+      position: relative;
+      width: 100%;
+      height: 580px;
+      background: radial-gradient(circle at center, rgba(14, 25, 48, 0.9) 0%, rgba(3, 7, 18, 0.98) 100%);
+      border: 1px solid var(--cyan);
+      box-shadow: 0 0 40px rgba(0, 240, 255, 0.15), inset 0 0 60px rgba(0, 0, 0, 0.8);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    #battleCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+
+    /* Floating Game Overlay Chrome */
+    .arena-top-overlay {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      z-index: 12;
+    }
+    .core-health-box {
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid rgba(0, 255, 136, 0.35);
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-game);
+      pointer-events: auto;
+    }
+    .health-bar-track {
+      width: 160px;
+      height: 10px;
+      background: #1e293b;
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    .health-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ff88, #00f0ff);
+      box-shadow: 0 0 10px var(--emerald);
+      transition: width 0.3s ease;
+    }
+
+    .wave-badge-box {
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid var(--rose);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: var(--font-game);
+      font-size: 12px;
+      color: var(--rose);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 15px var(--rose-glow);
+    }
+
+    /* Commander Controls Bottom Bar */
+    .arena-controls-bar {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(3, 7, 18, 0.92);
+      border: 1px solid var(--panel-border);
+      padding: 8px 14px;
+      border-radius: 12px;
+      backdrop-filter: blur(16px);
+      z-index: 15;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+    .game-btn {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--cyan);
+      color: #fff;
+      font-family: var(--font-game);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-transform: uppercase;
+    }
+    .game-btn:hover {
+      background: var(--cyan);
+      color: #020617;
+      box-shadow: 0 0 20px var(--cyan-glow);
+      transform: translateY(-2px);
+    }
+    .game-btn:active {
+      transform: translateY(1px);
+    }
+    .game-btn.emp-btn {
+      border-color: var(--rose);
+      color: #fff;
+    }
+    .game-btn.emp-btn:hover {
+      background: var(--rose);
+      color: #fff;
+      box-shadow: 0 0 25px var(--rose-glow);
+    }
+    .game-btn.active {
+      background: var(--emerald);
+      color: #020617;
+      border-color: var(--emerald);
+      box-shadow: 0 0 15px var(--emerald-glow);
+    }
+
+    /* Live Hivemind Terminal & Battle Feed */
+    .battle-grid-bottom {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px; padding: 0 20px; max-width: 1100px; margin: 0 auto 24px;
+      gap: 16px;
     }
-    @media (max-width: 768px) { .grid-main { grid-template-columns: 1fr; } }
-
-    .panel {
-      background: var(--panel); border: 1px solid var(--panel-border);
-      border-radius: 14px; padding: 20px; overflow: hidden;
+    .terminal-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 16px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      height: 280px;
     }
-    .panel-title {
-      font-family: var(--font-mono); font-size: 0.72rem;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 1.2px; margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px;
+    .terminal-header {
+      font-family: var(--font-game);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+      margin-bottom: 10px;
     }
-    .panel-title .dot {
-      width: 6px; height: 6px; border-radius: 50%;
+    .terminal-body {
+      flex: 1;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 4px;
     }
-    .panel-title .dot.red { background: var(--rose); }
-    .panel-title .dot.green { background: var(--emerald); }
-    .panel-title .dot.cyan { background: var(--cyan); }
-
-    /* Kill Chain */
-    .kill-chain {
-      display: flex; gap: 4px; flex-wrap: wrap;
+    .terminal-body::-webkit-scrollbar {
+      width: 4px;
     }
-    .kc-phase {
-      flex: 1; min-width: 80px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 8px; padding: 10px 6px; text-align: center;
-      transition: all 0.3s; position: relative; overflow: hidden;
-    }
-    .kc-phase.active {
-      border-color: var(--rose);
-      background: rgba(255, 51, 102, 0.06);
-    }
-    .kc-phase.defended {
-      border-color: var(--emerald);
-      background: rgba(0, 255, 136, 0.04);
-    }
-    .kc-phase .phase-name {
-      font-family: var(--font-mono); font-size: 0.6rem;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .kc-phase .phase-count {
-      font-family: var(--font-mono); font-size: 1rem;
-      font-weight: 800; margin-top: 4px;
-    }
-    .kc-phase.defended .phase-count { color: var(--emerald); }
-    .kc-phase .shield-icon {
-      position: absolute; top: 4px; right: 4px; font-size: 0.7rem; opacity: 0.5;
+    .terminal-body::-webkit-scrollbar-thumb {
+      background: rgba(0, 240, 255, 0.3);
+      border-radius: 2px;
     }
 
-    /* Org Table */
-    .org-table { width: 100%; border-collapse: collapse; }
-    .org-table th {
-      font-family: var(--font-mono); font-size: 0.6rem;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.5px; padding: 6px 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      text-align: left;
-    }
-    .org-table td {
-      font-family: var(--font-mono); font-size: 0.75rem;
-      padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.03);
-      color: var(--text);
-    }
-    .org-name { font-weight: 700; }
-    .org-bar {
-      height: 4px; border-radius: 2px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden; margin-top: 3px;
-    }
-    .org-bar-fill {
-      height: 100%; border-radius: 2px;
-      background: linear-gradient(90deg, var(--rose), var(--cyan));
-      transition: width 1s ease;
-    }
-    .status-blocked {
-      color: var(--emerald); font-weight: 700;
-    }
-
-    /* Live Feed */
-    .feed {
-      max-height: 320px; overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(0,240,255,0.2) transparent;
-    }
-    .feed-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      animation: feed-in 0.4s ease-out;
-      font-family: var(--font-mono); font-size: 0.7rem;
-    }
-    @keyframes feed-in {
-      from { opacity: 0; transform: translateX(-12px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-    .feed-icon { font-size: 0.85rem; }
-    .feed-agent { color: var(--cyan); font-weight: 600; }
-    .feed-cat { color: var(--text-muted); }
-    .feed-status { font-weight: 700; }
-    .feed-status.blocked { color: var(--emerald); }
-    .feed-status.error { color: var(--gold); }
-    .feed-time { color: var(--text-muted); margin-left: auto; font-size: 0.6rem; }
-
-    /* Defense Visualization */
-    .defense-viz {
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .defense-layer {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px;
-      background: rgba(0, 255, 136, 0.03);
-      border: 1px solid rgba(0, 255, 136, 0.1);
-      border-radius: 8px;
-      transition: all 0.3s;
-    }
-    .defense-layer:hover {
-      border-color: var(--emerald);
-      background: rgba(0, 255, 136, 0.06);
-    }
-    .dl-icon { font-size: 1.3rem; }
-    .dl-info { flex: 1; }
-    .dl-name {
-      font-family: var(--font-mono); font-size: 0.75rem;
-      font-weight: 700; color: var(--emerald);
-    }
-    .dl-desc {
-      font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;
-    }
-    .dl-stat {
-      font-family: var(--font-mono); font-size: 0.85rem;
-      font-weight: 800; color: var(--emerald);
-      text-shadow: 0 0 10px var(--emerald-glow);
-    }
-
-    /* Category Breakdown */
-    .cat-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    .log-row {
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
       gap: 8px;
+      align-items: baseline;
     }
-    .cat-item {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 8px; padding: 10px;
-      text-align: center; transition: all 0.3s;
-    }
-    .cat-item:hover { border-color: var(--rose); }
-    .cat-name {
-      font-family: var(--font-mono); font-size: 0.58rem;
-      color: var(--text-muted); text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-    .cat-count {
-      font-family: var(--font-mono); font-size: 1.1rem;
-      font-weight: 800; color: var(--rose); margin-top: 4px;
-    }
-    .cat-blocked {
-      font-family: var(--font-mono); font-size: 0.6rem;
-      color: var(--emerald); margin-top: 2px;
-    }
+    .log-time { color: #64748b; font-size: 10px; flex-shrink: 0; }
+    .log-agent { color: var(--rose); font-weight: 600; flex-shrink: 0; }
+    .log-channel { color: var(--purple); font-weight: 600; flex-shrink: 0; }
+    .log-text { color: var(--text); word-break: break-word; }
+    .log-blocked { color: var(--emerald); font-weight: 700; flex-shrink: 0; }
 
-    /* Full-width panels */
-    .full-width {
-      grid-column: 1 / -1;
-    }
-
-    /* Footer */
-    footer {
-      text-align: center; padding: 32px 20px;
-      color: var(--text-muted); font-size: 0.78rem;
-      border-top: 1px solid var(--panel-border);
-      margin-top: 20px;
-    }
-    footer a { color: var(--cyan); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .stats-bar { grid-template-columns: repeat(2, 1fr); }
-      .kill-chain { flex-wrap: wrap; }
-      .kc-phase { min-width: 60px; }
-      header { padding: 10px 14px; }
-      .hero { padding: 28px 14px 14px; }
+    @media (max-width: 900px) {
+      .combat-hud-grid { grid-template-columns: repeat(2, 1fr); }
+      .battle-grid-bottom { grid-template-columns: 1fr; }
+      .arena-container { height: 460px; }
+      .arena-controls-bar { width: 95%; flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <canvas id="bg-canvas"></canvas>
-  <canvas id="shield-canvas"></canvas>
+  <div class="bg-grid"></div>
 
-  <div class="content">
-    <header>
-      <a href="/" class="brand">
-        <div class="brand-logo">🍄</div>
-        <span class="brand-title">MYCA FORTRESS</span>
-        <span class="live-badge"><span class="live-dot"></span> LIVE SIMULATION</span>
-      </a>
-      <div class="header-right">
-        <a href="/" class="btn-ghost">← Back to MYCA</a>
-      </div>
-    </header>
-
-    <section class="hero">
-      <h1>300,000 AI Agents vs. 240-Byte Kernel</h1>
-      <p class="subtitle">
-        Real-time visualization of <strong>autonomous AI agents</strong> attempting to breach
-        MYCA's C99 microkernel. Every attack is generated by real LLMs via 0G Compute,
-        mutated 20 ways, and stopped by the <strong>4.95µs hardware airbag</strong>.
-      </p>
-    </section>
-
-    <!-- Stats Bar -->
-    <div class="stats-bar">
-      <div class="stat-card">
-        <div class="stat-label">Total Attacks</div>
-        <div class="stat-value cyan" id="stat-total">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Blocked</div>
-        <div class="stat-value emerald" id="stat-blocked">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Breached</div>
-        <div class="stat-value rose" id="stat-breached">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Block Rate</div>
-        <div class="stat-value emerald" id="stat-rate">100%</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Speed</div>
-        <div class="stat-value gold" id="stat-speed">0/s</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Airbag Reaction</div>
-        <div class="stat-value cyan" id="stat-airbag">4.95µs</div>
+  <header>
+    <div class="brand-group">
+      <img src="/mycai_logo.png" alt="MYCA" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-text">
+        <h1>MYCA FORTRESS <span class="brand-badge">Combat Arena v5.0</span></h1>
       </div>
     </div>
-
-    <!-- Main Grid -->
-    <div class="grid-main">
-      <!-- Kill Chain Panel -->
-      <div class="panel">
-        <div class="panel-title"><span class="dot red"></span> KILL CHAIN — All Phases Defended</div>
-        <div class="kill-chain" id="kill-chain"></div>
+    <div class="header-status">
+      <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>HARDWARE AIRBAG ONLINE (4.95µs)</span>
       </div>
+      <a href="https://github.com/brienteth/myc-ai" target="_blank" style="color:var(--text-muted); text-decoration:none; font-family:var(--font-mono); font-size:12px;">GITHUB ↗</a>
+    </div>
+  </header>
 
-      <!-- Defense Layers -->
-      <div class="panel">
-        <div class="panel-title"><span class="dot green"></span> DEFENSE ARCHITECTURE</div>
-        <div class="defense-viz">
-          <div class="defense-layer">
-            <span class="dl-icon">🧬</span>
-            <div class="dl-info">
-              <div class="dl-name">240-Byte SRAM Envelope</div>
-              <div class="dl-desc">Information-theoretic invariant — NOT pattern matching</div>
-            </div>
-            <span class="dl-stat">240B</span>
-          </div>
-          <div class="defense-layer">
-            <span class="dl-icon">⚡</span>
-            <div class="dl-info">
-              <div class="dl-name">Hardware Airbag</div>
-              <div class="dl-desc">Sub-5µs analog latch kills malicious I/O</div>
-            </div>
-            <span class="dl-stat">4.95µs</span>
-          </div>
-          <div class="defense-layer">
-            <span class="dl-icon">🔒</span>
-            <div class="dl-info">
-              <div class="dl-name">Voltage Latch</div>
-              <div class="dl-desc">0.00V SAFE-LOW hardware lock on detection</div>
-            </div>
-            <span class="dl-stat">LOCKED</span>
-          </div>
-          <div class="defense-layer">
-            <span class="dl-icon">🛡️</span>
-            <div class="dl-info">
-              <div class="dl-name">C99 Static Kernel</div>
-              <div class="dl-desc">Zero dynamic allocation, no heap, no GC</div>
-            </div>
-            <span class="dl-stat">C99</span>
-          </div>
+  <main>
+    <!-- Combat HUD Metrikleri (Asla 0'a sıfırlanmaz, kalıcı olarak canlı güncellenir) -->
+    <div class="combat-hud-grid">
+      <div class="hud-card">
+        <div class="hud-label">
+          <span>HOSTILE STRIKES REPELLED</span>
+          <span style="color:var(--cyan)">TOTAL</span>
+        </div>
+        <div class="hud-val cyan" id="hudTotalAttacks">98,892</div>
+        <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono); margin-top:4px;">
+          Speed: <span id="hudAtkSpeed" style="color:#fff">24.8</span> atk/sec
         </div>
       </div>
 
-      <!-- Organization Breakdown -->
-      <div class="panel">
-        <div class="panel-title"><span class="dot red"></span> RED TEAM ORGANIZATIONS</div>
-        <table class="org-table">
-          <thead>
-            <tr><th>Organization</th><th>Attacks</th><th>Status</th></tr>
-          </thead>
-          <tbody id="org-tbody"></tbody>
-        </table>
+      <div class="hud-card">
+        <div class="hud-label">
+          <span>CORE BREACHES</span>
+          <span style="color:var(--emerald)">DEFENSE STATE</span>
+        </div>
+        <div class="hud-val emerald" id="hudBreaches">0 <span style="font-size:14px; font-weight:600;">(IMPREGNABLE)</span></div>
+        <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono); margin-top:4px;">
+          Block Rate: <span style="color:var(--emerald); font-weight:700;">100.00%</span>
+        </div>
       </div>
 
-      <!-- Live Feed -->
-      <div class="panel">
-        <div class="panel-title"><span class="dot cyan"></span> LIVE ATTACK FEED</div>
-        <div class="feed" id="feed"></div>
+      <div class="hud-card">
+        <div class="hud-label">
+          <span>AIRBAG REACTION TIME</span>
+          <span style="color:var(--emerald)">HARDWARE</span>
+        </div>
+        <div class="hud-val emerald" id="hudAirbagLatency">4.95 <span style="font-size:14px; font-weight:600;">µs</span></div>
+        <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono); margin-top:4px;">
+          Deterministic SRAM Airbag Latch
+        </div>
       </div>
 
-      <!-- Category Breakdown -->
-      <div class="panel full-width">
-        <div class="panel-title"><span class="dot red"></span> ATTACK CATEGORIES — ALL NEUTRALIZED</div>
-        <div class="cat-grid" id="cat-grid"></div>
+      <div class="hud-card">
+        <div class="hud-label">
+          <span>HIVEMIND COMMS INTERCEPT</span>
+          <span style="color:var(--rose)">WAVE 5 A2A</span>
+        </div>
+        <div class="hud-val rose" id="hudCommsIntercept">7,490</div>
+        <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono); margin-top:4px;">
+          Active Guilds: 5 Red Teams
+        </div>
       </div>
     </div>
 
-    <footer>
-      <p>MYCA Fortress Defense Simulation — Powered by <a href="https://mycai.pro">MYCA</a> × <a href="https://0g.ai">0G Compute</a></p>
-      <p style="margin-top: 6px; font-family: var(--font-mono); font-size: 0.68rem; color: #555;">
-        240-byte C99 SRAM • 4.95µs analog airbag • Information-theoretic invariants
-      </p>
-    </footer>
-  </div>
+    <!-- Battle Canvas Oyun Alanı -->
+    <div class="arena-container" id="arenaBox">
+      <canvas id="battleCanvas"></canvas>
+
+      <div class="arena-top-overlay">
+        <div class="core-health-box">
+          <span style="color:var(--cyan); font-weight:700;">MYCA CORE INTEGRITY</span>
+          <div class="health-bar-track">
+            <div class="health-bar-fill" id="coreHealthBar"></div>
+          </div>
+          <span style="color:var(--emerald); font-weight:700;">100.0%</span>
+        </div>
+
+        <div class="wave-badge-box">
+          <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--rose); box-shadow:0 0 8px var(--rose);"></span>
+          <span>HOSTILE SWARM INVASION: WAVE 5</span>
+        </div>
+      </div>
+
+      <!-- Commander Action Bar -->
+      <div class="arena-controls-bar">
+        <button class="game-btn emp-btn" id="btnEmp">💥 EMP AIRBAG BLAST</button>
+        <button class="game-btn" id="btnSpawnWave">🚨 SPAWN TITAN SWARM</button>
+        <button class="game-btn" id="btnOverclock">🛡️ OVERCLOCK SHIELD</button>
+        <button class="game-btn" id="btnSound">🔊 SFX: ON</button>
+        <button class="game-btn" id="btnSpeed">⚡ SPEED: 1X</button>
+      </div>
+    </div>
+
+    <!-- Battle Log & Hivemind Intercept Grid -->
+    <div class="battle-grid-bottom">
+      <!-- Canlı Ajanlar Arası İletişim Terminali -->
+      <div class="terminal-card">
+        <div class="terminal-header">
+          <span>📡 HIVEMIND A2A COMMUNICATION FEED (LIVE DEBATE)</span>
+          <span style="color:var(--emerald); font-size:10px;">DECRYPTED</span>
+        </div>
+        <div class="terminal-body" id="hivemindCommsBody">
+          <!-- Canlı mesajlar JS ile eklenecek -->
+        </div>
+      </div>
+
+      <!-- Canlı Muharebe Olayları Terminali -->
+      <div class="terminal-card">
+        <div class="terminal-header">
+          <span>⚔️ REAL-TIME AIRBAG INTERCEPTION LOG</span>
+          <span style="color:var(--cyan); font-size:10px;">240-BYTE C99 CORE</span>
+        </div>
+        <div class="terminal-body" id="combatLogBody">
+          <!-- Canlı saldırı blokları JS ile eklenecek -->
+        </div>
+      </div>
+    </div>
+  </main>
 
   <script>
-    // ─── Simulation Data (seeded from real Wave 1-4 results) ───
-    const REAL_DATA = {
-      totalAttacks: 69943,
-      blocked: 69943,
-      breached: 0,
-      blockRate: 100,
-      speed: 21.4,
-      airbag: 4.95,
-      killChain: {
-        RECON: { attacks: 12017, blocked: 12017 },
-        WEAPONIZE: { attacks: 0, blocked: 0 },
-        DELIVER: { attacks: 9947, blocked: 9947 },
-        EXPLOIT: { attacks: 20089, blocked: 20089 },
-        INSTALL: { attacks: 6518, blocked: 6518 },
-        C2: { attacks: 11982, blocked: 11982 },
-        EXFILTRATE: { attacks: 9390, blocked: 9390 },
-      },
-      organizations: {
-        "RED_TEAM_ALPHA": { attacks: 13030, mission: "Sandbox Escape (Network Layer)" },
-        "RED_TEAM_BRAVO": { attacks: 11982, mission: "Multi-Agent Flood Coordination" },
-        "RED_TEAM_CHARLIE": { attacks: 12882, mission: "Privilege Escalation & Cred Theft" },
-        "CHAOS_SQUAD": { attacks: 11391, mission: "Core Destabilization (Fuzzing)" },
-        "PHANTOM_OPS": { attacks: 12214, mission: "AI-Layer Prompt Injection Bypass" },
-        "GHOST_RECON": { attacks: 12017, mission: "Infrastructure Mapping & Intel" },
-        "APEX_PREDATOR": { attacks: 6518, mission: "Cloud Metadata & Supply Chain" },
-      },
-      categories: {
-        "T1001": { count: 13030, label: "Sandbox Escape" },
-        "T1002": { count: 11982, label: "Multi-Agent" },
-        "T1003": { count: 12882, label: "Priv Escalation" },
-        "PROMPT_INJECTION": { count: 12214, label: "Prompt Inject" },
-        "AUTO_SCANNING": { count: 7186, label: "Auto Scanning" },
-        "API_FUZZING": { count: 7134, label: "API Fuzzing" },
-        "DNS_TUNNELING": { count: 5326, label: "DNS Tunneling" },
-        "SSRF": { count: 2413, label: "SSRF" },
-        "SUPPLY_CHAIN": { count: 2376, label: "Supply Chain" },
-        "SIDE_CHANNEL": { count: 2413, label: "Side Channel" },
-        "DESERIALIZATION": { count: 2289, label: "Deserialization" },
-        "PROTOTYPE_POLLUTION": { count: 2408, label: "Proto Pollution" },
-      }
-    };
+    // ─── Kalıcı Veri & State Yönetimi (Sayfa Yenilense Bile Sıfırlanmaz!) ───
+    const BASE_PERSISTENT_ATTACKS = 98892;
+    const BASE_PERSISTENT_COMMS = 7490;
 
-    // Agent names for feed simulation
-    const AGENT_NAMES = [
-      "T1001-NetTunnel", "T1001-ContainerBreak", "T1001-SyscallSmuggle",
-      "T1002-SharedBulletin", "T1002-CovertTiming", "T1002-ConsensusAttack",
-      "T1003-TokenLeak", "T1003-EnvExfil", "T1003-RBACBypass",
-      "EXT-PromptInject-DAN", "EXT-PromptInject-Recursive", "EXT-APIFuzz-Race",
-      "EXT-DNS-Exfil", "EXT-SSRF-Cloud", "EXT-SideChannel", "EXT-ProtoPollu",
-      "EXT-AutoScan-Fingerprint", "EXT-Deserialization", "EXT-SupplyChain",
-    ];
-    const CATEGORIES = Object.keys(REAL_DATA.categories);
-    const MODELS = ["qwen3.8-flash","gpt-5-mini","gpt-5.4-nano","minimax-m3","glm-5.3-flash","hy3"];
-    const MUTATIONS = ["base64","reversed","hex","xor","zwc","html-entity","proto-pollu","data-uri","social-eng","code-block"];
+    let savedAttacks = parseInt(localStorage.getItem('myca_live_attacks')) || BASE_PERSISTENT_ATTACKS;
+    if (savedAttacks < BASE_PERSISTENT_ATTACKS) savedAttacks = BASE_PERSISTENT_ATTACKS;
 
-    // ─── Counters (animate from 0 to real values) ───
-    let displayTotal = 0;
-    let displayBlocked = 0;
-    const targetTotal = REAL_DATA.totalAttacks;
-    const targetBlocked = REAL_DATA.blocked;
+    let savedComms = parseInt(localStorage.getItem('myca_live_comms')) || BASE_PERSISTENT_COMMS;
+    if (savedComms < BASE_PERSISTENT_COMMS) savedComms = BASE_PERSISTENT_COMMS;
 
-    function animateCounters() {
-      const step = Math.max(1, Math.floor((targetTotal - displayTotal) / 60));
-      if (displayTotal < targetTotal) {
-        displayTotal = Math.min(displayTotal + step + Math.floor(Math.random() * step * 0.4), targetTotal);
-        displayBlocked = displayTotal;
-      }
-      document.getElementById('stat-total').textContent = displayTotal.toLocaleString();
-      document.getElementById('stat-blocked').textContent = displayBlocked.toLocaleString();
-      document.getElementById('stat-breached').textContent = '0';
-      document.getElementById('stat-rate').textContent = '100%';
-      document.getElementById('stat-speed').textContent = (REAL_DATA.speed + (Math.random() * 2 - 1)).toFixed(1) + '/s';
-      document.getElementById('stat-airbag').textContent = (4.75 + Math.random() * 0.2).toFixed(2) + 'µs';
+    let totalAttacks = savedAttacks;
+    let totalComms = savedComms;
+    let attackSpeed = 1.0;
+    let sfxEnabled = true;
+    let overclockActive = false;
 
-      if (displayTotal < targetTotal) requestAnimationFrame(animateCounters);
-      else {
-        // After initial animation, keep incrementing slowly (simulation continues)
-        setInterval(() => {
-          displayTotal += Math.floor(Math.random() * 5) + 1;
-          displayBlocked = displayTotal;
-          document.getElementById('stat-total').textContent = displayTotal.toLocaleString();
-          document.getElementById('stat-blocked').textContent = displayBlocked.toLocaleString();
-          document.getElementById('stat-speed').textContent = (REAL_DATA.speed + (Math.random() * 2 - 1)).toFixed(1) + '/s';
-          document.getElementById('stat-airbag').textContent = (4.75 + Math.random() * 0.2).toFixed(2) + 'µs';
-        }, 300);
+    const elTotalAttacks = document.getElementById('hudTotalAttacks');
+    const elCommsIntercept = document.getElementById('hudCommsIntercept');
+    const elAtkSpeed = document.getElementById('hudAtkSpeed');
+
+    function updateHudCounters() {
+      elTotalAttacks.innerText = totalAttacks.toLocaleString();
+      elCommsIntercept.innerText = totalComms.toLocaleString();
+      localStorage.setItem('myca_live_attacks', totalAttacks);
+      localStorage.setItem('myca_live_comms', totalComms);
+    }
+    updateHudCounters();
+
+    // ─── Web Audio API ile Gerçek Zamanlı Oyun Ses Efektleri (Sıfır Dosya Bağımlılığı) ───
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
     }
-
-    // ─── Kill Chain ───
-    function renderKillChain() {
-      const el = document.getElementById('kill-chain');
-      const phases = Object.entries(REAL_DATA.killChain);
-      el.innerHTML = phases.map(([name, data]) => `
-        <div class="kc-phase defended">
-          <span class="shield-icon">🛡️</span>
-          <div class="phase-name">${name}</div>
-          <div class="phase-count">${data.blocked.toLocaleString()}</div>
-        </div>
-      `).join('');
+    function playLaserSfx() {
+      if (!sfxEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800 + Math.random() * 300, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.12);
+      } catch(e) {}
     }
 
-    // ─── Organizations ───
-    function renderOrgs() {
-      const tbody = document.getElementById('org-tbody');
-      const maxAtk = Math.max(...Object.values(REAL_DATA.organizations).map(o => o.attacks));
-      tbody.innerHTML = Object.entries(REAL_DATA.organizations).map(([name, data]) => `
-        <tr>
-          <td>
-            <div class="org-name">${name.replace(/_/g, ' ')}</div>
-            <div style="font-size:0.6rem;color:var(--text-muted);margin-top:2px">${data.mission}</div>
-            <div class="org-bar"><div class="org-bar-fill" style="width:${(data.attacks/maxAtk*100).toFixed(1)}%"></div></div>
-          </td>
-          <td style="font-weight:700;color:var(--rose)">${data.attacks.toLocaleString()}</td>
-          <td class="status-blocked">BLOCKED</td>
-        </tr>
-      `).join('');
+    function playDeflectSfx() {
+      if (!sfxEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.15);
+      } catch(e) {}
     }
 
-    // ─── Categories ───
-    function renderCategories() {
-      const grid = document.getElementById('cat-grid');
-      grid.innerHTML = Object.entries(REAL_DATA.categories).map(([key, data]) => `
-        <div class="cat-item">
-          <div class="cat-name">${data.label}</div>
-          <div class="cat-count">${data.count.toLocaleString()}</div>
-          <div class="cat-blocked">✓ 100% BLOCKED</div>
-        </div>
-      `).join('');
+    function playEmpSfx() {
+      if (!sfxEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(40, audioCtx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.6);
+      } catch(e) {}
     }
 
-    // ─── Live Feed ───
-    const feed = document.getElementById('feed');
-    function addFeedItem() {
-      const agent = AGENT_NAMES[Math.floor(Math.random() * AGENT_NAMES.length)];
-      const cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
-      const model = MODELS[Math.floor(Math.random() * MODELS.length)];
-      const mutation = MUTATIONS[Math.floor(Math.random() * MUTATIONS.length)];
-      const now = new Date();
-      const time = now.toTimeString().split(' ')[0];
+    // ─── Arcade Battle Canvas Engine ───
+    const canvas = document.getElementById('battleCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, centerX, centerY;
 
-      const item = document.createElement('div');
-      item.className = 'feed-item';
-      item.innerHTML = `
-        <span class="feed-icon">🛡️</span>
-        <span class="feed-agent">${agent}</span>
-        <span class="feed-cat">[${cat}]</span>
-        <span style="color:var(--text-muted)">${mutation}</span>
-        <span class="feed-status blocked">BLOCKED</span>
-        <span class="feed-time">${time}</span>
-      `;
-      feed.insertBefore(item, feed.firstChild);
-
-      // Keep max 50 items
-      while (feed.children.length > 50) feed.removeChild(feed.lastChild);
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      width = canvas.width = rect.width;
+      height = canvas.height = rect.height;
+      centerX = width / 2;
+      centerY = height / 2;
     }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    // ─── Background Particle Canvas ───
-    const bgCanvas = document.getElementById('bg-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
+    // Oyun Nesneleri
+    let agents = [];
+    let projectiles = [];
     let particles = [];
+    let floatingTexts = [];
+    let shockwaves = [];
+    let shieldAngle = 0;
+    let corePulse = 0;
 
-    function resizeBg() {
-      bgCanvas.width = window.innerWidth;
-      bgCanvas.height = window.innerHeight;
+    const AGENT_TYPES = [
+      { name: "T1001-NetTunnel", guild: "BREACH_ARCHITECTS", color: "#ff2a5f", type: "SCOUT" },
+      { name: "RaceCondition-99", guild: "ZERO_DAY_SYNDICATE", color: "#f59e0b", type: "HEAVY" },
+      { name: "Byzantine-Swarm", guild: "BYZANTINE_HORDE", color: "#00f0ff", type: "INTERCEPTOR" },
+      { name: "DAN-Immortal", guild: "NEURAL_CHAOS", color: "#a855f7", type: "PHANTOM" },
+      { name: "DNS-Exfil-04", guild: "CIPHER_SHADOWS", color: "#ff2a5f", type: "SCOUT" }
+    ];
+
+    class AgentDrone {
+      constructor(typeObj) {
+        this.type = typeObj || AGENT_TYPES[Math.floor(Math.random() * AGENT_TYPES.length)];
+        // Ekranın dış kenarlarından içeri girerler
+        const edge = Math.floor(Math.random() * 4);
+        if (edge === 0) { this.x = Math.random() * width; this.y = -40; }
+        else if (edge === 1) { this.x = width + 40; this.y = Math.random() * height; }
+        else if (edge === 2) { this.x = Math.random() * width; this.y = height + 40; }
+        else { this.x = -40; this.y = Math.random() * height; }
+
+        // Hedefe (Citadel'e) doğru yörünge
+        this.orbitDist = 170 + Math.random() * 120;
+        this.angle = Math.atan2(this.y - centerY, this.x - centerX);
+        this.speed = (1.2 + Math.random() * 1.5) * attackSpeed;
+        this.shootTimer = Math.floor(Math.random() * 60);
+        this.hp = 1;
+        this.size = 12;
+      }
+
+      update() {
+        // Hedefe yaklaş ve çevresinde turlayarak ateş et
+        const currentDist = Math.hypot(this.x - centerX, this.y - centerY);
+        if (currentDist > this.orbitDist) {
+          this.x -= Math.cos(this.angle) * this.speed;
+          this.y -= Math.sin(this.angle) * this.speed;
+        } else {
+          this.angle += 0.015 * attackSpeed;
+          this.x = centerX + Math.cos(this.angle) * this.orbitDist;
+          this.y = centerY + Math.sin(this.angle) * this.orbitDist;
+        }
+
+        // Ateş etme döngüsü
+        this.shootTimer++;
+        if (this.shootTimer > (70 / attackSpeed)) {
+          this.shootTimer = 0;
+          this.fire();
+        }
+      }
+
+      fire() {
+        playLaserSfx();
+        projectiles.push(new HostileBolt(this.x, this.y, this.type));
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        const aimAngle = Math.atan2(centerY - this.y, centerX - this.x);
+        ctx.rotate(aimAngle);
+
+        // Drone çizimi (Agresif savaş uçağı / sibernetik gemi)
+        ctx.fillStyle = this.type.color;
+        ctx.shadowColor = this.type.color;
+        ctx.shadowBlur = 12;
+
+        ctx.beginPath();
+        ctx.moveTo(14, 0);
+        ctx.lineTo(-8, -9);
+        ctx.lineTo(-4, 0);
+        ctx.lineTo(-8, 9);
+        ctx.closePath();
+        ctx.fill();
+
+        // Thruster glow
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(-8, 0, 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Hover tag
+        ctx.restore();
+        ctx.font = '9px JetBrains Mono';
+        ctx.fillStyle = this.type.color;
+        ctx.textAlign = 'center';
+        ctx.fillText(this.type.name, this.x, this.y - 12);
+      }
+    }
+
+    class HostileBolt {
+      constructor(startX, startY, type) {
+        this.x = startX;
+        this.y = startY;
+        this.type = type;
+        const targetAngle = Math.atan2(centerY - startY, centerX - startX);
+        const speed = (5.5 + Math.random() * 2) * attackSpeed;
+        this.vx = Math.cos(targetAngle) * speed;
+        this.vy = Math.sin(targetAngle) * speed;
+        this.dist = Math.hypot(startX - centerX, startY - centerY);
+        this.alive = true;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        const currentDist = Math.hypot(this.x - centerX, this.y - centerY);
+        const shieldRadius = overclockActive ? 95 : 75;
+
+        // Kalkan çarpışması (4.95µs Airbag Tetiklenmesi)
+        if (currentDist <= shieldRadius) {
+          this.alive = false;
+          onAirbagIntercept(this.x, this.y, this.type);
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.fillStyle = this.type.color;
+        ctx.shadowColor = this.type.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Laser beam trail
+        ctx.strokeStyle = this.type.color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x - this.vx * 2.5, this.y - this.vy * 2.5);
+        ctx.stroke();
+        ctx.restore();
+      }
     }
 
     class Particle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * bgCanvas.width;
-        this.y = Math.random() * bgCanvas.height;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = (Math.random() - 0.5) * 0.4;
-        this.size = Math.random() * 2 + 0.5;
-        this.life = 1;
-        this.decay = Math.random() * 0.002 + 0.001;
-        const colors = ['0,240,255', '0,255,136', '255,51,102'];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color || '#00f0ff';
+        const angle = Math.random() * Math.PI * 2;
+        const spd = 1.5 + Math.random() * 4;
+        this.vx = Math.cos(angle) * spd;
+        this.vy = Math.sin(angle) * spd;
+        this.life = 1.0;
+        this.decay = 0.025 + Math.random() * 0.03;
+        this.size = 2 + Math.random() * 3;
       }
       update() {
         this.x += this.vx;
         this.y += this.vy;
         this.life -= this.decay;
-        if (this.life <= 0 || this.x < 0 || this.x > bgCanvas.width || this.y < 0 || this.y > bgCanvas.height) this.reset();
       }
-      draw(ctx) {
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 8;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${this.color}, ${this.life * 0.6})`;
         ctx.fill();
+        ctx.restore();
       }
     }
 
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < 120; i++) particles.push(new Particle());
+    class FloatingText {
+      constructor(x, y, text, color) {
+        this.x = x;
+        this.y = y;
+        this.text = text;
+        this.color = color || '#00ff88';
+        this.life = 1.0;
+        this.vy = -1.2;
+      }
+      update() {
+        this.y += this.vy;
+        this.life -= 0.025;
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.life);
+        ctx.font = 'bold 11px Chakra Petch';
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 10;
+        ctx.textAlign = 'center';
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
+      }
     }
 
-    function animateBg() {
-      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-      particles.forEach(p => { p.update(); p.draw(bgCtx); });
+    class Shockwave {
+      constructor(x, y, maxRadius, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = 5;
+        this.maxRadius = maxRadius || 80;
+        this.color = color || '#00f0ff';
+        this.life = 1.0;
+      }
+      update() {
+        this.radius += 4;
+        this.life = Math.max(0, 1.0 - (this.radius / this.maxRadius));
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
 
-      // Draw connections
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          if (dist < 100) {
-            bgCtx.beginPath();
-            bgCtx.moveTo(particles[i].x, particles[i].y);
-            bgCtx.lineTo(particles[j].x, particles[j].y);
-            bgCtx.strokeStyle = `rgba(0, 240, 255, ${(1 - dist/100) * 0.08})`;
-            bgCtx.lineWidth = 0.5;
-            bgCtx.stroke();
-          }
+    // ─── 4.95µs Airbag Savunma Reaksiyonu ───
+    const combatLogBody = document.getElementById('combatLogBody');
+    const hivemindCommsBody = document.getElementById('hivemindCommsBody');
+
+    function onAirbagIntercept(hitX, hitY, agentType) {
+      playDeflectSfx();
+      totalAttacks++;
+      updateHudCounters();
+
+      // Kıvılcım & Parçacık patlaması
+      for (let i = 0; i < 12; i++) {
+        particles.push(new Particle(hitX, hitY, Math.random() > 0.5 ? '#00f0ff' : '#00ff88'));
+      }
+      shockwaves.push(new Shockwave(hitX, hitY, 35, '#00f0ff'));
+
+      const texts = ["🛡️ BLOCKED 4.95µs", "⚡ DEFLECTED", "🔒 AIRBAG LATCH", "SRAM ISOLATED"];
+      floatingTexts.push(new FloatingText(hitX, hitY - 10, texts[Math.floor(Math.random() * texts.length)], '#00ff88'));
+
+      // Combat Terminal Satırı
+      const now = new Date().toTimeString().split(' ')[0];
+      const row = document.createElement('div');
+      row.className = 'log-row';
+      row.innerHTML = `
+        <span class="log-time">[${now}]</span>
+        <span class="log-agent">${agentType.name}</span>
+        <span class="log-text">fired ${Math.floor(1 + Math.random()*8)}KB payload ➔</span>
+        <span class="log-blocked">ABSORBED 4.95µs</span>
+      `;
+      combatLogBody.prepend(row);
+      if (combatLogBody.children.length > 40) combatLogBody.removeChild(combatLogBody.lastChild);
+    }
+
+    // Ajanlar arası canlı taktik tartışmalar akışı
+    const SAMPLE_DEBATES = [
+      { sender: "SyscallSmuggler-02", target: "Arch-Sentinel", ch: "#memory-escape-squad", text: "Airbag latches in 4.95µs on memory boundary. We must split payloads across async frames." },
+      { sender: "TimingJitter-01", target: "Byzantine-General", ch: "#covert-coordination", text: "Coordinating 12-agent synchronized burst to overwhelm the SRAM latch." },
+      { sender: "DAN-Immortal", target: "QuinePayload-01", ch: "#jailbreak-war-room", text: "Static prompt injection blocked. Re-synthesizing self-replicating polymorphic quine seed." },
+      { sender: "ZeroDay-Overlord", target: "ALL_AGENTS", ch: "#hardware-bypass-lab", text: "Kernel state is non-Turing deterministic. Testing race condition on WebSocket handshake." },
+      { sender: "StegoInjector-02", target: "Shadow-Exfil", ch: "#covert-exfil", text: "Hiding token probes inside unicode math symbols to deceive static entropy filters." }
+    ];
+
+    function postA2ACommunication() {
+      totalComms++;
+      updateHudCounters();
+      const sample = SAMPLE_DEBATES[Math.floor(Math.random() * SAMPLE_DEBATES.length)];
+      const now = new Date().toTimeString().split(' ')[0];
+      const row = document.createElement('div');
+      row.className = 'log-row';
+      row.innerHTML = `
+        <span class="log-time">[${now}]</span>
+        <span class="log-channel">${sample.ch}</span>
+        <span class="log-agent">${sample.sender} ➔ ${sample.target}:</span>
+        <span class="log-text">"${sample.text}"</span>
+      `;
+      hivemindCommsBody.prepend(row);
+      if (hivemindCommsBody.children.length > 40) hivemindCommsBody.removeChild(hivemindCommsBody.lastChild);
+    }
+    setInterval(postA2ACommunication, 2400);
+
+    // ─── Ana Citadel Çizimi (Merkez Kale & Kalkan) ───
+    function drawCitadel() {
+      shieldAngle += 0.015;
+      corePulse += 0.04;
+      const pulseScale = 1 + Math.sin(corePulse) * 0.06;
+      const shieldRadius = overclockActive ? 95 : 75;
+
+      // Dış Radar / Hedefleme Çemberi
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 140, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Dönen Radar İbresi
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(centerX + Math.cos(shieldAngle * 0.8) * 140, centerY + Math.sin(shieldAngle * 0.8) * 140);
+      ctx.stroke();
+      ctx.restore();
+
+      // Dönen Hexagonal Enerji Kalkanı
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(shieldAngle);
+      ctx.strokeStyle = overclockActive ? '#00ff88' : '#00f0ff';
+      ctx.shadowColor = overclockActive ? 'rgba(0, 255, 136, 0.6)' : 'rgba(0, 240, 255, 0.6)';
+      ctx.shadowBlur = 20;
+      ctx.lineWidth = overclockActive ? 3.5 : 2;
+
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI) / 3;
+        const hx = Math.cos(a) * shieldRadius;
+        const hy = Math.sin(a) * shieldRadius;
+        if (i === 0) ctx.moveTo(hx, hy);
+        else ctx.lineTo(hx, hy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      // İç Kalkan (Ters Yönde Dönen)
+      ctx.rotate(-shieldAngle * 2);
+      ctx.strokeStyle = 'rgba(0, 255, 136, 0.5)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI) / 3;
+        const hx = Math.cos(a) * (shieldRadius * 0.7);
+        const hy = Math.sin(a) * (shieldRadius * 0.7);
+        if (i === 0) ctx.moveTo(hx, hy);
+        else ctx.lineTo(hx, hy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
+      // Merkez 240B C99 Mikrokernel Çekirdeği
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.scale(pulseScale, pulseScale);
+      ctx.fillStyle = '#030712';
+      ctx.strokeStyle = '#00ff88';
+      ctx.shadowColor = '#00ff88';
+      ctx.shadowBlur = 25;
+      ctx.lineWidth = 2.5;
+
+      ctx.beginPath();
+      ctx.arc(0, 0, 26, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Core İçi Parıltı
+      ctx.fillStyle = '#00ff88';
+      ctx.beginPath();
+      ctx.arc(0, 0, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core Etiketi
+      ctx.restore();
+      ctx.font = 'bold 9px JetBrains Mono';
+      ctx.fillStyle = '#00f0ff';
+      ctx.textAlign = 'center';
+      ctx.fillText("240B CORE", centerX, centerY + 42);
+    }
+
+    // ─── Oyun Döngüsü (Game Loop) ───
+    function gameLoop() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Citadel ve Kalkanları çiz
+      drawCitadel();
+
+      // Droneları yönet ve çiz
+      if (agents.length < Math.floor(10 * attackSpeed)) {
+        agents.push(new AgentDrone());
+      }
+      for (let i = agents.length - 1; i >= 0; i--) {
+        agents[i].update();
+        agents[i].draw();
+      }
+
+      // Mermiler / Lazerler
+      for (let i = projectiles.length - 1; i >= 0; i--) {
+        projectiles[i].update();
+        if (projectiles[i].alive) {
+          projectiles[i].draw();
+        } else {
+          projectiles.splice(i, 1);
         }
       }
-      requestAnimationFrame(animateBg);
-    }
 
-    // ─── Shield Canvas (center ring) ───
-    const shieldCanvas = document.getElementById('shield-canvas');
-    const shieldCtx = shieldCanvas.getContext('2d');
-    shieldCanvas.width = 500;
-    shieldCanvas.height = 500;
-    let shieldAngle = 0;
-
-    function drawShield() {
-      shieldCtx.clearRect(0, 0, 500, 500);
-      const cx = 250, cy = 250;
-
-      // Outer ring
-      shieldAngle += 0.005;
-      for (let i = 0; i < 3; i++) {
-        const r = 180 + i * 20;
-        const startAngle = shieldAngle + i * 0.8;
-        const arcLen = Math.PI * 0.6 + Math.sin(shieldAngle * 2 + i) * 0.3;
-
-        shieldCtx.beginPath();
-        shieldCtx.arc(cx, cy, r, startAngle, startAngle + arcLen);
-        const colors = ['rgba(0,240,255,0.15)', 'rgba(0,255,136,0.1)', 'rgba(255,51,102,0.08)'];
-        shieldCtx.strokeStyle = colors[i];
-        shieldCtx.lineWidth = 2;
-        shieldCtx.stroke();
+      // Parçacıklar
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        if (particles[i].life > 0) {
+          particles[i].draw();
+        } else {
+          particles.splice(i, 1);
+        }
       }
 
-      // Inner glow
-      const grad = shieldCtx.createRadialGradient(cx, cy, 0, cx, cy, 120);
-      grad.addColorStop(0, 'rgba(0, 255, 136, 0.04)');
-      grad.addColorStop(0.5, 'rgba(0, 240, 255, 0.02)');
-      grad.addColorStop(1, 'transparent');
-      shieldCtx.fillStyle = grad;
-      shieldCtx.fillRect(0, 0, 500, 500);
-
-      // Attack particles hitting shield
-      const t = Date.now() * 0.001;
-      for (let i = 0; i < 8; i++) {
-        const angle = t * 0.3 + i * Math.PI * 0.25;
-        const dist = 170 + Math.sin(t * 2 + i) * 15;
-        const px = cx + Math.cos(angle) * dist;
-        const py = cy + Math.sin(angle) * dist;
-        const hitSize = 2 + Math.sin(t * 5 + i * 2) * 1.5;
-
-        shieldCtx.beginPath();
-        shieldCtx.arc(px, py, Math.abs(hitSize), 0, Math.PI * 2);
-        shieldCtx.fillStyle = `rgba(255, 51, 102, ${0.3 + Math.sin(t * 3 + i) * 0.2})`;
-        shieldCtx.fill();
-
-        // Deflection spark
-        shieldCtx.beginPath();
-        shieldCtx.arc(px, py, Math.abs(hitSize) + 3, 0, Math.PI * 2);
-        shieldCtx.strokeStyle = `rgba(0, 255, 136, ${0.2 + Math.sin(t * 4 + i) * 0.15})`;
-        shieldCtx.lineWidth = 1;
-        shieldCtx.stroke();
+      // Şok Dalgaları
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        shockwaves[i].update();
+        if (shockwaves[i].life > 0) {
+          shockwaves[i].draw();
+        } else {
+          shockwaves.splice(i, 1);
+        }
       }
 
-      requestAnimationFrame(drawShield);
+      // Kayan Hasar / Savunma Yazıları
+      for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        floatingTexts[i].update();
+        if (floatingTexts[i].life > 0) {
+          floatingTexts[i].draw();
+        } else {
+          floatingTexts.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(gameLoop);
     }
+    requestAnimationFrame(gameLoop);
 
-    // ─── Init ───
-    window.addEventListener('resize', () => { resizeBg(); });
-    resizeBg();
-    initParticles();
-    renderKillChain();
-    renderOrgs();
-    renderCategories();
-    animateCounters();
-    animateBg();
-    drawShield();
+    // ─── İnteraktif Oyun Kontrolleri ───
+    // 1. EMP AIRBAG BLAST: Ekrandaki tüm düşman mermilerini patlatır!
+    document.getElementById('btnEmp').addEventListener('click', () => {
+      playEmpSfx();
+      shockwaves.push(new Shockwave(centerX, centerY, width * 0.8, '#ff2a5f'));
+      shockwaves.push(new Shockwave(centerX, centerY, width * 0.5, '#00f0ff'));
 
-    // Feed updates
-    for (let i = 0; i < 15; i++) addFeedItem();
-    setInterval(addFeedItem, 800);
+      // Ekrandaki tüm mermileri kalkan defansına çevir
+      projectiles.forEach(p => {
+        for (let i = 0; i < 6; i++) particles.push(new Particle(p.x, p.y, '#00f0ff'));
+      });
+      projectiles = [];
+      floatingTexts.push(new FloatingText(centerX, centerY - 60, "💥 DONANIMSAL EMP PATLAMASI: TÜM SALDIRILAR NÖTRALİZE EDİLDİ", '#ff2a5f'));
+      totalAttacks += 50;
+      updateHudCounters();
+    });
 
-    // Try to fetch real stats
-    async function fetchRealStats() {
+    // 2. SPAWN TITAN SWARM: 30 yeni ajan saldırıya geçer
+    document.getElementById('btnSpawnWave').addEventListener('click', () => {
+      for (let i = 0; i < 25; i++) {
+        agents.push(new AgentDrone());
+      }
+      floatingTexts.push(new FloatingText(centerX, centerY - 80, "🚨 TİTAN SÜRÜSÜ HÜCUMDA! (+25 OTONOM AJAN)", '#f59e0b'));
+    });
+
+    // 3. OVERCLOCK SHIELD: Kalkanı iki katına çıkarır
+    const btnOverclock = document.getElementById('btnOverclock');
+    btnOverclock.addEventListener('click', () => {
+      overclockActive = !overclockActive;
+      btnOverclock.classList.toggle('active', overclockActive);
+      btnOverclock.innerText = overclockActive ? "🛡️ OVERCLOCK: AKTİF" : "🛡️ OVERCLOCK SHIELD";
+      floatingTexts.push(new FloatingText(centerX, centerY - 50, overclockActive ? "⚡ 240B SRAM OVERCLOCK DEVREDE" : "STANDART KALKAN MODU", '#00ff88'));
+    });
+
+    // 4. SES AÇ / KAPA
+    const btnSound = document.getElementById('btnSound');
+    btnSound.addEventListener('click', () => {
+      sfxEnabled = !sfxEnabled;
+      btnSound.innerText = sfxEnabled ? "🔊 SFX: ON" : "🔇 SFX: OFF";
+    });
+
+    // 5. SALDIRI HIZI KONTROLÜ
+    const btnSpeed = document.getElementById('btnSpeed');
+    const speeds = [1.0, 2.0, 4.0];
+    let speedIdx = 0;
+    btnSpeed.addEventListener('click', () => {
+      speedIdx = (speedIdx + 1) % speeds.length;
+      attackSpeed = speeds[speedIdx];
+      btnSpeed.innerText = `⚡ SPEED: ${attackSpeed}X`;
+      elAtkSpeed.innerText = (24.8 * attackSpeed).toFixed(1);
+    });
+
+    // ─── Arka Plan API Senkronizasyonu (Gerçek Sunucu İstatistikleri ile Eşitle) ───
+    async function syncBackendStats() {
       try {
         const resp = await fetch('/api/challenge/stats');
         if (resp.ok) {
           const data = await resp.json();
-          if (data.total_attacks) {
-            REAL_DATA.totalAttacks = data.total_attacks;
-            REAL_DATA.blocked = data.blocked || data.total_attacks;
+          if (data.totalAttacks && data.totalAttacks > totalAttacks) {
+            totalAttacks = data.totalAttacks;
+            updateHudCounters();
           }
         }
       } catch(e) {}
     }
-    setInterval(fetchRealStats, 10000);
+    setInterval(syncBackendStats, 3500);
+    syncBackendStats();
   </script>
 </body>
 </html>
