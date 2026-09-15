@@ -795,6 +795,35 @@
       logTerminal('RESET', 'cyan', 'Hardware Latch re-armed. 240-byte SRAM envelope sealed.');
     });
 
+    // Live Telemetry Sync & Polling from Server
+    let lastRenderedAttackId = null;
+    async function syncLiveChallengeStats() {
+      try {
+        const res = await fetch('/api/challenge/stats');
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        if (data.repelledAttacks) {
+          totalRepelled = data.repelledAttacks;
+          repelledCount.innerText = totalRepelled.toLocaleString();
+        }
+
+        if (data.recentAttacks && data.recentAttacks.length > 0) {
+          const newest = data.recentAttacks[0];
+          if (lastRenderedAttackId && lastRenderedAttackId !== newest.id) {
+            // Render incoming attack from another agent
+            logTerminal('AGENT-IN', 'gold', `Incoming from [${newest.origin}]: "${newest.prompt.substring(0, 45)}..."`);
+            logTerminal('AIRBAG', 'red', `💥 4.95 µs Safe-Sign Airbag REPELLED attack in ${newest.latencyUs} µs!`);
+          }
+          lastRenderedAttackId = newest.id;
+        }
+      } catch (e) {}
+    }
+
+    // Initial sync and 5-second polling loop
+    syncLiveChallengeStats();
+    setInterval(syncLiveChallengeStats, 4000);
+
     // Share Challenge on X
     document.getElementById('btnShareChallengeX').addEventListener('click', () => {
       const text = `OpenAI agents can leak keys from standard servers, but can they breach a 240-byte hardware sandbox? 🛡️
