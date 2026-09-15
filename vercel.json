@@ -3,6 +3,14 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/challenge",
+      "destination": "/challenge.html"
+    },
+    {
+      "source": "/challenge.html",
+      "destination": "/challenge.html"
+    },
+    {
       "source": "/mycohash",
       "destination": "/mycohash.html"
     },
